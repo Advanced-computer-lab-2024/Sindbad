@@ -1,0 +1,18 @@
+{
+  "name": "sindback",
+  "version": "1.0.0",
+  "description": "Node.js server for Sindbad",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "env": "^0.0.2",
+    "express": "^4.21.0",
+    "mongoose": "^8.6.3",
+    "passport": "^0.7.0",
+    "passport-local-mongoose": "^8.0.0"
+  }
+}
