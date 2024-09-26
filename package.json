@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "express": "^4.21.0",
+    "express-session": "^1.18.0",
+    "mongoose": "^8.6.3",
+    "passport": "^0.7.0",
+    "passport-local-mongoose": "^8.0.0"
+  }
+}
