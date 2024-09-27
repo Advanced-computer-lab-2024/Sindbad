@@ -7,6 +7,7 @@ const adminRoutes = require("./routes/adminRoutes");
 const siteRoutes = require("./routes/siteRoutes");
 const activityRoutes = require("./routes/activityRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
+const tagRoutes = require("./routes/tagRoutes");
 require("dotenv").config();
 
 const app = express();
@@ -53,6 +54,9 @@ app.use("/activity", activityRoutes);
 
 // Activities' categories routes
 app.use("/category", categoryRoutes);
+
+// Activities' tags routes
+app.use("/tag", tagRoutes);
 
 // Fallback route for unknown endpoints
 app.use((req, res, next) => {
