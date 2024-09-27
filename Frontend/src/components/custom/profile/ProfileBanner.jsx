@@ -1,9 +1,9 @@
 import ImagePlaceholder from "../ImagePlaceholder";
-import { BadgeCheck, Phone, Link } from 'lucide-react';
+import { BadgeCheck, Phone, Link } from "lucide-react";
 
 function ProfileBanner() {
     return (
-        <section className="w-[350px] border border-neutral-600 rounded overflow-clip flex flex-col items-center shrink-0 pb-8 bg-gradient-to-b from-light/[0.03] to-transparent">
+        <section className="w-[350px] border border-neutral-600 rounded-md overflow-clip flex flex-col items-center shrink-0 pb-8 bg-gradient-to-b from-light/[0.03] to-transparent">
             <div className="h-[140px] w-full">
                 <ImagePlaceholder />
             </div>
