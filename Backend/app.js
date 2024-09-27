@@ -43,7 +43,7 @@ passport.deserializeUser(Admin.deserializeUser());
 // Admin routes
 app.use("/api", adminRoutes); // All admin-related routes will start with /api/admin
 
-app.use("/activity", activityRoutes);
+app.use("/", activityRoutes);
 
 // Fallback route for unknown endpoints
 app.use((req, res, next) => {
