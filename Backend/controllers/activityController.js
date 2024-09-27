@@ -18,15 +18,38 @@ const getActivity = async (req, res) => {
     });
   }
 };
+
 /**
  * Retrieves activities created by a specific user
  * @param {Object} req - The request object containing user data
  * @param {Object} res - The response object for sending the result
  * @returns {Object} JSON containing an array of activities or error message
  */
+
 const getMyActivities = async (req, res) => {
   try {
     const activities = await Activity.find({ creatorId: req.body.creatorId });
+    res.status(201).json(activities);
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error getting activities",
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * Gets all activities
+ *
+ * @param {Object} req - The request object
+ * @param {Object} res - The response object
+ * @returns {Object}
+ *
+ * @example GET http://localhost:3000/activity/all-activities
+ */
+const getAllActivities = async (req, res) => {
+  try {
+    const activities = await Activity.find();
     res.status(201).json(activities);
   } catch (error) {
     return res.status(500).json({
@@ -136,4 +159,5 @@ module.exports = {
   updateActivity,
   deleteActivity,
   getMyActivities,
+  getAllActivities,
 };

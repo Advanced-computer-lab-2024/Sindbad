@@ -45,7 +45,7 @@ passport.deserializeUser(Admin.deserializeUser());
 app.use("/api", adminRoutes); // All admin-related routes will start with /api/admin
 
 // Activity routes
-app.use("/", activityRoutes);
+app.use("/activity", activityRoutes);
 
 // Activities' categories routes
 app.use("/category", categoryRoutes);
