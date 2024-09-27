@@ -7,16 +7,22 @@ const Site = require("../models/siteModel");
 const Tag = require("../models/tagModel"); // Assuming you have a Tag model
 
 let mongoServer;
+let tagId;
+let creatorId;
 
 // Before all tests, start the in-memory MongoDB server
 beforeAll(async () => {
 	await startServer();
+	const tag = new Tag({ name: "Test Tag" });
+	await tag.save();
+	tagId = tag._id;
+	creatorId = new mongoose.Types.ObjectId();
 });
 
 // After each test, clear the database
 afterEach(async () => {
 	await Site.deleteMany({});
-	await Tag.deleteMany({}); 
+	await Tag.deleteMany({});
 });
 
 // After all tests, close the connection and stop MongoDB server
@@ -24,20 +30,8 @@ afterAll(async () => {
 	await stopServer();
 });
 
-// Test Data
-const testTag = async () => {
-	const tag = new Tag({ name: "Test Tag" }); // Adjust according to your Tag model
-	return await tag.save();
-};
-
 // TODO: Add tag creation from Salma's code
 describe("Site CRUD Operations", () => {
-	let tagId;
-
-	beforeAll(async () => {
-		const tag = await testTag();
-		tagId = tag._id;
-	});
 
 	it("should create a new site", async () => {
 		const res = await request(app)
@@ -51,8 +45,8 @@ describe("Site CRUD Operations", () => {
 					monday: { start: 420, end: 1020 },
 				},
 				ticketPrices: [10, 15],
-				tags: ["66f6fdde74045c90c09ad387"],
-				creatorId: "66f6fd42af6f9d152eae4e7a",
+				tags:[tagId],
+				creatorId: creatorId
 			});
 
 		expect(res.status).toBe(201);
@@ -73,8 +67,8 @@ describe("Site CRUD Operations", () => {
 					monday: { start: 420, end: 1020 },
 				},
 				ticketPrices: [10, 15],
-				tags: ["66f6fdde74045c90c09ad387"],
-				creatorId: "66f6fd42af6f9d152eae4e7a",
+				tags:[tagId],
+				creatorId: creatorId
 			});
 
 		const res = await request(app).get("/site");
@@ -93,8 +87,8 @@ describe("Site CRUD Operations", () => {
 				monday: { start: 420, end: 1020 },
 			},
 			ticketPrices: [10, 15],
-			tags: ["66f6fdde74045c90c09ad387"],
-			creatorId: "66f6fd42af6f9d152eae4e7a",
+			tags:[tagId],
+			creatorId: creatorId
 		});
 		await site.save();
 
@@ -113,8 +107,8 @@ describe("Site CRUD Operations", () => {
 				monday: { start: 420, end: 1020 },
 			},
 			ticketPrices: [10, 15],
-			tags: ["66f6fdde74045c90c09ad387"],
-			creatorId: "66f6fd42af6f9d152eae4e7a",
+			tags:[tagId],
+			creatorId: creatorId
 		});
 		await site.save();
 
@@ -137,8 +131,8 @@ describe("Site CRUD Operations", () => {
 				monday: { start: 420, end: 1020 },
 			},
 			ticketPrices: [10, 15],
-			tags: ["66f6fdde74045c90c09ad387"],
-			creatorId: "66f6fd42af6f9d152eae4e7a",
+			tags:[tagId],
+			creatorId: creatorId
 		});
 		await site.save();
 
@@ -164,8 +158,8 @@ describe("Site CRUD Operations - Failing Tests", () => {
 					monday: { start: 420, end: 1020 },
 				},
 				ticketPrices: [10, 15],
-				tags: ["66f6fdde74045c90c09ad387"],
-				creatorId: "66f6fd42af6f9d152eae4e7a",
+				tags:[tagId],
+				creatorId: creatorId
 			});
 
 		expect(res.status).toBe(400);
@@ -174,6 +168,9 @@ describe("Site CRUD Operations - Failing Tests", () => {
 
 	// Test for creating a site with a duplicate name
 	it("should not create a site with a duplicate name", async () => {
+
+		console.log("tagId", tagId);
+
 		await request(app)
 			.post("/site")
 			.send({
@@ -185,8 +182,8 @@ describe("Site CRUD Operations - Failing Tests", () => {
 					monday: { start: 420, end: 1020 },
 				},
 				ticketPrices: [10, 15],
-				tags: ["66f6fdde74045c90c09ad387"],
-				creatorId: "66f6fd42af6f9d152eae4e7a",
+				tags:[tagId],
+				creatorId: creatorId
 			});
 
 		const res = await request(app)
@@ -200,8 +197,8 @@ describe("Site CRUD Operations - Failing Tests", () => {
 					monday: { start: 420, end: 1020 },
 				},
 				ticketPrices: [10, 15],
-				tags: ["66f6fdde74045c90c09ad387"],
-				creatorId: "66f6fd42af6f9d152eae4e7a",
+				tags:[tagId],
+				creatorId: creatorId
 			});
 
 		expect(res.status).toBe(400);
@@ -244,8 +241,8 @@ describe("Site CRUD Operations - Failing Tests", () => {
 					monday: { start: 1020, end: 420 }, // Invalid opening hours
 				},
 				ticketPrices: [10, 15],
-				tags: ["66f6fdde74045c90c09ad387"],
-				creatorId: "66f6fd42af6f9d152eae4e7a",
+				tags:[tagId],
+				creatorId: creatorId
 			});
 
 		expect(res.status).toBe(400);
