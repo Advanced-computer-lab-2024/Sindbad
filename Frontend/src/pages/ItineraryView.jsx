@@ -132,7 +132,7 @@ function Itinerary(){
                     <div className="bg-gray-300 h-full w-full rounded-lg"></div>
                     
                     {/*Availibility Section
-                    TODO: add conditional for selected element to have thicker border*/}
+                    TODO: add conditional for selected element to have thicker border, seperate day and month to make them appear vertical, lookup map docs*/}
                     <div>
                         <h2 className="text-2xl font-semibold mb-4">Search Availability</h2>
                         <div className="grid grid-cols-3 gap-2">
