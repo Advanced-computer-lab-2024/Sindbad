@@ -20,7 +20,7 @@
 		"mongodb-memory-server": "^10.0.1",
 		"supertest": "^7.0.0"
 	},
-  "jest": {
-  "testEnvironment": "node"
-  }
+	"jest": {
+		"testEnvironment": "node"
+	}
 }

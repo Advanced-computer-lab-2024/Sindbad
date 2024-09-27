@@ -1,10 +1,23 @@
 const mongoose = require("mongoose");
 const Tag = require("./tagModel");
 
-const openingHoursSchema = new Schema(
+const openingHoursSchema = new mongoose.Schema(
 	{
-		start: { type: Number, required: true }, // Start time in minutes (e.g., 420 minutes = 7:00 AM)
-		end: { type: Number, required: true }, // End time in minutes (e.g., 1020 minutes = 5:00 PM)
+		start: {
+			type: Number,
+			required: true,
+		}, // Start time in minutes (e.g., 420 minutes = 7:00 AM)
+		end: {
+			type: Number,
+			required: true,
+			validate: {
+				validator: function (v) {
+					return v > this.start; // Ensure that end is greater than start
+				},
+				message: (props) =>
+					`Closing time (${props.value}) must be greater than opening time (${this.start})!`,
+			},
+		}, // End time in minutes (e.g., 1020 minutes = 5:00 PM)
 	},
 	{ _id: false } // Disable automatic _id generation for sub-documents
 );
