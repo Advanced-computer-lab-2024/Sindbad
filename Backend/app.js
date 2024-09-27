@@ -4,6 +4,8 @@ const passport = require("passport");
 const session = require("express-session");
 const Admin = require("./models/admin");
 const adminRoutes = require("./routes/admin-routes");
+const tourist = require("./models/tourist");
+const touristRoutes = require("./routes/tourist-routes");
 require("dotenv").config();
 
 const app = express();
@@ -41,6 +43,9 @@ passport.deserializeUser(Admin.deserializeUser());
 
 // Admin routes
 app.use("/api", adminRoutes); // All admin-related routes will start with /api/admin
+
+//Tourist routes
+app.use("/tourist", touristRoutes); // All admin-related routes will start with /api/admin
 
 // Fallback route for unknown endpoints
 app.use((req, res, next) => {
