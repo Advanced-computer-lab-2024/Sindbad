@@ -43,11 +43,10 @@ const siteSchema = new mongoose.Schema({
 	openingHours: {
 		type: Map,
 		of: openingHoursSchema, // One openingHours object per day
-		required: true,
+		required: [true, "Please add opening hours for your site"],
 	},
 	ticketPrices: {
 		type: [Number],
-		required: true,
 		validate: {
 			validator: function (arr) {
 				return arr.every((price) => price >= 0);
@@ -59,7 +58,6 @@ const siteSchema = new mongoose.Schema({
 		{
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Tag",
-			required: true,
 		},
 	],
 	creatorId: {
