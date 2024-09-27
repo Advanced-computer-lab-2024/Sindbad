@@ -13,14 +13,15 @@
 		"express": "^4.21.0",
 		"mongoose": "^8.6.3",
 		"passport": "^0.7.0",
-		"passport-local-mongoose": "^8.0.0"
+		"passport-local-mongoose": "^8.0.0",
+		"sindback": "file:"
 	},
 	"devDependencies": {
 		"jest": "^29.7.0",
 		"mongodb-memory-server": "^10.0.1",
 		"supertest": "^7.0.0"
 	},
-  "jest": {
-  "testEnvironment": "node"
-  }
+	"jest": {
+		"testEnvironment": "node"
+	}
 }
