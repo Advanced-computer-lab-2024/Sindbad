@@ -34,7 +34,8 @@ const activitySchema = mongoose.Schema({
     },
   },
   category: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Category",
     required: [true, "Please add the category of the activity"],
   },
   tags: {
