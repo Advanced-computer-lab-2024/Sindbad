@@ -143,6 +143,42 @@ describe("Site CRUD Operations", () => {
 		const deletedSite = await Site.findById(site._id);
 		expect(deletedSite).toBeNull();
 	});
+
+	it("should retrieve all sites created by a user", async () => {
+		const site1 = new Site({
+			name: "Test Site 1",
+			description: "This is a test site.",
+			imageUris: ["http://example.com/image1.jpg"],
+			location: "Test Location",
+			openingHours: {
+				monday: { start: 420, end: 1020 },
+			},
+			ticketPrices: [10, 15],
+			tags:[tagId],
+			creatorId: creatorId
+		});
+		await site1.save();
+
+		const site2 = new Site({
+			name: "Test Site 2",
+			description: "This is another test site.",
+			imageUris: ["http://example.com/image2.jpg"],
+			location: "Test Location",
+			openingHours: {
+				monday: { start: 420, end: 1020 },
+			},
+			ticketPrices: [10, 15],
+			tags:[tagId],
+			creatorId: creatorId
+		});
+		await site2.save();
+
+		const res = await request(app).get(`/site/my-sites/${creatorId}`);
+		expect(res.status).toBe(200);
+		expect(res.body.length).toBe(2);
+		expect(res.body[0].name).toBe("Test Site 1");
+		expect(res.body[1].name).toBe("Test Site 2");
+	});
 });
 
 describe("Site CRUD Operations - Failing Tests", () => {
@@ -247,6 +283,35 @@ describe("Site CRUD Operations - Failing Tests", () => {
 
 		expect(res.status).toBe(400);
 		expect(res.body.message).toMatch(/Closing time/);
+	});
+
+	// Test for creating a site with negative ticket prices
+	it("should not create a site with negative ticket prices", async () => {
+		const res = await request(app)
+			.post("/site")
+			.send({
+				name: "Negative Price Site",
+				description: "This site has negative ticket prices.",
+				imageUris: ["http://example.com/image1.jpg"],
+				location: "Test Location",
+				openingHours: {
+					monday: { start: 420, end: 1020 },
+				},
+				ticketPrices: [-10, 15], // Invalid ticket prices
+				tags:[tagId],
+				creatorId: creatorId
+			});
+
+		expect(res.status).toBe(400);
+		expect(res.body.message).toMatch(/Ticket prices must be non-negative/);
+	});
+
+	// Test for retrieving all sites created by a user that does not exist
+	it("should return 500 when getting sites for a non-existing user", async () => {
+		const res = await request(app).get("/site/my-sites/66f6fd42af6f9d152eae4e7a");
+		//Expect empty array
+		expect(res.status).toBe(200);
+		expect(res.body.length).toBe(0);
 	});
 });
 
