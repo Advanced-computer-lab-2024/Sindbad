@@ -8,9 +8,12 @@ const siteRoutes = require("./routes/siteRoutes");
 const activityRoutes = require("./routes/activityRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const tagRoutes = require("./routes/tagRoutes");
+const productRoutes = require("./routes/productRoutes");
 require("dotenv").config();
 
 const app = express();
+
+
 
 // Middleware to parse JSON and URL-encoded data
 app.use(express.json());
@@ -18,13 +21,14 @@ app.use(express.urlencoded({ extended: true }));
 
 // Connect to MongoDB
 mongoose
-	.connect(process.env.MONGO_URI)
-	.then(() => {
-		console.log("Connected to MongoDB");
-	})
-	.catch((err) => {
-		console.error("Database connection error:", err);
-	});
+.connect(process.env.MONGO_URI)
+.then(() => {
+	console.log("Connected to MongoDB");
+	
+})
+.catch((err) => {
+	console.error("Database connection error:", err);
+});
 
 // Session configuration (necessary for passport-local-mongoose)
 app.use(
@@ -54,6 +58,10 @@ app.use("/activity", activityRoutes);
 
 // Activities' categories routes
 app.use("/category", categoryRoutes);
+
+// Product routes
+app.use("/product", productRoutes);
+
 
 // Activities' tags routes
 app.use("/tag", tagRoutes);
