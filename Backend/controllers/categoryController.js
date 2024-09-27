@@ -10,6 +10,7 @@ const mongoose = require("mongoose");
  *
  * @throws {400} - If category name already exists
  */
+
 const createCategory = async (req, res) => {
   try {
     const category = await Category.create(req.body);
@@ -35,6 +36,7 @@ const createCategory = async (req, res) => {
  * @param {Object} res - The response object used to send the retrieved category or an error message
  * @returns {Object} - A JSON object of the retrieved category or an error message
  */
+
 const getCategory = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.body.id)) {
     return res.status(400).json({ message: "Invalid category ID format" });
@@ -60,6 +62,7 @@ const getCategory = async (req, res) => {
  * @param {Object} req - Request object containing the category ID
  * @param {Object} res - Response object for sending status and message
  */
+
 const deleteCategory = async (req, res) => {
   try {
     const deletedCategory = await Category.findByIdAndDelete(req.body.id);
@@ -84,6 +87,7 @@ const deleteCategory = async (req, res) => {
  * @param {Object} res - Response object for sending results
  * @returns {Object} - Updated category or error message
  */
+
 const updateCategory = async (req, res) => {
   try {
     const { id, name } = req.body;
