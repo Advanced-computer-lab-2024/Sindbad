@@ -1,12 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { number, z } from "zod"
+import { z } from "zod"
 
 import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -78,10 +77,11 @@ export function GenericForm() {
     }
 
     function renderFields() {
-        return Object.keys(temporaryHardCodedValues).map((key,value) => {
+        return Object.keys(temporaryHardCodedValues).map((key) => {
             const isNumberField = typeof temporaryHardCodedValues[key] === "number";
             return (
                 <FormField
+                    key={key}
                     control={form.control}
                     name={key}
                     render={({ field }) => (
