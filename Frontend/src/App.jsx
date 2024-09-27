@@ -10,6 +10,9 @@ import Timeline from "./pages/Timeline";
 
 
 function App() {
+
+    //These routes will be used to display objects in pages using router outlets
+
     return (
         <main className="bg-dark text-light font-inter">
             <Routes>
