@@ -15,7 +15,7 @@ function Wallet() {
                         </h3>
                     </div>
                 </div>
-                <Button>
+                <Button variant="rounded">
                     <p className="text-[14px] leading-[14px]">Redeem points</p>
                     <div className="shrink-0 group-hover:text-secondary">
                         <ArrowRight size={20} />

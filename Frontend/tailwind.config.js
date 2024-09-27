@@ -51,7 +51,10 @@ export default {
     				'5': 'hsl(var(--chart-5))'
     			},
     			dark: '#111111',
-    			light: '#eeeeee'
+    			light: '#eeeeee',
+				neutral: {
+					'850': '#222222'
+				}
     		},
     		fontFamily: {
     			inter: ['Inter']
