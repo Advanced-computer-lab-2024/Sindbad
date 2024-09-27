@@ -54,4 +54,27 @@ const getCategory = async (req, res) => {
   }
 };
 
-module.exports = { createCategory, getCategory };
+/**
+ * Deletes a category by its ID
+ *
+ * @param {Object} req - Request object containing the category ID
+ * @param {Object} res - Response object for sending status and message
+ */
+const deleteCategory = async (req, res) => {
+  try {
+    const deletedCategory = await Category.findByIdAndDelete(req.body.id);
+
+    if (!deletedCategory) {
+      return res.status(404).json({ message: "Category not found" });
+    }
+
+    res.status(200).json({ message: "Category deleted successfully" });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error deleting category",
+      error: error.message,
+    });
+  }
+};
+
+module.exports = { createCategory, getCategory, deleteCategory };
