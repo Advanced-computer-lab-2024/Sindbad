@@ -1,6 +1,12 @@
-// adminMethods.js
 const Admin = require("../models/adminModel");
 
+/**
+ * Registers a new admin in the database
+ *
+ * @param {Object} req - The request object containing the new admin's username and password
+ * @param {Object} res - The response object
+ * @returns {Object} - The response object containing a success message and the new admin
+ */
 const registerAdmin = async (req, res) => {
 	const { username, password } = req.body;
 

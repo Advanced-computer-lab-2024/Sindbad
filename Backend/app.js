@@ -4,6 +4,7 @@ const passport = require("passport");
 const session = require("express-session");
 const Admin = require("./models/adminModel");
 const adminRoutes = require("./routes/adminRoutes");
+const siteRoutes = require("./routes/siteRoutes");
 const activityRoutes = require("./routes/activityRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const tagRoutes = require("./routes/tagRoutes");
@@ -45,6 +46,9 @@ passport.deserializeUser(Admin.deserializeUser());
 // Admin routes
 app.use("/admin", adminRoutes);
 
+// Site routes
+app.use("/site", siteRoutes);
+
 // Activity routes
 app.use("/activity", activityRoutes);
 
@@ -66,7 +70,11 @@ app.use((err, req, res, next) => {
 });
 
 // Start the server
-const PORT = process.env.PORT || 3000;
+let PORT = process.env.PORT || 3000;
+if (process.env.NODE_ENV === "test") {
+	PORT = 0; // Finds first available port, to prevent conflicts when running test suites in parallel
+}
+
 const server = app.listen(PORT, () => {
 	console.log(`Server running on port ${PORT}`);
 });
