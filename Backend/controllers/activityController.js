@@ -6,6 +6,7 @@ const Activity = require("../models/activityModel");
  * @param {*} res -- The Activity JSON object returned
  * @returns {Object} - A JSON object representing the activity, or an error message if the activity is not found or an error occurs
  */
+
 const getActivity = async (req, res) => {
   try {
     const activity = await Activity.findById(req.body.id);
@@ -13,6 +14,23 @@ const getActivity = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       message: "Error getting activity",
+      error: error.message,
+    });
+  }
+};
+/**
+ * Retrieves activities created by a specific user
+ * @param {Object} req - The request object containing user data
+ * @param {Object} res - The response object for sending the result
+ * @returns {Object} JSON containing an array of activities or error message
+ */
+const getMyActivities = async (req, res) => {
+  try {
+    const activities = await Activity.find({ creatorId: req.body.creatorId });
+    res.status(201).json(activities);
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error getting activities",
       error: error.message,
     });
   }
@@ -117,4 +135,5 @@ module.exports = {
   getActivity,
   updateActivity,
   deleteActivity,
+  getMyActivities,
 };
