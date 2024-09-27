@@ -40,6 +40,25 @@ const getAllSites = async (req, res) => {
 };
 
 /**
+ * Retrieves sites created by a specific user
+ * @param {Object} req - The request object containing user data
+ * @param {Object} res - The response object for sending the result
+ * @returns {Object} JSON containing an array of sites or error message
+ */
+
+const getMySites = async (req, res) => {
+  try {
+    const sites = await Site.find(req.params);
+    res.status(200).json(sites);
+  } catch (error) {
+    return res.status(500).json({
+			message: "Error getting sites",
+			error: error.message,
+		});
+  }
+};
+
+/**
  * Retrieves a single site by its ID.
  *
  * @param {Object} req - The request object containing the site ID in the URL parameters.
@@ -113,6 +132,7 @@ const deleteSite = async (req, res) => {
 module.exports = {
 	createSite,
 	getAllSites,
+	getMySites,
 	getSiteById,
 	updateSite,
 	deleteSite,

@@ -3,6 +3,7 @@ const router = express.Router();
 const {
 	createSite,
 	getAllSites,
+	getMySites,
 	getSiteById,
 	updateSite,
 	deleteSite,
@@ -18,5 +19,9 @@ router
 	.get(getSiteById) // Get a single site by ID
 	.put(updateSite) // Update a site by ID
 	.delete(deleteSite); // Delete a site by ID
+
+router
+	.route("/my-sites/:creatorId")
+	.get(getMySites); // Get all sites created by the user
 
 module.exports = router;
