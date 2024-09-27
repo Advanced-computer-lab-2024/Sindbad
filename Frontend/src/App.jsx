@@ -7,6 +7,7 @@ import LogIn from "./pages/LogIn";
 import SignUp from "./pages/SignUp";
 import { Form, Navigate } from "react-router-dom/dist";
 import Timeline from "./pages/Timeline";
+import Itinerary from "./pages/ItineraryView";
 import GenericForm from "./components/custom/genericForm";
 
 
@@ -23,6 +24,7 @@ function App() {
                 </Route>
                 <Route path="/login" element={<LogIn />} />
                 <Route path="/signup" element={<SignUp />} />
+                <Route path="/Itinerary" element={<Itinerary />} />
                 <Route path="/" element={<Navigate to="/app" replace />} />
             </Routes>
         </main>
