@@ -39,7 +39,8 @@ const activitySchema = mongoose.Schema({
     required: [true, "Please add the category of the activity"],
   },
   tags: {
-    type: [String],
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Tag",
     required: [true, "Please add the tags of the activity"],
     //   validate: {
     //     validator: function(tags) {
