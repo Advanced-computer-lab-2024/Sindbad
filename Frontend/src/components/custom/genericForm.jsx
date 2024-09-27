@@ -25,11 +25,14 @@ export function GenericForm() {
         firstName: "John",
         lastName: "Doe",
         bio: "This is a bio",
-        number: 1234567890,
+        age: 20,
     }
 
     // Create a form schema object based on the temporary hard-coded values.
+    // formSchemaObject is an object that will be used to create the form schema. It will contain the keys of the temporaryHardCodedValues object,
+    // and the values will be zod types based on the type of the value in the temporaryHardCodedValues object.
     let formSchemaObject = {};
+    let defaultValues = {};
     for (const key in temporaryHardCodedValues) {
         const value = temporaryHardCodedValues[key]
         if (key == "email") {
@@ -57,39 +60,57 @@ export function GenericForm() {
                 formSchemaObject[key] = z.boolean();
             }
         }
+        defaultValues[key] = "";
     }
+
     // Define the form schema using zod.
     const formSchema = z.object(formSchemaObject);
 
     // Create the form using react-hook-form.
     const form = useForm({
         resolver: zodResolver(formSchema),
+        defaultValues: defaultValues,
     })
 
     function onSubmit(values) {
     // Do something with the form values.
     console.log(values)
     }
+
+    function renderFields() {
+        return Object.keys(temporaryHardCodedValues).map((key,value) => {
+            const isNumberField = typeof temporaryHardCodedValues[key] === "number";
+            return (
+                <FormField
+                    control={form.control}
+                    name={key}
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>{key}</FormLabel>
+                            <FormControl>
+                                <Input 
+                                {...field}
+                                type={isNumberField ? "number" : "text"}
+                                onChange={(e) => {
+                                    // If the field is a number, convert the value to a number. This is to avoid issues with form validation as the inputs usually otput strings and not numbers.
+                                    field.onChange(isNumberField ? Number(e.target.value) : e.target.value);
+                                }}
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+            );
+        });
+    }
+
   return (
     <div className="bg-white text-dark p-8 rounded-md m-auto">
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                
-                <FormField
-                control={form.control}
-                name="username"
-                render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Username</FormLabel>
-                        <FormControl>
-                            <Input {...field} />
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-                )}
-                />
-                
-                <Button type="submit">Submit</Button>
+                {renderFields()}
+                <Button type="submit" className="bg-dark text-white">Submit</Button>
             </form>
         </Form>
     </div>

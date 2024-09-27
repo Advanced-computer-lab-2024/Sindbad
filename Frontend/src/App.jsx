@@ -15,9 +15,8 @@ function App() {
     //These routes will be used to display objects in pages using router outlets
 
     return (
-        <main className="bg-dark text-light font-inter min-w-screen min-h-screen flex items-center ">
-            <GenericForm />
-            {/* <Routes>
+        <main className="bg-dark text-light font-inter min-w-screen min-h-screen">
+            <Routes>
                 <Route path="/app" element={<MainPage/>}>
                     <Route path="profile" element={<Profile />} />
                     <Route path="timeline" element={<Timeline/>} />
@@ -25,7 +24,7 @@ function App() {
                 <Route path="/login" element={<LogIn />} />
                 <Route path="/signup" element={<SignUp />} />
                 <Route path="/" element={<Navigate to="/app" replace />} />
-            </Routes> */}
+            </Routes>
         </main>
     );
 }
