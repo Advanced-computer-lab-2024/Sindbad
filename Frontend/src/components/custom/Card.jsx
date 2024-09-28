@@ -7,7 +7,7 @@ function Card() {
         <article className="w-full border border-primary-700/80 rounded-md overflow-clip bg-gradient-to-br from-dark to-primary-900/50 group">
             <div className="h-[196px] relative">
                 <ImagePlaceholder />
-                <button className="absolute top-3 right-3 border border-primary-900 opacity-0 group-hover:opacity-100 transition-all hover:text-secondary bg-primary-700 p-2 rounded-full">
+                <button className="absolute top-3 right-3 border-2 border-dark opacity-0 group-hover:opacity-100 transition-all hover:border-secondary bg-primary-900 p-2 rounded-full">
                     <Bookmark fill="currentColor" size={20} />
                 </button>
             </div>
