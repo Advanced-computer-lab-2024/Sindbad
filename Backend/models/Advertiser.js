@@ -20,25 +20,25 @@ const AdvertiserSchema = new mongoose.Schema({
 		type: String,
 		required: true,
 	},
-	websiteLink: {
-		type: String,
-		validate: {
-			validator: (v) =>
-				/^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?/.test(
-					v
-				),
-			message: (props) => `${props.value} is not a valid URL!`,
-		},
-	},
-	hotline: {
-		type: String,
-		validate: {
-			validator: (v) => /^\+?[1-9]\d{1,14}$/.test(v), // Basic validation for international phone numbers
-			message: (props) => `${props.value} is not a valid hotline number!`,
-		},
-	},
+	// websiteLink: {
+	// 	type: String,
+	// 	validate: {
+	// 		validator: (v) =>
+	// 			/^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?/.test(
+	// 				v
+	// 			),
+	// 		message: (props) => `${props.value} is not a valid URL!`,
+	// 	},
+	// },
+	// hotline: {
+	// 	type: String,
+	// 	validate: {
+	// 		validator: (v) => /^\+?[1-9]\d{1,14}$/.test(v), // Basic validation for international phone numbers
+	// 		message: (props) => `${props.value} is not a valid hotline number!`,
+	// 	},
+	// },
 	// companyProfile structure still unknown
-	companyProfile: {},
+	// companyProfile: {},
 
 	isAccepted: {
 		type: Boolean,

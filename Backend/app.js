@@ -11,6 +11,7 @@ const activityRoutes = require("./routes/activityRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const tagRoutes = require("./routes/tagRoutes");
 const userRoutes = require("./routes/user-routes");
+const advertiserRoutes = require("./routes/advertiserRoutes");
 
 const app = express();
 
@@ -46,6 +47,8 @@ passport.serializeUser(Admin.serializeUser());
 passport.deserializeUser(Admin.deserializeUser());
 
 app.use("/user", userRoutes);
+
+app.use("/advertiser", advertiserRoutes);
 
 // Admin routes
 app.use("/admin", adminRoutes);
