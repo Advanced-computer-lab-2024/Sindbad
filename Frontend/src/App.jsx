@@ -1,13 +1,11 @@
-import { BrowserRouter } from "react-router-dom";
 import "./App.css";
 import Profile from "./pages/Profile";
 import { Routes, Route } from "react-router-dom";
 import MainPage from "./pages/MainPage";
 import LogIn from "./pages/LogIn";
 import SignUp from "./pages/SignUp";
-import { Form, Navigate } from "react-router-dom/dist";
+import { Navigate } from "react-router-dom/dist";
 import Timeline from "./pages/Timeline";
-import GenericForm from "./components/custom/genericForm";
 
 
 function App() {
