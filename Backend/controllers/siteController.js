@@ -32,12 +32,34 @@ const createSite = async (req, res) => {
 
 const getAllSites = async (req, res) => {
 	try {
-		const sites = await Site.find().populate("tags"); // "Join" with the tags collection
+		const siteName = req.query.siteName; // Assuming the site name comes from a query parameter
+		const tagName = req.query.tagName; // Assuming the tag name comes from a query parameter
+
+		// Create a filter for siteName, allowing partial matching if provided
+		const siteFilter = siteName
+			? { name: { $regex: siteName, $options: "i" } }
+			: {};
+
+		// Find sites and populate tags with partial matching for tagName
+		let sites = await Site.find(siteFilter).populate({
+			path: "tags",
+			match: tagName ? { name: { $regex: tagName, $options: "i" } } : {}, // Partial match for tagName if provided
+		});
+
+		// Filter out sites where there are no matching tags
+		if (tagName) {
+			sites = sites.filter((site) => site.tags.length > 0);
+		}
+
 		res.status(200).json(sites);
 	} catch (err) {
 		res.status(500).json({ message: err.message });
 	}
 };
+
+
+
+
 
 /**
  * Retrieves sites created by a specific user
