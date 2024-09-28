@@ -13,6 +13,16 @@ const UserController = {
 			if (!role) {
 				throw new Error("Role is required");
 			}
+
+			// Check for unique email and username
+			const isUnique = await UserController.isUniqueEmailAndUsername(
+				email,
+				username
+			);
+			if (!isUnique) {
+				throw new Error("Email or username already exists");
+			}
+
 			switch (role.toLowerCase()) {
 				case "tourist":
 					const { mobileNumber, nationality, DOB, job } = touristData;
@@ -72,6 +82,35 @@ const UserController = {
 		}
 	},
 
+	isUniqueEmailAndUsername: async (email, username) => {
+		// Check in Tourist model
+		const touristExists =
+			(await Tourist.findOne({ email })) ||
+			(await Tourist.findOne({ username }));
+		if (touristExists) return false;
+
+		// Check in TourGuide model
+		const tourGuideExists =
+			(await TourGuide.findOne({ email })) ||
+			(await TourGuide.findOne({ username }));
+		if (tourGuideExists) return false;
+
+		// Check in Advertiser model
+		const advertiserExists =
+			(await Advertiser.findOne({ email })) ||
+			(await Advertiser.findOne({ username }));
+		if (advertiserExists) return false;
+
+		// Check in Seller model
+		const sellerExists =
+			(await Seller.findOne({ email })) ||
+			(await Seller.findOne({ username }));
+		if (sellerExists) return false;
+
+		// If no duplicates were found, return true
+		return true;
+	},
+
 	createTourist: async (
 		email,
 		username,
@@ -118,12 +157,8 @@ const UserController = {
 	},
 
 	createTourGuide: async (email, username, passwordHash) => {
-		// const mobileNumber = null;
-		// const yearsOfExperience = null;
-		// const previousWork = null;
 		const isAccepted = false;
 
-		// Add any specific fields for tour guides if needed
 		const tourGuide = new TourGuide({
 			email,
 			username,
@@ -165,7 +200,6 @@ const UserController = {
 			passwordHash,
 			isAccepted,
 			products,
-			// Add any specific fields for sellers if needed
 		});
 
 		await seller.save();
