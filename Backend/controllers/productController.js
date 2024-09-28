@@ -22,32 +22,55 @@ const getProductById = async (req, res) => {
    * Retrieves all products, with optional filtering and sorting by price
    */
   const getAllProducts = async (req, res) => {
-    const { search, minPrice, maxPrice, sortPrice } = req.query;
+    // console.log("Log", "hi");
+    const { search, minprice, maxprice, sortprice } = req.query;
   
+    // console.log("Log", "hi");
     let query = {};
     
+    // Handle search by name (case-insensitive)
     if (search) {
-      query.name = { $regex: search, $options: "i" }; // Case-insensitive search by name
+      query.name = { $regex: search, $options: "i" };
+      // console.log("Log", "hi");
     }
   
-    if (minPrice || maxPrice) {
+    // Ensure minprice and maxprice are parsed as numbers
+    const minPriceNum = minprice ? Number(minprice) : null;
+    const maxPriceNum = maxprice ? Number(maxprice) : null;
+  
+    // Apply price filter if provided
+    if (minPriceNum || maxPriceNum) {
       query.price = {};
-      if (minPrice) query.price.$gte = minPrice;
-      if (maxPrice) query.price.$lte = maxPrice;
+      if (minPriceNum) query.price.$gte = minPriceNum;
+      if (maxPriceNum) query.price.$lte = maxPriceNum;
     }
+  
+    // Log the final query to debug
+    // console.log("Query:", query);
   
     try {
-      const products = await Product.find(query).sort(sortPrice ? { price: sortPrice === "asc" ? 1 : -1 } : {});
-      res.status(200).json(products); // Change status to 200 for a successful fetch
+      // Apply sorting by price if specified
+      const sortOptions = sortprice ? { price: sortprice === "asc" ? 1 : -1 } : {};
+  
+      // Fetch filtered and sorted products
+      const products = await Product.find(query).sort(sortOptions);
+  
+      res.status(200).json(products);
     } catch (error) {
       return res.status(500).json({
         message: "Error getting products",
         error: error.message,
       });
     }
+    // console.log("minprice:", minprice, "maxprice:", maxprice);
+    // console.log("Query after processing:", query);
+
   };
   
+  
+  
 /**
+ * 
  * Creates a new product
  */
 const createProduct = async (req, res) => {
@@ -67,7 +90,8 @@ const createProduct = async (req, res) => {
  */
 const updateProduct = async (req, res) => {
   try {
-    const { id, name, price, description, quantity } = req.body;
+    const { id } = req.params; // Extract the id from req.params
+    const { name, price, description, quantity } = req.body;
 
     const updatedProduct = await Product.findByIdAndUpdate(
       id,
