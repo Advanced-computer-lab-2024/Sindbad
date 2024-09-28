@@ -71,6 +71,10 @@ const activitySchema = mongoose.Schema({
     type: Number,
     default: 0,
   },
+  rating: {
+    type: Number,
+    default: 0,
+  },
 });
 
 module.exports = mongoose.model("Activity", activitySchema);

@@ -62,91 +62,55 @@ const getAllActivities = async (req, res) => {
 };
 
 /**
- * Searches for a specific activity by name
+ * Searches for activities by a single search term across name, tags, or category
  *
- * @param {Object} req - Request with search query in the body
- * @param {Object} res - Response with the matching activity or error
- */
-const searchActivityByName = async (req, res) => {
-  try {
-    const { name } = req.body;
-    const activity = await Activity.find({
-      name: { $regex: `^${name}$`, $options: "i" },
-    }); // Exact case-insensitive match
-    if (!activity) {
-      return res.status(404).json({ message: "Activity not found" });
-    }
-    res.status(200).json(activity);
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error searching for activity", error: error.message });
-  }
-};
-
-/**
- * Searches for activities by specific tag names
- *
- * @param {Object} req - Request with tag names array in the body
+ * @param {Object} req - Request with search criteria in the body
  * @param {Object} res - Response with matching activities or error
  */
-const searchActivitiesByTags = async (req, res) => {
+const searchActivities = async (req, res) => {
   try {
-    const { names } = req.body; // Expecting an array of tag names
+    const { searchTerm } = req.body;
 
-    // Find all tags that match the provided names
-    const tags = await Tag.find({ name: { $in: names } });
-
-    if (tags.length === 0) {
-      return res.status(404).json({ message: "No matching tags found" });
+    if (!searchTerm) {
+      return res.status(400).json({ message: "Search term is required" });
     }
 
-    // Get the tag IDs to search activities
-    const tagIds = tags.map((tag) => tag._id);
+    const regex = new RegExp(searchTerm, "i"); // Case-insensitive search
 
-    // Find activities that contain any of the tag IDs
-    const activities = await Activity.find({ tags: { $in: tagIds } });
+    // Find activities by name
+    const activitiesByName = await Activity.find({ name: regex });
 
-    if (activities.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No activities found with the specified tags" });
-    }
-
-    res.status(200).json(activities);
-  } catch (error) {
-    res.status(500).json({
-      message: "Error searching for activities",
-      error: error.message,
+    // Find activities by category
+    const categories = await Category.find({ name: regex });
+    const categoryIds = categories.map((category) => category._id);
+    const activitiesByCategory = await Activity.find({
+      category: { $in: categoryIds },
     });
-  }
-};
 
-/**
- * Searches for activities by a specific category
- *
- * @param {Object} req - Request with a category name
- * @param {Object} res - Response with matching activities or error
- */
-const searchActivitiesByCategory = async (req, res) => {
-  try {
-    const { name } = req.body;
+    // Find activities by tags
+    const tags = await Tag.find({ name: regex });
+    const tagIds = tags.map((tag) => tag._id);
+    const activitiesByTags = await Activity.find({ tags: { $in: tagIds } });
 
-    if (!name) {
-      return res.status(400).json({ message: "Category is required" });
-    }
+    // Combine all found activities
+    const allActivities = [
+      ...activitiesByName,
+      ...activitiesByCategory,
+      ...activitiesByTags,
+    ];
 
-    const category = await Category.findOne({ name: name });
+    // Remove duplicates
+    const uniqueActivities = [
+      ...new Set(allActivities.map((activity) => activity._id)),
+    ].map((id) => allActivities.find((activity) => activity._id === id));
 
-    const activities = await Activity.find({ category });
-
-    if (!activities) {
+    if (uniqueActivities.length === 0) {
       return res
         .status(404)
-        .json({ message: "No activities found for the specified category" });
+        .json({ message: "No activities found matching the search term" });
     }
 
-    res.status(200).json(activities);
+    res.status(200).json(uniqueActivities);
   } catch (error) {
     res.status(500).json({
       message: "Error searching for activities",
@@ -278,7 +242,5 @@ module.exports = {
   deleteActivity,
   getMyActivities,
   getAllActivities,
-  searchActivityByName,
-  searchActivitiesByTags,
-  searchActivitiesByCategory,
+  searchActivities,
 };

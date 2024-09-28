@@ -7,9 +7,7 @@ const {
   deleteActivity,
   getMyActivities,
   getAllActivities,
-  searchActivityByName,
-  searchActivitiesByTags,
-  searchActivitiesByCategory,
+  searchActivities,
 } = require("../controllers/activityController");
 
 router
@@ -21,8 +19,6 @@ router
 
 router.route("/my-activities").get(getMyActivities);
 router.route("/all-activities").get(getAllActivities);
-router.route("/search-by-name").get(searchActivityByName);
-router.route("/search-by-tags").get(searchActivitiesByTags);
-router.route("/search-by-category").get(searchActivitiesByCategory);
+router.route("/search").get(searchActivities);
 
 module.exports = router;
