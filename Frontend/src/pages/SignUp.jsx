@@ -19,10 +19,12 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
+import { Navigate } from "react-router-dom";
 
 
 function SignUp() {
     const [registerType, setRegisterType] = useState("Tourist");
+    const [logInRedirect, setLogInRedirect] = useState(false);
 
     // Schema for the tourist form
     const touristFormSchema = z.object({
@@ -217,8 +219,11 @@ function SignUp() {
         <div className="w-screen h-screen grid grid-cols-2">
             <div className="bg-primary-700"></div>
             <div className="bg-primary-900 flex flex-col shadow-2xl">
-                <div className="w-full text-right p-8 absolute right-0">
-                    <h3>Log In</h3>
+                <div className="text-right p-8 absolute right-0">
+                    <Button onClick={() => setLogInRedirect(true)} className="">
+                        Log In
+                    </Button>
+                    { logInRedirect ? <Navigate to="/login" /> : null }
                 </div>
                 <div className="flex flex-col flex-grow justify-center items-center">
                     <h1 className="font-extrabold text-3xl mb-4">Create Your Account</h1>
