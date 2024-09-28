@@ -1,8 +1,7 @@
-const express = require("express");
-const router = express.Router();
-const Admin = require("../models/admin");
+// adminMethods.js
+const Admin = require("../models/adminModel");
 
-router.post("/admin", (req, res) => {
+const registerAdmin = async (req, res) => {
 	const { username, password } = req.body;
 
 	// Register a new admin (passport-local-mongoose handles hashing)
@@ -12,7 +11,6 @@ router.post("/admin", (req, res) => {
 		}
 		res.status(201).json({ message: "Admin created successfully!", admin });
 	});
-});
+};
 
-
-module.exports = router;
+module.exports = { registerAdmin };

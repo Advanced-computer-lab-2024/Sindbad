@@ -2,7 +2,7 @@ const request = require("supertest"); // Library for testing HTTP requests
 const mongoose = require("mongoose");
 const { MongoMemoryServer } = require("mongodb-memory-server");
 const { app, server } = require("../app");
-const Admin = require("../models/admin");
+const Admin = require("../models/adminModel");
 
 let mongoServer;
 
@@ -30,9 +30,9 @@ afterAll(async () => {
 	await new Promise((resolve) => server.close(resolve)); // Close the Express server
 });
 
-describe("POST /api/admin", () => {
+describe("POST /admin", () => {
 	it("should create a new admin", async () => {
-		const res = await request(app).post("/api/admin").send({
+		const res = await request(app).post("/admin").send({
 			username: "testAdmin",
 			password: "password123",
 		});
