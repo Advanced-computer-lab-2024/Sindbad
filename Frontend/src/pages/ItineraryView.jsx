@@ -1,22 +1,47 @@
 import React, {useState, useEffect} from "react";
-import { Accessibility, MapPin, Star } from "lucide-react";
+import { Accessibility, MapPin, Star, EarOff, EyeOff, Speech } from "lucide-react";
 
 function getRandomRating(){
-    return(Math.random()* 5).toFixed(1);
+    {/*return (Math.floor(Math.random() * 6));*/}
+    return (Math.round(Math.random() * 10) / 2).toFixed(1);
+
 }
 
 function getRandomReviews(){
     return Math.floor(Math.random()* 1000) + 1;
 }
 
-function Itinerary(){
-    const [rating, setRating] = useState(0);
-    const [reviews, setReviews] = useState(0);
+const reviews = (getRandomReviews());
+const rating = Math.floor(getRandomRating());
+const fullStars = rating;
+const emptyStar = 5 - fullStars;
 
-    useEffect(()=> {
-        setRating(getRandomRating());
-        setReviews(getRandomReviews());
-    }, []);
+const accessibilityFeatures = [
+    { icon: <Accessibility/>, label:"Mobility aid friendly" },
+    { icon: <EarOff/>, label:"Hearing impaired support" },
+    { icon: <EyeOff/>, label:"Vision impaired support" },
+    { icon: <Speech/>, label:"Text-to-speech devices" },
+];
+
+
+
+function Itinerary(){
+
+        // State to store the current count
+    const [count, setCount] = useState(1);
+    
+    // Function to handle increment
+    const handleIncrement = () => {
+        setCount(count + 1);
+    };
+
+    // Function to handle decrement
+    const handleDecrement = () => {
+    // Ensure count doesn't go below 1 (you can modify this if you want to allow negative values)
+        if (count > 0) {
+            setCount(count - 1);
+        }
+    };
 
     return(
         <div className="min-h-screen flex justify-center items-center">
@@ -29,23 +54,23 @@ function Itinerary(){
 
                         {/*Star Section
                         TODO: replace stars + make them full/empty */}
-                        <div className=" flex items-center space-x-2 my-4">
-                            <div className="flex text-amber-500">
-                                {[...Array(5)].map((star, index) => (
-                                    <svg
-                                        key ={index}
-                                        className={'h-6 w-6 ${index <Math.floor(rating) ? "fill-current" : "text-gray-300"'}
-                                        xmlns="https://www.w3.org/2000/svg"
-                                        viewBox="0 0 24 24"
-                                        fill="currentColor"
-                                        >
-                                             <path d="M12 .587l3.668 7.476 8.164 1.191-5.92 5.769 1.398 8.152L12 18.896l-7.31 3.849 1.398-8.152-5.92-5.769 8.164-1.191L12 .587z" />
-                                        </svg>
+                        <div className=" relative flex gap-4">
+                            <div className=" flex">
+                                
+                                {Array.from({ length: (fullStars)}, (_,index) => (
+                                    <Star key={index} fill="yellow" strokeWidth={0} />
                                 ))}
+
+                                {/*hasHalfStar && <StarHalf fill="yellow" strokeWidth={0} />*/}
+
+                                {Array.from({ length: emptyStar }, (_,index) => (
+                                    <Star key={fullStars + index} fill='#111' strokeWidth={0} />
+                                ))}
+
                             </div>
                             <p className="text-gray-400">{rating}/5 ({reviews})</p>
                         </div>
-
+                        
                         <p className="text-gray-500">
                         This bus tour offers you the chance to explore the city of London at your own pace.
                         You can choose between a 24-hour, 48-hour, or 72-hour pass and visit the top landmarks
@@ -67,20 +92,21 @@ function Itinerary(){
                         {/*Accessibility Fts*/}
                         {/*TODO: add icons*/}
                         <div className=" flex flex-wrap gap-4">
-                            {["Mobility aid friendly", "Hearing impaired support", "Vision impared support", "Text-to-speech devices"].map((ft)=>(
-                               <p className="flex ">
-                                 <Accessibility/>
-                                 {ft} 
+                            {accessibilityFeatures.map((feature, index) => (
+                                <p key={index} className="flex items-center gap-2">
+                                    {feature.icon}
+                                    {feature.label}
                                 </p>
                             ))}
                         </div>
                     </div>
                     
                     {/*TODO: Fix img placeholders + padding*/}
-                    <div className="grid grid-cols-2 col-span-2">
+                    <div className="grid grid-cols-2 col-span-2 gap-1
+                    ">
                         <div className="bg-gray-300 h-full rounded-lg "></div>
                         <div className="">
-                            <div className="bg-gray-300 h-1/2 rounded-lg "></div>
+                            <div className="bg-gray-300 h-1/2 rounded-lg mb-px "></div>
                             <div className="bg-gray-300 h-1/2 rounded-lg "></div>
                         </div>
                     </div>
@@ -137,7 +163,7 @@ function Itinerary(){
                         <h2 className="text-2xl font-semibold mb-4">Search Availability</h2>
                         <div className="grid grid-cols-3 gap-2">
                             {["30 Sept", "1 Oct", "3 Oct"].map((date,idx)=>(
-                                <button key={idx} className=" border py-2 px-4 rounded-md bg-slate-700 ">
+                                <button key={idx} className=" border py-2 px-4 min-h-20 rounded-md bg-slate-700 ">
                                     {date}
                                 </button>
                             ))}
@@ -151,21 +177,63 @@ function Itinerary(){
                             ))}
                         </div>
 
-                        <div className="pace-y-4">
-                            <div className="flex items-center">
+                        <div className="space-y-4">
+                            <div className="flex items-center justify-around">
                                 
                                 <div className="flex space-x-2">
-                                <p>Adult</p> 
+                                <p className="text-xl">Adult</p> 
                                 <p className=" text-slate-500">(16+)</p>
                                 </div>
-                                <input type="number" min="0" className="border w-16 px-2 py-1 rounded" placeholder="How many Adults..." />
+                                <div className="flex items-center justify-center gap-4 ">
+                                    {/* Decrement Button */}
+                                    <button
+                                        onClick={handleDecrement}
+                                        className="bg-gray-200 text-black rounded-lg w-10 h-10 flex items-center justify-center text-2xl"
+                                    >
+                                        -
+                                    </button>
+
+                                    {/* Count Display */}
+                                    <div className="border border-gray-300 rounded-lg w-10 h-10 flex items-center justify-center text-xl">
+                                        {count}
+                                    </div>
+
+                                    {/* Increment Button */}
+                                    <button
+                                        onClick={handleIncrement}
+                                        className="bg-gray-200 text-black rounded-lg w-10 h-10 flex items-center justify-center text-2xl"
+                                    >
+                                        +
+                                    </button>
+                                </div>             
                             </div>
-                            <div className="flex items-center">
+                            <div className="flex items-center justify-around">
                                 <div className="flex space-x-2">
-                                <p>Child</p> 
+                                <p className="text-xl">Child</p> 
                                 <p className=" text-slate-500">(5-15)</p>
                                 </div>
-                                <input type="number" min="0" className="border w-16 px-2 py-1 rounded" placeholder="How many Children..." />
+                                <div className="flex items-center justify-center gap-4">
+                                    {/* Decrement Button */}
+                                    <button
+                                        onClick={handleDecrement}
+                                        className="bg-gray-200 text-black rounded-lg w-10 h-10 flex items-center justify-center text-2xl"
+                                    >
+                                        -
+                                    </button>
+
+                                    {/* Count Display */}
+                                    <div className="border border-gray-300 rounded-lg w-10 h-10 flex items-center justify-center text-xl">
+                                        {count}
+                                    </div>
+
+                                    {/* Increment Button */}
+                                    <button
+                                        onClick={handleIncrement}
+                                        className="bg-gray-200 text-black rounded-lg w-10 h-10 flex items-center justify-center text-2xl"
+                                    >
+                                        +
+                                    </button>
+                                </div>  
                             </div>
                         </div>
 
