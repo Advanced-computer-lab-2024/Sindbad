@@ -156,10 +156,15 @@ const UserController = {
 	},
 
 	createSeller: async (email, username, passwordHash) => {
+		const isAccepted = false;
+		const products = [];
+
 		const seller = new Seller({
 			email,
 			username,
 			passwordHash,
+			isAccepted,
+			products,
 			// Add any specific fields for sellers if needed
 		});
 
