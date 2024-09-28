@@ -13,7 +13,7 @@ router.get('/' , async (req,res) => {
 	
 })
 
-//TODO: add that it returns wallet
+
 //Get certain tourist profile
 router.get('/:id' , getTourist , (req,res) => {
 	res.json(res.tourist);
@@ -21,12 +21,38 @@ router.get('/:id' , getTourist , (req,res) => {
 
 //TODO: add that it can update wallet and complete method
 //updating a tourist
-router.patch('/', getTourist, (req,res) => {
+router.patch('/:id', getTourist, async(req,res) => {
+	if(req.body.email !=null){
+		res.tourist.email = req.body.email;
+	}
 	if(req.body.username !=null){
 		res.tourist.username = req.body.username;
 	}
-	//do for other attributes
-	//continue code
+	if(req.body.passwordHash !=null){
+		res.tourist.passwordHash = req.body.passwordHash;
+	}
+	if(req.body.mobileNumber !=null){
+		res.tourist.mobileNumber = req.body.mobileNumber;
+	}
+	if(req.body.nationality !=null){
+		res.tourist.nationality = req.body.nationality;
+	}
+	if(req.body.DOB !=null){
+		res.tourist.DOB = req.body.DOB;
+	}
+	if(req.body.job !=null){
+		res.tourist.job = req.body.job;
+	}
+	if(req.body.wallet !=null){
+		res.tourist.wallet = req.body.wallet;
+	}
+
+	try{
+		const updatedTourist = await res.tourist.save();
+		res.json(updatedTourist);
+	} catch(err){
+		return res.status(400).json({message:err.message});
+	}
 })
 
 async function getTourist(req,res,next){

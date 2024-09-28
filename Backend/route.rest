@@ -17,3 +17,12 @@ Content-Type: application/json
     "DOB":"2013-10-21",
     "job":"student"
 }
+
+###
+
+PATCH http://localhost:3000/tourist/66f7096444164681e6e3695f
+Content-Type: application/json
+
+{
+    "username": "iidk"
+}
