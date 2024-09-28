@@ -120,6 +120,70 @@ const searchActivities = async (req, res) => {
 };
 
 /**
+ * Filters upcoming activities based on budget, date, category, or rating
+ *
+ * @param {Object} req - Request with filter criteria in the body
+ * @param {Object} res - Response with matching activities or error
+ */
+const filterActivities = async (req, res) => {
+  try {
+    const { budget, date, category, rating } = req.body;
+
+    const filterCriteria = {
+      dateTime: { $gte: new Date() }, // Ensure activities are upcoming
+    };
+
+    if (budget) {
+      filterCriteria.$or = [
+        // For activities where price is a single value
+        { price: { $gte: budget.min, $lte: budget.max } },
+
+        // For activities where price is a range (object with min and max)
+        {
+          "price.min": { $gte: budget.min },
+          "price.max": { $lte: budget.max },
+        },
+      ];
+    }
+
+    // Date filter
+    if (date) {
+      if (date.start) {
+        filterCriteria.dateTime.$gte = new Date(date.start); // Use dateTime for start date
+      }
+      if (date.end) {
+        filterCriteria.dateTime.$lte = new Date(date.end); // Use dateTime for end date
+      }
+    }
+
+    // Category filter
+    if (category) {
+      filterCriteria.category = category;
+    }
+
+    // Rating filter
+    if (rating) {
+      filterCriteria.rating = { $gte: rating };
+    }
+
+    const activities = await Activity.find(filterCriteria);
+
+    if (activities.length === 0) {
+      return res.status(404).json({
+        message: "No upcoming activities found matching the criteria",
+      });
+    }
+
+    res.status(200).json(activities);
+  } catch (error) {
+    res.status(500).json({
+      message: "Error filtering activities",
+      error: error.message,
+    });
+  }
+};
+
+/**
  * Creates a new activity
  *
  * @param {Object} req - The request object containing activity details in the body
@@ -243,4 +307,5 @@ module.exports = {
   getMyActivities,
   getAllActivities,
   searchActivities,
+  filterActivities,
 };
