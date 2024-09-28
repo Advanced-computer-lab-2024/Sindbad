@@ -20,14 +20,6 @@ const SellerSchema = new mongoose.Schema({
 		type: String,
 		required: true,
 	},
-	mobileNumber: {
-		type: String,
-		required: true,
-		validate: {
-			validator: (v) => /^\+?[1-9]\d{1,14}$/.test(v), // Basic validation for international phone numbers
-			message: (props) => `${props.value} is not a valid mobile number!`,
-		},
-	},
 	firstName: {
 		type: String,
 	},
@@ -41,6 +33,7 @@ const SellerSchema = new mongoose.Schema({
 		type: Boolean,
 		default: false, // Default to false indicating the tour guide is not accepted yet
 	},
+	products: [{}],
 });
 
 // Create the Seller model
