@@ -62,7 +62,7 @@ const TouristSchema = new mongoose.Schema({
 	},
 	isReceiveNotifications: {
 		type: Boolean,
-		default: true,
+		default: false,
 	},
 	wishlist: {
 		type: [String], // Array of item IDs or details
@@ -72,37 +72,39 @@ const TouristSchema = new mongoose.Schema({
 		type: [String], // Array of item IDs in the cart
 		default: [],
 	},
-	addresses: {
-		type: [
-			{
-				label: {
-					type: String,
-					required: true,
+	addresses: [
+		{
+			type: [
+				{
+					label: {
+						type: String,
+						required: true,
+					},
+					street: {
+						type: String,
+						required: true,
+					},
+					city: {
+						type: String,
+						required: true,
+					},
+					state: {
+						type: String,
+						required: true,
+					},
+					zip: {
+						type: String,
+						required: true,
+					},
+					country: {
+						type: String,
+						required: true,
+					},
 				},
-				street: {
-					type: String,
-					required: true,
-				},
-				city: {
-					type: String,
-					required: true,
-				},
-				state: {
-					type: String,
-					required: true,
-				},
-				zip: {
-					type: String,
-					required: true,
-				},
-				country: {
-					type: String,
-					required: true,
-				},
-			},
-		],
-		default: [],
-	},
+			],
+			default: [],
+		},
+	],
 });
 
 // Create the Tourist model
