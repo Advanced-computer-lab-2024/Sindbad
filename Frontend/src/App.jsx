@@ -15,7 +15,7 @@ function App() {
     //These routes will be used to display objects in pages using router outlets
 
     return (
-        <main className="bg-dark text-light font-inter min-w-screen min-h-screen">
+        <main className="bg-dark text-light font-inter min-h-screen h-max">
             <Routes>
                 <Route path="/app" element={<MainPage/>}>
                     <Route path="profile" element={<Profile />} />
