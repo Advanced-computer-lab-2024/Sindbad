@@ -1,3 +1,4 @@
+
 GET http://localhost:3000/tourist
 
 ###
@@ -25,4 +26,30 @@ Content-Type: application/json
 
 {
     "username": "iidk"
+}
+
+
+
+###
+
+GET http://localhost:3000/tourGuide
+
+###
+GET http://localhost:3000/tourGuide/66f8630f55f21e927d7455cc
+###
+POST http://localhost:3000/tourGuide
+Content-Type: application/json
+
+{
+    "email" : "tourGuide@gmail.com",
+    "username": "tourGuide",
+    "passwordHash": "pass"
+}
+
+###
+PATCH http://localhost:3000/tourGuide/66f8630f55f21e927d7455cc
+Content-Type: application/json
+
+{
+    "mobileNumber": "+201592222305"
 }

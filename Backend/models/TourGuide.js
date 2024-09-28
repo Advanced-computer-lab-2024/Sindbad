@@ -22,7 +22,7 @@ const TourGuideSchema = new mongoose.Schema({
 	},
 	mobileNumber: {
 		type: String,
-		required: true,
+		required: false,
 		validate: {
 			validator: (v) => /^\+?[1-9]\d{1,14}$/.test(v), // Basic validation for international phone numbers
 			message: (props) => `${props.value} is not a valid mobile number!`,
@@ -56,6 +56,10 @@ const TourGuideSchema = new mongoose.Schema({
 		default: [], // Default to an empty array
 	},
 	isAccepted: {
+		type: Boolean,
+		default: false, // Default to false indicating the tour guide is not accepted yet
+	},
+	hasProfile: {
 		type: Boolean,
 		default: false, // Default to false indicating the tour guide is not accepted yet
 	},
