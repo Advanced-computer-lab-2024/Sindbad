@@ -136,11 +136,19 @@ const UserController = {
 	},
 
 	createAdvertiser: async (email, username, passwordHash) => {
+		const isAccepted = false;
+		const createdActivities = [];
+		const createdIterinaries = [];
+		const createdHistoricalPlaces = [];
+
 		const advertiser = new Advertiser({
 			email,
 			username,
 			passwordHash,
-			// Add any specific fields for advertisers if needed
+			isAccepted,
+			createdActivities,
+			createdIterinaries,
+			createdHistoricalPlaces,
 		});
 
 		await advertiser.save();

@@ -20,15 +20,7 @@ const AdvertiserSchema = new mongoose.Schema({
 		type: String,
 		required: true,
 	},
-	mobileNumber: {
-		type: String,
-		required: true,
-		validate: {
-			validator: (v) => /^\+?[1-9]\d{1,14}$/.test(v), // Basic validation for international phone numbers
-			message: (props) => `${props.value} is not a valid mobile number!`,
-		},
-	},
-	website: {
+	websiteLink: {
 		type: String,
 		validate: {
 			validator: (v) =>
@@ -46,10 +38,8 @@ const AdvertiserSchema = new mongoose.Schema({
 		},
 	},
 	// companyProfile structure still unknown
-	companyProfile: {
-		type: String,
-		default: "", // Optional field for a detailed company profile
-	},
+	companyProfile: {},
+
 	isAccepted: {
 		type: Boolean,
 		default: false, // Indicates whether the advertiser has been accepted
