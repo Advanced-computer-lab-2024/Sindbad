@@ -1,16 +1,21 @@
+const Tourist = require("../models/Tourist");
+const TourGuide = require("../models/TourGuide");
+const Advertiser = require("../models/Advertiser");
+const Seller = require("../models/Seller");
+
 const UserController = {
 	signUp: async (req, res) => {
 		try {
-			const { username, passwordHash, role, ...touristData } = req.body; // Extract role and user data
+			const { email, username, passwordHash, role, ...touristData } =
+				req.body; // Extract role and user data
 
 			let user;
 			if (!role) {
 				throw new Error("Role is required");
 			}
-			switch (role) {
+			switch (role.toLowerCase()) {
 				case "tourist":
-					const { email, mobileNumber, nationality, DOB, job } =
-						touristData;
+					const { mobileNumber, nationality, DOB, job } = touristData;
 
 					if (
 						!email ||
@@ -22,24 +27,36 @@ const UserController = {
 						throw new Error("Tourist data is required");
 					}
 
-					user = await createTourist(
+					user = await UserController.createTourist(
+						email,
 						username,
 						passwordHash,
-						email,
 						mobileNumber,
 						nationality,
 						DOB,
 						job
 					);
 					break;
-				case "tourGuide":
-					user = await createTourGuide(username, passwordHash);
+				case "tourguide":
+					user = await UserController.createTourGuide(
+						email,
+						username,
+						passwordHash
+					);
 					break;
 				case "advertiser":
-					user = await createAdvertiser(username, passwordHash);
+					user = await UserController.createAdvertiser(
+						email,
+						username,
+						passwordHash
+					);
 					break;
 				case "seller":
-					user = await createSeller(username, passwordHash);
+					user = await UserController.createSeller(
+						email,
+						username,
+						passwordHash
+					);
 					break;
 				default:
 					throw new Error("Invalid role");
@@ -56,9 +73,9 @@ const UserController = {
 	},
 
 	createTourist: async (
+		email,
 		username,
 		passwordHash,
-		email,
 		mobileNumber,
 		nationality,
 		DOB,
@@ -77,9 +94,9 @@ const UserController = {
 
 		// Create a new tourist instance
 		const tourist = new Tourist({
+			email,
 			username,
 			passwordHash,
-			email,
 			mobileNumber,
 			nationality,
 			DOB,
@@ -100,19 +117,27 @@ const UserController = {
 		return tourist;
 	},
 
-	createTourGuide: async (username, passwordHash) => {
+	createTourGuide: async (email, username, passwordHash) => {
+		// const mobileNumber = null;
+		// const yearsOfExperience = null;
+		// const previousWork = null;
+		const isAccepted = false;
+
+		// Add any specific fields for tour guides if needed
 		const tourGuide = new TourGuide({
+			email,
 			username,
 			passwordHash,
-			// Add any specific fields for tour guides if needed
+			isAccepted,
 		});
 
 		await tourGuide.save();
 		return tourGuide;
 	},
 
-	createAdvertiser: async (username, passwordHash) => {
+	createAdvertiser: async (email, username, passwordHash) => {
 		const advertiser = new Advertiser({
+			email,
 			username,
 			passwordHash,
 			// Add any specific fields for advertisers if needed
@@ -122,8 +147,9 @@ const UserController = {
 		return advertiser;
 	},
 
-	createSeller: async (username, passwordHash) => {
+	createSeller: async (email, username, passwordHash) => {
 		const seller = new Seller({
+			email,
 			username,
 			passwordHash,
 			// Add any specific fields for sellers if needed

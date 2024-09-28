@@ -2,13 +2,15 @@ const express = require("express");
 const mongoose = require("mongoose");
 const passport = require("passport");
 const session = require("express-session");
+require("dotenv").config();
+
 const Admin = require("./models/adminModel");
 const adminRoutes = require("./routes/adminRoutes");
 const siteRoutes = require("./routes/siteRoutes");
 const activityRoutes = require("./routes/activityRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const tagRoutes = require("./routes/tagRoutes");
-require("dotenv").config();
+const userRoutes = require("./routes/user-routes");
 
 const app = express();
 
@@ -43,6 +45,8 @@ passport.use(Admin.createStrategy());
 passport.serializeUser(Admin.serializeUser());
 passport.deserializeUser(Admin.deserializeUser());
 
+app.use("/user", userRoutes);
+
 // Admin routes
 app.use("/admin", adminRoutes);
 
@@ -66,7 +70,10 @@ app.use((req, res, next) => {
 // Global error handler
 app.use((err, req, res, next) => {
 	console.error(err.stack);
-	res.status(500).json({ message: "Something went wrong", error: err.message });
+	res.status(500).json({
+		message: "Something went wrong",
+		error: err.message,
+	});
 });
 
 // Start the server
