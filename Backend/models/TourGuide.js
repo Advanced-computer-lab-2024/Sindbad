@@ -59,10 +59,6 @@ const TourGuideSchema = new mongoose.Schema({
 		type: Boolean,
 		default: false, // Default to false indicating the tour guide is not accepted yet
 	},
-	hasProfile: {
-		type: Boolean,
-		default: false, // Default to false indicating the tour guide is not accepted yet
-	},
 });
 
 // Create the TourGuide model

@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const TourGuide = require("../models/tourGuide");
+const TourGuide = require("../models/TourGuide");
 
 
 //Create a tourguide profile
@@ -46,28 +46,22 @@ router.get('/:id' , getTourGuide , (req,res) => {
 
 // Create/updating a tourGuide profile
 router.patch('/:id', getTourGuide, async(req,res) => {
-    if(!req.body.hasProfile){
-        res.tourGuide.mobileNumber = req.body.mobileNumber;
-        res.tourGuide.yearsOfExperience = req.body.yearsOfExperience;
-        res.tourGuide.previousWork = req.body.previousWork;
-        res.tourGuide.hasProfile = true;
-    } 
-    if(req.body.email !=null && req.body.hasProfile){
+    if(req.body.email !=null){
         res.tourGuide.email = req.body.email;
     }
-    if(req.body.username !=null && req.body.hasProfile){
+    if(req.body.username !=null ){
         res.tourGuide.username = req.body.username;
     }
-    if(req.body.passwordHash !=null && req.body.hasProfile){
+    if(req.body.passwordHash !=null ){
         res.tourGuide.passwordHash = req.body.passwordHash;
     }
-    if(req.body.mobileNumber !=null && req.body.hasProfile){
+    if(req.body.mobileNumber !=null ){
         res.tourGuide.mobileNumber = req.body.mobileNumber;
     }
-    if(req.body.yearsOfExperience !=null && req.body.hasProfile){
+    if(req.body.yearsOfExperience !=null ){
         res.tourGuide.yearsOfExperience = req.body.yearsOfExperience;
     }
-    if(req.body.previousWork !=null && req.body.hasProfile){
+    if(req.body.previousWork !=null ){
         res.tourGuide.previousWork = req.body.previousWork;
     }
     

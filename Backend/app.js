@@ -6,7 +6,7 @@ const Admin = require("./models/admin");
 const adminRoutes = require("./routes/admin-routes");
 const tourist = require("./models/tourist");
 const touristRoutes = require("./routes/tourist-routes");
-const tourGuide = require("./models/tourGuide");
+const tourGuide = require("./models/TourGuide");
 const tourGuideRoutes = require("./routes/tourGuide-routes");
 require("dotenv").config();
 
