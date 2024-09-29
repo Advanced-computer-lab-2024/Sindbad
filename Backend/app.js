@@ -18,7 +18,8 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Connect to MongoDB
+// Connect to MongoDB, and prevent connecting to the database during testing
+if (process.env.NODE_ENV !== "test") {
 mongoose
 	.connect(process.env.MONGO_URI)
 	.then(() => {
@@ -27,7 +28,9 @@ mongoose
 	.catch((err) => {
 		console.error("Database connection error:", err);
 	});
+}
 
+// TODO: Remove this stuff, we'll be using client-side hashing
 // Session configuration (necessary for passport-local-mongoose)
 app.use(
 	session({

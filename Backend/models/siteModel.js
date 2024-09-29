@@ -37,8 +37,14 @@ const siteSchema = new mongoose.Schema({
 		required: [true, "Please add an image for your site"],
 	},
 	location: {
-		type: String,
-		required: [true, "Please add a location for your site"],
+		address: {
+			type: String,
+			required: true,
+		},
+		coordinates: {
+			lat: { type: Number, required: true },
+			long: { type: Number, required: true },
+		},
 	},
 	openingHours: {
 		type: Map,

@@ -25,6 +25,9 @@
 		"supertest": "^7.0.0"
 	},
 	"jest": {
+		"setupFilesAfterEnv": [
+			"<rootDir>/jest.setup.js"
+		],
 		"testEnvironment": "node"
 	}
 }

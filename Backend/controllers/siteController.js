@@ -3,13 +3,13 @@ const Site = require("../models/siteModel");
 /**
  * Creates a new site.
  *
- * @param {Object} req - The request object containing the site details.
+ * @param {Object} req - The request object containing the site details in the body.
+ * @param {Object} req.body - The site details (e.g., name, location, tags, etc.).
  * @param {Object} res - The response object for sending the result.
  * @returns {Object} - JSON object indicating the success message and the created site.
  *
  * @throws {400} - If there is an error saving the site.
  */
-
 const createSite = async (req, res) => {
 	try {
 		const site = new Site(req.body);
@@ -21,19 +21,20 @@ const createSite = async (req, res) => {
 };
 
 /**
- * Retrieves all sites.
+ * Retrieves all sites, optionally filtered by site name or tag name.
  *
- * @param {Object} req - The request object.
+ * @param {Object} req - The request object containing optional query parameters.
+ * @param {String} [req.query.siteName] - Optional site name for filtering (supports partial matching).
+ * @param {String} [req.query.tagName] - Optional tag name for filtering (supports partial matching).
  * @param {Object} res - The response object used to send the list of sites.
- * @returns {Array} - JSON array of all sites.
+ * @returns {Array} - JSON array of all sites or filtered sites.
  *
  * @throws {500} - If there is an error retrieving the sites.
  */
-
 const getAllSites = async (req, res) => {
 	try {
-		const siteName = req.query.siteName; // Assuming the site name comes from a query parameter
-		const tagName = req.query.tagName; // Assuming the tag name comes from a query parameter
+		const siteName = req.query.siteName;
+		const tagName = req.query.tagName;
 
 		// Create a filter for siteName, allowing partial matching if provided
 		const siteFilter = siteName
@@ -57,40 +58,39 @@ const getAllSites = async (req, res) => {
 	}
 };
 
-
-
-
-
 /**
- * Retrieves sites created by a specific user
- * @param {Object} req - The request object containing user data
- * @param {Object} res - The response object for sending the result
- * @returns {Object} JSON containing an array of sites or error message
+ * Retrieves sites created by a specific user.
+ *
+ * @param {Object} req - The request object containing user data in URL parameters.
+ * @param {Object} req.params.userId - The ID of the user whose sites are being retrieved.
+ * @param {Object} res - The response object for sending the result.
+ * @returns {Array} - JSON containing an array of sites.
+ *
+ * @throws {500} - If there is an error retrieving the sites.
  */
-
 const getMySites = async (req, res) => {
-  try {
-    const sites = await Site.find(req.params);
-    res.status(200).json(sites);
-  } catch (error) {
-    return res.status(500).json({
+	try {
+		const sites = await Site.find({ createdBy: req.params.userId });
+		res.status(200).json(sites);
+	} catch (error) {
+		return res.status(500).json({
 			message: "Error getting sites",
 			error: error.message,
 		});
-  }
+	}
 };
 
 /**
  * Retrieves a single site by its ID.
  *
  * @param {Object} req - The request object containing the site ID in the URL parameters.
+ * @param {Object} req.params.id - The ID of the site to retrieve.
  * @param {Object} res - The response object for sending the retrieved site or an error message.
  * @returns {Object} - JSON object of the retrieved site or an error message.
  *
  * @throws {404} - If the site is not found.
  * @throws {500} - If there is an error retrieving the site.
  */
-
 const getSiteById = async (req, res) => {
 	try {
 		const site = await Site.findById(req.params.id).populate("tags"); // "Join" with the tags collection
@@ -106,14 +106,15 @@ const getSiteById = async (req, res) => {
 /**
  * Updates a site by its ID.
  *
- * @param {Object} req - The request object containing the site ID and new details in the body.
+ * @param {Object} req - The request object containing the site ID in the URL parameters and new details in the body.
+ * @param {Object} req.params.id - The ID of the site to update.
+ * @param {Object} req.body - The new site details to update.
  * @param {Object} res - The response object for sending the updated site or an error message.
  * @returns {Object} - JSON object indicating the success message and the updated site.
  *
  * @throws {404} - If the site is not found.
  * @throws {400} - If there is an error updating the site.
  */
-
 const updateSite = async (req, res) => {
 	try {
 		const site = await Site.findByIdAndUpdate(req.params.id, req.body, {
@@ -132,13 +133,13 @@ const updateSite = async (req, res) => {
  * Deletes a site by its ID.
  *
  * @param {Object} req - The request object containing the site ID in the URL parameters.
+ * @param {Object} req.params.id - The ID of the site to delete.
  * @param {Object} res - The response object for sending status and message.
  * @returns {Object} - JSON object indicating the success message.
  *
  * @throws {404} - If the site is not found.
  * @throws {500} - If there is an error deleting the site.
  */
-
 const deleteSite = async (req, res) => {
 	try {
 		const site = await Site.findByIdAndDelete(req.params.id);
