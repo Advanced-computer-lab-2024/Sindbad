@@ -2,6 +2,12 @@ const express = require("express");
 const mongoose = require("mongoose");
 const passport = require("passport");
 const session = require("express-session");
+const Admin = require("./models/admin");
+const adminRoutes = require("./routes/admin-routes");
+const tourist = require("./models/tourist");
+const touristRoutes = require("./routes/tourist-routes");
+const tourGuide = require("./models/TourGuide");
+const tourGuideRoutes = require("./routes/tourGuide-routes");
 require("dotenv").config();
 
 const Admin = require("./models/adminModel");
@@ -64,6 +70,12 @@ app.use("/category", categoryRoutes);
 
 // Activities' tags routes
 app.use("/tag", tagRoutes);
+
+//Tourist routes
+app.use("/tourist", touristRoutes); // All admin-related routes will start with /api/admin
+
+//TourGuide routes
+app.use("/tourGuide", tourGuideRoutes); // All admin-related routes will start with /api/admin
 
 // Fallback route for unknown endpoints
 app.use((req, res, next) => {
