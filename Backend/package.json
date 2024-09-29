@@ -16,7 +16,8 @@
 		"express-session": "^1.18.0",
 		"mongoose": "^8.6.3",
 		"passport": "^0.7.0",
-		"passport-local-mongoose": "^8.0.0"
+		"passport-local-mongoose": "^8.0.0",
+		"sindback": "file:"
 	},
 	"devDependencies": {
 		"jest": "^29.7.0",
