@@ -6,7 +6,6 @@ const { startServer, stopServer, clearDatabase } = require("../jest.setup");
 const Site = require("../models/siteModel");
 const Tag = require("../models/tagModel"); // Assuming you have a Tag model
 
-let mongoServer;
 let tagId;
 let creatorId;
 
@@ -14,25 +13,24 @@ let creatorId;
 beforeAll(async () => {
 	await startServer();
 	const tag = new Tag({ name: "Test Tag" });
-	await tag.save();
-	tagId = tag._id;
+	const savedTag = await tag.save();
+	tagId = savedTag._id; // Ensure tagId is correctly assigned
+	"Saved Tag ID", tagId;
 	creatorId = new mongoose.Types.ObjectId();
 });
 
 // After each test, clear the database
 afterEach(async () => {
 	await Site.deleteMany({});
-	await Tag.deleteMany({});
 });
 
 // After all tests, close the connection and stop MongoDB server
 afterAll(async () => {
+	await Tag.deleteMany({});
 	await stopServer();
 });
 
-// TODO: Add tag creation from Salma's code
 describe("Site CRUD Operations", () => {
-
 	it("should create a new site", async () => {
 		const res = await request(app)
 			.post("/site")
@@ -40,13 +38,19 @@ describe("Site CRUD Operations", () => {
 				name: "Test Site",
 				description: "This is a test site.",
 				imageUris: ["http://example.com/image1.jpg"],
-				location: "Test Location",
+				location: {
+					address: "123 Test St",
+					coordinates: {
+						lat: 40.7128,
+						long: -74.006,
+					},
+				},
 				openingHours: {
 					monday: { start: 420, end: 1020 },
 				},
 				ticketPrices: [10, 15],
-				tags:[tagId],
-				creatorId: creatorId
+				tags: [tagId],
+				creatorId: creatorId,
 			});
 
 		expect(res.status).toBe(201);
@@ -62,13 +66,19 @@ describe("Site CRUD Operations", () => {
 				name: "Test Site",
 				description: "This is a test site.",
 				imageUris: ["http://example.com/image1.jpg"],
-				location: "Test Location",
+				location: {
+					address: "123 Test St",
+					coordinates: {
+						lat: 40.7128,
+						long: -74.006,
+					},
+				},
 				openingHours: {
 					monday: { start: 420, end: 1020 },
 				},
 				ticketPrices: [10, 15],
-				tags:[tagId],
-				creatorId: creatorId
+				tags: [tagId],
+				creatorId: creatorId,
 			});
 
 		const res = await request(app).get("/site");
@@ -77,18 +87,153 @@ describe("Site CRUD Operations", () => {
 		expect(res.body[0].name).toBe("Test Site");
 	});
 
+	it("should populate tags when retrieving all sites", async () => {
+		"tagId", tagId; // Check if tagId is valid here
+		const site = new Site({
+			name: "Test Site",
+			description: "This is a test site.",
+			imageUris: ["http://example.com/image1.jpg"],
+			location: {
+				address: "123 Test St",
+				coordinates: {
+					lat: 40.7128,
+					long: -74.006,
+				},
+			},
+			openingHours: {
+				monday: { start: 420, end: 1020 },
+			},
+			ticketPrices: [10, 15],
+			tags: [tagId],
+			creatorId: creatorId,
+		});
+		await site.save();
+		const res = await request(app).get("/site");
+		"Response Body", res.body; // Log the response body to see the actual data
+
+		expect(res.status).toBe(200);
+		expect(res.body.length).toBe(1);
+		expect(res.body[0].name).toBe("Test Site");
+		expect(res.body[0].tags[0].name).toBe("Test Tag");
+	});
+
+	it("should retrieve sites with a partially matching site name", async () => {
+		const site1 = new Site({
+			name: "Test Mosque",
+			description: "This is a mosque site.",
+			imageUris: ["http://example.com/image1.jpg"],
+			location: {
+				address: "123 Test St",
+				coordinates: {
+					lat: 40.7128,
+					long: -74.006,
+				},
+			},
+			openingHours: { monday: { start: 420, end: 1020 } },
+			ticketPrices: [10, 15],
+			tags: [tagId],
+			creatorId: creatorId,
+		});
+		const site2 = new Site({
+			name: "Cathedral",
+			description: "This is a cathedral site.",
+			imageUris: ["http://example.com/image2.jpg"],
+			location: {
+				address: "123 Test St",
+				coordinates: {
+					lat: 40.7128,
+					long: -74.006,
+				},
+			},
+			openingHours: { monday: { start: 420, end: 1020 } },
+			ticketPrices: [10, 15],
+			tags: [tagId],
+			creatorId: creatorId,
+		});
+
+		await site1.save();
+		await site2.save();
+
+		const res = await request(app).get("/site?siteName=mos");
+		expect(res.status).toBe(200);
+		expect(res.body.length).toBe(1);
+		expect(res.body[0].name).toBe("Test Mosque");
+	});
+
+	it("should retrieve sites with a partially matching tag name", async () => {
+		const site1 = new Site({
+			name: "Test Mosque",
+			description: "This is a mosque site.",
+			imageUris: ["http://example.com/image1.jpg"],
+			location: {
+				address: "123 Test St",
+				coordinates: {
+					lat: 40.7128,
+					long: -74.006,
+				},
+			},
+			openingHours: { monday: { start: 420, end: 1020 } },
+			ticketPrices: [10, 15],
+			tags: [tagId],
+			creatorId: creatorId,
+		});
+
+		await site1.save();
+
+		const res1 = await request(app).get("/site");
+		res1.body;
+
+		const res = await request(app).get("/site?tagName=tes");
+		res.body;
+		expect(res.status).toBe(200);
+		expect(res.body.length).toBe(1);
+		expect(res.body[0].name).toBe("Test Mosque");
+	});
+
+	it("should retrieve sites with both matching site name and tag name", async () => {
+		const site1 = new Site({
+			name: "Test Mosque",
+			description: "This is a mosque site.",
+			imageUris: ["http://example.com/image1.jpg"],
+			location: {
+				address: "123 Test St",
+				coordinates: {
+					lat: 40.7128,
+					long: -74.006,
+				},
+			},
+			openingHours: { monday: { start: 420, end: 1020 } },
+			ticketPrices: [10, 15],
+			tags: [tagId],
+			creatorId: creatorId,
+		});
+
+		await site1.save();
+
+		const res = await request(app).get("/site?siteName=mos&tagName=tes");
+		expect(res.status).toBe(200);
+		expect(res.body.length).toBe(1);
+		expect(res.body[0].name).toBe("Test Mosque");
+	});
+
 	it("should retrieve a site by ID", async () => {
 		const site = new Site({
 			name: "Test Site",
 			description: "This is a test site.",
 			imageUris: ["http://example.com/image1.jpg"],
-			location: "Test Location",
+			location: {
+				address: "123 Test St",
+				coordinates: {
+					lat: 40.7128,
+					long: -74.006,
+				},
+			},
 			openingHours: {
 				monday: { start: 420, end: 1020 },
 			},
 			ticketPrices: [10, 15],
-			tags:[tagId],
-			creatorId: creatorId
+			tags: [tagId],
+			creatorId: creatorId,
 		});
 		await site.save();
 
@@ -102,13 +247,19 @@ describe("Site CRUD Operations", () => {
 			name: "Test Site",
 			description: "This is a test site.",
 			imageUris: ["http://example.com/image1.jpg"],
-			location: "Test Location",
+			location: {
+				address: "123 Test St",
+				coordinates: {
+					lat: 40.7128,
+					long: -74.006,
+				},
+			},
 			openingHours: {
 				monday: { start: 420, end: 1020 },
 			},
 			ticketPrices: [10, 15],
-			tags:[tagId],
-			creatorId: creatorId
+			tags: [tagId],
+			creatorId: creatorId,
 		});
 		await site.save();
 
@@ -126,13 +277,19 @@ describe("Site CRUD Operations", () => {
 			name: "Test Site",
 			description: "This is a test site.",
 			imageUris: ["http://example.com/image1.jpg"],
-			location: "Test Location",
+			location: {
+				address: "123 Test St",
+				coordinates: {
+					lat: 40.7128,
+					long: -74.006,
+				},
+			},
 			openingHours: {
 				monday: { start: 420, end: 1020 },
 			},
 			ticketPrices: [10, 15],
-			tags:[tagId],
-			creatorId: creatorId
+			tags: [tagId],
+			creatorId: creatorId,
 		});
 		await site.save();
 
@@ -149,13 +306,19 @@ describe("Site CRUD Operations", () => {
 			name: "Test Site 1",
 			description: "This is a test site.",
 			imageUris: ["http://example.com/image1.jpg"],
-			location: "Test Location",
+			location: {
+				address: "123 Test St",
+				coordinates: {
+					lat: 40.7128,
+					long: -74.006,
+				},
+			},
 			openingHours: {
 				monday: { start: 420, end: 1020 },
 			},
 			ticketPrices: [10, 15],
-			tags:[tagId],
-			creatorId: creatorId
+			tags: [tagId],
+			creatorId: creatorId,
 		});
 		await site1.save();
 
@@ -163,13 +326,19 @@ describe("Site CRUD Operations", () => {
 			name: "Test Site 2",
 			description: "This is another test site.",
 			imageUris: ["http://example.com/image2.jpg"],
-			location: "Test Location",
+			location: {
+				address: "123 Test St",
+				coordinates: {
+					lat: 40.7128,
+					long: -74.006,
+				},
+			},
 			openingHours: {
 				monday: { start: 420, end: 1020 },
 			},
 			ticketPrices: [10, 15],
-			tags:[tagId],
-			creatorId: creatorId
+			tags: [tagId],
+			creatorId: creatorId,
 		});
 		await site2.save();
 
@@ -189,13 +358,19 @@ describe("Site CRUD Operations - Failing Tests", () => {
 			.send({
 				description: "This is a test site.",
 				imageUris: ["http://example.com/image1.jpg"],
-				location: "Test Location",
+				location: {
+					address: "123 Test St",
+					coordinates: {
+						lat: 40.7128,
+						long: -74.006,
+					},
+				},
 				openingHours: {
 					monday: { start: 420, end: 1020 },
 				},
 				ticketPrices: [10, 15],
-				tags:[tagId],
-				creatorId: creatorId
+				tags: [tagId],
+				creatorId: creatorId,
 			});
 
 		expect(res.status).toBe(400);
@@ -204,22 +379,25 @@ describe("Site CRUD Operations - Failing Tests", () => {
 
 	// Test for creating a site with a duplicate name
 	it("should not create a site with a duplicate name", async () => {
-
-		console.log("tagId", tagId);
-
 		await request(app)
 			.post("/site")
 			.send({
 				name: "Test Site",
 				description: "This is a test site.",
 				imageUris: ["http://example.com/image1.jpg"],
-				location: "Test Location",
+				location: {
+					address: "123 Test St",
+					coordinates: {
+						lat: 40.7128,
+						long: -74.006,
+					},
+				},
 				openingHours: {
 					monday: { start: 420, end: 1020 },
 				},
 				ticketPrices: [10, 15],
-				tags:[tagId],
-				creatorId: creatorId
+				tags: [tagId],
+				creatorId: creatorId,
 			});
 
 		const res = await request(app)
@@ -228,17 +406,100 @@ describe("Site CRUD Operations - Failing Tests", () => {
 				name: "Test Site", // Same name as before
 				description: "This is a duplicate test site.",
 				imageUris: ["http://example.com/image2.jpg"],
-				location: "Test Location",
+				location: {
+					address: "123 Test St",
+					coordinates: {
+						lat: 40.7128,
+						long: -74.006,
+					},
+				},
 				openingHours: {
 					monday: { start: 420, end: 1020 },
 				},
 				ticketPrices: [10, 15],
-				tags:[tagId],
-				creatorId: creatorId
+				tags: [tagId],
+				creatorId: creatorId,
 			});
 
 		expect(res.status).toBe(400);
 		expect(res.body.message).toMatch(/duplicate key error/);
+	});
+
+	it("should return an empty array for non-matching site name", async () => {
+		const site = new Site({
+			name: "Test Mosque",
+			description: "This is a mosque site.",
+			imageUris: ["http://example.com/image1.jpg"],
+			location: {
+				address: "123 Test St",
+				coordinates: {
+					lat: 40.7128,
+					long: -74.006,
+				},
+			},
+			openingHours: { monday: { start: 420, end: 1020 } },
+			ticketPrices: [10, 15],
+			tags: [tagId],
+			creatorId: creatorId,
+		});
+
+		await site.save();
+
+		const res = await request(app).get("/site?siteName=nonexistent");
+		expect(res.status).toBe(200);
+		expect(res.body.length).toBe(0);
+	});
+
+	it("should return an empty array for non-matching tag name", async () => {
+		const site = new Site({
+			name: "Test Mosque",
+			description: "This is a mosque site.",
+			imageUris: ["http://example.com/image1.jpg"],
+			location: {
+				address: "123 Test St",
+				coordinates: {
+					lat: 40.7128,
+					long: -74.006,
+				},
+			},
+			openingHours: { monday: { start: 420, end: 1020 } },
+			ticketPrices: [10, 15],
+			tags: [tagId],
+			creatorId: creatorId,
+		});
+
+		await site.save();
+
+		const res = await request(app).get("/site?tagName=nonexistent");
+		expect(res.status).toBe(200);
+		expect(res.body.length).toBe(0);
+	});
+
+	it("should not return site if site name matches but tag name does not match", async () => {
+		const site = new Site({
+			name: "Test Mosque",
+			description: "This is a mosque site.",
+			imageUris: ["http://example.com/image1.jpg"],
+			location: {
+				address: "123 Test St",
+				coordinates: {
+					lat: 40.7128,
+					long: -74.006,
+				},
+			},
+			openingHours: { monday: { start: 420, end: 1020 } },
+			ticketPrices: [10, 15],
+			tags: [tagId],
+			creatorId: creatorId,
+		});
+
+		await site.save();
+
+		const res = await request(app).get(
+			"/site?siteName=mos&tagName=nonexistent"
+		);
+		expect(res.status).toBe(200);
+		expect(res.body.length).toBe(0);
 	});
 
 	// Test for retrieving a site that does not exist
@@ -272,13 +533,19 @@ describe("Site CRUD Operations - Failing Tests", () => {
 				name: "Invalid Hours Site",
 				description: "This site has invalid opening hours.",
 				imageUris: ["http://example.com/image1.jpg"],
-				location: "Test Location",
+				location: {
+					address: "123 Test St",
+					coordinates: {
+						lat: 40.7128,
+						long: -74.006,
+					},
+				},
 				openingHours: {
 					monday: { start: 1020, end: 420 }, // Invalid opening hours
 				},
 				ticketPrices: [10, 15],
-				tags:[tagId],
-				creatorId: creatorId
+				tags: [tagId],
+				creatorId: creatorId,
 			});
 
 		expect(res.status).toBe(400);
@@ -293,13 +560,19 @@ describe("Site CRUD Operations - Failing Tests", () => {
 				name: "Negative Price Site",
 				description: "This site has negative ticket prices.",
 				imageUris: ["http://example.com/image1.jpg"],
-				location: "Test Location",
+				location: {
+					address: "123 Test St",
+					coordinates: {
+						lat: 40.7128,
+						long: -74.006,
+					},
+				},
 				openingHours: {
 					monday: { start: 420, end: 1020 },
 				},
 				ticketPrices: [-10, 15], // Invalid ticket prices
-				tags:[tagId],
-				creatorId: creatorId
+				tags: [tagId],
+				creatorId: creatorId,
 			});
 
 		expect(res.status).toBe(400);
@@ -308,10 +581,11 @@ describe("Site CRUD Operations - Failing Tests", () => {
 
 	// Test for retrieving all sites created by a user that does not exist
 	it("should return 500 when getting sites for a non-existing user", async () => {
-		const res = await request(app).get("/site/my-sites/66f6fd42af6f9d152eae4e7a");
+		const res = await request(app).get(
+			"/site/my-sites/66f6fd42af6f9d152eae4e7a"
+		);
 		//Expect empty array
 		expect(res.status).toBe(200);
 		expect(res.body.length).toBe(0);
 	});
 });
-

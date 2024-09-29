@@ -9,7 +9,7 @@ module.exports = {
         mongoServer = await MongoMemoryServer.create();
         const mongoUri = mongoServer.getUri();
         if (mongoose.connection.readyState === 0) {
-        await mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true });
+        await mongoose.connect(mongoUri);
         }
     },
     stopServer: async () => {
