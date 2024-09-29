@@ -9,6 +9,7 @@ const activityRoutes = require("./routes/activityRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const tagRoutes = require("./routes/tagRoutes");
 const productRoutes = require("./routes/productRoutes");
+const sellerRoutes = require("./routes/sellerRoutes");
 require("dotenv").config();
 
 const app = express();
@@ -55,6 +56,9 @@ app.use("/site", siteRoutes);
 
 // Activity routes
 app.use("/activity", activityRoutes);
+
+//seller routes
+app.use("/seller", sellerRoutes);
 
 // Activities' categories routes
 app.use("/category", categoryRoutes);
