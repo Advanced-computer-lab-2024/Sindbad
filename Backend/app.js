@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require('cors');
 const mongoose = require("mongoose");
 const passport = require("passport");
 const session = require("express-session");
@@ -18,16 +19,22 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use(cors({
+	origin: 'http://localhost:5173',
+	methods: 'GET,POST,PUT,DELETE',
+	credentials: true,
+}));
+
 // Connect to MongoDB, and prevent connecting to the database during testing
 if (process.env.NODE_ENV !== "test") {
-mongoose
-	.connect(process.env.MONGO_URI)
-	.then(() => {
-		console.log("Connected to MongoDB");
-	})
-	.catch((err) => {
-		console.error("Database connection error:", err);
-	});
+	mongoose
+		.connect(process.env.MONGO_URI)
+		.then(() => {
+			console.log("Connected to MongoDB");
+		})
+		.catch((err) => {
+			console.error("Database connection error:", err);
+		});
 }
 
 // TODO: Remove this stuff, we'll be using client-side hashing
