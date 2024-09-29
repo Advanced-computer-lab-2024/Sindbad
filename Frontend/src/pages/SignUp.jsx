@@ -7,7 +7,7 @@ import {
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 import {
     Form,
     FormControl,
@@ -15,19 +15,21 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from "@/components/ui/form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
+} from "@/components/ui/form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { set, useForm } from "react-hook-form";
+import { z } from "zod";
 import { Navigate } from "react-router-dom";
-
+import { userSignUp } from "@/services/ApiHandler";
 
 function SignUp() {
     const [registerType, setRegisterType] = useState("Tourist");
     const [logInRedirect, setLogInRedirect] = useState(false);
+    const [currentStep, setCurrentStep] = useState(1);
+    const [formValues, setFormValues] = useState({});
 
     // Schema for the tourist form
-    const touristFormSchema = z.object({
+    const commonFormSchema = z.object({
         username: z.string().min(2, {
             message: "Username must be at least 2 characters.",
         }),
@@ -37,11 +39,14 @@ function SignUp() {
         password: z.string().min(8, {
             message: "Password must be at least 8 characters.",
         }),
+    });
+
+    const touristFormSchema = z.object({
         mobileNumber: z.string().min(8, {
             message: "Invalid mobile number.",
         }),
         nationality: z.string(),
-        dateOfBirth: z.string().refine(val => !isNaN(Date.parse(val)), {
+        DOB: z.string().refine((val) => !isNaN(Date.parse(val)), {
             message: "Invalid date.",
         }),
         job: z.string(),
@@ -53,22 +58,9 @@ function SignUp() {
         password: "",
         mobileNumber: "",
         nationality: "",
-        dateOfBirth: "",
+        DOB: "",
         job: "",
     };
-
-    // Schema for other forms (Tour Guide, Advertiser, Seller)
-    const otherFormSchema = z.object({
-        username: z.string().min(2, {
-            message: "Username must be at least 2 characters.",
-        }),
-        email: z.string().email({
-            message: "Invalid email.",
-        }),
-        password: z.string().min(8, {
-            message: "Password must be at least 8 characters.",
-        }),
-    });
 
     const otherDefaultValues = {
         username: "",
@@ -76,97 +68,39 @@ function SignUp() {
         password: "",
     };
 
-    const [currentSchema, setCurrentSchema] = useState(touristFormSchema);
-
     const form = useForm({
-        resolver: zodResolver(currentSchema),
-        defaultValues: touristDefaultValues,
+        resolver: zodResolver(currentStep === 1 ? commonFormSchema : touristFormSchema),
+        defaultValues: currentStep === 1 ? touristDefaultValues : formValues,
     });
 
-    // Watch for changes in registerType to update the form schema and reset form
+    // Watch for changes in registerType to reset the form schema and values
     useEffect(() => {
-        if (registerType === "Tourist") {
-            setCurrentSchema(touristFormSchema);
-            form.reset(touristDefaultValues); // Properly reset form with default values
+        if (registerType !== "Tourist") {
+            form.reset(otherDefaultValues);
         } else {
-            setCurrentSchema(otherFormSchema);
-            form.reset(otherDefaultValues); // Properly reset form with default values
+            form.reset(touristDefaultValues);
         }
     }, [registerType, form]);
 
-    function handleRegisterTypeChange(value) {
+    const handleRegisterTypeChange = (value) => {
         setRegisterType(value);
-    }
+    };
 
-    function onSubmit(values) {
-        // Handle form submission
-        console.log(values);
-    }
-
-    const renderTouristFields = () => (
-        <div className="flex flex-col gap-2">
-            <div className="flex gap-4">
-                <FormField
-                    key="dateOfBirth"
-                    control={form.control}
-                    name="dateOfBirth"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Date of Birth</FormLabel>
-                            <FormControl>
-                                <Input {...field} />
-                            </FormControl>
-                            <FormMessage className="text-secondary/90"/>
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    key="nationality"
-                    control={form.control}
-                    name="nationality"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Nationality</FormLabel>
-                            <FormControl>
-                                <Input {...field} />
-                            </FormControl>
-                            <FormMessage className="text-secondary/90"/>
-                        </FormItem>
-                    )}
-                />
-            </div>
-            <div className="flex gap-4">
-                <FormField
-                    key="job"
-                    control={form.control}
-                    name="job"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Job</FormLabel>
-                            <FormControl>
-                                <Input {...field} />
-                            </FormControl>
-                            <FormMessage className="text-secondary/90"/>
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    key="mobileNumber"
-                    control={form.control}
-                    name="mobileNumber"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Mobile Number</FormLabel>
-                            <FormControl>
-                                <Input {...field} />
-                            </FormControl>
-                            <FormMessage className="text-secondary/90"/>
-                        </FormItem>
-                    )}
-                />
-            </div>
-        </div>
-    );
+    const onSubmit = async (values) => {
+        if (currentStep === 1 && registerType === "Tourist") {
+            // Move to next step and store first step values
+            setFormValues(values);
+            setCurrentStep(2);
+        } else {
+            let finalValues = { ...formValues, ...values };
+            const response = await userSignUp(finalValues, registerType);
+            if (response.error) {
+                console.error('Sign-up error:', response.message);
+            } else {
+                setLogInRedirect(true);
+            }
+        }
+    };
 
     const renderCommonFields = () => (
         <>
@@ -180,7 +114,7 @@ function SignUp() {
                         <FormControl>
                             <Input {...field} />
                         </FormControl>
-                        <FormMessage className="text-secondary/90"/>
+                        <FormMessage className="text-destructive text-xs" />
                     </FormItem>
                 )}
             />
@@ -194,7 +128,7 @@ function SignUp() {
                         <FormControl>
                             <Input {...field} />
                         </FormControl>
-                        <FormMessage className="text-secondary/90"/>
+                        <FormMessage className="text-destructive text-xs" />
                     </FormItem>
                 )}
             />
@@ -208,49 +142,120 @@ function SignUp() {
                         <FormControl>
                             <Input {...field} type="password" />
                         </FormControl>
-                        <FormMessage className="text-secondary/90"/>
+                        <FormMessage className="text-destructive text-xs" />
                     </FormItem>
                 )}
             />
         </>
     );
 
+    const renderTouristFields = () => (
+        <div className="flex flex-col gap-2">
+            <FormField
+                key="DOB"
+                control={form.control}
+                name="DOB"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Date of Birth</FormLabel>
+                        <FormControl>
+                            <Input type="date" {...field} />
+                        </FormControl>
+                        <FormMessage className="text-destructive text-xs" />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                key="nationality"
+                control={form.control}
+                name="nationality"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Nationality</FormLabel>
+                        <FormControl>
+                            <Input {...field} />
+                        </FormControl>
+                        <FormMessage className="text-destructive text-xs" />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                key="job"
+                control={form.control}
+                name="job"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Job</FormLabel>
+                        <FormControl>
+                            <Input {...field} />
+                        </FormControl>
+                        <FormMessage className="text-destructive text-xs" />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                key="mobileNumber"
+                control={form.control}
+                name="mobileNumber"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Mobile Number</FormLabel>
+                        <FormControl>
+                            <Input {...field} />
+                        </FormControl>
+                        <FormMessage className="text-destructive text-xs" />
+                    </FormItem>
+                )}
+            />
+        </div>
+    );    
+
     return (
-        <div className="w-screen h-screen grid grid-cols-2">
+        <div className="w-full min-h-screen grid grid-cols-2">
             <div className="bg-primary-700"></div>
             <div className="bg-primary-900 flex flex-col shadow-2xl">
                 <div className="text-right p-8 absolute right-0">
-                    <Button onClick={() => setLogInRedirect(true)} className="">
+                    <Button onClick={() => setLogInRedirect(true)} variant="link">
                         Log In
                     </Button>
-                    { logInRedirect ? <Navigate to="/login" /> : null }
+                    {logInRedirect ? <Navigate to="/login" /> : null}
                 </div>
                 <div className="flex flex-col flex-grow justify-center items-center">
                     <h1 className="font-extrabold text-3xl mb-4">Create Your Account</h1>
                     <div className="w-2/5 flex flex-col gap-4">
-                        <div className="flex items-center justify-center gap-4 my-2">
-                            <h1 className="font-semibold text-lg text-nowrap">I am a...</h1>
-                            <Select onValueChange={handleRegisterTypeChange}>
-                                <SelectTrigger className="font-semibold">
-                                    <SelectValue className="text-center" placeholder="Tourist"/>
-                                </SelectTrigger>
-                                <SelectContent className="bg-light">
-                                    <SelectItem value="Tourist">Tourist</SelectItem>
-                                    <SelectItem value="TourGuide">Tour Guide</SelectItem>
-                                    <SelectItem value="Advertiser">Advertiser</SelectItem>
-                                    <SelectItem value="Seller">Seller</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
+                        {currentStep === 1 && (
+                            <div className="flex items-center justify-center gap-4 my-2">
+                                <h1 className="font-semibold text-nowrap">I am a...</h1>
+                                <Select onValueChange={handleRegisterTypeChange}>
+                                    <SelectTrigger>
+                                        <SelectValue className="text-center" placeholder="Tourist" />
+                                    </SelectTrigger>
+                                    <SelectContent className="bg-neutral-900">
+                                        <SelectItem value="Tourist">Tourist</SelectItem>
+                                        <SelectItem value="TourGuide">Tour Guide</SelectItem>
+                                        <SelectItem value="Advertiser">Advertiser</SelectItem>
+                                        <SelectItem value="Seller">Seller</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        )}
                         <Form {...form}>
-                            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 flex flex-col">
-                                {renderCommonFields()}
-                                {registerType === 'Tourist' && renderTouristFields()}
-                                <p className="text-center text-light/70 text-sm text-pretty">
-                                    By creating an account you agree to our <a href="#" className="text-secondary/90 hover:text-secondary hover:decoration-light/80 decoration-light/70 underline underline-offset-2">Terms of Service</a> & <a href="#" className="text-secondary/90 hover:text-secondary hover:decoration-light/80 decoration-light/70 underline underline-offset-2">Privacy Policy</a>.
-                                </p>
-                                <Button type="submit" className="flex gap-1 items-center self-center bg-primary-700 w-max py-2 rounded-md group transition-all hover:ring-1 hover:ring-secondary px-10">
-                                    Continue
+                            <form onSubmit={form.handleSubmit(onSubmit)} className="gap-3 flex flex-col">
+                                {currentStep === 1 ? renderCommonFields() : renderTouristFields()}
+                                {currentStep === 2 && (
+                                    <p className="text-center text-light/70 text-sm">
+                                        By creating an account you agree to our{" "}
+                                        <a href="#" className="text-secondary/90 hover:text-secondary hover:decoration-light/80 decoration-light/70 underline underline-offset-2">
+                                            Terms of Service
+                                        </a>{" "}
+                                        &{" "}
+                                        <a href="#" className="text-secondary/90 hover:text-secondary hover:decoration-light/80 decoration-light/70 underline underline-offset-2">
+                                            Privacy Policy
+                                        </a>.
+                                    </p>
+                                )}
+                                <Button type="submit" className="bg-primary-700 justify-center w-max mt-4">
+                                    {currentStep === 1 ? "Continue" : "Submit"}
                                 </Button>
                             </form>
                         </Form>
