@@ -2,12 +2,6 @@ const express = require("express");
 const mongoose = require("mongoose");
 const passport = require("passport");
 const session = require("express-session");
-const Admin = require("./models/admin");
-const adminRoutes = require("./routes/admin-routes");
-const tourist = require("./models/tourist");
-const touristRoutes = require("./routes/tourist-routes");
-const tourGuide = require("./models/TourGuide");
-const tourGuideRoutes = require("./routes/tourGuide-routes");
 require("dotenv").config();
 
 const Admin = require("./models/adminModel");
@@ -17,6 +11,8 @@ const activityRoutes = require("./routes/activityRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const tagRoutes = require("./routes/tagRoutes");
 const userRoutes = require("./routes/user-routes");
+const touristRoutes = require("./routes/tourist-routes");
+const tourGuideRoutes = require("./routes/tourGuide-routes");
 
 const app = express();
 
