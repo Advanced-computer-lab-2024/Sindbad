@@ -17,7 +17,7 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Navigate } from "react-router-dom";
 import { userSignUp } from "@/services/ApiHandler";
@@ -255,7 +255,7 @@ function SignUp() {
                                     </p>
                                 )}
                                 <Button type="submit" className="bg-primary-700 justify-center w-max mt-4">
-                                    {currentStep === 1 ? "Continue" : "Submit"}
+                                    {currentStep === 1 && registerType == "Tourist" ? "Continue" : "Sign Up"}
                                 </Button>
                             </form>
                         </Form>
