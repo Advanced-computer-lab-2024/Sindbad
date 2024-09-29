@@ -38,16 +38,19 @@ const activitySchema = mongoose.Schema({
     ref: "Category",
     required: [true, "Please add the category of the activity"],
   },
-  tags: {
-    type: [String],
-    required: [true, "Please add the tags of the activity"],
-    //   validate: {
-    //     validator: function(tags) {
-    //         return tags.length <= 10; //Limiting tags to 10
-    //     },
-    //     message: "You can only add up to 10 tags.""
-    // }
-  },
+  tags: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Tag",
+      required: [true, "Please add the tags of the activity"],
+      //   validate: {
+      //     validator: function(tags) {
+      //         return tags.length <= 10; //Limiting tags to 10
+      //     },
+      //     message: "You can only add up to 10 tags.""
+      // }
+    },
+  ],
   discounts: {
     type: Number,
     validate: {
@@ -65,6 +68,10 @@ const activitySchema = mongoose.Schema({
     type: String,
   },
   headCount: {
+    type: Number,
+    default: 0,
+  },
+  rating: {
     type: Number,
     default: 0,
   },

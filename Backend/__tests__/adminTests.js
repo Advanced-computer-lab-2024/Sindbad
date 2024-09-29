@@ -1,21 +1,15 @@
 const request = require("supertest"); // Library for testing HTTP requests
 const mongoose = require("mongoose");
 const { MongoMemoryServer } = require("mongodb-memory-server");
-const { app, server } = require("../app");
+const { startServer, stopServer, clearDatabase } = require("../jest.setup");
+const { app } = require("../app");
 const Admin = require("../models/adminModel");
 
 let mongoServer;
 
 // Before all tests, start the in-memory MongoDB server
 beforeAll(async () => {
-	// Start MongoDB Memory Server
-	mongoServer = await MongoMemoryServer.create();
-	const mongoUri = mongoServer.getUri();
-
-	// Connect mongoose to the in-memory MongoDB
-	if (mongoose.connection.readyState === 0) {
-		await mongoose.connect(mongoUri);
-	}
+	await startServer();
 });
 
 // After each test, clear the database
@@ -25,9 +19,7 @@ afterEach(async () => {
 
 // After all tests, close the connection and stop MongoDB server
 afterAll(async () => {
-	await mongoose.connection.close();
-	await mongoServer.stop();
-	await new Promise((resolve) => server.close(resolve)); // Close the Express server
+	await stopServer();
 });
 
 describe("POST /admin", () => {
