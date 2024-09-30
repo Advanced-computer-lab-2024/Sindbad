@@ -9,7 +9,7 @@ const labelVariants = cva(
 )
 
 const Label = React.forwardRef(({ className, ...props }, ref) => (
-  <LabelPrimitive.Root ref={ref} className={cn(labelVariants(), className)} {...props} />
+  <LabelPrimitive.Root ref={ref} className={cn(labelVariants(), className)} style={{ color: 'inherit' }} {...props} />
 ))
 Label.displayName = LabelPrimitive.Root.displayName
 
