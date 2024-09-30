@@ -4,7 +4,7 @@ const router = express.Router();
 const {
 	getTourGuide,
 	updateTourGuide,
-  } = require("../controllers/touristController");
+  } = require("../controllers/tourGuideController");
   
   router
 	.route("/")
