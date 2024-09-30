@@ -11,6 +11,8 @@ const activityRoutes = require("./routes/activityRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const tagRoutes = require("./routes/tagRoutes");
 const userRoutes = require("./routes/user-routes");
+const touristRoutes = require("./routes/tourist-routes");
+const tourGuideRoutes = require("./routes/tourGuide-routes");
 
 const app = express();
 
@@ -64,6 +66,12 @@ app.use("/category", categoryRoutes);
 
 // Activities' tags routes
 app.use("/tag", tagRoutes);
+
+//Tourist routes
+app.use("/tourist", touristRoutes); // All admin-related routes will start with /api/admin
+
+//TourGuide routes
+app.use("/tourGuide", tourGuideRoutes); // All admin-related routes will start with /api/admin
 
 // Fallback route for unknown endpoints
 app.use((req, res, next) => {

@@ -57,6 +57,25 @@ const getCategory = async (req, res) => {
 };
 
 /**
+ * Retrieves all categories
+ *
+ * @param {Object} req - The request object
+ * @param {Object} res - The response object used to send the retrieved categories or an error message
+ * @returns {Object} - A JSON array of all categories or an error message
+ */
+const getAllCategories = async (req, res) => {
+  try {
+    const categories = await Category.find();
+    res.status(200).json(categories);
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error getting categories",
+      error: error.message,
+    });
+  }
+};
+
+/**
  * Deletes a category by its ID
  *
  * @param {Object} req - Request object containing the category ID
@@ -114,4 +133,5 @@ module.exports = {
   getCategory,
   deleteCategory,
   updateCategory,
+  getAllCategories,
 };
