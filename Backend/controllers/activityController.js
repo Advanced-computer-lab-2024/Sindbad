@@ -299,6 +299,82 @@ const deleteActivity = async (req, res) => {
   }
 };
 
+const getSortedActivitiesHelper = async (
+  sortBy,
+  sortOrder = "asc",
+  page = 1,
+  limit = 10
+) => {
+  try {
+    let sortCriteria = {};
+    let order = sortOrder === "asc" ? 1 : -1;
+
+    if (sortBy === "price") {
+      sortCriteria = {
+        $addFields: {
+          priceValue: {
+            $cond: {
+              if: { $isNumber: "$price" },
+              then: "$price",
+              else: "$price.min",
+            },
+          },
+        },
+      };
+    } else if (sortBy === "rating") {
+      sortCriteria = { rating: order };
+    } else {
+      throw new Error("Invalid sortBy parameter. Use 'price' or 'rating'.");
+    }
+
+    const skip = (page - 1) * limit;
+
+    const activities =
+      sortBy === "price"
+        ? await Activity.aggregate([
+            sortCriteria,
+            { $sort: { priceValue: order } },
+            { $skip: skip }, // Skip for pagination
+            { $limit: limit }, // Limit the number of results
+          ])
+        : await Activity.find().sort(sortCriteria).skip(skip).limit(limit);
+
+    return activities;
+  } catch (error) {
+    console.error("Error fetching sorted activities:", error);
+    throw error;
+  }
+};
+
+/**
+ * Fetches sorted activities with pagination
+ *
+ * @param {Object} req - Request object
+ * @param {string} req.body.sortBy - Field to sort by ("price" or "rating")
+ * @param {string} [req.body.sortOrder="asc"] - Sort order ("asc" or "desc"). Default is "asc"
+ * @param {number} [req.body.page=1] - Page number for pagination. Default is 1
+ * @param {number} [req.body.limit=10] - Number of activities per page. Default is 10
+ *
+ * @param {Object} res - Response
+ *
+ * @returns {void} - Sends the sorted activities or an error message
+ */
+
+const getSortedActivities = async (req, res) => {
+  const { sortBy, sortOrder = "asc", page = 1, limit = 10 } = req.body;
+  try {
+    const activities = await getSortedActivitiesHelper(
+      sortBy,
+      sortOrder,
+      page,
+      limit
+    );
+    res.status(200).json(activities);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   setActivity,
   getActivity,
@@ -308,4 +384,5 @@ module.exports = {
   getAllActivities,
   searchActivities,
   filterActivities,
+  getSortedActivities,
 };

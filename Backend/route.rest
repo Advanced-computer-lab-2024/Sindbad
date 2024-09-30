@@ -1,0 +1,55 @@
+
+GET http://localhost:3000/tourist
+
+###
+
+GET http://localhost:3000/tourist/66f7096444164681e6e3695f
+
+###
+POST http://localhost:3000/tourist
+Content-Type: application/json
+
+{
+    "email" : "k@gmail.com",
+    "username": "iidk",
+    "passwordHash": "ppass",
+    "mobileNumber": "+201285556345",
+    "nationality" : "egyptiann",
+    "DOB":"2013-10-21",
+    "job":"student"
+}
+
+###
+
+PATCH http://localhost:3000/tourist/66f7096444164681e6e3695f
+Content-Type: application/json
+
+{
+    "username": "iidk"
+}
+
+
+
+###
+
+GET http://localhost:3000/tourGuide
+
+###
+GET http://localhost:3000/tourGuide/66f8630f55f21e927d7455cc
+###
+POST http://localhost:3000/tourGuide
+Content-Type: application/json
+
+{
+    "email" : "tourGuide@gmail.com",
+    "username": "tourGuide",
+    "passwordHash": "pass"
+}
+
+###
+PATCH http://localhost:3000/tourGuide/66f8630f55f21e927d7455cc
+Content-Type: application/json
+
+{
+    "mobileNumber": "+201592222306"
+}
