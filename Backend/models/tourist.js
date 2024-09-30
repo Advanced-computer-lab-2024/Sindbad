@@ -1,7 +1,4 @@
-const mongoose = require('mongoose');
-const passportLocalMongoose = require("passport-local-mongoose");
-const Schema = mongoose.Schema;
- 
+const mongoose = require("mongoose");
 
 // Define the schema for the Tourist model
 const TouristSchema = new mongoose.Schema({
@@ -65,7 +62,7 @@ const TouristSchema = new mongoose.Schema({
 	},
 	isReceiveNotifications: {
 		type: Boolean,
-		default: true,
+		default: false,
 	},
 	wishlist: {
 		type: [String], // Array of item IDs or details
