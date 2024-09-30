@@ -11,6 +11,7 @@ function getRandomReviews(){
     return Math.floor(Math.random()* 1000) + 1;
 }
 
+
 const reviews = (getRandomReviews());
 const rating = Math.floor(getRandomRating());
 const fullStars = rating;
@@ -28,20 +29,40 @@ const accessibilityFeatures = [
 function Itinerary(){
 
         // State to store the current count
-    const [count, setCount] = useState(1);
+    const [adult, setAdult] = useState(0);
+    const [child, setChild] = useState(0);
     
-    // Function to handle increment
-    const handleIncrement = () => {
-        setCount(count + 1);
-    };
-
-    // Function to handle decrement
-    const handleDecrement = () => {
-    // Ensure count doesn't go below 1 (you can modify this if you want to allow negative values)
-        if (count > 0) {
-            setCount(count - 1);
+    const handleAdultIncrement = () => {
+        setAdult(adult + 1);
+      };
+    
+      // Function to handle decrement for adult
+      const handleAdultDecrement = () => {
+        if (adult > 0) {
+          setAdult(adult - 1);
         }
-    };
+      };
+    
+      // Function to handle increment for child
+      const handleChildIncrement = () => {
+        setChild(child + 1);
+      };
+    
+      // Function to handle decrement for child
+      const handleChildDecrement = () => {
+        if (child > 0) {
+          setChild(child - 1);
+        }
+      };
+
+    // To store which element to border 
+
+    const [selectedDate, setSelectedDate] = useState(0);
+    const [selectedTime, setSelectedTime] = useState(0);
+
+    const dates = ["Mon 30 Sept", "Tue 1 Oct", "Wed 3 Oct"];
+    const times = ["6:30", "8:00", "9:30"];
+    const locations = [1,2,3];
 
     return(
         <div className="min-h-screen flex justify-center items-center">
@@ -52,8 +73,7 @@ function Itinerary(){
                         <h1 className="text-4xl font-bol">Itinerary Name</h1>
                         <p className="text-gray-500 text-lg">Provider Name</p>
 
-                        {/*Star Section
-                        TODO: replace stars + make them full/empty */}
+                        {/*Star Section */}
                         <div className=" relative flex gap-4">
                             <div className=" flex">
                                 
@@ -82,7 +102,9 @@ function Itinerary(){
                             <h2 className="text-xl font-semibold pb-2">Supported Langauges</h2>
                             <div className="flex flex-wrap gap-2">
                                 {["English", "Spanish", "Portuguese", "Arabic", "Chinese","German"].map((lang) => (
-                                    <button key={lang} className="px-3 py-1 bg-slate-800 rounded-full border">
+                                    <button 
+                                    key={lang} 
+                                    className="px-3 py-1 bg-slate-800 rounded-full border cursor-default">
                                         {lang}
                                     </button>
                                 ))}
@@ -111,10 +133,12 @@ function Itinerary(){
                         </div>
                     </div>
                 </div>
+                
+                <div className=" border-y mt-4 mx-24"></div>
 
                 {/*Itinerary + Availbility*/}
-                <div className="grid grid-cols-3 gap-8 mt-8">
-                    <div>
+                <div className="grid grid-cols-10 grid-rows gap-8 mt-8">
+                    <div className="col-span-2">
                         <h2 className="text-2xl font-semibold mb-4">Itinerary</h2>
                         <ul className="space-y-4">
                             <li>
@@ -127,7 +151,7 @@ function Itinerary(){
                                     </div>
                                 </div>
                             </li>
-                            {[1, 2, 3].map((stop) => (
+                            {locations.map((stop) => (
                                 <li key={stop}>
                                     <div className="flex items-start- space-x-2">
                                         <div className="flex-shrink-0 bg-white text-black font-semibold w-10 h-10 flex items-center justify-center rounded-full">
@@ -155,98 +179,120 @@ function Itinerary(){
                     </div>
                     
                     {/* Map Placeholder*/}
-                    <div className="bg-gray-300 h-full w-full rounded-lg"></div>
+                    <div className="col-span-4 bg-gray-300 h-full w-full rounded-lg"></div>
                     
                     {/*Availibility Section
                     TODO: add conditional for selected element to have thicker border, seperate day and month to make them appear vertical, lookup map docs*/}
-                    <div>
-                        <h2 className="text-2xl font-semibold mb-4">Search Availability</h2>
-                        <div className="grid grid-cols-3 gap-2">
-                            {["30 Sept", "1 Oct", "3 Oct"].map((date,idx)=>(
-                                <button key={idx} className=" border py-2 px-4 min-h-20 rounded-md bg-slate-700 ">
-                                    {date}
+                        <div className="col-span-4">
+                            <h2 className="text-2xl font-semibold mb-4">Search Availability</h2>
+                            <div className="grid grid-cols-3 gap-2">
+                                {dates.map((date,idx)=>(
+                                    <button 
+                                    key={idx}
+                                    onClick={() => setSelectedDate(idx)}
+                                    className={`border py-2 px-4 min-h-20 rounded-md bg-slate-700 ${
+                                        selectedDate=== idx ? 'border-white border-2 ' : 'border-transparent'
+                                    }`}>
+                                    <span className="text-sm text-gray-400">{date.split(" ")[0]}</span><br/> {/* Weekday */}
+                                    <span className="text-lg font-semibold text-white ml-1">{date.split(" ")[1]}</span><br/> {/* Day */}
+                                    <span className="text-sm text-gray-400 ml-1">{date.split(" ")[2]}</span> {/* Month */}
                                 </button>
-                            ))}
-                        </div>
-
-                        <div className="flex flex-wrap gap-2 my-4">
-                            {["6:30", "8:00", "9:30"].map((time, idx) => (
-                                <button key={idx} className="border py-2 px-4 rounded-xl bg-slate-700">
-                                    {time}
-                                </button>
-                            ))}
-                        </div>
-
-                        <div className="space-y-4">
-                            <div className="flex items-center justify-around">
-                                
-                                <div className="flex space-x-2">
-                                <p className="text-xl">Adult</p> 
-                                <p className=" text-slate-500">(16+)</p>
-                                </div>
-                                <div className="flex items-center justify-center gap-4 ">
-                                    {/* Decrement Button */}
-                                    <button
-                                        onClick={handleDecrement}
-                                        className="bg-gray-200 text-black rounded-lg w-10 h-10 flex items-center justify-center text-2xl"
-                                    >
-                                        -
-                                    </button>
-
-                                    {/* Count Display */}
-                                    <div className="border border-gray-300 rounded-lg w-10 h-10 flex items-center justify-center text-xl">
-                                        {count}
-                                    </div>
-
-                                    {/* Increment Button */}
-                                    <button
-                                        onClick={handleIncrement}
-                                        className="bg-gray-200 text-black rounded-lg w-10 h-10 flex items-center justify-center text-2xl"
-                                    >
-                                        +
-                                    </button>
-                                </div>             
+                                ))}
                             </div>
-                            <div className="flex items-center justify-around">
-                                <div className="flex space-x-2">
-                                <p className="text-xl">Child</p> 
-                                <p className=" text-slate-500">(5-15)</p>
-                                </div>
-                                <div className="flex items-center justify-center gap-4">
-                                    {/* Decrement Button */}
-                                    <button
-                                        onClick={handleDecrement}
-                                        className="bg-gray-200 text-black rounded-lg w-10 h-10 flex items-center justify-center text-2xl"
-                                    >
-                                        -
-                                    </button>
 
-                                    {/* Count Display */}
-                                    <div className="border border-gray-300 rounded-lg w-10 h-10 flex items-center justify-center text-xl">
-                                        {count}
-                                    </div>
-
-                                    {/* Increment Button */}
-                                    <button
-                                        onClick={handleIncrement}
-                                        className="bg-gray-200 text-black rounded-lg w-10 h-10 flex items-center justify-center text-2xl"
-                                    >
-                                        +
+                            <div className="flex flex-wrap gap-2 my-4">
+                                {times.map((time, idx) => (
+                                    <button 
+                                    key={idx}
+                                    onClick={() => setSelectedTime(idx)} 
+                                    className={`border py-2 px-4 rounded-xl bg-slate-700 ${
+                                        selectedTime === idx ? 'border-white border-2 ' : 'border-transparent'
+                                    }`}>
+                                        {time}
                                     </button>
-                                </div>  
+                                ))}
                             </div>
-                        </div>
 
-                        {/* Total Cost Section */}
-                        <div className="border-t mt-4 pt-4">
-                            <p>Total: <span className="font-semibold">2100.05 LE</span></p>
-                            <p className="text-sm text-gray-500">Includes taxes and charges</p>
-                        </div>
+                            <div className="relative p-6 bg-slate-800 border border-gray-300 rounded-lg">
 
-                        {/* Book Now Button */}
-                        <button className="bg-blue-500 text-white w-full py-3 mt-4 rounded">
-                            Book Now
-                        </button>
+                                {/* Top cutout */}
+                                <div className="absolute inset-x-0 top-36  -left-5 -right-5 flex justify-between">  
+                                        <div className="w-10 h-10 bg-slate-800 border-r-2 border-gray-300 rounded-full"></div>
+                                        <div className="w-10 h-10 bg-slate-800 border-l-2 border-gray-300 rounded-full"></div>
+                                </div>
+
+
+                            <div className="space-y-4 mt-6">
+                                <div className="flex items-center justify-around">
+                                    
+                                    <div className="flex space-x-2">
+                                        <p className="text-xl">Adult</p> 
+                                        <p className=" text-slate-500">(16+)</p>
+                                    </div>
+                                    <div className="flex items-center justify-center gap-4 ">
+                                        {/* Decrement Button */}
+                                        <button
+                                            onClick={handleAdultDecrement}
+                                            className="bg-gray-200 text-black rounded-lg w-10 h-10 flex items-center justify-center text-2xl"
+                                        >
+                                            -
+                                        </button>
+
+                                        {/* Count Display */}
+                                        <div className="border border-gray-300 rounded-lg w-10 h-10 flex items-center justify-center text-xl">
+                                            {adult}
+                                        </div>
+
+                                        {/* Increment Button */}
+                                        <button
+                                            onClick={handleAdultIncrement}
+                                            className="bg-gray-200 text-black rounded-lg w-10 h-10 flex items-center justify-center text-2xl"
+                                        >
+                                            +
+                                        </button>
+                                    </div>             
+                                </div>
+                                <div className="flex items-center justify-around">
+                                    <div className="flex space-x-2">
+                                        <p className="text-xl">Child</p> 
+                                        <p className=" text-slate-500">(5-15)</p>
+                                    </div>
+                                    <div className="flex items-center justify-center gap-4">
+                                        {/* Decrement Button */}
+                                        <button
+                                            onClick={handleChildDecrement}
+                                            className="bg-gray-200 text-black rounded-lg w-10 h-10 flex items-center justify-center text-2xl"
+                                        >
+                                            -
+                                        </button>
+
+                                        {/* Count Display */}
+                                        <div className="border border-gray-300 rounded-lg w-10 h-10 flex items-center justify-center text-xl">
+                                            {child}
+                                        </div>
+
+                                        {/* Increment Button */}
+                                        <button
+                                            onClick={handleChildIncrement}
+                                            className="bg-gray-200 text-black rounded-lg w-10 h-10 flex items-center justify-center text-2xl"
+                                        >
+                                            +
+                                        </button>
+                                    </div>  
+                                </div>
+                            </div>
+
+                            {/* Total Cost Section */}
+                            <div className="border-t border-dotted mt-4 pt-4">
+                                <p>Total: <span className="font-semibold text-xl">2100.05 LE</span></p>
+                                <p className="text-sm text-gray-500">Includes taxes and charges</p>
+                            </div>
+
+                            {/* Book Now Button */}
+                            <button className="bg-slate-500 text-white w-full py-3 mt-4 rounded">
+                                Book Now
+                            </button>
+                        </div>
                     </div>
 
                 </div>
