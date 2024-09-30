@@ -17,23 +17,27 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import { z } from "zod";
 import { Navigate } from "react-router-dom";
 import { userSignUp } from "@/services/ApiHandler";
+import SpinnerSVG from '@/SVGs/Spinner.jsx';
+import { ArrowLeft } from "lucide-react";
 
 function SignUp() {
     const [registerType, setRegisterType] = useState("Tourist");
     const [logInRedirect, setLogInRedirect] = useState(false);
     const [currentStep, setCurrentStep] = useState(1);
     const [formValues, setFormValues] = useState({});
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
     // Schema for the tourist form
     const commonFormSchema = z.object({
         username: z.string().min(2, {
             message: "Username must be at least 2 characters.",
         }),
-        email: z.string().email({
+        email: z.string().regex(/^\S+@\S+\.\S+$/, {
             message: "Invalid email.",
         }),
         password: z.string().min(8, {
@@ -42,7 +46,7 @@ function SignUp() {
     });
 
     const touristFormSchema = z.object({
-        mobileNumber: z.string().min(8, {
+        mobileNumber: z.string().regex(/^\+?[1-9]\d{1,14}$/, {
             message: "Invalid mobile number.",
         }),
         nationality: z.string(),
@@ -74,13 +78,13 @@ function SignUp() {
     });
 
     // Watch for changes in registerType to reset the form schema and values
-    useEffect(() => {
-        if (registerType !== "Tourist") {
-            form.reset(otherDefaultValues);
-        } else {
-            form.reset(touristDefaultValues);
-        }
-    }, [registerType, form]);
+    // useEffect(() => {
+    //     if (registerType !== "Tourist") {
+    //         form.reset(otherDefaultValues);
+    //     } else {
+    //         form.reset(touristDefaultValues);
+    //     }
+    // }, [registerType, form]);
 
     const handleRegisterTypeChange = (value) => {
         setRegisterType(value);
@@ -93,9 +97,16 @@ function SignUp() {
             setCurrentStep(2);
         } else {
             let finalValues = { ...formValues, ...values };
+            setError(null);
+
+            setLoading(true);
             const response = await userSignUp(finalValues, registerType);
+            setLoading(false);
+
             if (response.error) {
                 console.error('Sign-up error:', response.message);
+                setError(response.message);
+                setCurrentStep(1);
             } else {
                 setLogInRedirect(true);
             }
@@ -110,11 +121,11 @@ function SignUp() {
                 name="username"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Username</FormLabel>
+                        <FormLabel htmlFor="username">Username</FormLabel>
                         <FormControl>
-                            <Input {...field} />
+                            <Input id="username" {...field} />
                         </FormControl>
-                        <FormMessage className="text-destructive text-xs" />
+                        <FormMessage />
                     </FormItem>
                 )}
             />
@@ -124,11 +135,11 @@ function SignUp() {
                 name="email"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Email</FormLabel>
+                        <FormLabel htmlFor="email">Email</FormLabel>
                         <FormControl>
-                            <Input {...field} />
+                            <Input id="email" {...field} />
                         </FormControl>
-                        <FormMessage className="text-destructive text-xs" />
+                        <FormMessage />
                     </FormItem>
                 )}
             />
@@ -138,11 +149,11 @@ function SignUp() {
                 name="password"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Password</FormLabel>
+                        <FormLabel htmlFor="password">Password</FormLabel>
                         <FormControl>
-                            <Input {...field} type="password" />
+                            <Input id="password" {...field} type="password" />
                         </FormControl>
-                        <FormMessage className="text-destructive text-xs" />
+                        <FormMessage />
                     </FormItem>
                 )}
             />
@@ -157,11 +168,11 @@ function SignUp() {
                 name="DOB"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Date of Birth</FormLabel>
+                        <FormLabel htmlFor="DOB">Date of Birth</FormLabel>
                         <FormControl>
-                            <Input type="date" {...field} />
+                            <Input id="DOB" type="date" {...field} />
                         </FormControl>
-                        <FormMessage className="text-destructive text-xs" />
+                        <FormMessage />
                     </FormItem>
                 )}
             />
@@ -171,11 +182,11 @@ function SignUp() {
                 name="nationality"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Nationality</FormLabel>
+                        <FormLabel htmlFor="nationality">Nationality</FormLabel>
                         <FormControl>
-                            <Input {...field} />
+                            <Input id="nationality" {...field} />
                         </FormControl>
-                        <FormMessage className="text-destructive text-xs" />
+                        <FormMessage />
                     </FormItem>
                 )}
             />
@@ -185,11 +196,11 @@ function SignUp() {
                 name="job"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Job</FormLabel>
+                        <FormLabel htmlFor="job">Job</FormLabel>
                         <FormControl>
-                            <Input {...field} />
+                            <Input id="job" {...field} />
                         </FormControl>
-                        <FormMessage className="text-destructive text-xs" />
+                        <FormMessage />
                     </FormItem>
                 )}
             />
@@ -199,16 +210,16 @@ function SignUp() {
                 name="mobileNumber"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Mobile Number</FormLabel>
+                        <FormLabel htmlFor="mobileNumber">Mobile Number</FormLabel>
                         <FormControl>
-                            <Input {...field} />
+                            <Input id="mobileNumber" {...field} />
                         </FormControl>
-                        <FormMessage className="text-destructive text-xs" />
+                        <FormMessage />
                     </FormItem>
                 )}
             />
         </div>
-    );    
+    );
 
     return (
         <div className="w-full min-h-screen grid grid-cols-2">
@@ -221,14 +232,16 @@ function SignUp() {
                     {logInRedirect ? <Navigate to="/login" /> : null}
                 </div>
                 <div className="flex flex-col flex-grow justify-center items-center">
-                    <h1 className="font-extrabold text-3xl mb-4">Create Your Account</h1>
+                    <h1 className="font-bold text-2xl mb-4">
+                        {currentStep == 1 ? "Create an account" : "One more step!"}
+                    </h1>
                     <div className="w-2/5 flex flex-col gap-4">
                         {currentStep === 1 && (
                             <div className="flex items-center justify-center gap-4 my-2">
                                 <h1 className="font-semibold text-nowrap">I am a...</h1>
-                                <Select onValueChange={handleRegisterTypeChange}>
+                                <Select onValueChange={handleRegisterTypeChange} value={registerType}>
                                     <SelectTrigger>
-                                        <SelectValue className="text-center" placeholder="Tourist" />
+                                        <SelectValue className="text-center" />
                                     </SelectTrigger>
                                     <SelectContent className="bg-neutral-900">
                                         <SelectItem value="Tourist">Tourist</SelectItem>
@@ -240,10 +253,20 @@ function SignUp() {
                             </div>
                         )}
                         <Form {...form}>
-                            <form onSubmit={form.handleSubmit(onSubmit)} className="gap-3 flex flex-col">
+                            <form onSubmit={form.handleSubmit(onSubmit)} className="gap-2 flex flex-col">
                                 {currentStep === 1 ? renderCommonFields() : renderTouristFields()}
-                                {currentStep === 2 && (
-                                    <p className="text-center text-light/70 text-sm">
+                                {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+                                <Button type="submit" disabled={loading} className="bg-primary-700 justify-center w-full mt-4">
+                                    {loading ? <SpinnerSVG /> : currentStep === 1 && registerType == "Tourist" ? "Continue" : "Sign Up"}
+                                </Button>
+                                {currentStep === 2 &&
+                                    <Button variant="link" onClick={() => setCurrentStep(1)} className="-mt-1 flex gap-2 items-center self-center">
+                                        <ArrowLeft size={12} />
+                                        Back
+                                    </Button>
+                                }
+                                {currentStep === 1 && (
+                                    <p className="text-center text-light/70 text-sm mt-5">
                                         By creating an account you agree to our{" "}
                                         <a href="#" className="text-secondary/90 hover:text-secondary hover:decoration-light/80 decoration-light/70 underline underline-offset-2">
                                             Terms of Service
@@ -254,9 +277,6 @@ function SignUp() {
                                         </a>.
                                     </p>
                                 )}
-                                <Button type="submit" className="bg-primary-700 justify-center w-max mt-4">
-                                    {currentStep === 1 && registerType == "Tourist" ? "Continue" : "Sign Up"}
-                                </Button>
                             </form>
                         </Form>
                     </div>

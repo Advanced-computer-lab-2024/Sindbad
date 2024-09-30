@@ -42,7 +42,7 @@ export const userSignUp = async (finalValues, registerType) => {
             // Server responded with a status other than 2xx
             return {
                 error: true,
-                message: error.response.data.message || 'Unknown error occurred',
+                message: error.response.data.error || 'Unknown error occurred',
                 status: error.response.status,
             };
         } else if (error.request) {
