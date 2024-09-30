@@ -32,92 +32,92 @@ function SignUp() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    // Schema for the tourist form
+    const handleRegisterTypeChange = (value) => {
+        setRegisterType(value);
+    };
+
     const commonFormSchema = z.object({
         username: z.string().min(2, {
-            message: "Username must be at least 2 characters.",
+            message: "Username must be at least 2 characters",
         }),
         email: z.string().regex(/^\S+@\S+\.\S+$/, {
-            message: "Invalid email.",
+            message: "Invalid email",
         }),
         password: z.string().min(8, {
-            message: "Password must be at least 8 characters.",
+            message: "Password must be at least 8 characters",
         }),
     });
 
     const touristFormSchema = z.object({
         mobileNumber: z.string().regex(/^\+?[1-9]\d{1,14}$/, {
-            message: "Invalid mobile number.",
+            message: "Invalid mobile number",
         }),
-        nationality: z.string(),
+        nationality: z.string().min(1, {
+            message: "Nationality is required"
+        }),
         DOB: z.string().refine((val) => !isNaN(Date.parse(val)), {
-            message: "Invalid date.",
+            message: "Invalid date of birth",
         }),
-        job: z.string(),
+        job: z.string().min(1, {
+            message: "Job is required"
+        }),
     });
+
+    const commonDefaultValues = {
+        username: "",
+        email: "",
+        password: "",
+    };
 
     const touristDefaultValues = {
-        username: "",
-        email: "",
-        password: "",
-        mobileNumber: "",
-        nationality: "",
         DOB: "",
+        nationality: "",
         job: "",
+        mobileNumber: "",
     };
 
-    const otherDefaultValues = {
-        username: "",
-        email: "",
-        password: "",
-    };
-
-    const form = useForm({
-        resolver: zodResolver(currentStep === 1 ? commonFormSchema : touristFormSchema),
-        defaultValues: currentStep === 1 ? touristDefaultValues : formValues,
+    const commonForm = useForm({
+        resolver: zodResolver(commonFormSchema),
+        defaultValues: commonDefaultValues,
     });
 
-    // Watch for changes in registerType to reset the form schema and values
-    // useEffect(() => {
-    //     if (registerType !== "Tourist") {
-    //         form.reset(otherDefaultValues);
-    //     } else {
-    //         form.reset(touristDefaultValues);
-    //     }
-    // }, [registerType, form]);
+    const touristForm = useForm({
+        resolver: zodResolver(touristFormSchema),
+        defaultValues: touristDefaultValues,
+    });
 
-    const handleRegisterTypeChange = (value) => {
-        setRegisterType(value);
-    };
-
-    const onSubmit = async (values) => {
-        if (currentStep === 1 && registerType === "Tourist") {
-            // Move to next step and store first step values
-            setFormValues(values);
+    const handleCommonFormSubmit = (data) => {
+        setFormValues((prev) => ({ ...prev, ...data }));  // Store Step 1 data
+        if (registerType === "Tourist") {
             setCurrentStep(2);
         } else {
-            let finalValues = { ...formValues, ...values };
-            setError(null);
-
-            setLoading(true);
-            const response = await userSignUp(finalValues, registerType);
-            setLoading(false);
-
-            if (response.error) {
-                console.error('Sign-up error:', response.message);
-                setError(response.message);
-                setCurrentStep(1);
-            } else {
-                setLogInRedirect(true);
-            }
+            submitForm({ ...formValues, ...data });
         }
     };
+
+    const handleTouristFormSubmit = (data) => {
+        submitForm({ ...formValues, ...data });
+    };
+
+    const submitForm = async (values) => {
+        setLoading(true);
+        const response = await userSignUp(values, registerType);
+        setLoading(false);
+
+        if (response.error) {
+            console.error('Sign-up error:', response.message);
+            setCurrentStep(1);
+            setError(response.message);
+        } else {
+            setLogInRedirect(true);
+        }
+    }
 
     const renderCommonFields = () => (
         <>
             <FormField
                 key="username"
-                control={form.control}
+                control={commonForm.control}
                 name="username"
                 render={({ field }) => (
                     <FormItem>
@@ -131,7 +131,7 @@ function SignUp() {
             />
             <FormField
                 key="email"
-                control={form.control}
+                control={commonForm.control}
                 name="email"
                 render={({ field }) => (
                     <FormItem>
@@ -145,7 +145,7 @@ function SignUp() {
             />
             <FormField
                 key="password"
-                control={form.control}
+                control={commonForm.control}
                 name="password"
                 render={({ field }) => (
                     <FormItem>
@@ -164,7 +164,7 @@ function SignUp() {
         <div className="flex flex-col gap-2">
             <FormField
                 key="DOB"
-                control={form.control}
+                control={touristForm.control}
                 name="DOB"
                 render={({ field }) => (
                     <FormItem>
@@ -178,7 +178,7 @@ function SignUp() {
             />
             <FormField
                 key="nationality"
-                control={form.control}
+                control={touristForm.control}
                 name="nationality"
                 render={({ field }) => (
                     <FormItem>
@@ -192,7 +192,7 @@ function SignUp() {
             />
             <FormField
                 key="job"
-                control={form.control}
+                control={touristForm.control}
                 name="job"
                 render={({ field }) => (
                     <FormItem>
@@ -206,7 +206,7 @@ function SignUp() {
             />
             <FormField
                 key="mobileNumber"
-                control={form.control}
+                control={touristForm.control}
                 name="mobileNumber"
                 render={({ field }) => (
                     <FormItem>
@@ -252,20 +252,16 @@ function SignUp() {
                                 </Select>
                             </div>
                         )}
-                        <Form {...form}>
-                            <form onSubmit={form.handleSubmit(onSubmit)} className="gap-2 flex flex-col">
-                                {currentStep === 1 ? renderCommonFields() : renderTouristFields()}
-                                {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-                                <Button type="submit" disabled={loading} className="bg-primary-700 justify-center w-full mt-4">
-                                    {loading ? <SpinnerSVG /> : currentStep === 1 && registerType == "Tourist" ? "Continue" : "Sign Up"}
-                                </Button>
-                                {currentStep === 2 &&
-                                    <Button variant="link" onClick={() => setCurrentStep(1)} className="-mt-1 flex gap-2 items-center self-center">
-                                        <ArrowLeft size={12} />
-                                        Back
+
+                        {/* form step 1 */}
+                        {currentStep === 1 &&
+                            <Form {...commonForm}>
+                                <form onSubmit={commonForm.handleSubmit(handleCommonFormSubmit)} className="gap-2 flex flex-col">
+                                    {renderCommonFields()}
+                                    {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+                                    <Button type="submit" disabled={loading} className="bg-primary-700 justify-center w-full mt-4">
+                                        {loading ? <SpinnerSVG /> : registerType == "Tourist" ? "Continue" : "Sign Up"}
                                     </Button>
-                                }
-                                {currentStep === 1 && (
                                     <p className="text-center text-light/70 text-sm mt-5">
                                         By creating an account you agree to our{" "}
                                         <a href="#" className="text-secondary/90 hover:text-secondary hover:decoration-light/80 decoration-light/70 underline underline-offset-2">
@@ -276,9 +272,26 @@ function SignUp() {
                                             Privacy Policy
                                         </a>.
                                     </p>
-                                )}
-                            </form>
-                        </Form>
+                                </form>
+                            </Form>
+                        }
+
+                        {/* form step 2 */}
+                        {currentStep === 2 &&
+                            <Form {...touristForm}>
+                                <form onSubmit={touristForm.handleSubmit(handleTouristFormSubmit)} className="gap-2 flex flex-col">
+                                    {renderTouristFields()}
+                                    {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+                                    <Button type="submit" disabled={loading} className="bg-primary-700 justify-center w-full mt-4">
+                                        {loading ? <SpinnerSVG /> : "Sign Up"}
+                                    </Button>
+                                    <Button onClick={() => setCurrentStep(1)} variant="link" className="text-center -mt-1 flex gap-2 self-center">
+                                        <ArrowLeft size={12} />
+                                        Back
+                                    </Button>
+                                </form>
+                            </Form>
+                        }
                     </div>
                 </div>
             </div>
