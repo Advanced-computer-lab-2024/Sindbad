@@ -1,21 +1,27 @@
 import ImagePlaceholder from "../ImagePlaceholder";
 import { BadgeCheck, Phone, Link } from "lucide-react";
 import { useUser } from '@/state management/userInfo';
+import { Settings } from "lucide-react";
 
-function ProfileBanner({ userData }) {
+function ProfileBanner({ userData, userId, id }) {
     const { type } = useUser();
 
     function camelCaseToEnglish(str) {
-        let result = str.replace(/([A-Z])/g, ' $1').replace(/^./, function(match) {
+        let result = str.replace(/([A-Z])/g, ' $1').replace(/^./, function (match) {
             return match.toUpperCase();
         });
-        return result.trim(); 
+        return result.trim();
     }
 
     return (
-        <section className="w-[280px] border border-neutral-600 rounded-md overflow-clip flex flex-col items-center shrink-0 pb-6 bg-gradient-to-b from-light/[0.03] to-transparent">
+        <section className="group relative w-[280px] border border-neutral-600 rounded-md overflow-clip flex flex-col items-center shrink-0 pb-6 bg-gradient-to-b from-light/[0.03] to-transparent">
             <div className="h-[110px] w-full">
                 <ImagePlaceholder />
+                {id === userId &&
+                    <button className="absolute top-2 right-2 border-2 border-dark opacity-0 group-hover:opacity-100 transition-all hover:border-secondary bg-primary-900 p-1.5 rounded-full">
+                        <Settings size={16} />
+                    </button>
+                }
             </div>
             <div className="px-6 w-full flex flex-col gap-5">
                 <div className="flex flex-col -mt-10 w-full items-center gap-3">
