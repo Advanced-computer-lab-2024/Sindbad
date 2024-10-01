@@ -1,7 +1,17 @@
 import ImagePlaceholder from "../ImagePlaceholder";
 import { BadgeCheck, Phone, Link } from "lucide-react";
+import { useUser } from '@/state management/userInfo';
 
-function ProfileBanner() {
+function ProfileBanner({ userData }) {
+    const { type } = useUser();
+
+    function camelCaseToEnglish(str) {
+        let result = str.replace(/([A-Z])/g, ' $1').replace(/^./, function(match) {
+            return match.toUpperCase();
+        });
+        return result.trim(); 
+    }
+
     return (
         <section className="w-[280px] border border-neutral-600 rounded-md overflow-clip flex flex-col items-center shrink-0 pb-6 bg-gradient-to-b from-light/[0.03] to-transparent">
             <div className="h-[110px] w-full">
@@ -15,24 +25,24 @@ function ProfileBanner() {
                     <div>
                         <div className="flex items-center gap-1.5">
                             <h3 className="font-inter font-bold text-xl break-all">
-                                John Doe
+                                {userData.username}
                             </h3>
                             <div className="shrink-0">
-                                <BadgeCheck size={19} />
+                                {type !== "tourist" && <BadgeCheck size={19} />}
                             </div>
                         </div>
                         <h4 className="text-center font-semibold text-base text-neutral-500">
-                            Tour Guide
+                            {camelCaseToEnglish(type)}
                         </h4>
                     </div>
-                    <div className="flex gap-1 items-center bg-gradient-to-br from-primary-700 to-primary-900 px-3 py-1.5 rounded-full">
+                    {/* <div className="flex gap-1 items-center bg-gradient-to-br from-primary-700 to-primary-900 px-3 py-1.5 rounded-full">
                         <div className="shrink-0">
                             <Phone size={16} />
                         </div>
-                        <p className="text-xs leading-[11px]">+20 109 1234 567</p>
-                    </div>
+                        <p className="text-xs leading-[11px]">{userData.mobileNumber}</p>
+                    </div> */}
                 </div>
-                <hr className="border-neutral-700 border" />
+                {/* <hr className="border-neutral-700 border" />
                 <div className="flex flex-col gap-1.5">
                     <div className="flex gap-1">
                         <div className="shrink-0 pt-[1px]">
@@ -50,7 +60,7 @@ function ProfileBanner() {
                             Link 2
                         </a>
                     </div>
-                </div>
+                </div> */}
             </div>
         </section>
     );

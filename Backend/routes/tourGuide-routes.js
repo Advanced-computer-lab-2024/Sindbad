@@ -7,7 +7,7 @@ const {
   } = require("../controllers/tourGuideController");
   
   router
-	.route("/")
+	.route("/getTourGuide/:id")
 	.get(getTourGuide)
 	.patch(updateTourGuide);
 
