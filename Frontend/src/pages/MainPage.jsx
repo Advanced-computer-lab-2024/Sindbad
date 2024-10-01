@@ -48,7 +48,7 @@ function MainPage() {
                         {renderFields()}
                     </NavigationMenuList>
                 </NavigationMenu>
-                <NavigationMenu>
+                <NavigationMenu className="ml-auto list-none">
                     <NavigationMenuItem>
                         <NavigationMenuLink to="profile" className={navigationMenuTriggerStyle()}
                         onClick={() => {
