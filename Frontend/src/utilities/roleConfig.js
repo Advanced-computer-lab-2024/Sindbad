@@ -1,11 +1,11 @@
 // Desc: Map for each role to return pages they are allowed to access
 const rolePermissions = {
-    admin: ['Timeline', 'Shopping', 'Profile', 'AccountManagement'],
+    admin: ['Timeline', 'Store', 'Profile', 'AccountManagement'],
     guest: ['Timeline'],
-    tourist: ['Profile', 'Timeline', 'Shopping'],
+    tourist: ['Profile', 'Timeline', 'Store'],
     tourGuide: ['Profile'],
     tourismGovernor: ['Profile'],
-    seller: ['Profile', 'Shopping'],
+    seller: ['Profile', 'Store'],
     advertiser: ['Profile'],
 };
 // Desc: Function to get the pages that a role is allowed to access, based on the rolePermissions map

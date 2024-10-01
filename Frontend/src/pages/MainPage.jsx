@@ -5,52 +5,38 @@ import {
     NavigationMenuItem,
     NavigationMenuLink,
     NavigationMenuList,
-    NavigationMenuTrigger,
     navigationMenuTriggerStyle,
   } from "@/components/ui/navigation-menu"
+import { useUser } from "@/state management/userInfo";
+import { getRolePermissions } from "@/utilities/roleConfig";
 function MainPage() {
     
     const navigate = useNavigate();
+    const { type } = useUser();
+    const renderedFields = getRolePermissions("admin");
+
+    const renderFields = () => {
+        return renderedFields.map((field) => {
+            return (
+                <NavigationMenuItem
+                key={field}
+                >
+                    <NavigationMenuLink to={field} className={navigationMenuTriggerStyle()}
+                    onClick={() => {
+                        navigate(`/app/${field}`, { replace: true });
+                    }}
+                    >
+                        {field}
+                    </NavigationMenuLink>
+                </NavigationMenuItem>
+            );
+        });
+    }
     return (
         <div>
             <NavigationMenu>
                 <NavigationMenuList>
-                    <NavigationMenuItem>
-                            <NavigationMenuLink to="timeline" className={navigationMenuTriggerStyle()}
-                            onClick={() => {
-                                navigate("/app/timeline", { replace: true });
-                            }}
-                            >
-                                Timeline
-                            </NavigationMenuLink>
-                    </NavigationMenuItem>
-                    <NavigationMenuItem>
-                            <NavigationMenuLink to="profile" className={navigationMenuTriggerStyle()}
-                            onClick={() => {
-                                navigate("/app/profile", { replace: true });
-                            }}
-                            >
-                                Profile
-                            </NavigationMenuLink>
-                    </NavigationMenuItem>
-                    <NavigationMenuItem>
-                            <NavigationMenuLink to="store" className={navigationMenuTriggerStyle()}
-                            onClick={() => {
-                                navigate("/app/store", { replace: true });
-                            }}
-                            >
-                                Store
-                            </NavigationMenuLink>
-                    </NavigationMenuItem>
-                    <NavigationMenuItem>
-                            <NavigationMenuLink to="store" className={navigationMenuTriggerStyle()}
-                            onClick={() => {
-                                navigate("/app/accountmanagement", { replace: true });
-                            }}
-                            >
-                                Account Management
-                            </NavigationMenuLink>
-                    </NavigationMenuItem>
+                    {renderFields()}
                 </NavigationMenuList>
             </NavigationMenu>
             <Outlet />
