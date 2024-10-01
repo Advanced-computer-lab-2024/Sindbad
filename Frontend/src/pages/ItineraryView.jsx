@@ -60,7 +60,7 @@ function Itinerary(){
     const [selectedDate, setSelectedDate] = useState(0);
     const [selectedTime, setSelectedTime] = useState(0);
 
-    const dates = ["Mon 30 Sept", "Tue 1 Oct", "Wed 3 Oct"];
+    const dates = ["Mon 30 Sept", "Tue 1 Oct", "Wed 3 Oct", "Thu 4 Oct"];
     const times = ["6:30", "8:00", "9:30"];
     const locations = [1,2,3];
 
@@ -134,7 +134,7 @@ function Itinerary(){
                     </div>
                 </div>
                 
-                <div className=" border-y mt-4 mx-24"></div>
+                <div className=" border-y mt-8 "></div>
 
                 {/*Itinerary + Availbility*/}
                 <div className="grid grid-cols-10 grid-rows gap-8 mt-8">
@@ -185,12 +185,12 @@ function Itinerary(){
                     TODO: add conditional for selected element to have thicker border, seperate day and month to make them appear vertical, lookup map docs*/}
                         <div className="col-span-4">
                             <h2 className="text-2xl font-semibold mb-4">Search Availability</h2>
-                            <div className="grid grid-cols-3 gap-2">
+                            <div className="grid grid-cols-4 gap-2">
                                 {dates.map((date,idx)=>(
                                     <button 
                                     key={idx}
                                     onClick={() => setSelectedDate(idx)}
-                                    className={`border py-2 px-4 min-h-20 rounded-md bg-slate-700 ${
+                                    className={`border py-2 px-4 min-h-20 max-w-24 rounded-md bg-slate-700 ${
                                         selectedDate=== idx ? 'border-white border-2 ' : 'border-transparent'
                                     }`}>
                                     <span className="text-sm text-gray-400">{date.split(" ")[0]}</span><br/> {/* Weekday */}
