@@ -13,7 +13,7 @@ function MainPage() {
     
     const navigate = useNavigate();
     const { type } = useUser();
-    const renderedFields = getRolePermissions("admin");
+    const renderedFields = getRolePermissions("tourist"); //Change this field to change the role of the user
 
     const renderFields = () => {
         return renderedFields.map((field) => {

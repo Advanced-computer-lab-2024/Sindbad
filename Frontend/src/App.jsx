@@ -19,7 +19,7 @@ function App() {
                     <Route path="profile" element={<Profile />} />
                     <Route path="timeline" element={<Timeline/>} />
                     <Route path="store" element={<Timeline/>} />
-                    <Route path="accountmanagement" element={<Timeline/>} />
+                    <Route path="account-management" element={<Timeline/>} />
                 </Route>
                 <Route path="/login" element={<LogIn />} />
                 <Route path="/signup" element={<SignUp />} />
