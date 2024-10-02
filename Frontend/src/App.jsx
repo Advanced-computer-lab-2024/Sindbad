@@ -14,10 +14,12 @@ function App() {
     return (
         <main className="bg-dark text-light font-inter min-h-screen h-max">
             <Routes>
-                <Route path="/app" element={<MainPage />}>
+                <Route path="/app" element={<MainPage/>}>
                     <Route path="profile" element={<Navigate to={`/app/profile/${id}`} replace />} />
                     <Route path="profile/:userId" element={<Profile />} />
-                    <Route path="timeline" element={<Timeline />} />
+                    <Route path="timeline" element={<Timeline/>} />
+                    <Route path="store" element={<Timeline/>} />
+                    <Route path="account-management" element={<Timeline/>} />
                 </Route>
                 <Route path="/login" element={<LogIn />} />
                 <Route path="/signup" element={<SignUp />} />
