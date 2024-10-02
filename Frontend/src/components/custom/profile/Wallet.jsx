@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from 'lucide-react';
 
-function Wallet() {
+function Wallet({ userData }) {
     return (
         <section className="w-[280px] border border-neutral-600 rounded-md overflow-clip flex flex-col items-center shrink-0 p-6 bg-gradient-to-b from-light/[0.03] to-transparent">
             <div className="w-full flex flex-col gap-4">
@@ -11,7 +11,7 @@ function Wallet() {
                             Wallet
                         </h4>
                         <h3 className="font-inter font-bold text-xl break-all">
-                            0.00 EGP
+                            {userData.wallet} EGP
                         </h3>
                     </div>
                 </div>

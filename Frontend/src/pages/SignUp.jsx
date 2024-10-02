@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,7 +17,7 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Navigate } from "react-router-dom";
 import { userSignUp } from "@/services/ApiHandler";

@@ -20,7 +20,7 @@ const getTourist = async (req,res) => {
 	} catch (err) {
 		return res.status(500).json({message:err.message});
 	}
-	res.json(tourist);
+	return res.json(tourist);
 };
 
 /**
