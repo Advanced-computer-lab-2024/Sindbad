@@ -24,10 +24,24 @@ const updateProfile = async (req, res) => {
 	try {
 		const { username, websiteLink, hotline, companyProfile } = req.body; // Get username and other fields from the body
 
+		// Create an object to hold the fields that need to be updated
+		const updateData = {};
+
+		// Add only the fields that are defined (not undefined) to the update object
+		if (websiteLink !== undefined) {
+			updateData.websiteLink = websiteLink;
+		}
+		if (hotline !== undefined) {
+			updateData.hotline = hotline;
+		}
+		if (companyProfile !== undefined) {
+			updateData.companyProfile = companyProfile;
+		}
+
 		const advertiser = await Advertiser.findOneAndUpdate(
 			{ username },
-			{ websiteLink, hotline, companyProfile },
-			{ new: true }
+			{ $set: updateData }, // Use $set to only update specified fields
+			{ new: true } // Return the updated document
 		);
 
 		if (!advertiser) {
