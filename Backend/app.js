@@ -13,8 +13,13 @@ const tagRoutes = require("./routes/tagRoutes");
 const userRoutes = require("./routes/user-routes");
 const touristRoutes = require("./routes/tourist-routes");
 const tourGuideRoutes = require("./routes/tourGuide-routes");
+const productRoutes = require("./routes/productRoutes");
+const sellerRoutes = require("./routes/sellerRoutes");
+require("dotenv").config();
 
 const app = express();
+
+
 
 // Middleware to parse JSON and URL-encoded data
 app.use(express.json());
@@ -61,8 +66,15 @@ app.use("/site", siteRoutes);
 // Activity routes
 app.use("/activity", activityRoutes);
 
+//seller routes
+app.use("/seller", sellerRoutes);
+
 // Activities' categories routes
 app.use("/category", categoryRoutes);
+
+// Product routes
+app.use("/product", productRoutes);
+
 
 // Activities' tags routes
 app.use("/tag", tagRoutes);
