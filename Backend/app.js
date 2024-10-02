@@ -11,15 +11,13 @@ const activityRoutes = require("./routes/activityRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const tagRoutes = require("./routes/tagRoutes");
 const userRoutes = require("./routes/user-routes");
+const advertiserRoutes = require("./routes/advertiserRoutes");
 const touristRoutes = require("./routes/tourist-routes");
 const tourGuideRoutes = require("./routes/tourGuide-routes");
 const productRoutes = require("./routes/productRoutes");
 const sellerRoutes = require("./routes/sellerRoutes");
-require("dotenv").config();
 
 const app = express();
-
-
 
 // Middleware to parse JSON and URL-encoded data
 app.use(express.json());
@@ -27,14 +25,14 @@ app.use(express.urlencoded({ extended: true }));
 
 // Connect to MongoDB, and prevent connecting to the database during testing
 if (process.env.NODE_ENV !== "test") {
-mongoose
-	.connect(process.env.MONGO_URI)
-	.then(() => {
-		console.log("Connected to MongoDB");
-	})
-	.catch((err) => {
-		console.error("Database connection error:", err);
-	});
+	mongoose
+		.connect(process.env.MONGO_URI)
+		.then(() => {
+			console.log("Connected to MongoDB");
+		})
+		.catch((err) => {
+			console.error("Database connection error:", err);
+		});
 }
 
 // TODO: Remove this stuff, we'll be using client-side hashing
@@ -57,6 +55,8 @@ passport.deserializeUser(Admin.deserializeUser());
 
 app.use("/user", userRoutes);
 
+app.use("/advertiser", advertiserRoutes);
+
 // Admin routes
 app.use("/admin", adminRoutes);
 
@@ -74,7 +74,6 @@ app.use("/category", categoryRoutes);
 
 // Product routes
 app.use("/product", productRoutes);
-
 
 // Activities' tags routes
 app.use("/tag", tagRoutes);
