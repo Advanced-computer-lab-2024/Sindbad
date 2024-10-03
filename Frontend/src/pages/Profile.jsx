@@ -5,7 +5,7 @@ import Experience from "@/components/custom/profile/Experience";
 import Wallet from "@/components/custom/profile/Wallet";
 import Timeline from "@/components/custom/profile/Timeline";
 import { useUser } from '@/state management/userInfo';
-import { getTourist, getTourGuide } from "@/services/ApiHandler";
+import { getTourist, getTourGuide, getSeller } from "@/services/ApiHandler";
 
 function Profile() {
     const [userData, setUserData] = useState({});
@@ -18,6 +18,8 @@ function Profile() {
             response = await getTourist(userId);
         else if (type === "tourGuide")
             response = await getTourGuide(userId);
+        else if (type === "seller")
+            response = await getSeller(userId);
 
         if (response.error) {
             console.error(response.message);
