@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import ProfileBanner from "@/components/custom/profile/ProfileBanner";
 import Experience from "@/components/custom/profile/Experience";
 import Wallet from "@/components/custom/profile/Wallet";
-import Itineraries from "@/components/custom/timelines/Itineraries";
+import Timeline from "@/components/custom/profile/Timeline";
 import { useUser } from '@/state management/userInfo';
 import { getTourist, getTourGuide } from "@/services/ApiHandler";
 
@@ -43,7 +43,7 @@ function Profile() {
             </div>
             <div className="w-full flex flex-col gap-12">
                 {type === "tourGuide" && <Experience userData={userData} userId={userId} id={id} />}
-                <Itineraries userData={userData} userId={userId} id={id} />
+                <Timeline userData={userData} userId={userId} id={id} />
             </div>
         </div>
     );

@@ -33,15 +33,17 @@ function ProfileBanner({ userData, userId, id }) {
                             <h3 className="font-inter font-bold text-xl break-all">
                                 {userData.username}
                             </h3>
-                            <div className="shrink-0">
-                                {type !== "tourist" && <BadgeCheck size={19} />}
-                            </div>
+                            {type !== "tourist" &&
+                                <div className="shrink-0">
+                                    <BadgeCheck size={19} />
+                                </div>
+                            }
                         </div>
                         <h4 className="text-center font-semibold text-base text-neutral-500">
                             {camelCaseToEnglish(type)}
                         </h4>
                     </div>
-                    {type === "tourGuide" &&
+                    {type === "tourGuide" && userData.mobileNumber &&
                         <div className="flex gap-1 items-center bg-gradient-to-br from-primary-700 to-primary-900 px-3 py-1.5 rounded-full">
                             <div className="shrink-0">
                                 <Phone size={16} />

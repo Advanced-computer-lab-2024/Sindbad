@@ -18,10 +18,15 @@ function Experience({ userData, userId, id }) {
                 </div>
             </div>
             <div className="flex flex-col gap-3">
+                {(userData?.previousWork?.length === 0 || !userData?.previousWork) &&
+                    <p className="text-neutral-400 text-sm italic">
+                        {userId !== id ? "No experience to show." : "You have not added any experience yet. Click the + button to get started!"}
+                    </p>
+                }
                 {userData?.previousWork?.map((experience, index) => (
                     <Accordion key={index} type="single" defaultValue={index} collapsible>
                         <AccordionItem value={index}>
-                            <AccordionTrigger>{experience.title}</AccordionTrigger>
+                            <AccordionTrigger>{experience.jobTitle}</AccordionTrigger>
                             <AccordionContent>
                                 <div className="flex gap-5">
                                     <div className="border-l-[2px] border-neutral-500"></div>
@@ -31,7 +36,7 @@ function Experience({ userData, userId, id }) {
                                                 {experience.companyName}
                                             </h4>
                                             <h4 className="text-base text-neutral-400">
-                                                Jan 2023 - Present
+                                                {experience.duration}
                                             </h4>
                                         </div>
                                         <p className="leading-5 text-xs">

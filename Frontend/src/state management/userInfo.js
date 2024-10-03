@@ -5,7 +5,7 @@ const userSlice = createSlice({
     name: 'user',
     initialState: {
         type: "tourGuide",
-        id: "66f81ff63ba5a08e8581e95e",
+        id: "66f8630f55f21e927d7455cc",
     },
     reducers: {
         login(state, action) {
