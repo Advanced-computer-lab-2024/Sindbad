@@ -4,8 +4,8 @@ import { useSelector } from 'react-redux';
 const userSlice = createSlice({
     name: 'user',
     initialState: {
-        type: "tourist",
-        id: "66f97308f74fa1c054a9b15c",
+        type: "seller",
+        id: "66f99b1a497c76922f031040",
     },
     reducers: {
         login(state, action) {
