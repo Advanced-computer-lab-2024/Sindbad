@@ -86,7 +86,23 @@ const getAllItineraries = async (req, res) => {
     const itineraries = await Itinerary.find();
     res.status(200).json(itineraries);
   } catch (error) {
-    console.error("Error fetching itineraries:", error);
+    res.status(500).json({ message: "Error fetching itineraries" });
+  }
+};
+const getItinerariesByCreator = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const itineraries = await Itinerary.find({ creatorId: id });
+
+    if (itineraries.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No itineraries found for this creator." });
+    }
+
+    res.status(200).json(itineraries);
+  } catch (error) {
     res.status(500).json({ message: "Error fetching itineraries" });
   }
 };
@@ -97,4 +113,5 @@ module.exports = {
   updateItinerary,
   deleteItinerary,
   getAllItineraries,
+  getItinerariesByCreator,
 };

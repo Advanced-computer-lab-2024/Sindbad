@@ -6,6 +6,7 @@ const {
   updateItinerary,
   deleteItinerary,
   getAllItineraries,
+  getItinerariesByCreator,
 } = require("../controllers/itineraryController");
 
 router
@@ -15,5 +16,7 @@ router
   .delete(deleteItinerary);
 
 router.route("/").post(createItinerary).get(getAllItineraries);
+
+router.route("/myItineraries/:id").get(getItinerariesByCreator);
 
 module.exports = router;
