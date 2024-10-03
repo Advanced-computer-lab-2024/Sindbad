@@ -1,7 +1,7 @@
 import ImagePlaceholder from "../ImagePlaceholder";
 import { BadgeCheck, Phone, Link } from "lucide-react";
 import { useUser } from '@/state management/userInfo';
-import { Settings } from "lucide-react";
+import { Edit3 } from "lucide-react";
 
 function ProfileBanner({ userData, userId, id }) {
     const { type } = useUser();
@@ -19,7 +19,7 @@ function ProfileBanner({ userData, userId, id }) {
                 <ImagePlaceholder />
                 {id === userId &&
                     <button className="absolute top-2 right-2 border-2 border-dark opacity-0 group-hover:opacity-100 transition-all hover:border-secondary bg-primary-900 p-1.5 rounded-full">
-                        <Settings size={16} />
+                        <Edit3 size={16} />
                     </button>
                 }
             </div>
@@ -33,20 +33,24 @@ function ProfileBanner({ userData, userId, id }) {
                             <h3 className="font-inter font-bold text-xl break-all">
                                 {userData.username}
                             </h3>
-                            <div className="shrink-0">
-                                {type !== "tourist" && <BadgeCheck size={19} />}
-                            </div>
+                            {type !== "tourist" &&
+                                <div className="shrink-0">
+                                    <BadgeCheck size={19} />
+                                </div>
+                            }
                         </div>
                         <h4 className="text-center font-semibold text-base text-neutral-500">
                             {camelCaseToEnglish(type)}
                         </h4>
                     </div>
-                    {/* <div className="flex gap-1 items-center bg-gradient-to-br from-primary-700 to-primary-900 px-3 py-1.5 rounded-full">
-                        <div className="shrink-0">
-                            <Phone size={16} />
+                    {type === "tourGuide" && userData.mobileNumber &&
+                        <div className="flex gap-1 items-center bg-gradient-to-br from-primary-700 to-primary-900 px-3 py-1.5 rounded-full">
+                            <div className="shrink-0">
+                                <Phone size={16} />
+                            </div>
+                            <p className="text-xs leading-[11px]">{userData.mobileNumber}</p>
                         </div>
-                        <p className="text-xs leading-[11px]">{userData.mobileNumber}</p>
-                    </div> */}
+                    }
                 </div>
                 {/* <hr className="border-neutral-700 border" />
                 <div className="flex flex-col gap-1.5">

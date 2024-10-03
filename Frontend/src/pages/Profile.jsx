@@ -3,9 +3,9 @@ import { useParams } from 'react-router-dom';
 import ProfileBanner from "@/components/custom/profile/ProfileBanner";
 import Experience from "@/components/custom/profile/Experience";
 import Wallet from "@/components/custom/profile/Wallet";
-import Itineraries from "@/components/custom/timelines/Itineraries";
+import Timeline from "@/components/custom/profile/Timeline";
 import { useUser } from '@/state management/userInfo';
-import { getTourist } from "@/services/ApiHandler";
+import { getTourist, getTourGuide } from "@/services/ApiHandler";
 
 function Profile() {
     const [userData, setUserData] = useState({});
@@ -13,7 +13,11 @@ function Profile() {
     const { userId } = useParams();
 
     const getUserInfo = async (userId) => {
-        const response = await getTourist(userId);
+        let response;
+        if (type === "tourist")
+            response = await getTourist(userId);
+        else if (type === "tourGuide")
+            response = await getTourGuide(userId);
 
         if (response.error) {
             console.error(response.message);
@@ -27,6 +31,9 @@ function Profile() {
             getUserInfo(userId);
         }
     }, [userId]);
+    useEffect(() => {
+        console.log(userData)
+    }, [userData]);
 
     return (
         <div className="py-8 px-24 max-w-[1200px] flex gap-9 mx-auto">
@@ -35,8 +42,8 @@ function Profile() {
                 {type === "tourist" && userId === id && <Wallet userData={userData} />}
             </div>
             <div className="w-full flex flex-col gap-12">
-                {/* <Experience /> */}
-                <Itineraries userData={userData} />
+                {type === "tourGuide" && <Experience userData={userData} userId={userId} id={id} />}
+                <Timeline userData={userData} userId={userId} id={id} />
             </div>
         </div>
     );
