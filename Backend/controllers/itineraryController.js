@@ -81,9 +81,20 @@ const deleteItinerary = async (req, res) => {
   }
 };
 
+const getAllItineraries = async (req, res) => {
+  try {
+    const itineraries = await Itinerary.find();
+    res.status(200).json(itineraries);
+  } catch (error) {
+    console.error("Error fetching itineraries:", error);
+    res.status(500).json({ message: "Error fetching itineraries" });
+  }
+};
+
 module.exports = {
   getItinerary,
   createItinerary,
   updateItinerary,
   deleteItinerary,
+  getAllItineraries,
 };
