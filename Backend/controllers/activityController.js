@@ -30,8 +30,8 @@ const getActivity = async (req, res) => {
 
 const getMyActivities = async (req, res) => {
   try {
-    const activities = await Activity.find({ creatorId: req.body.creatorId });
-    res.status(201).json(activities);
+    const activities = await Activity.find({ creatorId: req.query.creatorId });
+    res.status(200).json(activities);
   } catch (error) {
     return res.status(500).json({
       message: "Error getting activities",
