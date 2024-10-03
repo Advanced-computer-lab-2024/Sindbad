@@ -12,8 +12,11 @@ const activityRoutes = require("./routes/activityRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const tagRoutes = require("./routes/tagRoutes");
 const userRoutes = require("./routes/user-routes");
+const advertiserRoutes = require("./routes/advertiserRoutes");
 const touristRoutes = require("./routes/tourist-routes");
 const tourGuideRoutes = require("./routes/tourGuide-routes");
+const productRoutes = require("./routes/productRoutes");
+const sellerRoutes = require("./routes/sellerRoutes");
 
 const app = express();
 
@@ -59,6 +62,8 @@ passport.deserializeUser(Admin.deserializeUser());
 
 app.use("/user", userRoutes);
 
+app.use("/advertiser", advertiserRoutes);
+
 // Admin routes
 app.use("/admin", adminRoutes);
 
@@ -68,8 +73,14 @@ app.use("/site", siteRoutes);
 // Activity routes
 app.use("/activity", activityRoutes);
 
+//seller routes
+app.use("/seller", sellerRoutes);
+
 // Activities' categories routes
 app.use("/category", categoryRoutes);
+
+// Product routes
+app.use("/product", productRoutes);
 
 // Activities' tags routes
 app.use("/tag", tagRoutes);
