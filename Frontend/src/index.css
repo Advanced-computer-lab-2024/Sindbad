@@ -84,3 +84,26 @@ select:-webkit-autofill:focus {
   -webkit-box-shadow: none;
   transition: background-color 9999s ease-in-out 0s;
 };
+
+.nav-underline {
+  display: inline;
+  position: relative;
+}
+
+.nav-underline:after {    
+  background: none repeat scroll 0 0 transparent;
+  bottom: -2px;
+  content: "";
+  display: block;
+  height: 1px;
+  left: 50%;
+  position: relative;
+  background: #EEEEEE;
+  transition: width 0.3s ease 0s, left 0.3s ease 0s;
+  width: 0;
+}
+
+.nav-underline:hover:after { 
+  width: 100%; 
+  left: 0; 
+}
