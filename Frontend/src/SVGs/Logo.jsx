@@ -1,6 +1,6 @@
-export default function LogoSVG( { onClick } ) {
+export default function LogoSVG( { onClick, className } ) {
     return (
-        <svg id="Layer_6" data-name="Layer 6" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 1024 1024" className="w-12 h-12" onClick={ onClick }>
+        <svg id="Layer_6" data-name="Layer 6" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 1024 1024" className={className} onClick={ onClick }>
             <defs>
                 <style>{`
                     .cls-1 {
