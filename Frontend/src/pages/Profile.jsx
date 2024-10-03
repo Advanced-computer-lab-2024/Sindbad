@@ -29,7 +29,7 @@ function Profile() {
     }, [userId]);
 
     return (
-        <div className="py-16 px-24 max-w-[1200px] flex gap-9 mx-auto">
+        <div className="py-8 px-24 max-w-[1200px] flex gap-9 mx-auto">
             <div className="flex flex-col w-max gap-9 self-start">
                 <ProfileBanner userData={userData} userId={userId} id={id} />
                 {type === "tourist" && userId === id && <Wallet userData={userData} />}
