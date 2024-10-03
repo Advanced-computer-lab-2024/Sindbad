@@ -1,7 +1,7 @@
 import ImagePlaceholder from "../ImagePlaceholder";
 import { BadgeCheck, Phone, Link } from "lucide-react";
 import { useUser } from '@/state management/userInfo';
-import { Edit3 } from "lucide-react";
+import { Edit3, Mail, Cake, Globe2, Briefcase } from "lucide-react";
 
 function ProfileBanner({ userData, userId, id }) {
     const { type } = useUser();
@@ -11,6 +11,11 @@ function ProfileBanner({ userData, userId, id }) {
             return match.toUpperCase();
         });
         return result.trim();
+    }
+
+    function formatDate(date) {
+        const d = new Date(date);
+        return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
     }
 
     return (
@@ -43,7 +48,7 @@ function ProfileBanner({ userData, userId, id }) {
                             {camelCaseToEnglish(type)}
                         </h4>
                     </div>
-                    {type === "tourGuide" && userData.mobileNumber &&
+                    {userData.mobileNumber &&
                         <div className="flex gap-1 items-center bg-gradient-to-br from-primary-700 to-primary-900 px-3 py-1.5 rounded-full">
                             <div className="shrink-0">
                                 <Phone size={16} />
@@ -52,21 +57,60 @@ function ProfileBanner({ userData, userId, id }) {
                         </div>
                     }
                 </div>
+                {type === "tourist" && userId === id &&
+                    <>
+                        <hr className="border-neutral-700 border" />
+                        <div className="flex flex-col gap-2">
+                            <div className="flex gap-2">
+                                <div className="shrink-0">
+                                    <Mail size={16} />
+                                </div>
+                                <a className="text-xs break-all pt-[1px]">
+                                    {userData.email}
+                                </a>
+                            </div>
+                            <div className="flex gap-2">
+                                <div className="shrink-0">
+                                    <Cake size={16} />
+                                </div>
+                                <a className="text-xs break-all pt-[1px]">
+                                    {formatDate(userData.DOB)}
+                                </a>
+                            </div>
+                            <div className="flex gap-2">
+                                <div className="shrink-0">
+                                    <Globe2 size={16} />
+                                </div>
+                                <a className="text-xs break-all pt-[1px]">
+                                    {userData.nationality}
+                                </a>
+                            </div>
+                            <div className="flex gap-2">
+                                <div className="shrink-0">
+                                    <Briefcase size={16} />
+                                </div>
+                                <a className="text-xs break-all pt-[1px]">
+                                    {userData.job}
+                                </a>
+                            </div>
+                        </div>
+                    </>
+                }
                 {/* <hr className="border-neutral-700 border" />
-                <div className="flex flex-col gap-1.5">
-                    <div className="flex gap-1">
-                        <div className="shrink-0 pt-[1px]">
+                <div className="flex flex-col gap-2">
+                    <div className="flex gap-2">
+                        <div className="shrink-0">
                             <Link size={16} />
                         </div>
-                        <a className="text-xs break-all">
+                        <a className="text-xs break-all pt-[1px]">
                             Link 1
                         </a>
                     </div>
-                    <div className="flex gap-1">
-                        <div className="shrink-0 pt-[1px]">
+                    <div className="flex gap-2">
+                        <div className="shrink-0">
                             <Link size={16} />
                         </div>
-                        <a className="text-xs break-all">
+                        <a className="text-xs break-all pt-[1px]">
                             Link 2
                         </a>
                     </div>

@@ -28,7 +28,7 @@ function Timeline({ userData, userId, id }) {
                 <div>
                     {(type === "tourist" && (userData?.bookmarks?.length === 0 || !userData?.bookmarks)) &&
                         <p className="text-neutral-400 text-sm italic">
-                            {"You have not bookmarked any itineraries yet."}
+                            {"You have not bookmarked any events yet."}
                         </p>
                     }
                     
