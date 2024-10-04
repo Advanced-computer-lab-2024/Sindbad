@@ -1,4 +1,4 @@
-import { getTourGuide } from "@/services/ApiHandler";
+import { getTourGuide } from "@/services/TourGuideApiHandler";
 import { z } from "zod";
 
 const TouristSchema = {

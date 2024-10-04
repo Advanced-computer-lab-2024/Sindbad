@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState} from "react";
 import { Accessibility, MapPin, Star, EarOff, EyeOff, Speech, ArrowBigRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -165,20 +165,20 @@ function Itinerary(){
                             <li> <div className="relative border border-light rounded-full w-1 h-1 bg-light left-5 mb-3"> </div> </li>
                             {locations.map((stop) => (
                                 <div>
-                                <li key={stop}>
-                                    <div className="flex items-start- space-x-2">
-                                        <div className="flex-shrink-0 bg-light text-dark font-semibold w-10 h-10 flex items-center justify-center rounded-full">
-                                            {stop}
+                                    <li key={stop}>
+                                        <div className="flex items-start- space-x-2">
+                                            <div className="flex-shrink-0 bg-light text-dark font-semibold w-10 h-10 flex items-center justify-center rounded-full">
+                                                {stop}
+                                            </div>
+                                            <div>
+                                                <p>Location {stop}</p>
+                                                <p>Stop: X hours</p>
+                                                <a href="#" className="text-secondary">See details</a>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <p>Location {stop}</p>
-                                            <p>Stop: X hours</p>
-                                            <a href="#" className="text-secondary">See details</a>
-                                        </div>
-                                    </div>
-                                </li>
-                                    <li> <div className="relative border border-light rounded-full w-1 h-1 bg-light left-5 mb-3"> </div> </li>
-                                    <li> <div className="relative border border-light rounded-full w-1 h-1 bg-light left-5 mb-3"> </div> </li>
+                                    </li>
+                                        <li> <div className="relative border border-light rounded-full w-1 h-1 bg-light left-5 mb-3"> </div> </li>
+                                        <li> <div className="relative border border-light rounded-full w-1 h-1 bg-light left-5 mb-3"> </div> </li>
                                 </div>
                                 
                             ))}
