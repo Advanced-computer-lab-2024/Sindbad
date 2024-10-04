@@ -91,7 +91,7 @@ const UserController = {
 		}
 	},
 
-	getUserType: async (req, res) => {
+	getUserRole: async (req, res) => {
 		try {
 			const { id } = req.params;
 
