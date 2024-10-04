@@ -6,8 +6,7 @@ const Seller = require("../models/Seller");
 const UserController = {
 	signUp: async (req, res) => {
 		try {
-			const { email, username, passwordHash, role, ...touristData } =
-				req.body; // Extract role and user data
+			const { email, username, passwordHash, role, ...touristData } = req.body; // Extract role and user data
 
 			let user;
 			if (!role) {
@@ -27,13 +26,7 @@ const UserController = {
 				case "tourist":
 					const { mobileNumber, nationality, DOB, job } = touristData;
 
-					if (
-						!email ||
-						!mobileNumber ||
-						!nationality ||
-						!DOB ||
-						!job
-					) {
+					if (!email || !mobileNumber || !nationality || !DOB || !job) {
 						throw new Error("Tourist data is required");
 					}
 
@@ -68,6 +61,14 @@ const UserController = {
 						passwordHash
 					);
 					break;
+				case "admin":
+					user = await UserController.createAdmin(
+						email,
+						username,
+						passwordHash
+					);
+					break;
+
 				default:
 					throw new Error("Invalid role");
 			}
@@ -103,9 +104,12 @@ const UserController = {
 
 		// Check in Seller model
 		const sellerExists =
-			(await Seller.findOne({ email })) ||
-			(await Seller.findOne({ username }));
+			(await Seller.findOne({ email })) || (await Seller.findOne({ username }));
 		if (sellerExists) return false;
+
+		const adminExists =
+			(await Admin.findOne({ email })) || (await Admin.findOne({ username }));
+		if (adminExists) return false;
 
 		// If no duplicates were found, return true
 		return true;
@@ -204,6 +208,17 @@ const UserController = {
 
 		await seller.save();
 		return seller;
+	},
+
+	createAdmin: async (email, username, passwordHash) => {
+		const admin = new Admin({
+			email,
+			username,
+			passwordHash,
+		});
+
+		await admin.save();
+		return admin;
 	},
 };
 

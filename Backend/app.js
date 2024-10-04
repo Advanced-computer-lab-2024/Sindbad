@@ -42,23 +42,6 @@ if (process.env.NODE_ENV !== "test") {
 		});
 }
 
-// TODO: Remove this stuff, we'll be using client-side hashing
-// Session configuration (necessary for passport-local-mongoose)
-app.use(
-	session({
-		secret: process.env.SECRET_KEY,
-		resave: false,
-		saveUninitialized: false,
-	})
-);
-
-// Initialize Passport.js for handling user authentication
-app.use(passport.initialize());
-app.use(passport.session());
-
-passport.use(Admin.createStrategy());
-passport.serializeUser(Admin.serializeUser());
-passport.deserializeUser(Admin.deserializeUser());
 
 app.use("/user", userRoutes);
 
