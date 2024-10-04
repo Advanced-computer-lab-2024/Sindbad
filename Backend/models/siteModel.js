@@ -52,7 +52,8 @@ const siteSchema = new mongoose.Schema({
 		required: [true, "Please add opening hours for your site"],
 	},
 	ticketPrices: {
-		type: [Number],
+		type: Map,
+		of: Number,
 		validate: {
 			validator: function (arr) {
 				return arr.every((price) => price >= 0);
