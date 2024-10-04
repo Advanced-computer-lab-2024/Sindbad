@@ -2,6 +2,7 @@ const Tourist = require("../models/tourist");
 const TourGuide = require("../models/TourGuide");
 const Advertiser = require("../models/Advertiser");
 const Seller = require("../models/Seller");
+const TourismGovernor = require("../models/TourismGovernor");
 const Admin = require("../models/adminModel");
 
 const UserController = {
@@ -119,8 +120,12 @@ const UserController = {
 				return res.status(200).json({ role: "seller" });
 			}
 
-			const admin = await Admin.findById(id);
+			const tourismGovernor = await TourismGovernor.findById(id);
+			if (tourismGovernor) {
+				return res.status(200).json({ role: "tourismGovernor" });
+			}
 
+			const admin = await Admin.findById(id);
 			if (admin) {
 				return res.status(200).json({ role: "admin" });
 			}

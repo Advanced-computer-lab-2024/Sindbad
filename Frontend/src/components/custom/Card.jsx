@@ -33,9 +33,11 @@ function Card({ data, id, userId, type }) {
                             (1092)
                         </p>
                     </div> */}
-                    <p className="text-xs leading-[11px] font-medium text-neutral-500 mt-1">
-                        rating: {data.rating}
-                    </p>
+                    {data.rating &&
+                        <p className="text-xs leading-[11px] font-medium text-neutral-500 mt-1">
+                            rating: {data.rating}
+                        </p>
+                    }
                 </div>
                 <Button
                     onClick={() => console.log(data)}
