@@ -30,7 +30,7 @@ const getActivity = async (req, res) => {
  */
 const getMyActivities = async (req, res) => {
   try {
-    const activities = await Activity.find({ creatorId: req.body.creatorId });
+    const activities = await Activity.find({ creatorId: req.params.creatorId });
     res.status(200).json(activities);
   } catch (error) {
     return res.status(500).json({

@@ -12,7 +12,7 @@ const {
   getSortedActivities,
 } = require("../controllers/activityController");
 
-router.route("/my-activities").get(getMyActivities);
+router.route("/my-activities/:creatorId").get(getMyActivities);
 router.route("/search").get(searchActivities);
 router.route("/filter").get(filterActivities);
 router.route("/sort").get(getSortedActivities);
