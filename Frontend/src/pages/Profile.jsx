@@ -2,13 +2,17 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import ProfileBanner from "@/components/custom/profile/ProfileBanner";
 import Experience from "@/components/custom/profile/Experience";
+import CompanyProfile from "@/components/custom/profile/CompanyProfile";
 import Wallet from "@/components/custom/profile/Wallet";
 import Timeline from "@/components/custom/profile/Timeline";
 import { useUser } from '@/state management/userInfo';
-import { getTourist, getTourGuide } from "@/services/ApiHandler";
+import { getTourist } from "@/services/TouristApiHandler";
+import { getTourGuide } from "@/services/TourGuideApiHandler";
+import { getSeller } from "@/services/SellerApiHandler";
+import { getAdvertiser } from "@/services/AdvertiserApiHandler";
 
 function Profile() {
-    const [userData, setUserData] = useState({});
+    const [userData, setUserData] = useState({"_id":{"$oid":"66f823447b0fe45d3c6d3768"},"email":"moski@gmail.com","username":"moskitoAdvertiser","passwordHash":"hashedpasswordlol","isAccepted":true,"createdActivities":[],"createdIterinaries":[],"createdHistoricalPlaces":[],"__v":{"$numberInt":"0"},"websiteLink":"moskitonddew.com","hotline":"123","companyProfile":{"name":"Ski Egypt","location":"Mall of Egypt، Wahat Road, 6th october, Giza Governorate 12582","description":"Africa’s first indoor ski resort, Ski Egypt’s Snow Park is a spectacular 22,000m2 of a real, snow-filled winter wonderland. At -2 degrees, with our unmatchable activities, it is an unforgettable experience for everyone."}});
     const { type, id } = useUser();
     const { userId } = useParams();
 
@@ -18,6 +22,10 @@ function Profile() {
             response = await getTourist(userId);
         else if (type === "tourGuide")
             response = await getTourGuide(userId);
+        else if (type === "seller")
+            response = await getSeller(userId);
+        else if (type === "advertiser")
+            response = await getAdvertiser(userId);
 
         if (response.error) {
             console.error(response.message);
@@ -42,6 +50,7 @@ function Profile() {
                 {type === "tourist" && userId === id && <Wallet userData={userData} />}
             </div>
             <div className="w-full flex flex-col gap-12">
+                {type === "advertiser" && <CompanyProfile userData={userData} userId={userId} id={id} />}
                 {type === "tourGuide" && <Experience userData={userData} userId={userId} id={id} />}
                 <Timeline userData={userData} userId={userId} id={id} />
             </div>

@@ -13,13 +13,16 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import formMap from "@/utilities/formMap"
-import { updateSeller, updateTourist, updateAdvertiser, updateTourGuide  } from "@/services/ApiHandler"
+import { updateSeller } from "@/services/SellerApiHandler"
+import { updateTourGuide } from "@/services/TourGuideApiHandler"
+import { updateTourist } from "@/services/TouristApiHandler"
+import { updateAdvertiser } from "@/services/AdvertiserApiHandler"
 
 export function GenericForm( { type, userData, id } ) {
 
     // formSchemaObject is an object that will be used to create the form schema. It will contain the keys of the temporaryHardCodedValues object,
     // and the values will be zod types based on the type of the value in the temporaryHardCodedValues object.
-    let formSchemaObject = formMap["seller"];
+    let formSchemaObject = formMap["tourGuide"];
     let defaultValues = {};
 
     for (const key in formSchemaObject) {

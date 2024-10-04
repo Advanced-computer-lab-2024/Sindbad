@@ -54,9 +54,9 @@ function ProfileBanner({ userData, userId, id }) {
                         <ImagePlaceholder />
                     </div>
                     <div>
-                        <div className="flex items-center gap-1.5">
-                            <h3 className="font-inter font-bold text-xl break-all">
-                                {userData.username}
+                        <div className="flex items-center justify-center gap-1.5">
+                            <h3 className="font-inter font-bold text-xl break-all text-center">
+                                {type !== "seller" ? userData.username : userData.firstName + " " + userData.lastName}
                             </h3>
                             {type !== "tourist" &&
                                 <div className="shrink-0">
@@ -65,30 +65,35 @@ function ProfileBanner({ userData, userId, id }) {
                             }
                         </div>
                         <h4 className="text-center font-semibold text-base text-neutral-500">
+                            <span className="break-all">
+                                {type === "seller" && `@${userData.username} ‧ `}
+                            </span>
                             {camelCaseToEnglish(type)}
                         </h4>
+                        <p className="text-xs leading-[11px] text-center mt-3">{userData.description}</p>
                     </div>
-                    {userData.mobileNumber &&
+                    {userData.mobileNumber || userData.hotline &&
                         <div className="flex gap-1 items-center bg-gradient-to-br from-primary-700 to-primary-900 px-3 py-1.5 rounded-full">
                             <div className="shrink-0">
                                 <Phone size={16} />
                             </div>
-                            <p className="text-xs leading-[11px]">{userData.mobileNumber}</p>
+                            <p className="text-xs leading-[11px]">{type === "advertiser" ? userData.hotline : userData.mobileNumber}</p>
                         </div>
                     }
                 </div>
-                {type === "tourist" && userId === id &&
-                    <>
-                        <hr className="border-neutral-700 border" />
-                        <div className="flex flex-col gap-2">
-                            <div className="flex gap-2">
-                                <div className="shrink-0">
-                                    <Mail size={16} />
-                                </div>
-                                <a className="text-xs break-all pt-[1px]">
-                                    {userData.email}
-                                </a>
-                            </div>
+
+                <hr className="border-neutral-700 border" />
+                <div className="flex flex-col gap-2">
+                    <div className="flex gap-2">
+                        <div className="shrink-0">
+                            <Mail size={16} />
+                        </div>
+                        <a className="text-xs break-all pt-[1px]">
+                            {userData.email}
+                        </a>
+                    </div>
+                    {type === "tourist" && userId === id &&
+                        <>
                             <div className="flex gap-2">
                                 <div className="shrink-0">
                                     <Cake size={16} />
@@ -113,28 +118,21 @@ function ProfileBanner({ userData, userId, id }) {
                                     {userData.job}
                                 </a>
                             </div>
+                        </>
+                    }
+                    {type === "advertiser" &&
+                        <div className="flex flex-col gap-2">
+                            <div className="flex gap-2">
+                                <div className="shrink-0">
+                                    <Link size={16} />
+                                </div>
+                                <a className="text-xs break-all pt-[1px] hover:underline" href={`https://${userData.websiteLink}`} target="_blank" rel="noreferrer">
+                                    {userData.websiteLink}
+                                </a>
+                            </div>
                         </div>
-                    </>
-                }
-                {/* <hr className="border-neutral-700 border" />
-                <div className="flex flex-col gap-2">
-                    <div className="flex gap-2">
-                        <div className="shrink-0">
-                            <Link size={16} />
-                        </div>
-                        <a className="text-xs break-all pt-[1px]">
-                            Link 1
-                        </a>
-                    </div>
-                    <div className="flex gap-2">
-                        <div className="shrink-0">
-                            <Link size={16} />
-                        </div>
-                        <a className="text-xs break-all pt-[1px]">
-                            Link 2
-                        </a>
-                    </div>
-                </div> */}
+                    }
+                </div>
             </div>
         </section>
     );

@@ -2,7 +2,7 @@ import ImagePlaceholder from "@/components/custom/ImagePlaceholder";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Star, StarHalf, Bookmark } from 'lucide-react';
 
-function Card() {
+function Card({ data }) {
     return (
         <article className="w-full border border-primary-700/80 rounded-md overflow-clip bg-gradient-to-br from-dark to-primary-900/50 group">
             <div className="h-[156px] relative">
@@ -14,9 +14,9 @@ function Card() {
             <div className="flex flex-col p-3 gap-5">
                 <div>
                     <h4 className="text-base font-semibold">
-                        Itinerary Name
+                        {data.name}
                     </h4>
-                    <div className="shrink-0 text-secondary flex gap-0.5 items-center">
+                    {/* <div className="shrink-0 text-secondary flex gap-0.5 items-center">
                         <Star fill="#fcd34d" size={16} />
                         <Star fill="#fcd34d" size={16} />
                         <Star fill="#fcd34d" size={16} />
@@ -25,9 +25,14 @@ function Card() {
                         <p className="text-xs leading-[11px] font-medium text-neutral-500">
                             (1092)
                         </p>
-                    </div>
+                    </div> */}
+                    <p className="text-xs leading-[11px] font-medium text-neutral-500 mt-1">
+                        rating: {data.rating}
+                    </p>
                 </div>
-                <Button>
+                <Button
+                    onClick={() => console.log(data)}
+                >
                     <p className="text-xs">
                         Read more
                     </p>
