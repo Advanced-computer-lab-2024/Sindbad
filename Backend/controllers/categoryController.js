@@ -38,11 +38,11 @@ const createCategory = async (req, res) => {
  */
 
 const getCategory = async (req, res) => {
-  if (!mongoose.Types.ObjectId.isValid(req.body.id)) {
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
     return res.status(400).json({ message: "Invalid category ID format" });
   }
   try {
-    const category = await Category.findById(req.body.id);
+    const category = await Category.findById(req.params.id);
     if (!category) {
       return res.status(404).json({ message: "Category not found" });
     }
@@ -84,7 +84,7 @@ const getAllCategories = async (req, res) => {
 
 const deleteCategory = async (req, res) => {
   try {
-    const deletedCategory = await Category.findByIdAndDelete(req.body.id);
+    const deletedCategory = await Category.findByIdAndDelete(req.params.id);
 
     if (!deletedCategory) {
       return res.status(404).json({ message: "Category not found" });
@@ -102,14 +102,16 @@ const deleteCategory = async (req, res) => {
 /**
  * Updates a category
  *
- * @param {Object} req - Request with category ID and new name
+ * @param {Object} req - Request with category ID in params and updated data in the body
  * @param {Object} res - Response object for sending results
  * @returns {Object} - Updated category or error message
  */
 
 const updateCategory = async (req, res) => {
   try {
-    const { id, name } = req.body;
+    const { name } = req.body;
+    const { id } = req.params;
+
     const updatedCategory = await Category.findByIdAndUpdate(
       id,
       { name },
