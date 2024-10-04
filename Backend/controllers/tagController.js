@@ -32,17 +32,17 @@ const createTag = async (req, res) => {
 /**
  * Retrieves a tag by its ID
  *
- * @param {Object} req - The request object containing the tag ID in the body
+ * @param {Object} req - The request object containing the tag ID in params
  * @param {Object} res - The response object used to send the retrieved tag or an error message
  * @returns {Object} - A JSON object of the retrieved tag or an error message
  */
 
 const getTag = async (req, res) => {
-  if (!mongoose.Types.ObjectId.isValid(req.body.id)) {
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
     return res.status(400).json({ message: "Invalid tag ID format" });
   }
   try {
-    const tag = await Tag.findById(req.body.id);
+    const tag = await Tag.findById(req.params.id);
     if (!tag) {
       return res.status(404).json({ message: "tag not found" });
     }
@@ -65,7 +65,7 @@ const getTag = async (req, res) => {
 
 const deleteTag = async (req, res) => {
   try {
-    const deletedTag = await Tag.findByIdAndDelete(req.body.id);
+    const deletedTag = await Tag.findByIdAndDelete(req.params.id);
 
     if (!deletedTag) {
       return res.status(404).json({ message: "Tag not found" });
@@ -83,14 +83,16 @@ const deleteTag = async (req, res) => {
 /**
  * Updates a tag
  *
- * @param {Object} req - Request with tag ID and new name
+ * @param {Object} req - Request with tag ID in params and updated data in the body
  * @param {Object} res - Response object for sending results
  * @returns {Object} - Updated tag or error message
  */
 
 const updateTag = async (req, res) => {
   try {
-    const { id, name } = req.body;
+    const { name } = req.body;
+    const { id } = req.params;
+
     const updatedTag = await Tag.findByIdAndUpdate(
       id,
       { name },
@@ -105,7 +107,7 @@ const updateTag = async (req, res) => {
   } catch (error) {
     res
       .status(500)
-      .json({ message: "Error updating Tag", error: error.message });
+      .json({ message: "Error updating tag", error: error.message });
   }
 };
 
