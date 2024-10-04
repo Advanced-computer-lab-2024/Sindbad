@@ -171,7 +171,6 @@ const SiteSchema = {
     }),
   ticketPrices: z.array(z.number().min(0, { message: "Ticket prices must be non-negative" })),
   tags: z.array(z.string().min(1, { message: "Tag must be valid ObjectId string" })),
-  creatorId: z.string().min(1, { message: "Creator ID is required" }),
 };
   const companyProfileSchema = 
   {
