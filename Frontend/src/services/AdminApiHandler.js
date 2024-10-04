@@ -6,22 +6,29 @@ export const getAllUsers = async () => {
 		// Perform all API calls concurrently using Promise.all
 		const [advertisers, admins, tourists, tourGuides, sellers] =
 			await Promise.all([
-				axios.get(`${baseURL}/advertiser`, {
+				axios.get(`${baseURL}/advertiser/profiles`, {
 					headers: { "Content-Type": "application/json" },
+					withCredentials: true, 
 				}),
 				axios.get(`${baseURL}/admin`, {
 					headers: { "Content-Type": "application/json" },
+					withCredentials: true, 
 				}),
 				axios.get(`${baseURL}/tourist`, {
 					headers: { "Content-Type": "application/json" },
+					withCredentials: true, 
 				}),
 				axios.get(`${baseURL}/tourGuide`, {
 					headers: { "Content-Type": "application/json" },
+					withCredentials: true, 
 				}),
 				axios.get(`${baseURL}/seller`, {
 					headers: { "Content-Type": "application/json" },
+					withCredentials: true, 
 				}),
 			]);
+
+		console.log(advertisers, admins, tourists, tourGuides, sellers);
 
 		// Extract the data and append the "role" field
 		const combinedUsers = [

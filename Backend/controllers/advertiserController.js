@@ -19,6 +19,18 @@ const getProfile = async (req, res) => {
 	}
 };
 
+// Controller to get all advertiser profiles
+const getAllProfiles = async (req, res) => {
+	try {
+		const advertisers = await Advertiser.find();
+
+		return res.status(200).json(advertisers);
+	} catch (error) {
+		console.error("Error fetching all advertiser profiles:", error);
+		return res.status(500).json({ message: "Internal server error" });
+	}
+};
+
 // Controller to update advertiser profile
 const updateProfile = async (req, res) => {
 	try {
@@ -57,5 +69,6 @@ const updateProfile = async (req, res) => {
 
 module.exports = {
 	getProfile,
+	getAllProfiles,
 	updateProfile,
 };

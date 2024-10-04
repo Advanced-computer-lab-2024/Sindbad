@@ -30,6 +30,23 @@ const getTourGuide =async (req,res) => {
 	
 };
 
+/**
+ * Retrieves all tourGuides
+ *
+ * @param {Object} req - The request object
+ * @param {Object} res - The response object used to send the retrieved tourGuides or an error message
+ * @returns {Object} - A JSON object of the retrieved tourGuides or an error message
+ */
+const getAllTourGuides = async (req, res) => {
+	try {
+		const tourGuides = await TourGuide.find();
+		res.json(tourGuides);
+	} catch (err) {
+		res.status(500).json({ message: err.message }); // pass err to catch block
+	}
+};
+
+
 
 /**
  * Updates a tourGuide's profile
@@ -88,6 +105,7 @@ const updateTourGuide = async(req,res) => {
 
 module.exports = {
     getTourGuide,
+	getAllTourGuides,
     updateTourGuide,
   };
 

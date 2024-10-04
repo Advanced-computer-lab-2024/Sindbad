@@ -23,6 +23,22 @@ const getTourist = async (req,res) => {
 	return res.json(tourist);
 };
 
+
+/**
+ * Retrieves all tourists
+ * @param {Object} req - The request object
+ * @param {Object} res - The response object used to send the retrieved tourists or an error message
+ * @returns {Object} - A JSON object of the retrieved tourists or an error message
+ */
+const getAllTourists = async (req,res) => {
+	try{
+		const tourists = await Tourist.find();
+		res.json(tourists);
+	}catch{
+		res.status(500).json({message:err.message});
+	}
+}
+
 /**
  * Updates a tourist's profile
  *
@@ -80,6 +96,7 @@ const updateTourist = async(req,res) => {
 
 module.exports = {
     getTourist,
+	getAllTourists,
     updateTourist,
   };
 
