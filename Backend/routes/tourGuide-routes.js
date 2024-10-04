@@ -4,7 +4,6 @@ const router = express.Router();
 const {
 	getAllTourGuides,
 	getTourGuide,
-	getAllTourGuides,
 	updateTourGuide,
 	deleteTourGuide,
   } = require("../controllers/tourGuideController");

@@ -4,24 +4,6 @@ const mongoose = require("mongoose");
 
 
 /**
- * Retrieves all tourGuides
- *
- * @returns {Object} - A JSON object of the retrieved tourGuides or an error message
- */
-const getAllTourGuides = async (req,res) => {
-	try{
-		const tourGuides = await TourGuide.find();
-		res.json(tourGuides);
-	}catch{
-		return res.status(500).json({
-			message: "Error retrieving Tour Guides",
-			error: err.message,
-		});
-	}
-	
-}
-
-/**
  * Retrieves a tourGuide by its ID
  *
  * @param {Object} req - The request object containing the tourGuide ID in the body

@@ -1,26 +1,6 @@
 const Tourist = require("../models/tourist");
 const mongoose = require("mongoose");
 
-
-
-/**
- * Retrieves all tourists
- *
- * @returns {Object} - A JSON object of the retrieved tourists or an error message
- */
-const getAllTourists = async (req,res) => {
-	try{
-		const tourists = await Tourist.find();
-		res.json(tourists);
-	}catch{
-		return res.status(500).json({
-			message: "Error retrieving Tourists",
-			error: err.message,
-		});
-	}
-	
-}
-
 /**
  * Retrieves a tourist by its ID
  *
