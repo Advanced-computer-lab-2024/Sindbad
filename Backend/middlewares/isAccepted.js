@@ -1,4 +1,4 @@
-const Tourist = require("../models/Tourist");
+const Tourist = require("../models/tourist");
 const TourGuide = require("../models/TourGuide");
 const Advertiser = require("../models/Advertiser");
 const Seller = require("../models/Seller");

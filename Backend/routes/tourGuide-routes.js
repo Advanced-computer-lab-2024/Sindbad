@@ -9,7 +9,7 @@ const {
   router
 	.route("/")
 	.get(getTourGuide)
-	.patch(updateTourGuide);
+	.put(updateTourGuide);
 
 
 
