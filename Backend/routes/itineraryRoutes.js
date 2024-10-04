@@ -7,7 +7,13 @@ const {
   deleteItinerary,
   getAllItineraries,
   getItinerariesByCreator,
+  searchItineraries,
+  getSortedItineraries,
 } = require("../controllers/itineraryController");
+
+router.route("/sort").get(getSortedItineraries);
+
+router.route("/search").get(searchItineraries);
 
 router
   .route("/:id")
