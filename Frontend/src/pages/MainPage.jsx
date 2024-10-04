@@ -13,11 +13,13 @@ import LogoSVG from "@/SVGs/Logo";
 import { CircleUserRound } from "lucide-react";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
+import { useUser } from "@/state management/userInfo";
 
 function MainPage() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const [currentRole, setCurrentRole] = useState("tourist"); // change this state to change the role of the user
+    const { type } = useUser();
+    const [currentRole, setCurrentRole] = useState(type); // change this state to change the role of the user
     const renderedFields = getRolePermissions(currentRole);
 
     function camelCaseToEnglish(str) {
@@ -47,7 +49,7 @@ function MainPage() {
                 );
             });
     }
-    
+
     return (
         <div>
             <div className="bg-primary-900/50 flex justify-center items-center sticky top-0 z-50 backdrop-blur-md">
