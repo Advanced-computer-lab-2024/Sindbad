@@ -46,7 +46,7 @@ export const getTourist = async (touristId) => {
 
 export const updateTourist = async (touristId, updatedValues) => {
     try {
-        const response = axios.patch(`${baseURL}/tourist/updateTourist/${touristId}`, updatedValues, {
+        const response = axios.put(`${baseURL}/tourist/getTourist/${touristId}`, updatedValues, {
             headers: {
                 'Content-Type': 'application/json',
             },

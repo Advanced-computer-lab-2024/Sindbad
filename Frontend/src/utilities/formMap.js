@@ -12,7 +12,9 @@ const TouristSchema = {
     nationality: z.string()
       .min(1, { message: "Nationality is required!" }),
   
-    DOB: z.string({}).min(1, { message: "Date of birth is required!" }),
+    DOB: z.string({}).min(1, { message: "Date of birth is required!" }).refine((val) => !isNaN(Date.parse(val)), {
+      message: "Invalid date of birth",
+    }),
     //   required_error: "Date of birth is required!",
     //   invalid_type_error: "Invalid date format!",
     // }),
@@ -43,8 +45,6 @@ const TourGuideSchema = {
   mobileNumber: z.string()
   .regex(/^\+?[1-9]\d{1,14}$/, { message: "Invalid mobile number!" })
   .min(1, { message: "Mobile number is required!" }),
-
-  yearsOfExperience: z.number().optional(),
 }
 
 const SellerSchema = {
@@ -72,7 +72,7 @@ const AdvertiserSchema = {
 
   websiteLink: z.string(),
 
-  mobileNumber: z.string()
+  hotline: z.string()
   .regex(/^\+?[1-9]\d{1,14}$/, { message: "Invalid mobile number!" })
   .min(1, { message: "Mobile number is required!" }),
 }
@@ -94,19 +94,9 @@ const itinerarySchema = {
   languages: z.array(z.string().min(1, { message: "Language must be provided" }))
     .min(1, { message: "Please add the supported languages" }),
 
-  price:  z.union([
-    z.number().min(0, { message: "Price must be a non-negative number" }),
-    z.object({
-      min: z.number().min(0, { message: "Min price must be non-negative" }),
-      max: z.number().min(0, { message: "Max price must be non-negative" }),
-    }).refine(
-      (data) => data.max >= data.min,
-      { message: "Max price must be greater than or equal to min price" }
-    ),
-  ]),
+  price: z.number().min(0, { message: "Price must be a non-negative number" }),
 
-  availableDatesTimes: z.array(z.date())
-    .min(1, { message: "Please add at least one available date and time" }),
+  availableDatesTimes: z.array(z.string()),
 
   accessibility: z.array(z.string().min(1, { message: "Accessibility option must be provided" }))
     .min(1, { message: "Please specify accessibility options" }),
@@ -114,12 +104,6 @@ const itinerarySchema = {
   pickUpLocation: z.string().min(1, { message: "Please add the pick-up location" }),
 
   dropOffLocation: z.string().min(1, { message: "Please add the drop-off location" }),
-
-  creatorId: z.string().min(1, { message: "Please add the creator of the itinerary" }),
-
-  headCount: z.number().min(0).default(0),
-
-  rating: z.number().min(0).default(0),
 };
 const productSchema = {
   name: z.string()
@@ -138,48 +122,25 @@ const productSchema = {
   seller: z.string()
     .min(1, { message: "Please add the seller of the product" }),
 
-  rating: z.number()
-    .min(0, { message: "Rating must be between 0 and 5" })
-    .max(5, { message: "Rating must be between 0 and 5" })
-    .default(0),
-
-  reviews: z.array(z.string()).optional(),
-
   quantity: z.number()
     .min(0, { message: "Quantity must be a non-negative number" }),
-
-  numSales: z.number()
-    .min(0, { message: "Number of sales must be non-negative" })
-    .default(0),
-
-  isArchived: z.boolean().default(false),
+  
+  isArchived: z.boolean(),
 }
 const activitySchema = {
   name: z.string()
     .min(1, { message: "Please add the name of the activity" }),
 
-  dateTime: z.date({ 
+  dateTime: z.string({ 
     required_error: "Please add the date of the activity" 
+  }).refine((val) => !isNaN(Date.parse(val)), {
+    message: "Invalid date of birth",
   }),
 
   location: z.string()
     .min(1, { message: "Please add the location of the activity" }),
 
-  price: z.union([
-    z.number().min(0, { message: "Fixed price must be non-negative" }),
-    z.object({
-      min: z.number().min(0, { message: "Price range min must be non-negative" }),
-      max: z.number().min(0).refine((val, ctx) => {
-        if (val < ctx.parent.min) {
-          return false;
-        }
-        return true;
-      }, { message: "Price range max must be greater than or equal to min" }),
-    }),
-  ]).refine(
-    value => typeof value === "number" || (value.min <= value.max),
-    { message: "Price must be either a non-negative number or a valid price range" }
-  ),
+  price: z.number().min(0, { message: "Price must be a non-negative number" }),
 
   category: z.string()
     .min(1, { message: "Please add the category of the activity" }),
@@ -190,20 +151,7 @@ const activitySchema = {
 
   discounts: z.number()
     .min(0, { message: "Discount must be between 0 and 100" })
-    .max(100, { message: "Discount must be between 0 and 100" })
-    .optional(),
-
-  isBookingOpen: z.boolean().default(true),
-
-  creatorId: z.string().optional(),
-
-  headCount: z.number()
-    .min(0, { message: "Head count must be non-negative" })
-    .default(0),
-
-  rating: z.number()
-    .min(0, { message: "Rating must be non-negative" })
-    .default(0),
+    .max(100, { message: "Discount must be between 0 and 100" }),
 };
 
 const SiteSchema = {
@@ -228,16 +176,15 @@ const SiteSchema = {
   const companyProfileSchema = 
   {
     name: z.string().min(1, { message: "Company name is required." }),
-    description: z.string().max(500, { message: "Description cannot be longer than 500 characters." }).optional(),
-    location: z.string().optional(),
-    // Add more fields as needed for the company profile
+    description: z.string().max(500, { message: "Description cannot be longer than 500 characters." }),
+    location: z.string(),
   };
   const PreviousWorkSchema = 
     {
-      jobTitle: z.string().optional(),
-      companyName: z.string().optional(),
-      duration: z.string().optional(), // E.g., "Jan 2020 - Dec 2021"
-      description: z.string().default(""), // Optional field with default empty string
+      jobTitle: z.string(),
+      companyName: z.string(),
+      duration: z.string(), 
+      description: z.string(), 
     }
   
 
@@ -269,11 +216,6 @@ export const parseZodSchema = (schema) => {
     return [parseZodSchema(schema.element)];
   }
 
-  if (schema instanceof z.ZodUnion) {
-    // Handle union types (returning the first valid schema structure as a placeholder)
-    return parseZodSchema(schema.options[0]);
-  }
-
   // Check for specific primitive types and return corresponding values
   if (schema instanceof z.ZodString) {
     return "string"; // For strings, return an empty string
@@ -286,7 +228,9 @@ export const parseZodSchema = (schema) => {
   if (schema instanceof z.ZodBoolean) {
     return false; // For booleans, return false
   }
-
+  if (schema instanceof z.ZodDate) {
+    return "date"// For dates, return the current date
+  }
   // Default return value for any other types not explicitly handled
   return ""; 
 };
