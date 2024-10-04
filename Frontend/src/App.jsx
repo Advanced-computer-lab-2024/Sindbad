@@ -6,6 +6,9 @@ import LogIn from "./pages/LogIn";
 import SignUp from "./pages/SignUp";
 import { Navigate } from "react-router-dom";
 import Timeline from "./pages/Timeline";
+import Itinerary from "./pages/ItineraryView";
+import GenericForm from "./components/custom/genericForm";
+
 import { useUser } from '@/state management/userInfo';
 
 function App() {
@@ -23,6 +26,7 @@ function App() {
                 </Route>
                 <Route path="/login" element={<LogIn />} />
                 <Route path="/signup" element={<SignUp />} />
+                <Route path="/Itinerary" element={<Itinerary />} />
                 <Route path="/" element={<Navigate to="/app" replace />} />
             </Routes>
         </main>
