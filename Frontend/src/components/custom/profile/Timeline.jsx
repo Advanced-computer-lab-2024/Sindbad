@@ -28,8 +28,7 @@ function Timeline({ userData, userId, id, userType, cardData }) {
 
                     {userType === "tourGuide" && cardData.length !== 0 && cardData.map((itinerary, index) => (<Card key={index} data={itinerary} id={id} userId={userId} type={type} />))}
 
-                    {/* hook up to API later */}
-                    {userType === "seller" && userData?.products?.map((product, index) => (<Card key={index} data={product} id={id} userId={userId} type={type} />))}
+                    {userType === "seller" && cardData?.map((product, index) => (<Card key={index} data={product} id={id} userId={userId} type={type} />))}
 
                     {userType === "advertiser" && cardData?.map((activity, index) => (<Card key={index} data={activity} id={id} userId={userId} type={type} />))}
 

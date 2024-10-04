@@ -15,6 +15,7 @@ import { getUserRole } from '@/services/UserApiHandler';
 import { getMyActivities } from "@/services/ActivityApiHandler";
 import { getMyItineraries } from "@/services/ItineraryApiHandler";
 import { getMySites } from "@/services/SiteApiHandler";
+import { getMyProducts } from "@/services/ProductApiHandler";
 
 function Profile() {
     const [userData, setUserData] = useState({});
@@ -83,13 +84,18 @@ function Profile() {
             }
         }
         else if (userType === "tourismGovernor") {
-            console.log("Getting sites");
             response = await getMySites(userId);
             if (response.error) {
-                console.log("FAIL");
                 console.error(response.message);
             } else {
-                console.log("SUCCESS");
+                setCardData(response);
+            }
+        }
+        else if (userType === "seller") {
+            response = await getMyProducts(userId);
+            if (response.error) {
+                console.error(response.message);
+            } else {
                 setCardData(response);
             }
         }
