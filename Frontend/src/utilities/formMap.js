@@ -217,19 +217,14 @@ const SiteSchema = {
       long: z.number().min(-180).max(180, { message: "Longitude must be between -180 and 180" }),
     }),
   }),
-  openingHours: z.record(z.string(),
-    z.object({
+  openingHours: z.object({
       start: z.number().min(0).max(1440, { message: "Start time must be within a valid range (0-1440 minutes)" }),
-      end: z.number()
-        .min(0)
-        .max(1440)
-        .refine((end, ctx) => end > ctx.parent.start, { message: "End time must be greater than start time" }),
-    })
-    ),
-    ticketPrices: z.array(z.number().min(0, { message: "Ticket prices must be non-negative" })),
-    tags: z.array(z.string().min(1, { message: "Tag must be valid ObjectId string" })),
-    creatorId: z.string().min(1, { message: "Creator ID is required" }),
-  };
+      end: z.number().min(0).max(1440),
+    }),
+  ticketPrices: z.array(z.number().min(0, { message: "Ticket prices must be non-negative" })),
+  tags: z.array(z.string().min(1, { message: "Tag must be valid ObjectId string" })),
+  creatorId: z.string().min(1, { message: "Creator ID is required" }),
+};
   const companyProfileSchema = 
   {
     name: z.string().min(1, { message: "Company name is required." }),
@@ -258,5 +253,42 @@ const formMap = {
     company: companyProfileSchema,
     experience: PreviousWorkSchema,
 }
+
+export const parseZodSchema = (schema) => {
+  if (schema instanceof z.ZodObject) {
+    const shape = schema.shape;
+    const parsed = {};
+    for (const key in shape) {
+      parsed[key] = parseZodSchema(shape[key]);
+    }
+    return parsed;
+  }
+
+  if (schema instanceof z.ZodArray) {
+    // Return an array of empty objects based on the inner schema
+    return [parseZodSchema(schema.element)];
+  }
+
+  if (schema instanceof z.ZodUnion) {
+    // Handle union types (returning the first valid schema structure as a placeholder)
+    return parseZodSchema(schema.options[0]);
+  }
+
+  // Check for specific primitive types and return corresponding values
+  if (schema instanceof z.ZodString) {
+    return "string"; // For strings, return an empty string
+  }
+  
+  if (schema instanceof z.ZodNumber) {
+    return 1; // For numbers, return 0
+  }
+
+  if (schema instanceof z.ZodBoolean) {
+    return false; // For booleans, return false
+  }
+
+  // Default return value for any other types not explicitly handled
+  return ""; 
+};
 
 export default formMap;
