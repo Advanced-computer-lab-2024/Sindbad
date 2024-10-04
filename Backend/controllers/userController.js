@@ -3,11 +3,14 @@ const TourGuide = require("../models/TourGuide");
 const Advertiser = require("../models/Advertiser");
 const Seller = require("../models/Seller");
 const Admin = require("../models/adminModel");
+const TourismGovernor = require("../models/TourismGovernor");
+
 
 
 const models = {
 	tourist: Tourist,
 	tourguide: TourGuide,
+  tourismgovernor: TourismGovernor,
 	advertiser: Advertiser,
 	seller: Seller,
 	admin: Admin,
@@ -39,6 +42,7 @@ const defaultFields = {
 		isAccepted: false,
 	},
 	admin: {},
+  tourismgovernor: {}
 };
 
 const UserController = {
@@ -90,6 +94,31 @@ const UserController = {
 				.json({ message: "Sign up failed", error: error.message });
 		}
 	},
+
+  getUserRole: async (req, res) => {
+      try {
+          const { id } = req.params;
+
+          if (!id) {
+              throw new Error("ID is required");
+          }
+
+          // Loop through models to find the user by ID
+          for (const [role, model] of Object.entries(models)) {
+              const user = await model.findById(id);
+              if (user) {
+                  return res.status(200).json({ role });
+              }
+          }
+
+          return res.status(404).json({ message: "User not found" });
+      } catch (error) {
+          return res.status(400).json({
+              message: "Failed to get user type",
+              error: error.message,
+          });
+      }
+  },
 
 	isUniqueEmailAndUsername: async (email, username) => {
 		// Check all models for unique email/username

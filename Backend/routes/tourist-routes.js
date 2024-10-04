@@ -5,10 +5,14 @@ const {
 	getTourist,
 	getAllTourists,
 	updateTourist,
-} = require("../controllers/touristController");
+	deleteTourist,
+	getAllTourists,
+  } = require("../controllers/touristController");
 
-router.route("/")
-			.get(getAllTourists);
+  router.get("/",getAllTourists);
+  router.get("/:id",getTourist);
+  router.put("/:id", updateTourist);
+  router.delete("/:id", deleteTourist); 
 
 router.route("/getTourist/:id")
 			.get(getTourist)

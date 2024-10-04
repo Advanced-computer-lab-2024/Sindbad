@@ -2,6 +2,25 @@ const Tourist = require("../models/tourist");
 const mongoose = require("mongoose");
 
 
+
+/**
+ * Retrieves all tourists
+ *
+ * @returns {Object} - A JSON object of the retrieved tourists or an error message
+ */
+const getAllTourists = async (req,res) => {
+	try{
+		const tourists = await Tourist.find();
+		res.json(tourists);
+	}catch{
+		return res.status(500).json({
+			message: "Error retrieving Tourists",
+			error: err.message,
+		});
+	}
+	
+}
+
 /**
  * Retrieves a tourist by its ID
  *
@@ -15,10 +34,13 @@ const getTourist = async (req,res) => {
 	try{
 		tourist = await Tourist.findById(req.params.id);
 		if (tourist == null) {
-			return res.status(404).send('Cannot find Tourist');
+			return res.status(404).json({ message: "Tourist not found" });
 		}
 	} catch (err) {
-		return res.status(500).json({message:err.message});
+		return res.status(500).json({
+			message: "Error finding tourist",
+			error: err.message,
+		});
 	}
 	return res.json(tourist);
 };
@@ -52,10 +74,13 @@ const updateTourist = async(req,res) => {
 	try{
 		tourist = await Tourist.findById(req.params.id);
 		if (tourist == null) {
-			return res.status(404).send('Cannot find Tourist');
+			return res.status(404).json({ message: "Tourist not found" });
 		}
 	} catch (err) {
-		return res.status(500).json({message:err.message});
+		return res.status(500).json({
+			message: "Error finding tourist",
+			error: err.message,
+		});
 	}
 	res.tourist = tourist;
 
@@ -89,27 +114,44 @@ const updateTourist = async(req,res) => {
 		const updatedTourist = await res.tourist.save();
 		res.json(updatedTourist);
 	} catch(err){
-		return res.status(400).json({message:err.message});
+		return res.status(400).json({
+			message: "Error updating tourist",
+			error: err.message,
+		});
 	}
 };
 
+/**
+ * deletes a tourist's profile
+ *
+ * @param {Object} req - Request with tourist ID
+ * @returns {Object} - Deleted tourist profile or error message
+ */
+const deleteTourist = async (req,res) => {
+	try{
+		const deletedTourist = await Tourist.findByIdAndDelete(req.params.id);
+		if (deletedTourist == null) {
+			return res.status(404).json({ message: "Tourist not found" });
+		}else{
+			res.json(deletedTourist);
+		}
+	} catch (err) {
+		return res.status(500).json({
+			message: "Error deleting Tourist",
+			error: err.message,
+		});
+	}
+};
 
 module.exports = {
+	getAllTourists,
     getTourist,
 	getAllTourists,
     updateTourist,
+	deleteTourist,
   };
 
-//Get all tourists
-/*router.get('/' , async (req,res) => {
-	try{
-		const tourists = await Tourist.find();
-		res.json(tourists);
-	}catch{
-		res.status(500).json({message:err.message});
-	}
-	
-})*/
+
 /*
 //create
 router.post("/", async (req, res) => {

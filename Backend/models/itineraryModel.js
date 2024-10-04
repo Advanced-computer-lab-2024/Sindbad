@@ -65,7 +65,8 @@ const itinerarySchema = mongoose.Schema({
     required: [true, "Please add the drop-off location"],
   },
   creatorId: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "TourGuide",
     required: [true, "Please add the creator of the itinerary"],
   },
   headCount: {
