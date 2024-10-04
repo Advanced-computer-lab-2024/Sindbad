@@ -19,7 +19,7 @@ export function GenericForm( { type, userData, id } ) {
 
     // formSchemaObject is an object that will be used to create the form schema. It will contain the keys of the temporaryHardCodedValues object,
     // and the values will be zod types based on the type of the value in the temporaryHardCodedValues object.
-    let formSchemaObject = formMap[type];
+    let formSchemaObject = formMap["seller"];
     let defaultValues = {};
 
     for (const key in formSchemaObject) {
