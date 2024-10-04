@@ -3,13 +3,10 @@ const baseURL = import.meta.env.VITE_BASE_URL;
 
 export const getMyActivities = async (advertiserId) => {
     try {
-        const response = await axios.get(`${baseURL}/activity/my-activities`, {
+        const response = await axios.get(`${baseURL}/activity/my-activities/${advertiserId}`, {
             headers: {
                 'Content-Type': 'application/json',
             },
-            params: {
-                "creatorId": "12345"
-            }
         });
 
         if (response.status === 200) {

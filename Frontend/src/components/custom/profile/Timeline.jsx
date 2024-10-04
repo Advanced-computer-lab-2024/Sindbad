@@ -19,14 +19,15 @@ function Timeline({ userData, userId, id, userType, cardData }) {
             </div>
             <div>
                 <div className="grid grid-cols-3 gap-6">
-                    {userType === "tourist" && userData?.bookmarks?.map((bookmark, index) => (<Card key={index} data={bookmark} />))}
+                    {/* hook up to API in later sprint*/}
+                    {userType === "tourist" && userData?.bookmarks?.map((bookmark, index) => (<Card key={index} data={bookmark} id={id} userId={userId} type={type} />))}
 
                     {userType === "tourGuide" && cardData.length !== 0 && cardData.map((itinerary, index) => (<Card key={index} data={itinerary} id={id} userId={userId} type={type} />))}
 
-                    {/* THIS TOO ONCE YOU FIGURE OUT HOW TO DEAL WITH IT */}
-                    {userType === "seller" && userData?.products?.map((product, index) => (<Card key={index} data={product} />))}
+                    {/* hook up to API later */}
+                    {userType === "seller" && userData?.products?.map((product, index) => (<Card key={index} data={product} id={id} userId={userId} type={type} />))}
 
-                    {userType === "advertiser" && cardData?.map((activity, index) => (<Card key={index} data={activity} />))}
+                    {userType === "advertiser" && cardData?.map((activity, index) => (<Card key={index} data={activity} id={id} userId={userId} type={type} />))}
                 </div>
                 <div>
                     {(userType === "tourist" && (userData?.bookmarks?.length === 0 || !userData?.bookmarks)) &&

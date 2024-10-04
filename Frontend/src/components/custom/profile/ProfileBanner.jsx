@@ -67,7 +67,7 @@ function ProfileBanner({ userData, userId, id, userType }) {
                         </h4>
                         <p className="text-xs leading-[11px] text-center mt-3">{userData.description}</p>
                     </div>
-                    {userData.mobileNumber || userData.hotline &&
+                    {(userData.mobileNumber || userData.hotline) &&
                         <div className="flex gap-1 items-center bg-gradient-to-br from-primary-700 to-primary-900 px-3 py-1.5 rounded-full">
                             <div className="shrink-0">
                                 <Phone size={16} />
