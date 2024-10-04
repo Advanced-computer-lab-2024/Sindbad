@@ -225,11 +225,26 @@ const SiteSchema = {
         .max(1440)
         .refine((end, ctx) => end > ctx.parent.start, { message: "End time must be greater than start time" }),
     })
-  ).min(1, { message: "Please add opening hours for each day" }),
+    ),
     ticketPrices: z.array(z.number().min(0, { message: "Ticket prices must be non-negative" })),
     tags: z.array(z.string().min(1, { message: "Tag must be valid ObjectId string" })),
     creatorId: z.string().min(1, { message: "Creator ID is required" }),
   };
+  const companyProfileSchema = 
+  {
+    name: z.string().min(1, { message: "Company name is required." }),
+    description: z.string().max(500, { message: "Description cannot be longer than 500 characters." }).optional(),
+    location: z.string().optional(),
+    // Add more fields as needed for the company profile
+  };
+  const PreviousWorkSchema = 
+    {
+      jobTitle: z.string().optional(),
+      companyName: z.string().optional(),
+      duration: z.string().optional(), // E.g., "Jan 2020 - Dec 2021"
+      description: z.string().default(""), // Optional field with default empty string
+    }
+  
 
 const formMap = {
     tourist: TouristSchema,
@@ -240,6 +255,8 @@ const formMap = {
     product: productSchema,
     activity: activitySchema,
     site: SiteSchema,
+    company: companyProfileSchema,
+    experience: PreviousWorkSchema,
 }
 
 export default formMap;

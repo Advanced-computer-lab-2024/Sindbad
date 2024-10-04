@@ -48,10 +48,10 @@ function Timeline({ userData, userId, id }) {
                         <CirclePlus size={24} />
                     </button>
                     </DialogTrigger>
-                    <DialogContent>
+                    <DialogContent className="overflow-y-scroll max-h-[50%]">
                         <DialogHeader>
                             <DialogTitle>Edit Profile</DialogTitle>
-                            <GenericForm type={type === "seller" ? "product" : type === "advertiser" ? "activity" : "itinerary"} id={id} />
+                            <GenericForm type={type === "seller" ? "product" : type === "advertiser" ? "activity" : type === "tourGuide" ? "itinerary" : "site"} id={id} />
                         </DialogHeader>
                     </DialogContent>
                 </Dialog>
