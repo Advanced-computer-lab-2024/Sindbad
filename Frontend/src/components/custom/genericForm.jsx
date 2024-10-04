@@ -13,8 +13,12 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import formMap from "@/utilities/formMap"
+import { updateTourist } from "@/services/ApiHandler"
+import { updateTourGuide } from "@/services/ApiHandler"
 
-export function GenericForm( { type, userData } ) {
+export function GenericForm( { type, userData, id } ) {
+
+    const API_ENDPOINT = "";
 
     // formSchemaObject is an object that will be used to create the form schema. It will contain the keys of the temporaryHardCodedValues object,
     // and the values will be zod types based on the type of the value in the temporaryHardCodedValues object.
@@ -39,8 +43,12 @@ export function GenericForm( { type, userData } ) {
     })
 
     function onSubmit(values) {
-    // Do something with the form values.
-        console.log(values)
+        if (type === "tourist") {
+            updateTourist(id, values);
+        }
+        if (type === "tourGuide") {
+            updateTourGuide(id, values);
+        }
     }
 
     function renderFields() {
@@ -51,6 +59,7 @@ export function GenericForm( { type, userData } ) {
               key={key}
               control={form.control}
               name={key}
+              
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>{key}</FormLabel>
@@ -58,6 +67,7 @@ export function GenericForm( { type, userData } ) {
                     <Input 
                       {...field}
                       type={isNumberField ? "number" : "text"}
+                      className="text-white"
                       onChange={(e) => {
                         // If the field is a number, convert the value to a number.
                         field.onChange(isNumberField ? Number(e.target.value) : e.target.value);

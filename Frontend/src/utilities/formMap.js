@@ -1,3 +1,4 @@
+import { getTourGuide } from "@/services/ApiHandler";
 import { z } from "zod";
 
 const TouristSchema = {
@@ -15,10 +16,10 @@ const TouristSchema = {
     nationality: z.string()
       .min(1, { message: "Nationality is required!" }),
   
-    DOB: z.date({
-      required_error: "Date of birth is required!",
-      invalid_type_error: "Invalid date format!",
-    }),
+    DOB: z.string({}).min(1, { message: "Date of birth is required!" }),
+    //   required_error: "Date of birth is required!",
+    //   invalid_type_error: "Invalid date format!",
+    // }),
   
     job: z.string()
       .min(1, { message: "Job is required!" }),
@@ -38,4 +39,5 @@ const TouristSchema = {
 const formMap = {
     tourist: TouristSchema,
 }
+
 export default formMap;

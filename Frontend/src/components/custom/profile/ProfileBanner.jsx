@@ -41,13 +41,7 @@ function ProfileBanner({ userData, userId, id }) {
                         <DialogContent>
                             <DialogHeader>
                                 <DialogTitle>Edit Profile</DialogTitle>
-                                <GenericForm type={type} userData={userData}>
-
-                                </GenericForm>
-                                <DialogDescription>
-                                This action cannot be undone. This will permanently delete your account
-                                and remove your data from our servers.
-                                </DialogDescription>
+                                <GenericForm type={type} userData={userData} id={id} />
                             </DialogHeader>
                         </DialogContent>
                     </Dialog>
