@@ -32,7 +32,7 @@ const ticketPrices = [
 ];
 
 
-function Place(){
+function Site(){
     return(
     <div className="min-h-screen h-full flex justify-center items-center bg-primary-950">
         <div className="w-full max-w-7xl px-8 py-8 bg-primary-900 shadow-lg rounded-md">
@@ -106,7 +106,7 @@ function Place(){
                     <div className="">
                         <div className="  bg-light h-64 w-3/4 rounded-lg m-4"></div>
                         <div className="flex flex-rows">
-                            <MapPin className="border-2 rounded-full p-1 w-8 h-8 relative mx-2"/>
+                            <MapPin className="border-2 rounded-full p-1 w-8 h-8 m-1 mx-3"/>
                             <p className=" text-lg m-2">Detailed Location Description</p>
                         </div>
                     </div>
@@ -156,4 +156,4 @@ function Place(){
         
     </div>
     )
-}export default Place;
+}export default Site;
