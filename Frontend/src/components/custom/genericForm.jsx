@@ -67,15 +67,16 @@ export function GenericForm( { type, data, id } ) {
       // }
     }
 
-    function ArrayFieldRenderer({ name, control }) {
+    function ArrayFieldRenderer({ name, control, initialValue }) {
       const { fields: arrayFields, append, remove } = useFieldArray({
         control,
         name,
       });
-  
+    
       return (
         <div className="space-y-4">
           <FormLabel>{name}</FormLabel>
+    
           {arrayFields.map((field, index) => (
             <div key={field.id} className="flex items-center space-x-4">
               <FormField
@@ -86,8 +87,14 @@ export function GenericForm( { type, data, id } ) {
                     <FormControl>
                       <Input
                         {...field}
+                        type={initialValue === "number" ? "number" : "text"} // Set type based on initialValue
                         className="text-white"
                         placeholder={`Item ${index + 1}`}
+                        onChange={(e) => {
+                          const value = initialValue === "number" ? Number(e.target.value) : e.target.value;
+                          field.onChange(value);
+                        }}
+                        value={field.value} // Make sure to bind the input value
                       />
                     </FormControl>
                     <FormMessage />
@@ -105,14 +112,14 @@ export function GenericForm( { type, data, id } ) {
           ))}
           <Button
             type="button"
-            onClick={() => append("string")}
+            onClick={() => append(initialValue === "number" ? 1 : "string")} // Initialize with a number or string based on the type
             className="bg-blue-500 text-white"
           >
             Add Item
           </Button>
         </div>
       );
-    }
+    }    
   
     function renderFields(values, path = "") {
       return Object.keys(values).map((key) => {
@@ -126,6 +133,7 @@ export function GenericForm( { type, data, id } ) {
               key={fullPath}
               name={fullPath}
               control={form.control}
+              initialValue={typeof values[key][0]}
             />
           );
         }
