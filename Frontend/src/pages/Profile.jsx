@@ -10,50 +10,77 @@ import { getTourist } from "@/services/TouristApiHandler";
 import { getTourGuide } from "@/services/TourGuideApiHandler";
 import { getSeller } from "@/services/SellerApiHandler";
 import { getAdvertiser } from "@/services/AdvertiserApiHandler";
+import { getUserRole } from '@/services/UserApiHandler';
 
 function Profile() {
-    const [userData, setUserData] = useState({"_id":{"$oid":"66f823447b0fe45d3c6d3768"},"email":"moski@gmail.com","username":"moskitoAdvertiser","passwordHash":"hashedpasswordlol","isAccepted":true,"createdActivities":[],"createdIterinaries":[],"createdHistoricalPlaces":[],"__v":{"$numberInt":"0"},"websiteLink":"moskitonddew.com","hotline":"123","companyProfile":{"name":"Ski Egypt","location":"Mall of Egypt، Wahat Road, 6th october, Giza Governorate 12582","description":"Africa’s first indoor ski resort, Ski Egypt’s Snow Park is a spectacular 22,000m2 of a real, snow-filled winter wonderland. At -2 degrees, with our unmatchable activities, it is an unforgettable experience for everyone."}});
+    const [userData, setUserData] = useState({});
     const { type, id } = useUser();
     const { userId } = useParams();
+    const [userType, setUserType] = useState("guest");
+    const [error, setError] = useState(false);
 
     const getUserInfo = async (userId) => {
         let response;
-        if (type === "tourist")
-            response = await getTourist(userId);
-        else if (type === "tourGuide")
+        const t = await getType(userId);
+
+        if (t === "tourist") {
+            if (userId === id || type === "admin")
+                response = await getTourist(userId);
+            else
+                response = { error: true, message: "Unauthorized access" };
+        }
+        else if (t === "tourGuide")
             response = await getTourGuide(userId);
-        else if (type === "seller")
+        else if (t === "seller")
             response = await getSeller(userId);
-        else if (type === "advertiser")
+        else if (t === "advertiser")
             response = await getAdvertiser(userId);
 
         if (response.error) {
+            setError(true);
             console.error(response.message);
         } else {
+            setError(false);
             setUserData(response);
         }
     };
+
+    const getType = async (userId) => {
+        const response = await getUserRole(userId);
+        if (response.error) {
+            setError(true);
+            console.error(response.message);
+        } else {
+            setUserType(response.role);
+            return response.role;
+        }
+    }
 
     useEffect(() => {
         if (userId) {
             getUserInfo(userId);
         }
     }, [userId]);
-    useEffect(() => {
-        console.log(userData)
-    }, [userData]);
 
     return (
         <div className="py-8 px-24 max-w-[1200px] flex gap-9 mx-auto">
-            <div className="flex flex-col w-max gap-9 self-start">
-                <ProfileBanner userData={userData} userId={userId} id={id} />
-                {type === "tourist" && userId === id && <Wallet userData={userData} />}
-            </div>
-            <div className="w-full flex flex-col gap-12">
-                {type === "advertiser" && <CompanyProfile userData={userData} userId={userId} id={id} />}
-                {type === "tourGuide" && <Experience userData={userData} userId={userId} id={id} />}
-                <Timeline userData={userData} userId={userId} id={id} />
-            </div>
+            {error === false ?
+                <>
+                    <div className="flex flex-col w-max gap-9 self-start">
+                        <ProfileBanner userData={userData} userId={userId} id={id} userType={userType} />
+                        {userType === "tourist" && userId === id && <Wallet userData={userData} />}
+                    </div>
+                    <div className="w-full flex flex-col gap-12">
+                        {userType === "advertiser" && <CompanyProfile userData={userData} userId={userId} id={id} />}
+                        {userType === "tourGuide" && <Experience userData={userData} userId={userId} id={id} />}
+                        <Timeline userData={userData} userId={userId} id={id} userType={userType} />
+                    </div>
+                </>
+                :
+                <div className="flex justify-center w-full">
+                    <p className="text-neutral-400 text-sm italic">Profile does not exist or you are not authorised to view it.</p>
+                </div>
+            }
         </div>
     );
 }
