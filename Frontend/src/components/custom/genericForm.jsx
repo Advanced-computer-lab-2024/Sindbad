@@ -39,32 +39,51 @@ export function GenericForm( { type, data, id } ) {
     })
 
     function onSubmit(values) {
-      console.log(values);
       // Call the appropriate API function based on the type of the form.
-      // if (type === "tourist") {
-      //     updateTourist(id, values);
-      // }
-      // if (type === "tourGuide") {
-      //     updateTourGuide(id, values);
-      // }
-      // if (type === "seller") {
-      //     updateSeller(id, values);
-      // }
-      // if (type === "advertiser"){
-      //     updateAdvertiser(values);
-      // }
-      // if (type === "itinerary") {
-      //     // Call the appropriate API function to update the itinerary.
-      // }
-      // if (type === "product") {
-      //     // Call the appropriate API function to update the product.
-      // }
-      // if (type === "activity") {
-      //     // Call the appropriate API function to update the activity.
-      // }
-      // if (type === "site") {
-      //   // Call the appropriate API function to update the site.
-      // }
+      if (type === "tourist") {
+          updateTourist(id, values);
+      }
+      if (type === "tourGuide") {
+          updateTourGuide(id, values);
+      }
+      if (type === "seller") {
+          updateSeller(id, values);
+      }
+      if (type === "advertiser"){
+          updateAdvertiser(values);
+      }
+      if (type === "itinerary") {
+          if (data) {
+            // Call the appropriate API function to update the itinerary.  
+          }
+          else {
+            // Call the appropriate API function to create the itinerary.
+          }
+      }
+      if (type === "product") {
+        if (data) {
+          // Call the appropriate API function to update the Product.  
+        }
+        else {
+          // Call the appropriate API function to create the Product.
+        }
+      }
+      if (type === "activity") {
+        if (data) {
+          // Call the appropriate API function to update the Activity.  
+        }
+        else {
+          // Call the appropriate API function to create the Activity.
+        }
+      }
+      if (type === "site") {
+        if (data) {
+          // Call the appropriate API function to update the Site.  
+        }
+        else {
+          // Call the appropriate API function to create the Site.
+        }
+      }
     }
 
     function ArrayFieldRenderer({ name, control, initialValue }) {
