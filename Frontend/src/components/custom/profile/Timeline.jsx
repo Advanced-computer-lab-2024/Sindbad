@@ -1,29 +1,9 @@
 import Card from "@/components/custom/Card";
 import { CirclePlus } from "lucide-react";
-import { useEffect, useState } from 'react';
-import { getMyActivities } from "@/services/ActivityApiHandler";
+import { useUser } from "@/state management/userInfo";
 
-function Timeline({ userData, userId, id, userType }) {
-    const [cardData, setCardData] = useState([]);
-
-    const getCardData = async (userId) => {
-        let response;
-        if (userType === "advertiser" && userData?.createdActivities && userData?.createdActivities.length !== 0) {
-            response = await getMyActivities(userId);
-            if (response.error) {
-                console.error(response.message);
-            } else {
-                setCardData(response);
-            }
-        }
-    };
-
-    useEffect(() => {
-        if (userId) {
-            getCardData(userId);
-        }
-    }, [userId]);
-
+function Timeline({ userData, userId, id, userType, cardData }) {
+    const { type } = useUser();
     return (
         <div className="flex flex-col gap-6">
             <div className="flex items-center gap-6">
@@ -41,8 +21,7 @@ function Timeline({ userData, userId, id, userType }) {
                 <div className="grid grid-cols-3 gap-6">
                     {userType === "tourist" && userData?.bookmarks?.map((bookmark, index) => (<Card key={index} data={bookmark} />))}
 
-                    {/* CHANGE THIS TO APPROPRIATE API CALL ONCE ITINERARIES ARE IMPLEMENTED */}
-                    {userType === "tourGuide" && userData?.itineraries?.map((itinerary, index) => (<Card key={index} data={itinerary} />))}
+                    {userType === "tourGuide" && cardData.length !== 0 && cardData.map((itinerary, index) => (<Card key={index} data={itinerary} id={id} userId={userId} type={type} />))}
 
                     {/* THIS TOO ONCE YOU FIGURE OUT HOW TO DEAL WITH IT */}
                     {userType === "seller" && userData?.products?.map((product, index) => (<Card key={index} data={product} />))}
@@ -56,7 +35,7 @@ function Timeline({ userData, userId, id, userType }) {
                         </p>
                     }
 
-                    {(userType === "tourGuide" && (userData?.itineraries?.length === 0 || !userData?.itineraries)) &&
+                    {(userType === "tourGuide" && cardData.length === 0) &&
                         <p className="text-neutral-400 text-sm italic">
                             {userId !== id ? "No itineraries to show." : "You have not created any itineraries yet. Click the + button to get started!"}
                         </p>

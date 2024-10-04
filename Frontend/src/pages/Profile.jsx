@@ -11,9 +11,12 @@ import { getTourGuide } from "@/services/TourGuideApiHandler";
 import { getSeller } from "@/services/SellerApiHandler";
 import { getAdvertiser } from "@/services/AdvertiserApiHandler";
 import { getUserRole } from '@/services/UserApiHandler';
+import { getMyActivities } from "@/services/ActivityApiHandler";
+import { getItinerariesByCreator } from "@/services/ItineraryApiHandler";
 
 function Profile() {
     const [userData, setUserData] = useState({});
+    const [cardData, setCardData] = useState([]);
     const { type, id } = useUser();
     const { userId } = useParams();
     const [userType, setUserType] = useState("guest");
@@ -56,11 +59,38 @@ function Profile() {
         }
     }
 
+    const getCardData = async (userId) => {
+        console.log("userType:", userType, "userData:", userData);
+        let response;
+        if (userType === "advertiser" && userData?.createdActivities && userData?.createdActivities.length !== 0) {
+            response = await getMyActivities(userId);
+            if (response.error) {
+                console.error(response.message);
+            } else {
+                setCardData(response);
+            }
+        }
+        else if (userType === "tourGuide") {
+            response = await getItinerariesByCreator(userId);
+            if (response.error) {
+                console.error(response.message);
+            } else {
+                setCardData(response);
+            }
+        }
+    };
+
     useEffect(() => {
         if (userId) {
             getUserInfo(userId);
         }
     }, [userId]);
+
+    useEffect(() => {
+        if (userId && userType !== "guest" && Object.keys(userData).length > 0) {
+            getCardData(userId);
+        }
+    }, [userType, userData]);
 
     return (
         <div className="py-8 px-24 max-w-[1200px] flex gap-9 mx-auto">
@@ -73,7 +103,7 @@ function Profile() {
                     <div className="w-full flex flex-col gap-12">
                         {userType === "advertiser" && <CompanyProfile userData={userData} userId={userId} id={id} />}
                         {userType === "tourGuide" && <Experience userData={userData} userId={userId} id={id} />}
-                        <Timeline userData={userData} userId={userId} id={id} userType={userType} />
+                        <Timeline userData={userData} userId={userId} id={id} userType={userType} cardData={cardData} />
                     </div>
                 </>
                 :
