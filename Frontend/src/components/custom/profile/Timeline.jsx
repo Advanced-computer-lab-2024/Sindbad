@@ -3,6 +3,14 @@ import { CirclePlus } from "lucide-react";
 import { useUser } from '@/state management/userInfo';
 import { useEffect, useState } from 'react';
 import { getMyActivities } from "@/services/ActivityApiHandler";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+import GenericForm from "../genericForm";
 
 function Timeline({ userData, userId, id }) {
     const { type } = useUser();
@@ -34,9 +42,19 @@ function Timeline({ userData, userId, id }) {
                 </h1>
                 <hr className="border-neutral-700 border w-full mt-1.5" />
                 {type !== "tourist" && userId === id &&
+                <Dialog>
+                    <DialogTrigger>
                     <button className="shrink-0 mt-1.5 text-neutral-600 hover:text-light transition-all">
                         <CirclePlus size={24} />
                     </button>
+                    </DialogTrigger>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Edit Profile</DialogTitle>
+                            <GenericForm type={type === "seller" ? "product" : type === "advertiser" ? "activity" : "itinerary"} id={id} />
+                        </DialogHeader>
+                    </DialogContent>
+                </Dialog>
                 }
             </div>
             <div>

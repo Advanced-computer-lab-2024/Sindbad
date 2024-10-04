@@ -5,7 +5,6 @@ import { Edit3, Mail, Cake, Globe2, Briefcase } from "lucide-react";
 import {
     Dialog,
     DialogContent,
-    DialogDescription,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
@@ -32,7 +31,7 @@ function ProfileBanner({ userData, userId, id }) {
             <div className="h-[110px] w-full">
                 <ImagePlaceholder />
                 {id === userId &&
-                        <Dialog>
+                    <Dialog>
                         <DialogTrigger>
                         <button className="absolute top-2 right-2 border-2 border-dark opacity-0 group-hover:opacity-100 transition-all hover:border-secondary bg-primary-900 p-1.5 rounded-full">
                             <Edit3 size={16} />

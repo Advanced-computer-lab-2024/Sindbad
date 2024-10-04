@@ -18,7 +18,7 @@ import { updateTourGuide } from "@/services/TourGuideApiHandler"
 import { updateTourist } from "@/services/TouristApiHandler"
 import { updateAdvertiser } from "@/services/AdvertiserApiHandler"
 
-export function GenericForm( { type, userData, id } ) {
+export function GenericForm( { type, data, id } ) {
 
     // formSchemaObject is an object that will be used to create the form schema. It will contain the keys of the temporaryHardCodedValues object,
     // and the values will be zod types based on the type of the value in the temporaryHardCodedValues object.
@@ -26,11 +26,13 @@ export function GenericForm( { type, userData, id } ) {
     let defaultValues = {};
 
     for (const key in formSchemaObject) {
-        if (userData[key]) {
-            defaultValues[key] = userData[key];
+      if (data) {
+        if (data[key]) {
+            defaultValues[key] = data[key];
             continue;
         }
-        defaultValues[key] = "";
+      }
+      defaultValues[key] = "";
     }
 
     // Define the form schema using zod.
@@ -55,6 +57,18 @@ export function GenericForm( { type, userData, id } ) {
       }
       if (type === "advertiser"){
           updateAdvertiser(values);
+      }
+      if (type === "itinerary") {
+          // Call the appropriate API function to update the itinerary.
+      }
+      if (type === "product") {
+          // Call the appropriate API function to update the product.
+      }
+      if (type === "activity") {
+          // Call the appropriate API function to update the activity.
+      }
+      if (type === "site") {
+          // Call the appropriate API function to update the site.
       }
     }
 
