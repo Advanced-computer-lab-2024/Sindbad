@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,9 +14,30 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { useState } from "react"
 import { Navigate } from "react-router-dom";
-
+import { useDispatch } from 'react-redux';
+import { login } from '@/state management/userInfo';
 
 function LogIn() {
+    const dispatch = useDispatch();
+
+    function constUserData() {
+        return {
+            type: "tourist",
+            id: 1000
+        };
+    }
+
+    useEffect(() => {
+        const getUserData = async () => {
+            const userData = constUserData(); // replace with api call later
+
+            if (userData) {
+                dispatch(login({ type: userData.type, id: userData.id }));
+            }
+        };
+
+        getUserData();
+    }, [dispatch]);
 
     const [signUpRedirect, setSignUpRedirect] = useState(false);
 

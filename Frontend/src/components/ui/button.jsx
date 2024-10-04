@@ -13,6 +13,8 @@ const buttonVariants = cva(
           "flex gap-1 items-center justify-between self-center bg-primary-900 w-full px-3 py-1.5 rounded-md group transition-all hover:ring-1 hover:ring-secondary",
         rounded:
           "flex gap-1 items-center self-center bg-neutral-850 w-max px-3 py-1.5 rounded-full group transition-all hover:ring-1 hover:ring-secondary",
+        icon:
+          "absolute top-2 right-2 border-2 border-dark opacity-0 group-hover:opacity-100 transition-all hover:border-secondary bg-primary-900 p-1.5 rounded-full",
         destructive:
           "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
         outline:

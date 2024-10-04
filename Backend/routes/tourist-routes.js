@@ -9,7 +9,7 @@ const {
   } = require("../controllers/touristController");
   
   router
-	.route("/")
+	.route("/getTourist/:id")
 	.get(getTourist)
 	.put(updateTourist);
 
