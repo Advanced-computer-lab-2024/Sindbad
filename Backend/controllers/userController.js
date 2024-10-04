@@ -2,11 +2,13 @@ const Tourist = require("../models/tourist");
 const TourGuide = require("../models/TourGuide");
 const Advertiser = require("../models/Advertiser");
 const Seller = require("../models/Seller");
+const Admin = require("../models/adminModel");
 
 const UserController = {
 	signUp: async (req, res) => {
 		try {
-			const { email, username, passwordHash, role, ...touristData } = req.body; // Extract role and user data
+			const { email, username, passwordHash, role, ...touristData } =
+				req.body; // Extract role and user data
 
 			let user;
 			if (!role) {
@@ -26,7 +28,13 @@ const UserController = {
 				case "tourist":
 					const { mobileNumber, nationality, DOB, job } = touristData;
 
-					if (!email || !mobileNumber || !nationality || !DOB || !job) {
+					if (
+						!email ||
+						!mobileNumber ||
+						!nationality ||
+						!DOB ||
+						!job
+					) {
 						throw new Error("Tourist data is required");
 					}
 
@@ -83,6 +91,49 @@ const UserController = {
 		}
 	},
 
+	getUserType: async (req, res) => {
+		try {
+			const { id } = req.params;
+
+			if (!id) {
+				throw new Error("ID is required");
+			}
+
+			const tourist = await Tourist.findById(id);
+			if (tourist) {
+				return res.status(200).json({ role: "tourist" });
+			}
+
+			const tourGuide = await TourGuide.findById(id);
+			if (tourGuide) {
+				return res.status(200).json({ role: "tourguide" });
+			}
+
+			const advertiser = await Advertiser.findById(id);
+			if (advertiser) {
+				return res.status(200).json({ role: "advertiser" });
+			}
+
+			const seller = await Seller.findById(id);
+			if (seller) {
+				return res.status(200).json({ role: "seller" });
+			}
+
+			const admin = await Admin.findById(id);
+
+			if (admin) {
+				return res.status(200).json({ role: "admin" });
+			}
+
+			return res.status(404).json({ message: "User not found" });
+		} catch (error) {
+			return res.status(400).json({
+				message: "Failed to get user type",
+				error: error.message,
+			});
+		}
+	},
+
 	isUniqueEmailAndUsername: async (email, username) => {
 		// Check in Tourist model
 		const touristExists =
@@ -104,11 +155,13 @@ const UserController = {
 
 		// Check in Seller model
 		const sellerExists =
-			(await Seller.findOne({ email })) || (await Seller.findOne({ username }));
+			(await Seller.findOne({ email })) ||
+			(await Seller.findOne({ username }));
 		if (sellerExists) return false;
 
 		const adminExists =
-			(await Admin.findOne({ email })) || (await Admin.findOne({ username }));
+			(await Admin.findOne({ email })) ||
+			(await Admin.findOne({ username }));
 		if (adminExists) return false;
 
 		// If no duplicates were found, return true
