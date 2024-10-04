@@ -12,8 +12,8 @@ import { getSeller } from "@/services/SellerApiHandler";
 import { getAdvertiser } from "@/services/AdvertiserApiHandler";
 
 function Profile() {
-    const [userData, setUserData] = useState({"_id":{"$oid":"66f823447b0fe45d3c6d3768"},"email":"moski@gmail.com","username":"moskitoAdvertiser","passwordHash":"hashedpasswordlol","isAccepted":true,"createdActivities":[],"createdIterinaries":[],"createdHistoricalPlaces":[],"__v":{"$numberInt":"0"},"websiteLink":"moskitonddew.com","hotline":"123","companyProfile":{"name":"Ski Egypt","location":"Mall of Egypt، Wahat Road, 6th october, Giza Governorate 12582","description":"Africa’s first indoor ski resort, Ski Egypt’s Snow Park is a spectacular 22,000m2 of a real, snow-filled winter wonderland. At -2 degrees, with our unmatchable activities, it is an unforgettable experience for everyone."}});
-    const { type, id } = useUser();
+    const [userData, setUserData] = useState({});
+    const { type, id, username } = useUser();
     const { userId } = useParams();
 
     const getUserInfo = async (userId) => {
@@ -25,7 +25,7 @@ function Profile() {
         else if (type === "seller")
             response = await getSeller(userId);
         else if (type === "advertiser")
-            response = await getAdvertiser(userId);
+            response = await getAdvertiser(username, type);
 
         if (response.error) {
             console.error(response.message);

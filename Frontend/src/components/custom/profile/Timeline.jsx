@@ -10,13 +10,13 @@ function Timeline({ userData, userId, id }) {
 
     const getCardData = async (userId) => {
         let response;
-        if (type === "advertiser")
+        if (type === "advertiser" && userData?.createdActivities && userData?.createdActivities.length !== 0) {
             response = await getMyActivities(userId);
-
-        if (response.error) {
-            console.error(response.message);
-        } else {
-            setCardData(response);
+            if (response.error) {
+                console.error(response.message);
+            } else {
+                setCardData(response);
+            }
         }
     };
 

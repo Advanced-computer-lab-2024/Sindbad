@@ -6,15 +6,18 @@ const userSlice = createSlice({
     initialState: {
         type: "advertiser",
         id: "66f823447b0fe45d3c6d3768",
+        username: "moskitoAdvertiser"
     },
     reducers: {
         login(state, action) {
             state.type = action.payload.type
             state.id = action.payload.id
+            state.username = action.payload.username
         },
         logout(state) {
             state.type = "guest"
             state.id = null
+            state.username = null
         }
     }
 });
@@ -26,7 +29,7 @@ export const store = configureStore({
 });
 
 export function useUser() {
-    return useSelector((state) => ({type: state.type, id: state.id}));
+    return useSelector((state) => ({type: state.type, id: state.id, username: state.username}));
 }
 
 // Can still subscribe to the store
