@@ -1,9 +1,9 @@
 import axios from 'axios';
 const baseURL = import.meta.env.VITE_BASE_URL;
 
-export const getMyActivities = async (advertiserId) => {
+export const getMyProducts = async (sellerId) => {
     try {
-        const response = await axios.get(`${baseURL}/activity/my-activities/${advertiserId}`, {
+        const response = await axios.get(`${baseURL}/seller/${sellerId}/products`, {
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -16,7 +16,7 @@ export const getMyActivities = async (advertiserId) => {
             console.log("fail: ", response.data);
             return {
                 error: true,
-                message: 'No activities found.',
+                message: 'No products found.',
                 status: 404,
             };
         } else {

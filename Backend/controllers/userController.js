@@ -2,6 +2,8 @@ const Tourist = require("../models/tourist");
 const TourGuide = require("../models/TourGuide");
 const Advertiser = require("../models/Advertiser");
 const Seller = require("../models/Seller");
+const TourismGovernor = require("../models/TourismGovernor");
+const Admin = require("../models/adminModel");
 
 const UserController = {
 	signUp: async (req, res) => {
@@ -68,6 +70,14 @@ const UserController = {
 						passwordHash
 					);
 					break;
+				case "admin":
+					user = await UserController.createAdmin(
+						email,
+						username,
+						passwordHash
+					);
+					break;
+
 				default:
 					throw new Error("Invalid role");
 			}
@@ -79,6 +89,53 @@ const UserController = {
 			return res
 				.status(400)
 				.json({ message: "Sign up failed", error: error.message });
+		}
+	},
+
+	getUserRole: async (req, res) => {
+		try {
+			const { id } = req.params;
+
+			if (!id) {
+				throw new Error("ID is required");
+			}
+
+			const tourist = await Tourist.findById(id);
+			if (tourist) {
+				return res.status(200).json({ role: "tourist" });
+			}
+
+			const tourGuide = await TourGuide.findById(id);
+			if (tourGuide) {
+				return res.status(200).json({ role: "tourGuide" });
+			}
+
+			const advertiser = await Advertiser.findById(id);
+			if (advertiser) {
+				return res.status(200).json({ role: "advertiser" });
+			}
+
+			const seller = await Seller.findById(id);
+			if (seller) {
+				return res.status(200).json({ role: "seller" });
+			}
+
+			const tourismGovernor = await TourismGovernor.findById(id);
+			if (tourismGovernor) {
+				return res.status(200).json({ role: "tourismGovernor" });
+			}
+
+			const admin = await Admin.findById(id);
+			if (admin) {
+				return res.status(200).json({ role: "admin" });
+			}
+
+			return res.status(404).json({ message: "User not found" });
+		} catch (error) {
+			return res.status(400).json({
+				message: "Failed to get user type",
+				error: error.message,
+			});
 		}
 	},
 
@@ -106,6 +163,11 @@ const UserController = {
 			(await Seller.findOne({ email })) ||
 			(await Seller.findOne({ username }));
 		if (sellerExists) return false;
+
+		const adminExists =
+			(await Admin.findOne({ email })) ||
+			(await Admin.findOne({ username }));
+		if (adminExists) return false;
 
 		// If no duplicates were found, return true
 		return true;
@@ -204,6 +266,17 @@ const UserController = {
 
 		await seller.save();
 		return seller;
+	},
+
+	createAdmin: async (email, username, passwordHash) => {
+		const admin = new Admin({
+			email,
+			username,
+			passwordHash,
+		});
+
+		await admin.save();
+		return admin;
 	},
 };
 

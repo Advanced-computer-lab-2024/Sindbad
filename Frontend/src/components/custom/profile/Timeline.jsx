@@ -12,33 +12,17 @@ import {
 } from "@/components/ui/dialog"
 import GenericForm from "../genericForm";
 
-function Timeline({ userData, userId, id }) {
+function Timeline({ userData, userId, id, userType, cardData }) {
     const { type } = useUser();
-    const [cardData, setCardData] = useState([]);
-
-    const getCardData = async (userId) => {
-        let response;
-        if (type === "advertiser")
-            response = await getMyActivities(userId);
-
-        if (response.error) {
-            console.error(response.message);
-        } else {
-            setCardData(response);
-        }
-    };
-
-    useEffect(() => {
-        if (userId) {
-            getCardData(userId);
-        }
-    }, [userId]);
-
     return (
         <div className="flex flex-col gap-6">
             <div className="flex items-center gap-6">
-                <h1 className="text-3xl font-extrabold">
-                    {type === "tourist" ? "Bookmarks" : type === "seller" ? "Products" : type === "advertiser" ? "Activities" : "Itineraries"}
+                <h1 className="text-3xl font-extrabold shrink-0">
+                    {userType === "tourist" ? "Bookmarks"
+                        : userType === "seller" ? "Products"
+                            : userType === "advertiser" ? "Activities"
+                                : userType === "tourismGovernor" ? "Historical Places & Museums"
+                                    : "Itineraries"}
                 </h1>
                 <hr className="border-neutral-700 border w-full mt-1.5" />
                 {type !== "tourist" && userId === id &&
@@ -58,39 +42,46 @@ function Timeline({ userData, userId, id }) {
                 }
             </div>
             <div>
-                <div className="grid grid-cols-3 gap-6">
-                    {type === "tourist" && userData?.bookmarks?.map((bookmark, index) => (<Card key={index} data={bookmark} />))}
+                <div className={`grid gap-6 ${userType === "tourismGovernor" ? "grid-cols-5" : "grid-cols-3"}`}>
+                    {/* hook up to API in later sprint*/}
+                    {userType === "tourist" && userData?.bookmarks?.map((bookmark, index) => (<Card key={index} data={bookmark} id={id} userId={userId} type={type} />))}
 
-                    {/* CHANGE THIS TO APPROPRIATE API CALL ONCE ITINERARIES ARE IMPLEMENTED */}
-                    {type === "tourGuide" && userData?.itineraries?.map((itinerary, index) => (<Card key={index} data={itinerary} />))}
+                    {userType === "tourGuide" && cardData.length !== 0 && cardData.map((itinerary, index) => (<Card key={index} data={itinerary} id={id} userId={userId} type={type} />))}
 
-                    {/* THIS TOO ONCE YOU FIGURE OUT HOW TO DEAL WITH IT */}
-                    {type === "seller" && userData?.products?.map((product, index) => (<Card key={index} data={product} />))}
+                    {userType === "seller" && cardData?.map((product, index) => (<Card key={index} data={product} id={id} userId={userId} type={type} />))}
 
-                    {type === "advertiser" && cardData?.map((activity, index) => (<Card key={index} data={activity} />))}
+                    {userType === "advertiser" && cardData?.map((activity, index) => (<Card key={index} data={activity} id={id} userId={userId} type={type} />))}
+
+                    {userType === "tourismGovernor" && cardData?.map((site, index) => (<Card key={index} data={site} id={id} userId={userId} type={type} />))}
                 </div>
                 <div>
-                    {(type === "tourist" && (userData?.bookmarks?.length === 0 || !userData?.bookmarks)) &&
+                    {(userType === "tourist" && (userData?.bookmarks?.length === 0 || !userData?.bookmarks)) &&
                         <p className="text-neutral-400 text-sm italic">
                             {"You have not bookmarked any events yet."}
                         </p>
                     }
 
-                    {(type === "tourGuide" && (userData?.itineraries?.length === 0 || !userData?.itineraries)) &&
+                    {(userType === "tourGuide" && cardData.length === 0) &&
                         <p className="text-neutral-400 text-sm italic">
                             {userId !== id ? "No itineraries to show." : "You have not created any itineraries yet. Click the + button to get started!"}
                         </p>
                     }
 
-                    {(type === "seller" && (userData?.products?.length === 0 || !userData?.products)) &&
+                    {(userType === "seller" && (userData?.products?.length === 0 || !userData?.products)) &&
                         <p className="text-neutral-400 text-sm italic">
                             {userId !== id ? "No products to show." : "You have not added any products yet. Click the + button to get started!"}
                         </p>
                     }
 
-                    {(type === "advertiser" && (userData?.createdActivities?.length === 0 || !userData?.createdActivities)) &&
+                    {(userType === "advertiser" && (userData?.createdActivities?.length === 0 || !userData?.createdActivities)) &&
                         <p className="text-neutral-400 text-sm italic">
                             {userId !== id ? "No activities to show." : "You have not created any activities yet. Click the + button to get started!"}
+                        </p>
+                    }
+
+                    {(userType === "tourismGovernor" && (userData?.createdHistoricalPlaces?.length === 0 || !userData?.createdHistoricalPlaces)) &&
+                        <p className="text-neutral-400 text-sm italic">
+                            {userId !== id ? "No historical places or museums to show." : "You have not added any historical places or museums yet. Click the + button to get started!"}
                         </p>
                     }
                 </div>

@@ -3,13 +3,11 @@ const Advertiser = require("../models/Advertiser");
 // Controller to get advertiser profile
 const getProfile = async (req, res) => {
 	try {
-		const { username } = req.body; // Get username from the body
-		const advertiser = await Advertiser.findOne({ username });
+		const { id } = req.params; // Get username from the params
+		const advertiser = await Advertiser.findById(id);
 
 		if (!advertiser) {
-			return res
-				.status(404)
-				.json({ message: "Advertiser not found or not accepted." });
+			return res.status(404).json({ message: "Advertiser not found" });
 		}
 
 		return res.status(200).json(advertiser);

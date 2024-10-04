@@ -9,7 +9,7 @@ const {
   router
 	.route("/getTourGuide/:id")
 	.get(getTourGuide)
-	.patch(updateTourGuide);
+	.put(updateTourGuide);
 
 
 
