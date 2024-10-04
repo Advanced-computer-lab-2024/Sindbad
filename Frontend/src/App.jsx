@@ -7,7 +7,6 @@ import SignUp from "./pages/SignUp";
 import { Navigate } from "react-router-dom";
 import Timeline from "./pages/Timeline";
 import Itinerary from "./pages/ItineraryView";
-import GenericForm from "./components/custom/genericForm";
 
 import { useUser } from '@/state management/userInfo';
 
