@@ -29,8 +29,8 @@ function CompanyProfile({ userData, userId, id }) {
                         <div className="flex gap-5">
                             <div className="border-l-[2px] border-neutral-500"></div>
                             <div className="flex flex-col gap-2">
-                                <div className="flex items-center gap-1 text-neutral-400">
-                                    <MapPin size={16} />
+                                <div className="flex items-start gap-1 text-neutral-400">
+                                    <MapPin size={18} className="pt-1 shrink-0" />
                                     <h4 className="text-base">
                                         {userData.companyProfile.location}
                                     </h4>

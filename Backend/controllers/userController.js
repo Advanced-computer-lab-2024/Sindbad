@@ -106,7 +106,7 @@ const UserController = {
 
 			const tourGuide = await TourGuide.findById(id);
 			if (tourGuide) {
-				return res.status(200).json({ role: "tourguide" });
+				return res.status(200).json({ role: "tourGuide" });
 			}
 
 			const advertiser = await Advertiser.findById(id);
