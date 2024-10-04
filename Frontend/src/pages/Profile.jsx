@@ -10,22 +10,25 @@ import { getTourist } from "@/services/TouristApiHandler";
 import { getTourGuide } from "@/services/TourGuideApiHandler";
 import { getSeller } from "@/services/SellerApiHandler";
 import { getAdvertiser } from "@/services/AdvertiserApiHandler";
+import { getUserRole } from '@/services/UserApiHandler';
 
 function Profile() {
     const [userData, setUserData] = useState({});
-    const { type, id, username } = useUser();
+    const { type, id } = useUser();
     const { userId } = useParams();
 
     const getUserInfo = async (userId) => {
         let response;
-        if (type === "tourist")
+        const role = await getRole(userId);
+
+        if (role === "tourist")
             response = await getTourist(userId);
-        else if (type === "tourGuide")
+        else if (role === "tourGuide")
             response = await getTourGuide(userId);
-        else if (type === "seller")
+        else if (role === "seller")
             response = await getSeller(userId);
-        else if (type === "advertiser")
-            response = await getAdvertiser(username);
+        else if (role === "advertiser")
+            response = await getAdvertiser(userId);
 
         if (response.error) {
             console.error(response.message);
@@ -33,6 +36,15 @@ function Profile() {
             setUserData(response);
         }
     };
+
+    const getRole = async (userId) => {
+        const response = await getUserRole(userId);
+        if (response.error) {
+            console.error(response.message);
+        } else {
+            console.log(response);
+        }
+    }
 
     useEffect(() => {
         if (userId) {

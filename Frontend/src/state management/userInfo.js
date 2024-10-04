@@ -5,19 +5,16 @@ const userSlice = createSlice({
     name: 'user',
     initialState: {
         type: "advertiser",
-        id: "66f823447b0fe45d3c6d3768",
-        username: "moskitoAdvertiser"
+        id: "66f823447b0fe45d3c6d3768"
     },
     reducers: {
         login(state, action) {
             state.type = action.payload.type
             state.id = action.payload.id
-            state.username = action.payload.username
         },
         logout(state) {
             state.type = "guest"
             state.id = null
-            state.username = null
         }
     }
 });
