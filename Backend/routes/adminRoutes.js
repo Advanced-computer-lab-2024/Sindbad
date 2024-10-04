@@ -1,9 +1,25 @@
 const express = require("express");
 const router = express.Router();
-const { registerAdmin } = require("../controllers/adminController");
+const {
+	createAdmin,
+	getAllAdmins,
+	getAdminById,
+	updateAdmin,
+	deleteAdmin,
+	addTourismGovernor,
+} = require("../controllers/adminController");
 
 router
 	.route("/")
-	.post(registerAdmin);
+	.get(getAllAdmins)
+	.post(createAdmin);
+
+router
+	.route("/:id")
+	.get(getAdminById)
+	.put(updateAdmin)
+	.delete(deleteAdmin);
+
+router.post("/add-tourism-governor", addTourismGovernor);
 
 module.exports = router;

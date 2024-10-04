@@ -4,8 +4,8 @@ import { useSelector } from 'react-redux';
 const userSlice = createSlice({
     name: 'user',
     initialState: {
-        type: "advertiser",
-        id: "66f823447b0fe45d3c6d3768",
+        type: "tourGuide",
+        id: "66f8630f55f21e927d7455cc"
     },
     reducers: {
         login(state, action) {
@@ -26,7 +26,7 @@ export const store = configureStore({
 });
 
 export function useUser() {
-    return useSelector((state) => ({type: state.type, id: state.id}));
+    return useSelector((state) => ({type: state.type, id: state.id, username: state.username}));
 }
 
 // Can still subscribe to the store

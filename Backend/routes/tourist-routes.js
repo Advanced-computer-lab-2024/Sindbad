@@ -11,7 +11,7 @@ const {
   router
 	.route("/getTourist/:id")
 	.get(getTourist)
-	.patch(updateTourist);
+	.put(updateTourist);
 
 
 module.exports = router;

@@ -1,15 +1,29 @@
 const mongoose = require('mongoose');
-const passportLocalMongoose = require("passport-local-mongoose");
 const Schema = mongoose.Schema;
 
 //TODO: Update schema to link with User 
-const AdminSchema = new Schema({
-  username: {
-    type: String,
-    required: true,
-    unique: true,
-  }
-}, { timestamps: true });
+const AdminSchema = new Schema(
+	{
+		email: {
+			type: String,
+			required: true,
+			unique: true,
+			validate: {
+				validator: (v) => /^\S+@\S+\.\S+$/.test(v),
+				message: (props) => `${props.value} is not a valid email!`,
+			},
+		},
+		username: {
+			type: String,
+			required: true,
+			unique: true,
+		},
+		passwordHash: {
+			type: String,
+			required: true,
+		},
+	},
+	{ timestamps: true }
+);
 
-AdminSchema.plugin(passportLocalMongoose);
 module.exports = mongoose.model("Admin", AdminSchema);
