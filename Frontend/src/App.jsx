@@ -8,30 +8,34 @@ import { Navigate } from "react-router-dom";
 import Timeline from "./pages/Timeline";
 import Itinerary from "./pages/ItineraryView";
 import Site from "./pages/SitesView";
+import AdminManagementView from "./pages/AdminManagementView"; 
 
-import { useUser } from '@/state management/userInfo';
+import { useUser } from "@/state management/userInfo";
 
 function App() {
-    const { id } = useUser();
+	const { id } = useUser();
 
-    return (
-        <main className="bg-dark text-light font-inter min-h-screen h-max">
-            <Routes>
-                <Route path="/app" element={<MainPage/>}>
-                    <Route path="profile" element={<Navigate to={`/app/profile/${id}`} replace />} />
-                    <Route path="profile/:userId" element={<Profile />} />
-                    <Route path="timeline" element={<Timeline/>} />
-                    <Route path="store" element={<Timeline/>} />
-                    <Route path="account-management" element={<Timeline/>} />
-                </Route>
-                <Route path="/login" element={<LogIn />} />
-                <Route path="/signup" element={<SignUp />} />
-                <Route path="/Itinerary" element={<Itinerary />} />
+	return (
+		<main className="bg-dark text-light font-inter min-h-screen h-max">
+			<Routes>
+				<Route path="/app" element={<MainPage />}>
+					<Route
+						path="profile"
+						element={<Navigate to={`/app/profile/${id}`} replace />}
+					/>
+					<Route path="profile/:userId" element={<Profile />} />
+					<Route path="timeline" element={<Timeline />} />
+					<Route path="store" element={<Timeline />} />
+					<Route path="management" element={<AdminManagementView />} />
+				</Route>
+				<Route path="/login" element={<LogIn />} />
+				<Route path="/signup" element={<SignUp />} />
+				<Route path="/Itinerary" element={<Itinerary />} />
                 <Route path="/site" element= {<Site />} />
-                <Route path="/" element={<Navigate to="/app" replace />} />
-            </Routes>
-        </main>
-    );
+				<Route path="/" element={<Navigate to="/app" replace />} />
+			</Routes>
+		</main>
+	);
 }
 
 export default App;

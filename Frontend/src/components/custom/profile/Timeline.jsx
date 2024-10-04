@@ -7,8 +7,12 @@ function Timeline({ userData, userId, id, userType, cardData }) {
     return (
         <div className="flex flex-col gap-6">
             <div className="flex items-center gap-6">
-                <h1 className="text-3xl font-extrabold">
-                    {userType === "tourist" ? "Bookmarks" : userType === "seller" ? "Products" : userType === "advertiser" ? "Activities" : "Itineraries"}
+                <h1 className="text-3xl font-extrabold shrink-0">
+                    {userType === "tourist" ? "Bookmarks"
+                        : userType === "seller" ? "Products"
+                            : userType === "advertiser" ? "Activities"
+                                : userType === "tourismGovernor" ? "Historical Places & Museums"
+                                    : "Itineraries"}
                 </h1>
                 <hr className="border-neutral-700 border w-full mt-1.5" />
                 {userType !== "tourist" && userId === id &&
@@ -18,16 +22,17 @@ function Timeline({ userData, userId, id, userType, cardData }) {
                 }
             </div>
             <div>
-                <div className="grid grid-cols-3 gap-6">
+                <div className={`grid gap-6 ${userType === "tourismGovernor" ? "grid-cols-5" : "grid-cols-3"}`}>
                     {/* hook up to API in later sprint*/}
                     {userType === "tourist" && userData?.bookmarks?.map((bookmark, index) => (<Card key={index} data={bookmark} id={id} userId={userId} type={type} />))}
 
                     {userType === "tourGuide" && cardData.length !== 0 && cardData.map((itinerary, index) => (<Card key={index} data={itinerary} id={id} userId={userId} type={type} />))}
 
-                    {/* hook up to API later */}
-                    {userType === "seller" && userData?.products?.map((product, index) => (<Card key={index} data={product} id={id} userId={userId} type={type} />))}
+                    {userType === "seller" && cardData?.map((product, index) => (<Card key={index} data={product} id={id} userId={userId} type={type} />))}
 
                     {userType === "advertiser" && cardData?.map((activity, index) => (<Card key={index} data={activity} id={id} userId={userId} type={type} />))}
+
+                    {userType === "tourismGovernor" && cardData?.map((site, index) => (<Card key={index} data={site} id={id} userId={userId} type={type} />))}
                 </div>
                 <div>
                     {(userType === "tourist" && (userData?.bookmarks?.length === 0 || !userData?.bookmarks)) &&
@@ -51,6 +56,12 @@ function Timeline({ userData, userId, id, userType, cardData }) {
                     {(userType === "advertiser" && (userData?.createdActivities?.length === 0 || !userData?.createdActivities)) &&
                         <p className="text-neutral-400 text-sm italic">
                             {userId !== id ? "No activities to show." : "You have not created any activities yet. Click the + button to get started!"}
+                        </p>
+                    }
+
+                    {(userType === "tourismGovernor" && (userData?.createdHistoricalPlaces?.length === 0 || !userData?.createdHistoricalPlaces)) &&
+                        <p className="text-neutral-400 text-sm italic">
+                            {userId !== id ? "No historical places or museums to show." : "You have not added any historical places or museums yet. Click the + button to get started!"}
                         </p>
                     }
                 </div>

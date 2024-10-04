@@ -65,7 +65,8 @@ const activitySchema = mongoose.Schema({
     default: true,
   },
   creatorId: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Advertiser",
   },
   headCount: {
     type: Number,

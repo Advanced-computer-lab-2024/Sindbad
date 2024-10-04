@@ -10,9 +10,12 @@ import { getTourist } from "@/services/TouristApiHandler";
 import { getTourGuide } from "@/services/TourGuideApiHandler";
 import { getSeller } from "@/services/SellerApiHandler";
 import { getAdvertiser } from "@/services/AdvertiserApiHandler";
+import { getTourismGovernor } from "@/services/AdminApiHandler";
 import { getUserRole } from '@/services/UserApiHandler';
 import { getMyActivities } from "@/services/ActivityApiHandler";
-import { getItinerariesByCreator } from "@/services/ItineraryApiHandler";
+import { getMyItineraries } from "@/services/ItineraryApiHandler";
+import { getMySites } from "@/services/SiteApiHandler";
+import { getMyProducts } from "@/services/ProductApiHandler";
 
 function Profile() {
     const [userData, setUserData] = useState({});
@@ -27,7 +30,7 @@ function Profile() {
         const t = await getType(userId);
 
         if (t === "tourist") {
-            if (userId === id || type === "admin")
+            if (userId == id || type === "admin")
                 response = await getTourist(userId);
             else
                 response = { error: true, message: "Unauthorized access" };
@@ -38,6 +41,8 @@ function Profile() {
             response = await getSeller(userId);
         else if (t === "advertiser")
             response = await getAdvertiser(userId);
+        else if (t === "tourismGovernor")
+            response = await getTourismGovernor(userId);
 
         if (response.error) {
             setError(true);
@@ -71,7 +76,23 @@ function Profile() {
             }
         }
         else if (userType === "tourGuide") {
-            response = await getItinerariesByCreator(userId);
+            response = await getMyItineraries(userId);
+            if (response.error) {
+                console.error(response.message);
+            } else {
+                setCardData(response);
+            }
+        }
+        else if (userType === "tourismGovernor") {
+            response = await getMySites(userId);
+            if (response.error) {
+                console.error(response.message);
+            } else {
+                setCardData(response);
+            }
+        }
+        else if (userType === "seller") {
+            response = await getMyProducts(userId);
             if (response.error) {
                 console.error(response.message);
             } else {
@@ -96,10 +117,12 @@ function Profile() {
         <div className="py-8 px-24 max-w-[1200px] flex gap-9 mx-auto">
             {error === false ?
                 <>
-                    <div className="flex flex-col w-max gap-9 self-start">
-                        <ProfileBanner userData={userData} userId={userId} id={id} userType={userType} />
-                        {userType === "tourist" && userId === id && <Wallet userData={userData} />}
-                    </div>
+                    {userType !== "tourismGovernor" &&
+                        <div className="flex flex-col w-max gap-9 self-start">
+                            <ProfileBanner userData={userData} userId={userId} id={id} userType={userType} />
+                            {userType === "tourist" && userId === id && <Wallet userData={userData} />}
+                        </div>
+                    }
                     <div className="w-full flex flex-col gap-12">
                         {userType === "advertiser" && <CompanyProfile userData={userData} userId={userId} id={id} />}
                         {userType === "tourGuide" && <Experience userData={userData} userId={userId} id={id} />}
