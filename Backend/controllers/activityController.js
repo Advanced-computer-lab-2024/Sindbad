@@ -4,15 +4,15 @@ const Category = require("../models/categoryModel");
 
 /**
  * Gets an activity by ID
- * @param {*} req -- The request body should contain the id of the activity. example : { "id": "66f68d4a90d0a4eaa665d343" }
- * @param {*} res -- The Activity JSON object returned
+ * @route GET /activity/:id
+ * @param {*} req - The request parameters should contain the ID of the activity. Example: /activity/66f68d4a90d0a4eaa665d343
+ * @param {*} res - The Activity JSON object returned
  * @returns {Object} - A JSON object representing the activity, or an error message if the activity is not found or an error occurs
  */
-
 const getActivity = async (req, res) => {
   try {
-    const activity = await Activity.findById(req.body.id);
-    res.status(201).json(activity);
+    const activity = await Activity.findById(req.params.id);
+    res.status(200).json(activity);
   } catch (error) {
     return res.status(500).json({
       message: "Error getting activity",
@@ -23,15 +23,15 @@ const getActivity = async (req, res) => {
 
 /**
  * Retrieves activities created by a specific user
+ * @route GET /activity/my-activities
  * @param {Object} req - The request object containing user data
  * @param {Object} res - The response object for sending the result
  * @returns {Object} JSON containing an array of activities or error message
  */
-
 const getMyActivities = async (req, res) => {
   try {
-    const activities = await Activity.find({ creatorId: req.body.creatorId });
-    res.status(201).json(activities);
+    const activities = await Activity.find({ creatorId: req.params.creatorId });
+    res.status(200).json(activities);
   } catch (error) {
     return res.status(500).json({
       message: "Error getting activities",
@@ -41,18 +41,17 @@ const getMyActivities = async (req, res) => {
 };
 
 /**
- * Gets all activities
+ * Retrieves all activities from the database.
  *
- * @param {Object} req - The request object
- * @param {Object} res - The response object
- * @returns {Object}
- *
- * @example GET http://localhost:3000/activity/all-activities
+ * @route GET /activity
+ * @param {Object} req - The request object (not used in this function).
+ * @param {Object} res - The response object used to send the list of activities or an error message.
+ * @returns {Object} - A JSON object containing an array of activities or an error message if an error occurs.
  */
 const getAllActivities = async (req, res) => {
   try {
     const activities = await Activity.find();
-    res.status(201).json(activities);
+    res.status(200).json(activities);
   } catch (error) {
     return res.status(500).json({
       message: "Error getting activities",
@@ -62,14 +61,17 @@ const getAllActivities = async (req, res) => {
 };
 
 /**
- * Searches for activities by a single search term across name, tags, or category
+ * Searches for activities by a single search term across name, tags, or category.
  *
- * @param {Object} req - Request with search criteria in the body
- * @param {Object} res - Response with matching activities or error
+ * @route GET /activity/search
+ * @param {Object} req - Request with search criteria in query parameters.
+ * @param {string} req.query.searchTerm - The term to search for in activity names, tags, or categories.
+ * @param {Object} res - Response with matching activities or error.
+ * @returns {Object} - A JSON object containing an array of matching activities or an error message.
  */
 const searchActivities = async (req, res) => {
   try {
-    const { searchTerm } = req.body;
+    const { searchTerm } = req.query;
 
     if (!searchTerm) {
       return res.status(400).json({ message: "Search term is required" });
@@ -120,14 +122,22 @@ const searchActivities = async (req, res) => {
 };
 
 /**
- * Filters upcoming activities based on budget, date, category, or rating
+ * Filters upcoming activities based on budget, date, category, or rating.
  *
- * @param {Object} req - Request with filter criteria in the body
- * @param {Object} res - Response with matching activities or error
+ * @route GET /activity/filter
+ * @param {Object} req - Request with filter criteria in query parameters.
+ * @param {Object} req.query - Filter criteria.
+ * @param {Object} req.query.budget - Object with min and max properties for filtering activities by price.
+ * @param {Date} req.query.date.start - Start date for filtering activities.
+ * @param {Date} req.query.date.end - End date for filtering activities.
+ * @param {string} req.query.category - Category for filtering activities.
+ * @param {number} req.query.rating - Minimum rating for filtering activities.
+ * @param {Object} res - Response with matching activities or error.
+ * @returns {Object} - A JSON object containing an array of matching activities or an error message.
  */
 const filterActivities = async (req, res) => {
   try {
-    const { budget, date, category, rating } = req.body;
+    const { budget, date, category, rating } = req.query;
 
     const filterCriteria = {
       dateTime: { $gte: new Date() }, // Ensure activities are upcoming
@@ -186,9 +196,10 @@ const filterActivities = async (req, res) => {
 /**
  * Creates a new activity
  *
- * @param {Object} req - The request object containing activity details in the body
- * @param {Object} res - The response object used to send the created activity or error message
- * @returns {Object} - A JSON object of the created activity or an error message
+ * @route POST /activity/
+ * @param {Object} req - The request object containing activity details in the body.
+ * @param {Object} res - The response object used to send the created activity or error message.
+ * @returns {Object} - A JSON object of the created activity or an error message.
  */
 const setActivity = async (req, res) => {
   try {
@@ -227,14 +238,18 @@ const setActivity = async (req, res) => {
 /**
  * Updates an existing activity in the database
  *
- * @param {Object} req - The request object containing the activity ID and updated fields in the body
- * @param {Object} res - The response object used to send the updated activity or an error message
- * @returns {Object} - A JSON object of the updated activity or an error message if not found
+ * @route PUT /activity/:id
+ * @param {Object} req - The request object containing the activity ID as a parameter and updated fields in the body.
+ * @param {Object} res - The response object used to send the updated activity or an error message.
+ * @returns {Object} - A JSON object of the updated activity or an error message if not found.
  */
 const updateActivity = async (req, res) => {
   try {
+    // Get the ID from the request parameters
+    const { id } = req.params;
+
+    // Destructure the fields from the request body
     const {
-      id,
       name,
       dateTime,
       location,
@@ -278,19 +293,20 @@ const updateActivity = async (req, res) => {
 };
 
 /**
- * Deletes an activity from the database by ID
+ * Deletes an activity by ID
  *
+ * @route DELETE /activity/:id
  * @param {Object} req - The request object containing the ID of the activity to delete in the body
  * @param {Object} res - The response object used to send a confirmation message or error
  * @returns {Object} - A JSON object with a confirmation message or an error message if not found
  */
 const deleteActivity = async (req, res) => {
   try {
-    const deletedActivity = await Activity.findByIdAndDelete(req.body.id);
+    const deletedActivity = await Activity.findByIdAndDelete(req.params.id);
     if (!deletedActivity) {
       return res.status(404).json({ message: "Activity not found" });
     }
-    return res.status(201).json({ message: "Activity deleted" });
+    return res.status(204).json({ message: "Activity deleted" });
   } catch (error) {
     return res.status(500).json({
       message: "Error deleting activity",
@@ -307,7 +323,8 @@ const getSortedActivitiesHelper = async (
 ) => {
   try {
     let sortCriteria = {};
-    let order = sortOrder === "asc" ? 1 : -1;
+    const order = sortOrder === "asc" ? 1 : -1;
+    const skip = (page - 1) * limit;
 
     if (sortBy === "price") {
       sortCriteria = {
@@ -327,17 +344,17 @@ const getSortedActivitiesHelper = async (
       throw new Error("Invalid sortBy parameter. Use 'price' or 'rating'.");
     }
 
-    const skip = (page - 1) * limit;
+    // Ensure limit is a number
+    const limitNumber = Number(limit);
 
-    const activities =
-      sortBy === "price"
-        ? await Activity.aggregate([
-            sortCriteria,
-            { $sort: { priceValue: order } },
-            { $skip: skip }, // Skip for pagination
-            { $limit: limit }, // Limit the number of results
-          ])
-        : await Activity.find().sort(sortCriteria).skip(skip).limit(limit);
+    const activities = await Activity.aggregate([
+      ...(sortBy === "price" ? [sortCriteria] : []),
+      ...(sortBy === "price"
+        ? [{ $sort: { priceValue: order } }]
+        : [{ $sort: { [sortBy]: order } }]),
+      { $skip: skip }, // Skip for pagination
+      { $limit: limitNumber }, // Use limitNumber instead of limit
+    ]);
 
     return activities;
   } catch (error) {
@@ -349,19 +366,19 @@ const getSortedActivitiesHelper = async (
 /**
  * Fetches sorted activities with pagination
  *
+ * @route GET activity/sort
  * @param {Object} req - Request object
- * @param {string} req.body.sortBy - Field to sort by ("price" or "rating")
- * @param {string} [req.body.sortOrder="asc"] - Sort order ("asc" or "desc"). Default is "asc"
- * @param {number} [req.body.page=1] - Page number for pagination. Default is 1
- * @param {number} [req.body.limit=10] - Number of activities per page. Default is 10
+ * @param {string} req.query.sortBy - Field to sort by ("price" or "rating")
+ * @param {string} [req.query.sortOrder="asc"] - Sort order ("asc" or "desc"). Default is "asc"
+ * @param {number} [req.query.page=1] - Page number for pagination. Default is 1
+ * @param {number} [req.query.limit=10] - Number of activities per page. Default is 10
  *
  * @param {Object} res - Response
  *
  * @returns {void} - Sends the sorted activities or an error message
  */
-
 const getSortedActivities = async (req, res) => {
-  const { sortBy, sortOrder = "asc", page = 1, limit = 10 } = req.body;
+  const { sortBy, sortOrder = "asc", page = 1, limit = 10 } = req.query;
   try {
     const activities = await getSortedActivitiesHelper(
       sortBy,
