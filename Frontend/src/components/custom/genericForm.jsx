@@ -13,12 +13,9 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import formMap from "@/utilities/formMap"
-import { updateTourist } from "@/services/ApiHandler"
-import { updateTourGuide } from "@/services/ApiHandler"
+import { updateSeller, updateTourist, updateAdvertiser, updateTourGuide  } from "@/services/ApiHandler"
 
 export function GenericForm( { type, userData, id } ) {
-
-    const API_ENDPOINT = "";
 
     // formSchemaObject is an object that will be used to create the form schema. It will contain the keys of the temporaryHardCodedValues object,
     // and the values will be zod types based on the type of the value in the temporaryHardCodedValues object.
@@ -38,17 +35,24 @@ export function GenericForm( { type, userData, id } ) {
 
     // Create the form using react-hook-form.
     const form = useForm({
-        resolver: zodResolver(formSchema),
-        defaultValues: defaultValues,
+      resolver: zodResolver(formSchema),
+      defaultValues: defaultValues,
     })
 
     function onSubmit(values) {
-        if (type === "tourist") {
-            updateTourist(id, values);
-        }
-        if (type === "tourGuide") {
-            updateTourGuide(id, values);
-        }
+      // Call the appropriate API function based on the type of the form.
+      if (type === "tourist") {
+          updateTourist(id, values);
+      }
+      if (type === "tourGuide") {
+          updateTourGuide(id, values);
+      }
+      if (type === "seller") {
+          updateSeller(id, values);
+      }
+      if (type === "advertiser"){
+          updateAdvertiser(values);
+      }
     }
 
     function renderFields() {
