@@ -24,10 +24,9 @@ const AdvertiserSchema = new mongoose.Schema({
 		type: String,
 		validate: {
 			validator: (v) =>
-				/^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?/.test(
-					v
-				),
-			message: (props) => `${props.value} is not a valid URL!`,
+				/^(www\.)[\da-z.-]+\.[a-z.]{2,6}(\/[\w .-]*)*\/?$/.test(v), // Basic validation for URLs starting with www.
+			message: (props) =>
+				`${props.value} is not a valid website URL! Website must start with 'www.'`,
 		},
 	},
 	hotline: {
@@ -37,24 +36,42 @@ const AdvertiserSchema = new mongoose.Schema({
 			message: (props) => `${props.value} is not a valid hotline number!`,
 		},
 	},
-	// companyProfile structure still unknown
-	companyProfile: {},
-
+	companyProfile: {
+		name: {
+			type: String,
+			required: true,
+			validate: {
+				validator: (v) => v.length > 0,
+				message: "Company name is required.",
+			},
+		},
+		description: {
+			type: String,
+			validate: {
+				validator: (v) => v.length <= 500, // Limiting description to 500 characters
+				message: "Description cannot be longer than 500 characters.",
+			},
+		},
+		location: {
+			type: String,
+		},
+		// Add more fields here as needed for the company profile
+	},
 	isAccepted: {
 		type: Boolean,
 		default: false, // Indicates whether the advertiser has been accepted
 	},
 	createdActivities: {
 		type: [String], // Array of activity IDs
-		default: [], // Default to an empty array
+		default: [],
 	},
 	createdIterinaries: {
 		type: [String], // Array of itinerary IDs
-		default: [], // Default to an empty array
+		default: [],
 	},
 	createdHistoricalPlaces: {
 		type: [String], // Array of historical place IDs
-		default: [], // Default to an empty array
+		default: [],
 	},
 });
 
