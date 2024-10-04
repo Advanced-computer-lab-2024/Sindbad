@@ -7,6 +7,6 @@ const router = express.Router();
 router.get("/profile/:id", AdvertiserController.getProfile);
 
 // Route to update advertiser profile
-router.put("/profile", AdvertiserController.updateProfile);
+router.put("/profile/:id", AdvertiserController.updateProfile);
 
 module.exports = router;

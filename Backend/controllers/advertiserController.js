@@ -20,7 +20,8 @@ const getProfile = async (req, res) => {
 // Controller to update advertiser profile
 const updateProfile = async (req, res) => {
 	try {
-		const { username, websiteLink, hotline, companyProfile } = req.body; // Get username and other fields from the body
+		const { id } = req.params; // Get username from the params
+		const { websiteLink, hotline, companyProfile, email } = req.body; // Get username and other fields from the body
 
 		// Create an object to hold the fields that need to be updated
 		const updateData = {};
@@ -35,9 +36,15 @@ const updateProfile = async (req, res) => {
 		if (companyProfile !== undefined) {
 			updateData.companyProfile = companyProfile;
 		}
+		if (email !== undefined) {
+			updateData.email = email;
+		}
 
-		const advertiser = await Advertiser.findOneAndUpdate(
-			{ username },
+		console.log("Received ID:", id);
+		console.log("Update Data:", updateData);
+
+		const advertiser = await Advertiser.findByIdAndUpdate(
+			id,
 			{ $set: updateData }, // Use $set to only update specified fields
 			{ new: true } // Return the updated document
 		);
