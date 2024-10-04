@@ -6,12 +6,14 @@ const router = express.Router();
 const {
 	getTourist,
 	updateTourist,
+	deleteTourist,
+	getAllTourists,
   } = require("../controllers/touristController");
-  
-  router
-	.route("/getTourist/:id")
-	.get(getTourist)
-	.put(updateTourist);
+
+  router.get("/",getAllTourists);
+  router.get("/:id",getTourist);
+  router.put("/:id", updateTourist);
+  router.delete("/:id", deleteTourist); 
 
 
 module.exports = router;
