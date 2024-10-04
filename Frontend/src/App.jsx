@@ -7,7 +7,7 @@ import SignUp from "./pages/SignUp";
 import { Navigate } from "react-router-dom";
 import Timeline from "./pages/Timeline";
 import Itinerary from "./pages/ItineraryView";
-import AdminManagementView from "./pages/AdminManagementView";
+import AdminManagementView from "./pages/AdminManagementView"; 
 
 import { useUser } from "@/state management/userInfo";
 
