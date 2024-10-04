@@ -2,6 +2,7 @@ const Tourist = require("../models/tourist");
 const TourGuide = require("../models/TourGuide");
 const Advertiser = require("../models/Advertiser");
 const Seller = require("../models/Seller");
+const Admin = require("../models/adminModel");
 
 const UserController = {
 	signUp: async (req, res) => {

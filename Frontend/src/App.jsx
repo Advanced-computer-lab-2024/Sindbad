@@ -7,6 +7,7 @@ import SignUp from "./pages/SignUp";
 import { Navigate } from "react-router-dom";
 import Timeline from "./pages/Timeline";
 import Itinerary from "./pages/ItineraryView";
+import AccountManagementView from "./pages/AccountManagementView";
 
 import { useUser } from '@/state management/userInfo';
 
@@ -21,7 +22,7 @@ function App() {
                     <Route path="profile/:userId" element={<Profile />} />
                     <Route path="timeline" element={<Timeline/>} />
                     <Route path="store" element={<Timeline/>} />
-                    <Route path="account-management" element={<Timeline/>} />
+                    <Route path="account-management" element={<AccountManagementView/>} />
                 </Route>
                 <Route path="/login" element={<LogIn />} />
                 <Route path="/signup" element={<SignUp />} />
