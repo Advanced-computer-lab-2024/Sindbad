@@ -288,7 +288,7 @@ const getSortedHelper = async (
 
 /**
  * @description Fetches sorted itineraries with pagination
- * @route GET /itineraries/sorted
+ * @route GET /sort
  * @param {Object} req - The request object containing sorting and pagination parameters
  * @param {string} req.query.sortBy - Field to sort by ("price" or "rating")
  * @param {string} [req.query.sortOrder="asc"] - Sort order ("asc" or "desc"). Default is "asc"
@@ -311,7 +311,7 @@ const getSortedItineraries = async (req, res) => {
 
 /**
  * @description Filters itineraries based on budget, date range, preferences (tags), and languages
- * @route GET /itineraries/filter
+ * @route GET /filter
  * @param {Object} req - The request object containing filter criteria
  * @param {string} [req.query.budget] - Budget range in the format "min,max" or a single number for a maximum price
  * @param {string} [req.query.startDate] - Start date for filtering itineraries
