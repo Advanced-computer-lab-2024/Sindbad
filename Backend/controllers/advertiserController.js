@@ -3,7 +3,7 @@ const Advertiser = require("../models/Advertiser");
 // Controller to get advertiser profile
 const getProfile = async (req, res) => {
 	try {
-		const { username } = req.body; // Get username from the body
+		const { username } = req.params; // Get username from the params
 		const advertiser = await Advertiser.findOne({ username });
 
 		if (!advertiser) {
