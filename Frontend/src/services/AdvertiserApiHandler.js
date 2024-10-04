@@ -1,13 +1,12 @@
 import axios from 'axios';
 const baseURL = import.meta.env.VITE_BASE_URL;
 
-export const getAdvertiser = async (type, username) => {
+export const getAdvertiser = async (username) => {
     try {
-        const response = await axios.get(`${baseURL}/advertiser/profile/`, {
+        const response = await axios.get(`${baseURL}/advertiser/profile/${username}`, {
             headers: {
                 'Content-Type': 'application/json',
             },
-            params: { "role": type, "username": username },
         });
 
         if (response.status === 200) {

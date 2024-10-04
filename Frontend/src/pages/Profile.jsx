@@ -25,7 +25,7 @@ function Profile() {
         else if (type === "seller")
             response = await getSeller(userId);
         else if (type === "advertiser")
-            response = await getAdvertiser(username, type);
+            response = await getAdvertiser(username);
 
         if (response.error) {
             console.error(response.message);
