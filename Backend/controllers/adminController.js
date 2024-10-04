@@ -172,6 +172,18 @@ const addTourismGovernor = async (req, res) => {
 	}
 };
 
+const getTourismGovernorById = async (req, res) => {
+	try {
+		const tourismGovernor = await TourismGovernor.findById(req.params.id);
+		if (!tourismGovernor) {
+			return res.status(404).json({ message: "Tourism governor not found" });
+		}
+		res.status(200).json(tourismGovernor);
+	} catch (err) {
+		res.status(500).json({ message: err.message });
+	}
+};
+
 const isUsernameUnique = async (username) => {
 	const admin = await Admin.findOne({ username });
 	if (admin) return false;
@@ -201,4 +213,5 @@ module.exports = {
 	updateAdmin,
 	deleteAdmin,
 	addTourismGovernor,
+	getTourismGovernorById,
 };

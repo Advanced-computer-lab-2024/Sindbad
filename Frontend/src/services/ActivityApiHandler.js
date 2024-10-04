@@ -16,7 +16,7 @@ export const getMyActivities = async (advertiserId) => {
             console.log("fail: ", response.data);
             return {
                 error: true,
-                message: 'Activity not found.',
+                message: 'No activities found.',
                 status: 404,
             };
         } else {

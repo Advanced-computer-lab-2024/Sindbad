@@ -1,20 +1,22 @@
 import axios from 'axios';
 const baseURL = import.meta.env.VITE_BASE_URL;
 
-export const getMyItineraries = async (tourGuideId) => {
+export const getMySites = async (tourismGovernorId) => {
     try {
-        const response = await axios.get(`${baseURL}/itinerary/myItineraries/${tourGuideId}`, {
+        const response = await axios.get(`${baseURL}/site/my-sites/${tourismGovernorId}`, {
             headers: {
                 'Content-Type': 'application/json',
             },
         });
 
         if (response.status === 200) {
+            console.log("success: ", response.data);
             return response.data;
         } else if (response.status === 404) {
+            console.log("fail: ", response.data);
             return {
                 error: true,
-                message: 'No itineraries found.',
+                message: 'No sites found.',
                 status: 404,
             };
         } else {
