@@ -8,7 +8,7 @@ const {
   getAllTags,
 } = require("../controllers/tagController");
 
-router.route("/").post(createTag).get(getTag).delete(deleteTag).put(updateTag);
-router.route("/allTags").get(getAllTags);
+router.route("/").post(createTag).get(getAllTags);
+router.route("/:id").get(getTag).put(updateTag).delete(deleteTag);
 
 module.exports = router;

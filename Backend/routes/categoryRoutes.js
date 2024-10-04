@@ -9,12 +9,13 @@ const {
 } = require("../controllers/categoryController");
 const { getAllActivities } = require("../controllers/activityController");
 
+router.route("/").post(createCategory).get(getAllCategories);
+
 router
-  .route("/")
-  .post(createCategory)
+  .route("/:id")
   .get(getCategory)
-  .delete(deleteCategory)
-  .put(updateCategory);
+  .put(updateCategory)
+  .delete(deleteCategory);
 
 router.route("/all-categories").get(getAllCategories);
 
