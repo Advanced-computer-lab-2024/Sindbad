@@ -4,12 +4,48 @@ const Advertiser = require("../models/Advertiser");
 const Seller = require("../models/Seller");
 const Admin = require("../models/adminModel");
 
+
+const models = {
+	tourist: Tourist,
+	tourguide: TourGuide,
+	advertiser: Advertiser,
+	seller: Seller,
+	admin: Admin,
+};
+
+const defaultFields = {
+	tourist: {
+		wallet: 0,
+		bookmarks: [],
+		loyaltyPoints: 0,
+		level: 1,
+		xpPoints: 0,
+		isReceiveNotifications: false,
+		wishlist: [],
+		cart: [],
+		addresses: [],
+	},
+	advertiser: {
+		isAccepted: false,
+		createdActivities: [],
+		createdIterinaries: [],
+		createdHistoricalPlaces: [],
+	},
+	seller: {
+		isAccepted: false,
+		products: [],
+	},
+	tourguide: {
+		isAccepted: false,
+	},
+	admin: {},
+};
+
 const UserController = {
 	signUp: async (req, res) => {
 		try {
-			const { email, username, passwordHash, role, ...touristData } = req.body; // Extract role and user data
+			const { email, username, passwordHash, role, ...userData } = req.body;
 
-			let user;
 			if (!role) {
 				throw new Error("Role is required");
 			}
@@ -23,56 +59,27 @@ const UserController = {
 				throw new Error("Email or username already exists");
 			}
 
-			switch (role.toLowerCase()) {
-				case "tourist":
-					const { mobileNumber, nationality, DOB, job } = touristData;
-
-					if (!email || !mobileNumber || !nationality || !DOB || !job) {
-						throw new Error("Tourist data is required");
-					}
-
-					user = await UserController.createTourist(
-						email,
-						username,
-						passwordHash,
-						mobileNumber,
-						nationality,
-						DOB,
-						job
-					);
-					break;
-				case "tourguide":
-					user = await UserController.createTourGuide(
-						email,
-						username,
-						passwordHash
-					);
-					break;
-				case "advertiser":
-					user = await UserController.createAdvertiser(
-						email,
-						username,
-						passwordHash
-					);
-					break;
-				case "seller":
-					user = await UserController.createSeller(
-						email,
-						username,
-						passwordHash
-					);
-					break;
-				case "admin":
-					user = await UserController.createAdmin(
-						email,
-						username,
-						passwordHash
-					);
-					break;
-
-				default:
-					throw new Error("Invalid role");
+			// Get the model based on role
+			const Model = models[role.toLowerCase()];
+			if (!Model) {
+				throw new Error("Invalid role");
 			}
+
+			// Combine user-provided data with default fields for the role
+			const roleSpecificData = {
+				...defaultFields[role.toLowerCase()],
+				...userData,
+			};
+
+			// Create a new user instance and save it
+			const user = new Model({
+				email,
+				username,
+				passwordHash,
+				...roleSpecificData,
+			});
+
+			await user.save();
 
 			return res
 				.status(201)
@@ -85,141 +92,54 @@ const UserController = {
 	},
 
 	isUniqueEmailAndUsername: async (email, username) => {
-		// Check in Tourist model
-		const touristExists =
-			(await Tourist.findOne({ email })) ||
-			(await Tourist.findOne({ username }));
-		if (touristExists) return false;
-
-		// Check in TourGuide model
-		const tourGuideExists =
-			(await TourGuide.findOne({ email })) ||
-			(await TourGuide.findOne({ username }));
-		if (tourGuideExists) return false;
-
-		// Check in Advertiser model
-		const advertiserExists =
-			(await Advertiser.findOne({ email })) ||
-			(await Advertiser.findOne({ username }));
-		if (advertiserExists) return false;
-
-		// Check in Seller model
-		const sellerExists =
-			(await Seller.findOne({ email })) || (await Seller.findOne({ username }));
-		if (sellerExists) return false;
-
-		const adminExists =
-			(await Admin.findOne({ email })) || (await Admin.findOne({ username }));
-		if (adminExists) return false;
-
-		// If no duplicates were found, return true
+		// Check all models for unique email/username
+		for (let model in models) {
+			const existingUser = await models[model]
+				.findOne({ $or: [{ email }, { username }] })
+				.exec();
+			if (existingUser) {
+				return false;
+			}
+		}
 		return true;
 	},
 
-	createTourist: async (
-		email,
-		username,
-		passwordHash,
-		mobileNumber,
-		nationality,
-		DOB,
-		job
-	) => {
-		// Initialize variables with default values
-		const wallet = 0;
-		const bookmarks = [];
-		const loyaltyPoints = 0;
-		const level = 1;
-		const xpPoints = 0;
-		const isReceiveNotifications = false;
-		const wishlist = [];
-		const cart = [];
-		const addresses = [];
+	getAllUsers: async (req, res) => {
+		try {
+			const results = await Promise.all(
+				Object.entries(models).map(async ([role, model]) => {
+					const users = await model.find();
+					return users.map((user) => ({ ...user._doc, role }));
+				})
+			);
 
-		// Create a new tourist instance
-		const tourist = new Tourist({
-			email,
-			username,
-			passwordHash,
-			mobileNumber,
-			nationality,
-			DOB,
-			job,
-			wallet,
-			bookmarks,
-			loyaltyPoints,
-			level,
-			xpPoints,
-			isReceiveNotifications,
-			wishlist,
-			cart,
-			addresses,
-		});
-
-		// Save tourist to the database
-		await tourist.save();
-		return tourist;
+			const combinedUsers = results.flat();
+			return res.status(200).json(combinedUsers);
+		} catch (error) {
+			console.log(error)
+			return res.status(500).json({ message: error.message });
+		}
 	},
 
-	createTourGuide: async (email, username, passwordHash) => {
-		const isAccepted = false;
+	deleteUser: async (req, res) => {
+		const { id } = req.params;
+		const { role } = req.body;
 
-		const tourGuide = new TourGuide({
-			email,
-			username,
-			passwordHash,
-			isAccepted,
-		});
+		if (!role) {
+			return res.status(400).json({ message: "Role is required" });
+		}
 
-		await tourGuide.save();
-		return tourGuide;
-	},
+		try {
+			const Model = models[role.toLowerCase()];
+			if (!Model) {
+				throw new Error("Invalid role");
+			}
 
-	createAdvertiser: async (email, username, passwordHash) => {
-		const isAccepted = false;
-		const createdActivities = [];
-		const createdIterinaries = [];
-		const createdHistoricalPlaces = [];
-
-		const advertiser = new Advertiser({
-			email,
-			username,
-			passwordHash,
-			isAccepted,
-			createdActivities,
-			createdIterinaries,
-			createdHistoricalPlaces,
-		});
-
-		await advertiser.save();
-		return advertiser;
-	},
-
-	createSeller: async (email, username, passwordHash) => {
-		const isAccepted = false;
-		const products = [];
-
-		const seller = new Seller({
-			email,
-			username,
-			passwordHash,
-			isAccepted,
-			products,
-		});
-
-		await seller.save();
-		return seller;
-	},
-
-	createAdmin: async (email, username, passwordHash) => {
-		const admin = new Admin({
-			email,
-			username,
-			passwordHash,
-		});
-
-		await admin.save();
-		return admin;
+			await Model.findByIdAndDelete(id);
+			return res.status(200).json({ message: "User deleted successfully" });
+		} catch (error) {
+			return res.status(500).json({ message: error.message });
+		}
 	},
 };
 
