@@ -20,7 +20,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Navigate } from "react-router-dom";
-import { userSignUp } from "@/services/ApiHandler";
+import { userSignUp } from "@/services/LoginSignupApiHandler";
 import SpinnerSVG from '@/SVGs/Spinner.jsx';
 import { ArrowLeft } from "lucide-react";
 
