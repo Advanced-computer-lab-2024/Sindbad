@@ -24,11 +24,12 @@ import { updateItinerary } from "@/services/ItineraryApiHandler";
 import { createItinerary } from "@/services/ItineraryApiHandler";
 import { updateProduct } from "@/services/ProductApiHandler";
 import { createProduct } from "@/services/ProductApiHandler";
+import { createActivity } from "@/services/ActivityApiHandler";
 
 export function GenericForm({ type, data, id }) {
   // formSchemaObject is an object that will be used to create the form schema. It will contain the keys of the temporaryHardCodedValues object,
   // and the values will be zod types based on the type of the value in the temporaryHardCodedValues object.
-  // console.log(parsedFormMap);
+
   let formSchemaObject = formMap[type];
 
   // Define the form schema using zod.
@@ -44,7 +45,6 @@ export function GenericForm({ type, data, id }) {
   });
 
   function onSubmit(values) {
-    console.log(values);
     // Call the appropriate API function based on the type of the form.
     if (type === "tourist") {
       updateTourist(id, values);
@@ -77,11 +77,11 @@ export function GenericForm({ type, data, id }) {
       }
     }
     if (type === "activity") {
-      if (data) {
-        // Call the appropriate API function to update the Activity.
-      } else {
-        // Call the appropriate API function to create the Activity.
-      }
+        const activityWithId = {
+          ...values,
+          creatorId: id,
+        }
+        createActivity(activityWithId);
     }
     if (type === "site") {
       if (data) {
