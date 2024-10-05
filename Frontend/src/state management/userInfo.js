@@ -6,10 +6,10 @@ const userSlice = createSlice({
     initialState: {
         // type: "tourist",
         // id: "66f97308f74fa1c054a9b15c"
-        // type: "tourGuide",
-        // id: "66f8630f55f21e927d7455cc"
-        type: "seller",
-        id: "66f99b77497c76922f03104e"
+        type: "tourGuide",
+        id: "66f8630f55f21e927d7455cc"
+        // type: "seller",
+        // id: "66f99b77497c76922f03104e"
         // type: "advertiser",
         // id: "66f823447b0fe45d3c6d3768"
         // type: "tourismGovernor",
