@@ -1,7 +1,9 @@
 import ImagePlaceholder from "@/components/custom/ImagePlaceholder";
-import React from "react";
+import { useParams } from 'react-router-dom';
 
 function ProductView() {
+    const { userId } = useParams();
+    
     // Example data for the ratings distribution
     const totalReviews = 500;
     const ratingsDistribution = {
