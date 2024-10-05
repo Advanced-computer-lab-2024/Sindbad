@@ -7,43 +7,7 @@ import {
 	updateTag,
 	deleteTag,
 } from "@/services/AdminApiHandler";
-import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
-} from "@/components/ui/table";
-import { Skeleton } from "@/components/ui/skeleton";
-
-// TableSkeleton Component (For Loading State)
-function TableSkeleton(rows = 5, cols = 4) {
-	return (
-		<Table>
-			<TableHeader>
-				<TableRow>
-					{Array.from({ length: cols }).map((_, j) => (
-						<TableHead key={j} className="w-[100px]">
-							<Skeleton className="w-full h-4" />
-						</TableHead>
-					))}
-				</TableRow>
-			</TableHeader>
-			<TableBody>
-				{Array.from({ length: rows }).map((_, i) => (
-					<TableRow key={i}>
-						{Array.from({ length: cols }).map((_, j) => (
-							<TableCell key={j}>
-								<Skeleton className="w-24 h-4" />
-							</TableCell>
-						))}
-					</TableRow>
-				))}
-			</TableBody>
-		</Table>
-	);
-}
+import TableSkeleton from "../TableSkeleton";
 
 // TagManagement Component
 export default function TagManagement() {
@@ -62,10 +26,14 @@ export default function TagManagement() {
 		setLoading(true);
 		try {
 			const result = await getAllTags();
-			setData(result.data);
-			setLoading(false);
+			if (result && result.data) {
+				setData(result.data);
+			} else {
+				setMessage({ type: "error", text: "No tags available." });
+			}
 		} catch (error) {
 			setMessage({ type: "error", text: "Failed to load tag data." });
+		} finally {
 			setLoading(false);
 		}
 	};
@@ -103,8 +71,6 @@ export default function TagManagement() {
 		}
 	};
 
-	console.log(data);
-
 	return (
 		<>
 			<div className="flex items-center gap-6">
@@ -124,15 +90,17 @@ export default function TagManagement() {
 				</div>
 			)}
 
-			{/* Conditional rendering based on loading and message states */}
+			{/* Conditional rendering based on loading, error, and data state */}
 			{loading ? (
-				<TableSkeleton />
-			) : (
+				<TableSkeleton rows={3} cols={2} />
+			) : data ? (
 				<DataTable
 					columns={columns(handleDeleteTag, handleUpdateTag)}
 					data={data}
 					handleCreateTag={handleCreateTag}
 				/>
+			) : (
+				<div>Unable to get tags.</div> // Message when no data is available
 			)}
 		</>
 	);

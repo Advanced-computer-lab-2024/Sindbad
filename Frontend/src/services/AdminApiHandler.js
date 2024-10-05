@@ -56,6 +56,50 @@ export const deleteTag = async (tagId) => {
     }
 }
 
+export const getAllCategories = async () => {
+    try {
+        // Fetch all categories
+        let categories = await axios.get(`${baseURL}/category`);
+        return categories; 
+    } catch (error) {
+        console.error("Error fetching categories: ", error);
+        throw error; // Handle errors appropriately
+    }
+}
+
+export const createCategory = async (category) => {
+    try {
+        // Create a category
+        let newCategory = await axios.post(`${baseURL}/category`, category);
+        return newCategory;
+    } catch (error) {
+        console.error("Error creating category: ", error);
+        throw error; // Handle errors appropriately
+    }
+}
+
+export const updateCategory = async (category) => {
+    try {
+        // Update a category
+        let updatedCategory = await axios.put(`${baseURL}/category/${category.id}`, category);
+        return updatedCategory;
+    } catch (error) {
+        console.error("Error updating category: ", error);
+        throw error; // Handle errors appropriately
+    }
+}
+
+export const deleteCategory = async (categoryId) => {
+    try {
+        // Delete a category
+        let deletedCategory = await axios.delete(`${baseURL}/category/${categoryId}`);
+        return deletedCategory;
+    } catch (error) {
+        console.error("Error deleting category: ", error);
+        throw error; // Handle errors appropriately
+    }
+}
+
 export const deleteUser = async (id, role) => {
 	try {
 		console.log(id, role);
