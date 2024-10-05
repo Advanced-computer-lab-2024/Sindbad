@@ -12,6 +12,7 @@ import ProductView from "./pages/ProductView";
 import AdminManagementView from "./pages/AdminManagementView"; 
 
 import { useUser } from "@/state management/userInfo";
+import ShoppingPage from "./pages/ShoppingPage";
 
 function App() {
 	const { id } = useUser();
@@ -26,7 +27,7 @@ function App() {
 					/>
 					<Route path="profile/:userId" element={<Profile />} />
 					<Route path="timeline" element={<Timeline />} />
-					<Route path="store" element={<Timeline />} />
+					<Route path="store" element={<ShoppingPage />} />
 					<Route path="product" element={<ProductView />} />
 					<Route path="management" element={<AdminManagementView />} />
 				</Route>
