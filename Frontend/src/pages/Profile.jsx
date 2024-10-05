@@ -8,14 +8,13 @@ import Timeline from "@/components/custom/profile/Timeline";
 import { useUser } from '@/state management/userInfo';
 import { getTourist } from "@/services/TouristApiHandler";
 import { getTourGuide } from "@/services/TourGuideApiHandler";
-import { getSeller } from "@/services/SellerApiHandler";
+import { getSeller, getMyProducts } from "@/services/SellerApiHandler";
 import { getAdvertiser } from "@/services/AdvertiserApiHandler";
 import { getTourismGovernor } from "@/services/AdminApiHandler";
 import { getUserRole } from '@/services/UserApiHandler';
 import { getMyActivities } from "@/services/ActivityApiHandler";
 import { getMyItineraries } from "@/services/ItineraryApiHandler";
 import { getMySites } from "@/services/SiteApiHandler";
-import { getMyProducts } from "@/services/ProductApiHandler";
 
 function Profile() {
     const [userData, setUserData] = useState({});
