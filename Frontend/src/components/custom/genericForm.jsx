@@ -110,7 +110,6 @@ export function GenericForm({ type, data, id }) {
           ...values,
           creatorId: id,
         }
-        console.log(siteWithId)
         createSite(siteWithId);
       }
     }

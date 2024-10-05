@@ -154,18 +154,53 @@ const activitySchema = {
     .max(100, { message: "Discount must be between 0 and 100" }),
 };
 
-const SiteSchema = {
-  name: z.string().min(1, { message: "Please add a name for your site" }),
-  description: z.string().min(1, { message: "Please add a description for your site" }),
-  imageUris: z.array(z.string().url({ message: "Image must be a valid URL" })).min(1, { message: "Please add an image for your site" }),
-  location: z.string().min(1, { message: "Address is required" }),
-  openingHours: z.object({
-      start: z.number().min(0).max(1440, { message: "Start time must be within a valid range (0-1440 minutes)" }),
-      end: z.number().min(0).max(1440),
-    }),
-  ticketPrices: z.array(z.number().min(0, { message: "Ticket prices must be non-negative" })),
-  tags: z.array(z.string().min(1, { message: "Tag must be valid ObjectId string" })),
-};
+
+// Schema for opening hours per day
+const openingHoursSchema = z.object({
+  start: z.number().min(0, "Start time must be a positive number").max(1440, "Start time must be within a 24-hour range"),
+  end: z.number().min(0, "End time must be a positive number").max(1440, "End time must be within a 24-hour range")
+});
+
+// Days of the week as keys
+const daysOfWeek = z.object({
+  monday: openingHoursSchema,
+  tuesday: openingHoursSchema,
+  wednesday: openingHoursSchema,
+  thursday: openingHoursSchema,
+  friday: openingHoursSchema,
+  saturday: openingHoursSchema,
+  sunday: openingHoursSchema,
+});
+
+// Schema for location
+const locationSchema = z.object({
+  address: z.string().nonempty("Address is required"),
+  coordinates: z.object({
+    lat: z.number().min(-90).max(90, "Latitude must be between -90 and 90"),
+    long: z.number().min(-180).max(180, "Longitude must be between -180 and 180"),
+  }),
+});
+
+// Ticket prices schema
+const ticketPricesSchema = z.object({
+  child: z.number().min(0, "Child ticket price must be non-negative"),
+  student: z.number().min(0, "Student ticket price must be non-negative"),
+  adult: z.number().min(0, "Adult ticket price must be non-negative"),
+  foreigner: z.number().min(0, "Foreigner ticket price must be non-negative"),
+});
+
+// Site schema
+const siteSchema = {
+  name: z.string().min(1,"Please add a name for your site"),
+  description: z.string().nonempty("Please add a description for your site"),
+  imageUris: z.array(z.string().url("Invalid image URL")).nonempty("Please add at least one image URL"),
+  location: locationSchema,
+  openingHours: daysOfWeek, // Opening hours per day of the week
+  ticketPrices: ticketPricesSchema, // Explicit keys for ticket categories
+  tags: z.array(z.string().nonempty()), // assuming ObjectId can be represented as a string
+  creatorId: z.string().nonempty("Creator ID is required"), // Assuming creatorId can be treated as a string
+}
+
   const companyProfileSchema = 
   {
     name: z.string().min(1, { message: "Company name is required." }),
@@ -189,7 +224,7 @@ const formMap = {
     itinerary: itinerarySchema,
     product: productSchema,
     activity: activitySchema,
-    site: SiteSchema,
+    site: siteSchema,
     company: companyProfileSchema,
     experience: PreviousWorkSchema,
 }
