@@ -25,6 +25,58 @@ const accessibilityFeatures = [
     { icon: <Speech/>, label:"Text-to-speech devices" },
 ];
 
+const itinerary = {
+    _id: "66fec47696a5a727ea518498",
+    name: "Updated Weekend Getaway to the Mountains",
+    activities: [
+      "603fba4f7b3b1a23f44c5555", // Example ObjectId for an activity
+      "603fba4f7b3b1a23f44c6666", // Example ObjectId for another activity
+    ],
+    locations: [
+      "Updated Mountain Resort",
+      "New Lake View Point",
+    ],
+    timeline: [
+      "Day 1: Arrival and Relaxation",
+      "Day 2: Hiking and Sightseeing",
+      "Day 3: Departure with a bonus activity",
+    ],
+    duration: 4, // Duration in days
+    languages: [
+      "English",
+      "French",
+    ],
+    price: 349.99,
+    availableDatesTimes: [
+      new Date("2024-11-15T10:00:00.000Z"),
+      new Date("2024-11-22T10:00:00.000Z"),
+    ],
+    accessibility: [
+      "Wheelchair accessible",
+      "Family-friendly",
+      "Pet-friendly",
+    ],
+    pickUpLocation: "City Center",
+    dropOffLocation: "Updated Mountain Resort Parking Lot",
+    creatorId: "66f81ff63ba5a08e8581e95e",
+    headCount: 6,
+    rating: 4.5,
+  };
+
+  const dates = itinerary.availableDatesTimes.map((date) => {
+    const d = new Date(date);
+    // Format the date parts (weekday, day, month)
+    const weekday = d.toLocaleString('en-US', { weekday: 'short' }); // Full weekday name
+    const day = d.toLocaleString('en-US', { day: 'numeric' }); // Day of the month
+    const month = d.toLocaleString('en-US', { month: 'short' }); // Full month name
+  
+    return `${weekday} ${day} ${month}`; // Returning formatted string
+  });
+
+  const times = itinerary.availableDatesTimes.map((date) => {
+    const d = new Date(date);
+    return d.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }); // Example: "10:00 AM"
+  });
 
 
 function Itinerary(){
@@ -61,8 +113,6 @@ function Itinerary(){
     const [selectedDate, setSelectedDate] = useState(0);
     const [selectedTime, setSelectedTime] = useState(0);
 
-    const dates = ["Mon 30 Sept", "Tue 1 Oct", "Wed 3 Oct", "Thu 4 Oct"];
-    const times = ["6:30", "8:00", "9:30"];
     const locations = [1,2,3];
 
     return(
@@ -72,8 +122,8 @@ function Itinerary(){
                     <div>
                         {/*Title Section*/}
                         <div className="my-4">
-                            <h1 className="text-4xl font-bol">Itinerary Name</h1>
-                            <p className="text-light text-lg">Provider Name</p>
+                            <h1 className="text-4xl font-bol">{itinerary.name}</h1>
+                            <p className="text-light text-lg">{itinerary.duration} day trip </p>
                         
 
                             {/*Star Section */}
@@ -111,7 +161,7 @@ function Itinerary(){
                         <div className="my-6">
                             <h2 className="text-xl font-semibold pb-2">Supported Langauges</h2>
                             <div className="flex flex-wrap gap-2">
-                                {["English", "Spanish", "Portuguese", "Arabic", "Chinese","German"].map((lang) => (
+                                {itinerary.languages.map((lang) => (
                                     <div 
                                     key={lang} 
                                     className="px-3 py-1 bg-primary-950 rounded-full border cursor-default">
@@ -124,10 +174,16 @@ function Itinerary(){
                         {/*Accessibility Fts*/}
                         {/*TODO: add icons*/}
                         <div className=" flex flex-wrap gap-4">
-                            {accessibilityFeatures.map((feature, index) => (
+                            {/* {accessibilityFeatures.map((feature, index) => (
                                 <p key={index} className="flex items-center gap-2">
                                     {feature.icon}
                                     {feature.label}
+                                </p>
+                            ))} */}
+                            {itinerary.accessibility.map((feature) => (
+                                <p key={feature} className="flex items-center gap-2">
+                                    <Star className="h-4 w-4"/>
+                                    {feature}
                                 </p>
                             ))}
                         </div>
@@ -147,8 +203,8 @@ function Itinerary(){
                 <div className=" border-y mt-8 mx-4"></div>
 
                 {/*Itinerary + Availbility*/}
-                <div className="grid grid-cols-10 grid-rows gap-8 mt-8 p-8">
-                    <div className="col-span-2">
+                <div className="grid grid-cols-9 grid-rows gap-8 mt-8 p-8">
+                    <div className="col-span-3">
                         <h2 className="text-2xl font-semibold mb-4">Itinerary</h2>
                         <ul className="">
                             <li>
@@ -156,23 +212,22 @@ function Itinerary(){
                                     <div className="mt-1"><MapPin size={40} className="border-2 rounded-full p-1" /></div>
                                     < div>
                                     <p>Starting at, </p>
-                                    <p>Location Name</p>
+                                    <p>{itinerary.pickUpLocation}</p>
                                     <a href="#" className="text-secondary">See details</a>
                                     </div>
                                 </div>
                             </li>
                             <li> <div className="relative border border-light rounded-full w-1 h-1 bg-light left-5 mb-3"> </div> </li>
                             <li> <div className="relative border border-light rounded-full w-1 h-1 bg-light left-5 mb-3"> </div> </li>
-                            {locations.map((stop) => (
-                                <div>
-                                    <li key={stop}>
+                            {itinerary.timeline.map((stop, index) => (
+                                <div key={index}>
+                                    <li >
                                         <div className="flex items-start- space-x-2">
                                             <div className="flex-shrink-0 bg-light text-dark font-semibold w-10 h-10 flex items-center justify-center rounded-full">
-                                                {stop}
+                                                {index+1}
                                             </div>
                                             <div>
                                                 <p>Location {stop}</p>
-                                                <p>Stop: X hours</p>
                                                 <a href="#" className="text-secondary">See details</a>
                                             </div>
                                         </div>
@@ -187,7 +242,7 @@ function Itinerary(){
                                     <div className="mt-1"><MapPin size={40} className="border-2 rounded-full p-1" /></div>
                                         < div>
                                             <p>Finishing at, </p>
-                                            <p>Location Name</p>
+                                            <p>{itinerary.dropOffLocation}</p>
                                         <a href="#" className="text-secondary">See details</a>
                                     </div>
                                 </div>
@@ -196,18 +251,18 @@ function Itinerary(){
                     </div>
                     
                     {/* Map Placeholder*/}
-                    <div className="col-span-4 bg-light h-full w-full rounded-lg"></div>
+                    <div className="col-span-3 bg-light h-full w-full rounded-lg"></div>
                     
                     {/*Availibility Section
                     TODO: add conditional for selected element to have thicker border, seperate day and month to make them appear vertical, lookup map docs*/}
-                        <div className="col-span-4 p-4">
+                        <div className="col-span-3 p-4">
                             <h2 className="text-2xl font-semibold mb-4">Search Availability</h2>
-                            <div className="grid grid-cols-5 gap-2">
+                            <div className="grid grid-cols-4 gap-2">
                                 {dates.map((date,idx)=>(
                                     <button 
                                         key={idx}
                                         onClick={() => setSelectedDate(idx)}
-                                        className={`border py-2 px-4 min-h-20 max-w-24 rounded-lg bg-primary-700 ${
+                                        className={`border py-2 px-6 min-h-20 max-w-24 rounded-lg bg-primary-700 text-center ${
                                             selectedDate=== idx ? 'border-light border-2 border- ' : 'border-transparent'
                                         }`}>
                                         <span className="text-sm text-light">{date.split(" ")[0]}</span><br/> {/* Weekday */}
@@ -312,7 +367,7 @@ function Itinerary(){
 
                             {/* Total Cost Section */}
                             <div className="border-t border-dashed mt-4 pt-4">
-                                <p>Total: <span className="font-semibold text-xl mx-4">{(adult*400+child*200)*1.2}</span>LE</p>
+                                <p>Total: <span className="font-semibold text-xl mx-4">{(adult*itinerary.price+child*itinerary.price)*1.2}</span>LE</p>
                                 <p className="text-sm text-secondary">Includes taxes and charges</p>
                             </div>
 
