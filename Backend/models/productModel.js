@@ -29,15 +29,38 @@ const productSchema = mongoose.Schema({
     required: [true, "Please add the seller of the product"],
   },
   rating: {
+    type: Map,
+    of: Number,
+    default: {
+      "0": 0,
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0
+    }
+  },
+  averageRating: {
     type: Number,
     default: 0,
-    min: 0,
-    max: 5,
-  },
+  },  
   reviews: [
     {
-      type: String,
-    },
+      username: {
+        type: String,
+        required: [true, "Username is required for a review"],
+      },
+      rating: {
+        type: Number,
+        min: 0,
+        max: 5,
+        required: [true, "Rating is required"],
+      },
+      comment: {
+        type: String,
+        required: [true, "Comment is required"],
+      }
+    }
   ],
   quantity: {
     type: Number,
@@ -58,5 +81,7 @@ const productSchema = mongoose.Schema({
     default: false,
   },
 });
+
+
 
 module.exports = mongoose.model("Product", productSchema);
