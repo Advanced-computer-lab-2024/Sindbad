@@ -6,7 +6,6 @@ import { PriceFilter } from "@/components/ui/price-filter";
 const GenericFilter = ({ formFields, setActiveFilters, activeFilters }) => {
 	// Function to handle changes and update the filter object
 	const handleChange = (key, value) => {
-		setTimeout(() => {}, 10000);
 		setActiveFilters((prev) => ({
 			...prev,
 			[key]: value,
