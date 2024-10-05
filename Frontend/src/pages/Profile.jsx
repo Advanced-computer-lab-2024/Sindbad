@@ -60,6 +60,7 @@ function Profile() {
             console.error(response.message);
         } else {
             setUserType(response.role);
+            console.log("User type:", response.role);
             return response.role;
         }
     }

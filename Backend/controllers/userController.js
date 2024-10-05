@@ -10,7 +10,7 @@ const TourismGovernor = require("../models/TourismGovernor");
 const models = {
 	tourist: Tourist,
 	tourguide: TourGuide,
-  tourismgovernor: TourismGovernor,
+	tourismgovernor: TourismGovernor,
 	advertiser: Advertiser,
 	seller: Seller,
 	admin: Admin,
@@ -42,7 +42,7 @@ const defaultFields = {
 		isAccepted: false,
 	},
 	admin: {},
-  tourismgovernor: {}
+	tourismgovernor: {}
 };
 
 const UserController = {
@@ -95,30 +95,36 @@ const UserController = {
 		}
 	},
 
-  getUserRole: async (req, res) => {
-      try {
-          const { id } = req.params;
+	getUserRole: async (req, res) => {
+		try {
+			const { id } = req.params;
 
-          if (!id) {
-              throw new Error("ID is required");
-          }
+			if (!id) {
+				throw new Error("ID is required");
+			}
 
-          // Loop through models to find the user by ID
-          for (const [role, model] of Object.entries(models)) {
-              const user = await model.findById(id);
-              if (user) {
-                  return res.status(200).json({ role });
-              }
-          }
+			// Loop through models to find the user by ID
+			for (const [role, model] of Object.entries(models)) {
+				const user = await model.findById(id);
+				if (user) {
+					if (role === "tourguide") {
+						return res.status(200).json({ role: "tourGuide" });
+					} else if (role === "tourismgovernor") {
+						return res.status(200).json({ role: "tourismGovernor" });
+					} else {
+						return res.status(200).json({ role });
+					}
+				}
+			}
 
-          return res.status(404).json({ message: "User not found" });
-      } catch (error) {
-          return res.status(400).json({
-              message: "Failed to get user type",
-              error: error.message,
-          });
-      }
-  },
+			return res.status(404).json({ message: "User not found" });
+		} catch (error) {
+			return res.status(400).json({
+				message: "Failed to get user type",
+				error: error.message,
+			});
+		}
+	},
 
 	isUniqueEmailAndUsername: async (email, username) => {
 		// Check all models for unique email/username

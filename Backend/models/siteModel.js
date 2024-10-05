@@ -53,7 +53,7 @@ const siteSchema = new mongoose.Schema({
 	},
 	ticketPrices: {
 		type: Map,
-		of: Number, 
+		of: Number,
 		validate: {
 			validator: function (arr) {
 				return arr.every((price) => price >= 0);
