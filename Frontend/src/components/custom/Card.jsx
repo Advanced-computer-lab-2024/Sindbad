@@ -1,6 +1,14 @@
 import ImagePlaceholder from "@/components/custom/ImagePlaceholder";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Star, StarHalf, Bookmark, Edit3 } from 'lucide-react';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+import GenericForm from "./genericForm";
 
 function Card({ data, id, userId, type }) {
     return (
@@ -13,9 +21,19 @@ function Card({ data, id, userId, type }) {
                     </button>
                 }
                 {type !== "tourist" && id === userId &&
+                <Dialog>
+                    <DialogTrigger>
                     <button className="absolute top-2 right-2 border-2 border-dark opacity-0 group-hover:opacity-100 transition-all hover:border-secondary bg-primary-900 p-1.5 rounded-full">
                         <Edit3 fill="currentColor" size={16} />
                     </button>
+                    </DialogTrigger>
+                    <DialogContent className="overflow-y-scroll max-h-[50%]">
+                        <DialogHeader>
+                            <DialogTitle>Edit Profile</DialogTitle>
+                            <GenericForm type={type === "seller" ? "product" : type === "advertiser" ? "activity" : type === "tourGuide" ? "itinerary" : "site"} id={id} data={data}/>
+                        </DialogHeader>
+                    </DialogContent>
+                </Dialog>
                 }
             </div>
             <div className="flex flex-col p-3 gap-5 h-full justify-between">

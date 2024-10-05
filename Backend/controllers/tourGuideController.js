@@ -25,8 +25,6 @@ const getTourGuide =async (req,res) => {
 		});
 	}
 
-
-
     if (tourGuide.isAccepted){
         res.json(tourGuide);
     }else{

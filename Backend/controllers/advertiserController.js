@@ -52,9 +52,6 @@ const updateProfile = async (req, res) => {
 			updateData.email = email;
 		}
 
-		console.log("Received ID:", id);
-		console.log("Update Data:", updateData);
-
 		const advertiser = await Advertiser.findByIdAndUpdate(
 			id,
 			{ $set: updateData }, // Use $set to only update specified fields

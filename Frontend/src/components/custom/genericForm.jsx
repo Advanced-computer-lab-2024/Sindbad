@@ -26,6 +26,7 @@ import { updateProduct } from "@/services/ProductApiHandler";
 import { createProduct } from "@/services/ProductApiHandler";
 import { createActivity } from "@/services/ActivityApiHandler";
 import { createSite } from "@/services/SiteApiHandler";
+import { updateActivity } from "@/services/ActivityApiHandler";
 
 export function GenericForm({ type, data, id }) {
   // formSchemaObject is an object that will be used to create the form schema. It will contain the keys of the temporaryHardCodedValues object,
@@ -39,6 +40,14 @@ export function GenericForm({ type, data, id }) {
   // Parse the form schema to get the fields.
   const fields = parseZodSchema(formSchema);
   
+  if (data) {
+    for (const key in fields) {
+      if (data[key]) {
+        fields[key] = data[key];
+      }
+    }
+  }
+
   // Create the form using react-hook-form.
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -72,17 +81,24 @@ export function GenericForm({ type, data, id }) {
     }
     if (type === "product") {
       if (data) {
-        updateProduct(id, values);
+        updateProduct(data._id, values);
       } else {
         createProduct(values);
       }
     }
     if (type === "activity") {
+      if (data) {
+        const activityId = data._id;
+        updateActivity(activityId, values);
+      }
+      else {
         const activityWithId = {
           ...values,
           creatorId: id,
         }
         createActivity(activityWithId);
+      }
+        
     }
     if (type === "site") {
       const siteWithId = {
