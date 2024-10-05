@@ -1,6 +1,16 @@
 import Card from "@/components/custom/Card";
 import { CirclePlus } from "lucide-react";
-import { useUser } from "@/state management/userInfo";
+import { useUser } from '@/state management/userInfo';
+import { useEffect, useState } from 'react';
+import { getMyActivities } from "@/services/ActivityApiHandler";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+import GenericForm from "../genericForm";
 
 function Timeline({ userData, userId, id, userType, cardData }) {
     const { type } = useUser();
@@ -15,10 +25,20 @@ function Timeline({ userData, userId, id, userType, cardData }) {
                                     : "Itineraries"}
                 </h1>
                 <hr className="border-neutral-700 border w-full mt-1.5" />
-                {userType !== "tourist" && userId === id &&
+                {type !== "tourist" && userId === id &&
+                <Dialog>
+                    <DialogTrigger>
                     <button className="shrink-0 mt-1.5 text-neutral-600 hover:text-light transition-all">
                         <CirclePlus size={24} />
                     </button>
+                    </DialogTrigger>
+                    <DialogContent className="overflow-y-scroll max-h-[50%]">
+                        <DialogHeader>
+                            <DialogTitle>Edit Profile</DialogTitle>
+                            <GenericForm type={type === "seller" ? "product" : type === "advertiser" ? "activity" : type === "tourGuide" ? "itinerary" : "site"} id={id} />
+                        </DialogHeader>
+                    </DialogContent>
+                </Dialog>
                 }
             </div>
             <div>

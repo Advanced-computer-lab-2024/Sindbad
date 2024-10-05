@@ -1,6 +1,15 @@
 import { Edit, MapPin } from "lucide-react";
-
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+import GenericForm from "../genericForm";
+import { useUser } from '@/state management/userInfo';
 function CompanyProfile({ userData, userId, id }) {
+    const { type } = useUser();
     return (
         <div className="flex flex-col gap-2">
             <div>
@@ -10,9 +19,19 @@ function CompanyProfile({ userData, userId, id }) {
                     </h1>
                     <hr className="border-neutral-700 border w-full mt-1.5" />
                     {userId === id &&
-                        <button className="shrink-0 mt-1.5 text-neutral-600 hover:text-light transition-all">
-                            <Edit size={24} />
-                        </button>
+                    <Dialog>
+                        <DialogTrigger>
+                            <button className="shrink-0 mt-1.5 text-neutral-600 hover:text-light transition-all">
+                                <Edit size={24} />
+                            </button>
+                        </DialogTrigger>
+                        <DialogContent className="overflow-y-scroll max-h-[50%]">
+                            <DialogHeader>
+                                <DialogTitle>Edit Profile</DialogTitle>
+                                <GenericForm type={type === "advertiser" ? "company" : type === "tourGuide" ? "experience" : ""} id={id} />
+                            </DialogHeader>
+                        </DialogContent>
+                    </Dialog>
                     }
                 </div>
             </div>
