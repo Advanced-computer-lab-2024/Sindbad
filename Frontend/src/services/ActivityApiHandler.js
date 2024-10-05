@@ -10,10 +10,8 @@ export const getMyActivities = async (advertiserId) => {
         });
 
         if (response.status === 200) {
-            console.log("success: ", response.data);
             return response.data;
         } else if (response.status === 404) {
-            console.log("fail: ", response.data);
             return {
                 error: true,
                 message: 'No activities found.',

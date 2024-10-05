@@ -3,7 +3,7 @@ const baseURL = import.meta.env.VITE_BASE_URL;
 
 export const getTourGuide = async (tourGuideId) => {
     try {
-        const response = await axios.get(`${baseURL}/tourGuide/getTourGuide/${tourGuideId}`, {
+        const response = await axios.get(`${baseURL}/tourGuide/${tourGuideId}`, {
             headers: {
                 'Content-Type': 'application/json',
             },

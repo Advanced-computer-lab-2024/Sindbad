@@ -8,6 +8,7 @@ import { Navigate } from "react-router-dom";
 import Timeline from "./pages/Timeline";
 import Itinerary from "./pages/ItineraryView";
 import Activity from "./pages/ActivityView";
+import Site from "./pages/SitesView";
 import AdminManagementView from "./pages/AdminManagementView"; 
 
 import { useUser } from "@/state management/userInfo";
@@ -32,6 +33,7 @@ function App() {
 				<Route path="/signup" element={<SignUp />} />
 				<Route path="/Itinerary" element={<Itinerary />} />
                 <Route path="/activity" element={<Activity />} />
+                <Route path="/site" element= {<Site />} />
 				<Route path="/" element={<Navigate to="/app" replace />} />
 			</Routes>
 		</main>
