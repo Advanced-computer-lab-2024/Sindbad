@@ -41,37 +41,38 @@ export default function PrivilegeManagement() {
 	const [message, setMessage] = useState(null);
 
 	// Create a hook form instance for Admin and Tourism Governor
-	const adminForm = useForm({
-		resolver: zodResolver(formSchema),
-		defaultValues: defaultValues,
-	});
-
-	const governorForm = useForm({
+	const form = useForm({
 		resolver: zodResolver(formSchema),
 		defaultValues: defaultValues,
 	});
 
 	// Handle form submission
 	const handleAdminSubmit = async (data) => {
-		try {
-			await userSignUp({ ...data, role: "Admin" });
+		data.password = data.email; // Ensure password is set
+		const result = await userSignUp({ ...data }, "Admin");
+
+		if (result.error) {
+			// If there's an error, set the error message
+			setMessage({ type: "error", text: result.message });
+		} else {
+			// On success, set the success message
 			setMessage({ type: "success", text: "Admin added successfully." });
-		} catch (error) {
-			console.error("Failed to add admin:", error);
-			setMessage({ type: "error", text: "Failed to add admin." });
 		}
 	};
 
 	const handleGovernorSubmit = async (data) => {
-		try {
-			await userSignUp({ ...data, role: "Tourism Governor" });
+		data.password = data.email; // Ensure password is set
+		const result = await userSignUp({ ...data }, "TourismGovernor");
+
+		if (result.error) {
+			// If there's an error, set the error message
+			setMessage({ type: "error", text: result.message });
+		} else {
+			// On success, set the success message
 			setMessage({
 				type: "success",
 				text: "Tourism Governor added successfully.",
 			});
-		} catch (error) {
-			console.error("Failed to add tourism governor:", error);
-			setMessage({ type: "error", text: "Failed to add tourism governor." });
 		}
 	};
 
@@ -130,12 +131,12 @@ export default function PrivilegeManagement() {
 				<AccordionItem value="item-1">
 					<AccordionTrigger>New Admin</AccordionTrigger>
 					<AccordionContent>
-						<Form {...adminForm}>
+						<Form {...form}>
 							<form
-								onSubmit={adminForm.handleSubmit(handleAdminSubmit)}
+								onSubmit={form.handleSubmit(handleAdminSubmit)}
 								className="space-y-4"
 							>
-								{renderFormFields(adminForm)}
+								{renderFormFields(form)}
 								<div className="flex justify-end">
 									<Button
 										type="submit"
@@ -152,12 +153,12 @@ export default function PrivilegeManagement() {
 				<AccordionItem value="item-2">
 					<AccordionTrigger>New Tourism Governor</AccordionTrigger>
 					<AccordionContent>
-						<Form {...governorForm}>
+						<Form {...form}>
 							<form
-								onSubmit={governorForm.handleSubmit(handleGovernorSubmit)}
+								onSubmit={form.handleSubmit(handleGovernorSubmit)}
 								className="space-y-4"
 							>
-								{renderFormFields(governorForm)}
+								{renderFormFields(form)}
 								<div className="flex justify-end">
 									<Button
 										type="submit"

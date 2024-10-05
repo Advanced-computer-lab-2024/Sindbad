@@ -1,7 +1,7 @@
 import CategoryManagement from "@/components/custom/admin/CategoryManagement";
+import PrivelegeManagement from "@/components/custom/admin/PrivelegeManagement";
 import TagManagement from "@/components/custom/admin/TagManagement";
 import UserManagement from "@/components/custom/admin/UserManagement";
-
 
 function AdminManagementView() {
 	return (
@@ -15,6 +15,7 @@ function AdminManagementView() {
 					<CategoryManagement />
 				</div>
 			</div>
+			<PrivelegeManagement />
 		</div>
 	);
 }
