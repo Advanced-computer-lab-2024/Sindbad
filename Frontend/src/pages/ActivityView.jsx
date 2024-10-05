@@ -31,8 +31,7 @@ const emptyStar = 5 - fullStars;
     },
     category: "66f6b76979faeed4f154facb", // Category reference (ObjectId)
     tags: [
-      "66faa4f7e6afc4ffe0dcdef6", 
-      "66faa4f7e6afc4ffe0dcdef6" // Tags (Array of ObjectIds)
+      "66faa4f7e6afc4ffe0dcdef6",  // Tags (Array of ObjectIds)
     ],
     discounts: 15, // Discount on the activity
     isBookingOpen: true, // Is booking open for the activity
@@ -44,40 +43,30 @@ const emptyStar = 5 - fullStars;
 function Activity(){
 
     const [fetchedTags, setFetchedTags] = useState([]);
-    const [error, setError] = useState(null);
     
   
     const getTagById = async (tag) => {
         const response = await getTag(tag);
 
         if (response.error) {
-            setError(true);
             console.error(response.message);
         } else {
-            setError(false);
-            setFetchedTags(response);
-            console.log(response);
+            return response
         }
     };
     useEffect(() => {
-        // const fetchTags = async () => {
-        //     if (activity.tags && activity.tags.length !== 0) {
-        //         // Use Promise.all to wait for all fetches to complete
-        //         const tagPromises = activity.tags.map(tag => getTagById(tag));
+        const fetchTags = async () => {
+            if (activity.tags && activity.tags.length !== 0) {
+                // Use Promise.all to wait for all fetches to complete
+                const tagPromises = activity.tags.map(tag => getTagById(tag));
                 
-        //         const resolvedTags = await Promise.all(tagPromises);
-                
-        //         // Filter out any null values (from errors) and set state
-        //         setFetchedTags(resolvedTags.filter(tag => tag !== null));
-        //         console.log(resolvedTags.filter(tag => tag !== null))
-        //     }
-        // };
-
-        // fetchTags();
-        getTagById("66faa4f7e6afc4ffe0dcdef6");
-
-
-    }, [activity.tags]);
+                const resolvedTags = await Promise.all(tagPromises);
+                // Filter out any null values (from errors) and set state
+                setFetchedTags(resolvedTags.filter(tag => tag !== null));
+            }
+        };
+        fetchTags();
+    }, []);
     
     return(
         <div className="min-h-screen flex justify-center items-center bg-primary-950">
@@ -127,7 +116,7 @@ function Activity(){
                                     <div 
                                     key={tags._id} 
                                     className="px-3 py-1 bg-primary-950 rounded-full border cursor-default text-light">
-                                        {tags}
+                                        {tags.name}
                                     </div>
                                 ))}
                             </div>
