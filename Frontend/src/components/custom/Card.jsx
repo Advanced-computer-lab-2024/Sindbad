@@ -1,6 +1,6 @@
 import ImagePlaceholder from "@/components/custom/ImagePlaceholder";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Star, StarHalf, Bookmark, Edit3 } from 'lucide-react';
+import { ArrowRight, Star, StarHalf, Bookmark, Edit3, CircleX } from 'lucide-react';
 import {
     Dialog,
     DialogContent,
@@ -9,6 +9,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 import GenericForm from "./genericForm";
+import DeleteForm from "./deleteForm";
 
 function Card({ data, id, userId, type }) {
     return (
@@ -21,20 +22,37 @@ function Card({ data, id, userId, type }) {
                     </button>
                 }
                 {type !== "tourist" && id === userId &&
-                <Dialog>
-                    <DialogTrigger>
-                    <button className="absolute top-2 right-2 border-2 border-dark opacity-0 group-hover:opacity-100 transition-all hover:border-secondary bg-primary-900 p-1.5 rounded-full">
-                        <Edit3 fill="currentColor" size={16} />
-                    </button>
-                    </DialogTrigger>
-                    <DialogContent className="overflow-y-scroll max-h-[50%]">
-                        <DialogHeader>
-                            <DialogTitle>Edit Profile</DialogTitle>
-                            <GenericForm type={type === "seller" ? "product" : type === "advertiser" ? "activity" : type === "tourGuide" ? "itinerary" : "site"} id={id} data={data}/>
-                        </DialogHeader>
-                    </DialogContent>
-                </Dialog>
+                <div>
+                    <Dialog>
+                        <DialogTrigger>
+                        <button className="absolute top-2 right-2 border-2 border-dark opacity-0 group-hover:opacity-100 transition-all hover:border-secondary bg-primary-900 p-1.5 rounded-full">
+                            <Edit3 fill="currentColor" size={16} />
+                        </button>
+                        </DialogTrigger>
+                        <DialogContent className="overflow-y-scroll max-h-[50%]">
+                            <DialogHeader>
+                                <GenericForm type={type === "seller" ? "product" : type === "advertiser" ? "activity" : type === "tourGuide" ? "itinerary" : "site"} id={id} data={data}/>
+                            </DialogHeader>
+                        </DialogContent>
+                    </Dialog>
+                    <Dialog>
+                        <DialogTrigger>
+                        <button className="absolute top-12 right-2 border-2 border-dark opacity-0 group-hover:opacity-100 transition-all hover:border-secondary bg-primary-900 p-1.5 rounded-full">
+                            <CircleX size={16} />
+                        </button>
+                        </DialogTrigger>
+                        <DialogContent className="overflow-y-scroll max-h-[50%]">
+                            <DialogTitle>
+                                Are you sure you want to delete this {type === "advertiser" ? "activity" : type === "tourGuide" ? "itinerary" : "site"}?
+                            </DialogTitle>
+                            <DialogHeader>
+                                <DeleteForm type={type === "advertiser" ? "activity" : type === "tourGuide" ? "itinerary" : "site"} data={data}/>
+                            </DialogHeader>
+                        </DialogContent>
+                    </Dialog>
+                </div>
                 }
+                
             </div>
             <div className="flex flex-col p-3 gap-5 h-full justify-between">
                 <div>

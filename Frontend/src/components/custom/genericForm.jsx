@@ -115,25 +115,28 @@ export function GenericForm({ type, data, id }) {
       }
     }
     if (type === "experience") {
-      if (data) {
-        const previousWork =
-        {
-          ...data.previousWork,
-          values
+      const previousWork = {}
+      for (const key in values) {
+        if (key === "jobTitle") {
+          previousWork.jobTitle = values[key];
         }
-        updateTourGuide(id, 
-          previousWork
-        );
-      } else {
-        const previousWork =
-        {
-          ...data.previousWork,
-          values
+        if (key === "companyName") {
+          previousWork.companyName = values[key];
         }
-        updateTourGuide(id, 
-          previousWork
-        );
+        if (key === "duration") {
+          previousWork.duration = values[key];
+        }
+        if (key === "description") {
+          previousWork.description = values[key];
+        }
       }
+      const body = {
+        previousWork: previousWork
+      }
+      updateTourGuide(id, 
+        body
+      );
+      
     }
     if (type === "company") {
       let companyProfile = {}

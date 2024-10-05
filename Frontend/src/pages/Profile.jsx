@@ -60,13 +60,13 @@ function Profile() {
             console.error(response.message);
         } else {
             setUserType(response.role);
-            console.log("User type:", response.role);
+            // console.log("User type:", response.role);
             return response.role;
         }
     }
 
     const getCardData = async (userId) => {
-        console.log("userType:", userType, "userData:", userData);
+        // console.log("userType:", userType, "userData:", userData);
         let response;
         if (userType === "advertiser" && userData?.createdActivities && userData?.createdActivities.length !== 0) {
             console.log(userId)
