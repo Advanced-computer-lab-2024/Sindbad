@@ -1,6 +1,8 @@
 const TourGuide = require("../models/TourGuide");
 const mongoose = require("mongoose");
 
+
+
 /**
  * Retrieves a tourGuide by its ID
  *
@@ -13,11 +15,14 @@ const getTourGuide =async (req,res) => {
 	try{
 		tourGuide = await TourGuide.findById(req.params.id);
 		if (tourGuide == null) {
-			return res.status(404).send('Cannot find TourGuide');
+			return res.status(404).json({ message: "Tour Guide not found" });
 		}
         
 	} catch (err) {
-		return res.status(500).json({message:err.message});
+		return res.status(500).json({
+			message: "Error retrieving Tour Guide",
+			error: err.message,
+		});
 	}
 
 
@@ -29,6 +34,23 @@ const getTourGuide =async (req,res) => {
 	}
 	
 };
+
+/**
+ * Retrieves all tourGuides
+ *
+ * @param {Object} req - The request object
+ * @param {Object} res - The response object used to send the retrieved tourGuides or an error message
+ * @returns {Object} - A JSON object of the retrieved tourGuides or an error message
+ */
+const getAllTourGuides = async (req, res) => {
+	try {
+		const tourGuides = await TourGuide.find();
+		res.json(tourGuides);
+	} catch (err) {
+		res.status(500).json({ message: err.message }); // pass err to catch block
+	}
+};
+
 
 
 /**
@@ -43,18 +65,20 @@ const updateTourGuide = async(req,res) => {
 	try{
 		tourGuide = await TourGuide.findById(req.params.id);
 		if (tourGuide == null) {
-			return res.status(404).send('Cannot find TourGuide');
+			return res.status(404).json({ message: "Tour Guide not found" });
 		}
         
 	} catch (err) {
-		return res.status(500).json({message:err.message});
+		return res.status(500).json({
+			message: "Error retrieving Tour Guide",
+			error: err.message,
+		});
 	}
     if (tourGuide.isAccepted){
         res.tourGuide = tourGuide;
     }else{
         return res.status(404).send('TourGuide not accepted yet');
 	}
-
 
 
     if(req.body.email !=null){
@@ -72,23 +96,52 @@ const updateTourGuide = async(req,res) => {
     if(req.body.yearsOfExperience !=null ){
         res.tourGuide.yearsOfExperience = req.body.yearsOfExperience;
     }
-    if(req.body.previousWork !=null ){
-        res.tourGuide.previousWork = req.body.previousWork;
-    }
+	if (req.body.previousWork != null) {
+		res.tourGuide.previousWork = res.tourGuide.previousWork.concat(req.body.previousWork);
+	}
     
 
 	try{
 		const updatedTourGuide = await res.tourGuide.save();
 		res.json(updatedTourGuide);
 	} catch(err){
-		return res.status(400).json({message:err.message});
+		return res.status(400).json({
+			message: "Error saving Tour Guide's information",
+			error: err.message,
+		});
+	}
+};
+
+
+/**
+ * deletes a tourGuides's profile
+ *
+ * @param {Object} req - Request with tourGuide's ID
+ * @returns {Object} - Deleted tourGuide's profile or error message
+ */
+const deleteTourGuide = async (req,res) => {
+	try{
+		const deletedTourGuide = await TourGuide.findByIdAndDelete(req.params.id);
+		if (deletedTourGuide == null) {
+			return res.status(404).json({ message: "Tour Guide not found" });
+		}else{
+			res.json(deletedTourGuide);
+		}
+	} catch (err) {
+		return res.status(500).json({
+			message: "Error deleting Tour Guide",
+			error: err.message,
+		});
 	}
 };
 
 
 module.exports = {
+	getAllTourGuides,
     getTourGuide,
+	getAllTourGuides,
     updateTourGuide,
+	deleteTourGuide,
   };
 
 /*
@@ -112,15 +165,6 @@ router.post("/", async (req, res) => {
 	
 });
 
-//Get all tourGuides
-router.get('/' , async (req,res) => {
-	try{
-		const tourGuides = await TourGuide.find();
-		res.json(tourGuides);
-	}catch{
-		res.status(500).json({message:err.message});
-	}
-	
-})
+
 
 */
