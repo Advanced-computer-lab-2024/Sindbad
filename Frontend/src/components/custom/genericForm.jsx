@@ -40,7 +40,7 @@ export function GenericForm({ type, data, id }) {
 
   // Parse the form schema to get the fields.
   const fields = parseZodSchema(formSchema);
-  
+
   if (data) {
     for (const key in fields) {
       if (data[key]) {
@@ -130,9 +130,14 @@ export function GenericForm({ type, data, id }) {
           previousWork.description = values[key];
         }
       }
+
       const body = {
-        previousWork: previousWork
+        previousWork: {
+          ...previousWork,
+          _id: data._id
+        }
       }
+      
       updateTourGuide(id, 
         body
       );
@@ -184,7 +189,7 @@ export function GenericForm({ type, data, id }) {
                     <Input
                       {...field}
                       type={initialValue === "number" ? "number" : "text"} // Set type based on initialValue
-                      className="text-white"
+                      className="text-black"
                       placeholder={`Item ${index + 1}`}
                       onChange={(e) => {
                         const value =
@@ -273,7 +278,7 @@ export function GenericForm({ type, data, id }) {
                     type={
                       isNumberField ? "number" : isDateField ? "date" : "text"
                     }
-                    className="text-white"
+                    className="text-black"
                     onChange={(e) => {
                       if (isDateField) {
                         // Format the date to yyyy-MM-dd

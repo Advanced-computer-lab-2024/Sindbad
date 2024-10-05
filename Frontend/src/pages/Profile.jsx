@@ -65,7 +65,7 @@ function Profile() {
     }
 
     const getCardData = async (userId) => {
-        // console.log("userType:", userType, "userData:", userData);
+        console.log("userType:", userType, "userData:", userData);
         let response;
         if (userType === "advertiser" && userData?.createdActivities && userData?.createdActivities.length !== 0) {
             console.log(userId)

@@ -44,9 +44,24 @@ function Experience({ userData, userId, id }) {
                     </p>
                 }
                 {userData?.previousWork?.map((experience, index) => (
-                    <Accordion key={index} type="single" defaultValue={index} collapsible>
-                        <AccordionItem value={index}>
-                            <AccordionTrigger>{experience.jobTitle}</AccordionTrigger>
+                    <Accordion key={index + 1} type="single" defaultValue={index + 1} collapsible>
+                        <AccordionItem value={index + 1}>
+                            <div className="relative">
+                                <AccordionTrigger>{experience.jobTitle}</AccordionTrigger>
+                                <Dialog>
+                                    <DialogTrigger>
+                                        <button>
+                                            <Edit size={16} className="text-neutral-600" />
+                                        </button>
+                                    </DialogTrigger>
+                                    <DialogContent className="overflow-y-scroll max-h-[50%]">
+                                        <DialogHeader>
+                                            <DialogTitle>Edit Profile</DialogTitle>
+                                            <GenericForm type={type === "advertiser" ? "company" : type === "tourGuide" ? "experience" : ""} id={id} data={experience} />
+                                        </DialogHeader>
+                                    </DialogContent>
+                                </Dialog>
+                            </div>
                             <AccordionContent>
                                 <div className="flex gap-5">
                                     <div className="border-l-[2px] border-neutral-500"></div>
