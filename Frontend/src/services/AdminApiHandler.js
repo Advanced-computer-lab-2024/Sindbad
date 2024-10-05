@@ -12,6 +12,50 @@ export const getAllUsers = async () => {
 	}
 };
 
+export const getAllTags =  async () => {
+    try {
+        // Fetch all tags
+        let tags = await axios.get(`${baseURL}/tag`);
+        return tags; 
+    } catch (error) {
+        console.error("Error fetching tags: ", error);
+        throw error; // Handle errors appropriately
+    }
+}
+
+export const createTag = async (tag) => {
+    try {
+        // Create a tag
+        let newTag = await axios.post(`${baseURL}/tag`, tag);
+        return newTag;
+    } catch (error) {
+        console.error("Error creating tag: ", error);
+        throw error; // Handle errors appropriately
+    }
+}
+
+export const updateTag = async (tag) => {
+    try {
+        // Update a tag
+        let updatedTag = await axios.put(`${baseURL}/tag/${tag.id}`, tag);
+        return updatedTag;
+    } catch (error) {
+        console.error("Error updating tag: ", error);
+        throw error; // Handle errors appropriately
+    }
+}
+
+export const deleteTag = async (tagId) => {
+    try {
+        // Delete a tag
+        let deletedTag = await axios.delete(`${baseURL}/tag/${tagId}`);
+        return deletedTag;
+    } catch (error) {
+        console.error("Error deleting tag: ", error);
+        throw error; // Handle errors appropriately
+    }
+}
+
 export const deleteUser = async (id, role) => {
 	try {
 		console.log(id, role);

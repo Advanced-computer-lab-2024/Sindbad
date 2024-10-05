@@ -1,7 +1,12 @@
-import { DataTable } from "@/components/custom/user-management/data-table";
+import { DataTable } from "@/components/custom/tag-management/data-table";
 import { useState, useEffect } from "react";
-import { columns } from "@/components/custom/user-management/columns";
-import { getAllUsers } from "@/services/AdminApiHandler";
+import { columns } from "@/components/custom/tag-management/columns";
+import {
+	getAllTags,
+	createTag,
+	updateTag,
+	deleteTag,
+} from "@/services/AdminApiHandler";
 import {
 	Table,
 	TableBody,
@@ -11,7 +16,6 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
-import { deleteUser } from "@/services/AdminApiHandler";
 
 // TableSkeleton Component (For Loading State)
 function TableSkeleton(rows = 5, cols = 4) {
@@ -41,8 +45,8 @@ function TableSkeleton(rows = 5, cols = 4) {
 	);
 }
 
-// UserManagement Component
-export default function UserManagement() {
+// TagManagement Component
+export default function TagManagement() {
 	// State management for data, loading, and message
 	const [data, setData] = useState(null);
 	const [loading, setLoading] = useState(true);
@@ -57,23 +61,45 @@ export default function UserManagement() {
 	const fetchData = async () => {
 		setLoading(true);
 		try {
-			const result = await getAllUsers();
+			const result = await getAllTags();
 			setData(result.data);
 			setLoading(false);
 		} catch (error) {
-			setMessage({ type: "error", text: "Failed to load user data." });
+			setMessage({ type: "error", text: "Failed to load tag data." });
 			setLoading(false);
 		}
 	};
 
-	const handleDeleteUser = async (userId, role) => {
+	const handleDeleteTag = async (tagId) => {
 		try {
-			await deleteUser(userId, role);
-			setMessage({ type: "success", text: "User deleted successfully." });
+			await deleteTag(tagId);
+			setMessage({ type: "success", text: "Tag deleted successfully." });
 			await fetchData(); // Refresh the data after deletion
 		} catch (error) {
-			console.error("Failed to delete user:", error);
-			setMessage({ type: "error", text: "Failed to delete user." });
+			console.error("Failed to delete tag:", error);
+			setMessage({ type: "error", text: "Failed to delete tag." });
+		}
+	};
+
+	const handleUpdateTag = async (tagId, name) => {
+		try {
+			await updateTag({ id: tagId, name });
+			setMessage({ type: "success", text: "Tag updated successfully." });
+			await fetchData(); // Refresh the data after update
+		} catch (error) {
+			console.error("Failed to update tag:", error);
+			setMessage({ type: "error", text: "Failed to update tag." });
+		}
+	};
+
+	const handleCreateTag = async (name) => {
+		try {
+			await createTag({ name });
+			setMessage({ type: "success", text: "Tag created successfully." });
+			await fetchData(); // Refresh the data after creation
+		} catch (error) {
+			console.error("Failed to create tag:", error);
+			setMessage({ type: "error", text: "Failed to create tag." });
 		}
 	};
 
@@ -81,10 +107,8 @@ export default function UserManagement() {
 
 	return (
 		<>
-			{/* Display the message below the table */}
-
 			<div className="flex items-center gap-6">
-				<h1 className="text-3xl font-extrabold">User Management</h1>
+				<h1 className="text-3xl font-extrabold">Tags</h1>
 				<hr className="border-neutral-700 border w-full mt-1.5" />
 			</div>
 
@@ -100,11 +124,15 @@ export default function UserManagement() {
 				</div>
 			)}
 
-			{/* Conditional rendering based on loading state */}
+			{/* Conditional rendering based on loading and message states */}
 			{loading ? (
 				<TableSkeleton />
 			) : (
-				<DataTable columns={columns(handleDeleteUser)} data={data} />
+				<DataTable
+					columns={columns(handleDeleteTag, handleUpdateTag)}
+					data={data}
+					handleCreateTag={handleCreateTag}
+				/>
 			)}
 		</>
 	);
