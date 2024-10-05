@@ -26,16 +26,13 @@ const getAllProducts = async (req, res) => {
 
   let query = {};
 
-  // Handle search by name (case-insensitive)
   if (search) {
     query.name = { $regex: search, $options: "i" };
   }
 
-  // Ensure minprice and maxprice are parsed as numbers
   const minPriceNum = minprice ? Number(minprice) : null;
   const maxPriceNum = maxprice ? Number(maxprice) : null;
 
-  // Apply price filter if provided
   if (minPriceNum || maxPriceNum) {
     query.price = {};
     if (minPriceNum) query.price.$gte = minPriceNum;
@@ -43,11 +40,9 @@ const getAllProducts = async (req, res) => {
   }
 
   try {
-    // Apply sorting by price or rating if specified
     const sortOptions = {};
     if (sortrating) sortOptions.averageRating = sortrating === "asc" ? 1 : -1;
 
-    // Fetch filtered and sorted products
     const products = await Product.find(query).sort(sortOptions);
 
     res.status(200).json(products);
@@ -118,7 +113,7 @@ const updateProduct = async (req, res) => {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    res.status(200).json(updatedProduct);
+    res.status(201).json(updatedProduct);
   } catch (error) {
     return res.status(500).json({
       message: "Error updating product",
@@ -162,7 +157,7 @@ const addReview = async (req, res) => {
  */
 const deleteProduct = async (req, res) => {
   try {
-    const deletedProduct = await Product.findByIdAndDelete(req.body.id);
+    const deletedProduct = await Product.findByIdAndDelete(req.params.id);
     if (!deletedProduct) {
       return res.status(404).json({ message: "Product not found" });
     }
@@ -174,6 +169,7 @@ const deleteProduct = async (req, res) => {
     });
   }
 };
+
 
 const calculateAverageRating = (ratings) => {
   let totalRating = 0;
