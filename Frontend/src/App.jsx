@@ -8,6 +8,7 @@ import { Navigate } from "react-router-dom";
 import Timeline from "./pages/Timeline";
 import Itinerary from "./pages/ItineraryView";
 import Site from "./pages/SitesView";
+import ProductView from "./pages/ProductView";
 import AdminManagementView from "./pages/AdminManagementView"; 
 
 import { useUser } from "@/state management/userInfo";
@@ -26,6 +27,7 @@ function App() {
 					<Route path="profile/:userId" element={<Profile />} />
 					<Route path="timeline" element={<Timeline />} />
 					<Route path="store" element={<Timeline />} />
+					<Route path="product" element={<ProductView />} />
 					<Route path="management" element={<AdminManagementView />} />
 				</Route>
 				<Route path="/login" element={<LogIn />} />
