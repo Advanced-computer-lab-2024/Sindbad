@@ -1,7 +1,21 @@
 const TourGuide = require("../models/TourGuide");
-const mongoose = require("mongoose");
 
-
+/**
+ * Retrieves all tourGuides
+ *
+ * @returns {Object} - A JSON object of the retrieved tourGuides or an error message
+ */
+const getAllTourGuides = async (req, res) => {
+	try {
+		const tourGuides = await TourGuide.find();
+		res.json(tourGuides);
+	} catch {
+		return res.status(500).json({
+			message: "Error retrieving Tour Guides",
+			error: err.message,
+		});
+	}
+};
 
 /**
  * Retrieves a tourGuide by its ID
@@ -10,14 +24,13 @@ const mongoose = require("mongoose");
  * @param {Object} res - The response object used to send the retrieved tourGuide or an error message
  * @returns {Object} - A JSON object of the retrieved tourGuide or an error message
  */
-const getTourGuide =async (req,res) => {
-    let tourGuide
-	try{
+const getTourGuide = async (req, res) => {
+	let tourGuide;
+	try {
 		tourGuide = await TourGuide.findById(req.params.id);
 		if (tourGuide == null) {
 			return res.status(404).json({ message: "Tour Guide not found" });
 		}
-        
 	} catch (err) {
 		return res.status(500).json({
 			message: "Error retrieving Tour Guide",
@@ -25,31 +38,12 @@ const getTourGuide =async (req,res) => {
 		});
 	}
 
-    if (tourGuide.isAccepted){
-        res.json(tourGuide);
-    }else{
-        return res.status(404).send('TourGuide not accepted yet');
-	}
-	
-};
-
-/**
- * Retrieves all tourGuides
- *
- * @param {Object} req - The request object
- * @param {Object} res - The response object used to send the retrieved tourGuides or an error message
- * @returns {Object} - A JSON object of the retrieved tourGuides or an error message
- */
-const getAllTourGuides = async (req, res) => {
-	try {
-		const tourGuides = await TourGuide.find();
-		res.json(tourGuides);
-	} catch (err) {
-		res.status(500).json({ message: err.message }); // pass err to catch block
+	if (tourGuide.isAccepted) {
+		res.json(tourGuide);
+	} else {
+		return res.status(404).send("TourGuide not accepted yet");
 	}
 };
-
-
 
 /**
  * Updates a tourGuide's profile
@@ -58,51 +52,54 @@ const getAllTourGuides = async (req, res) => {
  * @param {Object} res - Response object for sending results
  * @returns {Object} - Updated tourGuide profile or error message
  */
-const updateTourGuide = async(req,res) => {
-    let tourGuide
-	try{
+const updateTourGuide = async (req, res) => {
+	let tourGuide;
+	try {
 		tourGuide = await TourGuide.findById(req.params.id);
 		if (tourGuide == null) {
 			return res.status(404).json({ message: "Tour Guide not found" });
 		}
-        
 	} catch (err) {
 		return res.status(500).json({
 			message: "Error retrieving Tour Guide",
 			error: err.message,
 		});
 	}
-    if (tourGuide.isAccepted){
-        res.tourGuide = tourGuide;
-    }else{
-        return res.status(404).send('TourGuide not accepted yet');
-	}
+	if (!tourGuide.isAccepted)
+		return res.status(404).send("TourGuide not accepted yet");
 
+	if (req.body.email != null) tourGuide.email = req.body.email;
+	if (req.body.username != null) tourGuide.username = req.body.username;
+	if (req.body.passwordHash != null)
+		tourGuide.passwordHash = req.body.passwordHash;
+	if (req.body.mobileNumber != null)
+		tourGuide.mobileNumber = req.body.mobileNumber;
+	if (req.body.yearsOfExperience != null)
+		tourGuide.yearsOfExperience = req.body.yearsOfExperience;
 
-    if(req.body.email !=null){
-        res.tourGuide.email = req.body.email;
-    }
-    if(req.body.username !=null ){
-        res.tourGuide.username = req.body.username;
-    }
-    if(req.body.passwordHash !=null ){
-        res.tourGuide.passwordHash = req.body.passwordHash;
-    }
-    if(req.body.mobileNumber !=null ){
-        res.tourGuide.mobileNumber = req.body.mobileNumber;
-    }
-    if(req.body.yearsOfExperience !=null ){
-        res.tourGuide.yearsOfExperience = req.body.yearsOfExperience;
-    }
+	// Update or concat previousWork based on wether or not the previous work exists
 	if (req.body.previousWork != null) {
-		res.tourGuide.previousWork = res.tourGuide.previousWork.concat(req.body.previousWork);
-	}
-    
+		if (tourGuide.previousWork.length === 0) {
+			tourGuide.previousWork.push(req.body.previousWork);
+		} else {
+			const existingIndex = tourGuide.previousWork.findIndex(
+				(work) => work._id.toString() === req.body.previousWork._id
+			);
 
-	try{
-		const updatedTourGuide = await res.tourGuide.save();
+			if (existingIndex !== -1) {
+				// If it exists, update the entry
+				tourGuide.previousWork[existingIndex] = req.body.previousWork;
+			} else {
+				// Otherwise, add it to the list
+				tourGuide.previousWork.push(req.body.previousWork);
+			}
+		}
+	}
+
+	try {
+		const updatedTourGuide = await tourGuide.save();
 		res.json(updatedTourGuide);
-	} catch(err){
+	} catch (err) {
 		return res.status(400).json({
 			message: "Error saving Tour Guide's information",
 			error: err.message,
@@ -110,19 +107,20 @@ const updateTourGuide = async(req,res) => {
 	}
 };
 
-
 /**
  * deletes a tourGuides's profile
  *
  * @param {Object} req - Request with tourGuide's ID
  * @returns {Object} - Deleted tourGuide's profile or error message
  */
-const deleteTourGuide = async (req,res) => {
-	try{
-		const deletedTourGuide = await TourGuide.findByIdAndDelete(req.params.id);
+const deleteTourGuide = async (req, res) => {
+	try {
+		const deletedTourGuide = await TourGuide.findByIdAndDelete(
+			req.params.id
+		);
 		if (deletedTourGuide == null) {
 			return res.status(404).json({ message: "Tour Guide not found" });
-		}else{
+		} else {
 			res.json(deletedTourGuide);
 		}
 	} catch (err) {
@@ -133,14 +131,12 @@ const deleteTourGuide = async (req,res) => {
 	}
 };
 
-
 module.exports = {
 	getAllTourGuides,
-    getTourGuide,
-	getAllTourGuides,
-    updateTourGuide,
+	getTourGuide,
+	updateTourGuide,
 	deleteTourGuide,
-  };
+};
 
 /*
 //create

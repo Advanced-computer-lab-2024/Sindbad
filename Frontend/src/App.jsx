@@ -7,10 +7,13 @@ import SignUp from "./pages/SignUp";
 import { Navigate } from "react-router-dom";
 import Timeline from "./pages/Timeline";
 import Itinerary from "./pages/ItineraryView";
+import Activity from "./pages/ActivityView";
 import Site from "./pages/SitesView";
+import ProductView from "./pages/ProductView";
 import AdminManagementView from "./pages/AdminManagementView"; 
 
 import { useUser } from "@/state management/userInfo";
+import ShoppingPage from "./pages/ShoppingPage";
 
 function App() {
 	const { id } = useUser();
@@ -25,12 +28,14 @@ function App() {
 					/>
 					<Route path="profile/:userId" element={<Profile />} />
 					<Route path="timeline" element={<Timeline />} />
-					<Route path="store" element={<Timeline />} />
+					<Route path="store" element={<ShoppingPage />} />
+					<Route path="product" element={<ProductView />} />
 					<Route path="management" element={<AdminManagementView />} />
 				</Route>
 				<Route path="/login" element={<LogIn />} />
 				<Route path="/signup" element={<SignUp />} />
 				<Route path="/Itinerary" element={<Itinerary />} />
+                <Route path="/activity" element={<Activity />} />
                 <Route path="/site" element= {<Site />} />
 				<Route path="/" element={<Navigate to="/app" replace />} />
 			</Routes>

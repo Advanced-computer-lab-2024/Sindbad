@@ -1,9 +1,9 @@
 import axios from 'axios';
 const baseURL = import.meta.env.VITE_BASE_URL;
 
-export const getMyProducts = async (sellerId) => {
+export const getAllProducts = async (search, minprice, maxprice) => {
     try {
-        const response = await axios.get(`${baseURL}/seller/${sellerId}/products`, {
+        const response = await axios.get(`${baseURL}/product?search=${search}&minprice=${minprice}&maxprice=${maxprice}`, {
             headers: {
                 'Content-Type': 'application/json',
             },

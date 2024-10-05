@@ -76,6 +76,10 @@ const activitySchema = mongoose.Schema({
     type: Number,
     default: 0,
   },
+  description: {
+    type: String,
+    default: "",
+  },
 });
 
 module.exports = mongoose.model("Activity", activitySchema);

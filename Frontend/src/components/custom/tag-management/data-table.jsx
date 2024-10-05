@@ -6,6 +6,10 @@ import {
 	useReactTable,
 } from "@tanstack/react-table";
 
+import { ArrowRight, ArrowLeft } from "lucide-react";
+import { useState } from "react";
+
+
 import {
 	Table,
 	TableBody,
@@ -15,15 +19,18 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-export function DataTable({ columns, data }) {
+export function DataTable({ columns, data, handleCreateTag }) {
 	const table = useReactTable({
 		data,
 		columns,
 		getCoreRowModel: getCoreRowModel(),
 		getPaginationRowModel: getPaginationRowModel(),
 	});
+
+	const [newTagName, setNewTagName] = useState(""); // Manage the input value
 
 	return (
 		<div className="rounded-md border">
@@ -67,6 +74,23 @@ export function DataTable({ columns, data }) {
 							</TableCell>
 						</TableRow>
 					)}
+					<TableRow>
+						<TableCell colSpan="1">
+							<Input placeholder="Tag name"
+                                    value={newTagName}
+                                    onChange={(e) => setNewTagName(e.target.value)}
+                            ></Input>
+						</TableCell>
+						<TableCell colSpan="1" className="flex items-center justify-center">
+							<Button
+								variant="ghost"
+								className="p-3 "
+								onClick={() => handleCreateTag(newTagName)}
+							>
+								Add
+							</Button>
+						</TableCell>
+					</TableRow>
 				</TableBody>
 			</Table>
 			<div className="flex items-center justify-end space-x-2 p-4">
@@ -76,7 +100,7 @@ export function DataTable({ columns, data }) {
 					onClick={() => table.previousPage()}
 					disabled={!table.getCanPreviousPage()}
 				>
-					Previous
+					<ArrowLeft />
 				</Button>
 				<Button
 					variant="outline"
@@ -84,7 +108,7 @@ export function DataTable({ columns, data }) {
 					onClick={() => table.nextPage()}
 					disabled={!table.getCanNextPage()}
 				>
-					Next
+					<ArrowRight />
 				</Button>
 			</div>
 		</div>
