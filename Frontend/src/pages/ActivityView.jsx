@@ -33,6 +33,7 @@ const activity = {
     creatorId: "652a86b0b06d9c3240a1d30e", // Example ObjectId for Advertiser
     headCount: 35, // 35 people booked
     rating: 4.5, // Example rating
+    description: "With the history going back to 420 B.C., this tour includes sights throughout history. From the local alley drug dealer to the Queen's castle.",
   };
   
 
@@ -73,8 +74,15 @@ function Activity(){
                             </div>
                             <div className="border w-full my-4"></div>
                         </div>
-
-                        {/*Supported Languages*/}
+                        {/*description*/}
+                        <div className= "text-light">
+                            <p>
+                                {
+                                    activity.description
+                                }
+                            </p>
+                        </div>
+                        {/*Tags*/}
                         <div className="my-6">
                             <div className="flex flex-wrap gap-2">
                                 {activity.tags.map((lang) => (
@@ -87,10 +95,6 @@ function Activity(){
                             </div>
                         </div>
 
-                        {/**/}
-                        <div className=" flex flex-wrap gap-4">
-                            
-                        </div>
                     </div>
                     
                     {/*right section*/}
