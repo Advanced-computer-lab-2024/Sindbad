@@ -46,7 +46,7 @@ export const getTourGuide = async (tourGuideId) => {
 
 export const updateTourGuide = async (tourGuideId, updatedValues) => {
     try {
-        const response = axios.put(`${baseURL}/tourGuide/getTourGuide/${tourGuideId}`, updatedValues, {
+        const response = axios.put(`${baseURL}/tourGuide/${tourGuideId}`, updatedValues, {
             headers: {
                 'Content-Type': 'application/json',
             },

@@ -158,13 +158,7 @@ const SiteSchema = {
   name: z.string().min(1, { message: "Please add a name for your site" }),
   description: z.string().min(1, { message: "Please add a description for your site" }),
   imageUris: z.array(z.string().url({ message: "Image must be a valid URL" })).min(1, { message: "Please add an image for your site" }),
-  location: z.object({
-    address: z.string().min(1, { message: "Address is required" }),
-    coordinates: z.object({
-      lat: z.number().min(-90).max(90, { message: "Latitude must be between -90 and 90" }),
-      long: z.number().min(-180).max(180, { message: "Longitude must be between -180 and 180" }),
-    }),
-  }),
+  location: z.string().min(1, { message: "Address is required" }),
   openingHours: z.object({
       start: z.number().min(0).max(1440, { message: "Start time must be within a valid range (0-1440 minutes)" }),
       end: z.number().min(0).max(1440),

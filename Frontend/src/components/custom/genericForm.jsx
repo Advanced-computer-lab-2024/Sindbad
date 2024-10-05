@@ -27,6 +27,7 @@ import { createProduct } from "@/services/ProductApiHandler";
 import { createActivity } from "@/services/ActivityApiHandler";
 import { createSite } from "@/services/SiteApiHandler";
 import { updateActivity } from "@/services/ActivityApiHandler";
+import { updateSite } from "@/services/SiteApiHandler";
 
 export function GenericForm({ type, data, id }) {
   // formSchemaObject is an object that will be used to create the form schema. It will contain the keys of the temporaryHardCodedValues object,
@@ -70,13 +71,13 @@ export function GenericForm({ type, data, id }) {
     }
     if (type === "itinerary") {
       if (data) {
-        const valuesWithCreator = {
+        updateItinerary(data._id, values);
+      } else {
+        const itineraryWithId = {
           ...values,
           creatorId: id,
         }
-        updateItinerary(id, valuesWithCreator);
-      } else {
-        createItinerary(values);
+        createItinerary(itineraryWithId);
       }
     }
     if (type === "product") {
@@ -101,11 +102,17 @@ export function GenericForm({ type, data, id }) {
         
     }
     if (type === "site") {
-      const siteWithId = {
-        ...values,
-        creatorId: id,
+      if (data) {
+        updateSite(data._id, values);
       }
-      createSite(siteWithId);
+      else {
+        const siteWithId = {
+          ...values,
+          creatorId: id,
+        }
+        console.log(siteWithId)
+        createSite(siteWithId);
+      }
     }
     if (type === "experience") {
       if (data) {
