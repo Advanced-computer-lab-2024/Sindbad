@@ -35,29 +35,22 @@ const TourGuideSchema = new mongoose.Schema({
 	},
 	previousWork: [
 		{
-			type: [
-				{
-					jobTitle: {
-						type: String,
-						required: false, // Make jobTitle optional
-					},
-					companyName: {
-						type: String,
-						required: false, // Make companyName optional
-					},
-					duration: {
-						type: String, // E.g., "Jan 2020 - Dec 2021"
-						required: false, // Make duration optional
-					},
-					description: {
-						type: String,
-						default: "", // Optional field for description
-					},
-				},
-			],
-			default: [], // Default to an empty array
+			jobTitle: {
+				type: String,
+			},
+			companyName: {
+				type: String,
+			},
+			duration: {
+				type: String,
+			},
+			description: {
+				type: String,
+				default: "",
+			},
 		},
 	],
+
 	isAccepted: {
 		type: Boolean,
 	},
