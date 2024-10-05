@@ -260,6 +260,7 @@ const updateActivity = async (req, res) => {
       isBookingOpen,
       creatorId,
       headCount,
+      description,
     } = req.body;
 
     const updatedActivity = await Activity.findByIdAndUpdate(
@@ -275,6 +276,7 @@ const updateActivity = async (req, res) => {
         isBookingOpen,
         creatorId,
         headCount,
+        description,
       },
       { new: true, runValidators: true } // Return the updated document and run validators
     );

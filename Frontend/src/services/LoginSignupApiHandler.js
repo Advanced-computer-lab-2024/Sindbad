@@ -2,6 +2,9 @@ import axios from 'axios';
 const baseURL = import.meta.env.VITE_BASE_URL;
 
 export const userSignUp = async (finalValues, registerType) => {
+
+    console.log(finalValues);
+    console.log(registerType);
     const { password, ...rest } = finalValues; // Exclude 'password' from finalValues
 
     // Adjust the data format based on the role

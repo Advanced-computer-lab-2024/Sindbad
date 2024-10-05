@@ -14,6 +14,8 @@ const userSlice = createSlice({
         // id: "66f823447b0fe45d3c6d3768"
         // type: "tourismGovernor",
         // id: "66fff189a0a316baace5a99b"
+        // type: "admin",
+        // id: "66ffd995f2226d9aa3157374"
     },
     reducers: {
         login(state, action) {
