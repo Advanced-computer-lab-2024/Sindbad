@@ -4,7 +4,12 @@ import { set } from "date-fns";
 import { MapPin } from "lucide-react";
 import { useCallback } from "react";
 
-export default function GoogleMapWrite({ setPosition, lat, lng, zoom = 13 }) {
+export default function GoogleMapWrite({
+	setPosition,
+	lat = 30.0444,
+	ln = 31.2357,
+	zoom = 13,
+}) {
 	const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 	console.log("lat: ", lat, "lng: ", lng);
 
@@ -15,9 +20,7 @@ export default function GoogleMapWrite({ setPosition, lat, lng, zoom = 13 }) {
 					defaultZoom={zoom}
 					defaultCenter={{ lat, lng }}
 					className="h-full"
-					onCameraChanged={(ev) =>
-                        setPosition(ev.detail.center)
-					}
+					onCameraChanged={(ev) => setPosition(ev.detail.center)}
 				>
 					>
 				</Map>
