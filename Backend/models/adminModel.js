@@ -1,13 +1,12 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-//TODO: Update schema to link with User 
+//TODO: Update schema to link with User
 const AdminSchema = new Schema(
 	{
 		email: {
 			type: String,
 			required: true,
-			unique: true,
 			validate: {
 				validator: (v) => /^\S+@\S+\.\S+$/.test(v),
 				message: (props) => `${props.value} is not a valid email!`,
