@@ -31,12 +31,12 @@ function App() {
 					<Route path="store" element={<ShoppingPage />} />
 					<Route path="product/:productId" element={<ProductView />} />
 					<Route path="management" element={<AdminManagementView />} />
+					<Route path="itinerary/:itineraryId" element={<Itinerary />} />
+					<Route path="activity/:activityId" element={<Activity />} />
 				</Route>
 				<Route path="/login" element={<LogIn />} />
 				<Route path="/signup" element={<SignUp />} />
-				<Route path="/Itinerary" element={<Itinerary />} />
-                <Route path="/activity" element={<Activity />} />
-                <Route path="/site" element= {<Site />} />
+				<Route path="/site" element={<Site />} />
 				<Route path="/" element={<Navigate to="/app" replace />} />
 			</Routes>
 		</main>

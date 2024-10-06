@@ -11,7 +11,7 @@ const Category = require("../models/categoryModel");
  */
 const getActivity = async (req, res) => {
   try {
-    const activity = await Activity.findById(req.params.id);
+    const activity = await Activity.findById(req.params.id).populate("category tags");
     res.status(200).json(activity);
   } catch (error) {
     return res.status(500).json({
