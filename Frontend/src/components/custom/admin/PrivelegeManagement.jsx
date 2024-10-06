@@ -30,11 +30,15 @@ export default function PrivilegeManagement() {
 		email: z.string().regex(/^\S+@\S+\.\S+$/, {
 			message: "Invalid email",
 		}),
+		password: z.string().min(6, {
+			message: "Password must be at least 6 characters",
+		}),
 	});
 
 	const defaultValues = {
 		username: "",
 		email: "",
+		password: "",
 	};
 
 	// State for feedback messages
@@ -100,6 +104,19 @@ export default function PrivilegeManagement() {
 						<FormLabel htmlFor="email">Email</FormLabel>
 						<FormControl>
 							<Input id="email" {...field} />
+						</FormControl>
+						<FormMessage />
+					</FormItem>
+				)}
+			/>
+			<FormField
+				control={form.control}
+				name="password"
+				render={({ field }) => (
+					<FormItem className="w-full">
+						<FormLabel htmlFor="password">Password</FormLabel>
+						<FormControl>
+							<Input id="password" {...field} />
 						</FormControl>
 						<FormMessage />
 					</FormItem>
