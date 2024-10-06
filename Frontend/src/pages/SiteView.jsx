@@ -1,21 +1,16 @@
+import { useState, useEffect } from "react";
 import { Star, MapPin, Frown } from "lucide-react";
+import { getSiteById } from "@/services/SiteApiHandler";
+import { useParams } from "react-router-dom";
+
 
 function getRandomRating() {
-	{
-		/*return (Math.floor(Math.random() * 6));*/
-	}
 	return (Math.round(Math.random() * 10) / 2).toFixed(1);
 }
 
 function getRandomReviews() {
 	return Math.floor(Math.random() * 1000) + 1;
 }
-
-const reviews = getRandomReviews();
-const rating = Math.floor(getRandomRating());
-const fullStars = rating;
-const emptyStar = 5 - fullStars;
-//const isAccessible = true; //open to public
 
 const convertMinutesToTime = (minutes) => {
 	const hours = Math.floor(minutes / 60);
@@ -27,43 +22,43 @@ const convertMinutesToTime = (minutes) => {
 	return `${formattedHours}:${formattedMins} ${period}`;
 };
 
-const site = {
-	name: "Ancient Ruins",
-	category: "Historic Site",
-	description:
-		"Nestled atop a rugged hill, this ancient fortress once guarded a thriving medieval town.Its crumbling stone walls and towering arches whisper stories of battles fought and lives lived centuries ago. Today, the site offers breathtaking views of the surrounding valley, transporting visitors back in time.",
-	imageUris: [
-		"https://example.com/images/ruins1.jpg",
-		"https://example.com/images/ruins2.jpg",
-		"https://example.com/images/ruins3.jpg",
-	],
-	location: {
-		address: "1234 History Lane, Old Town, Country",
-		coordinates: {
-			lat: 34.0522,
-			lng: -118.2437,
-		},
-	},
-	openingHours: {
-		Monday: { start: 480, end: 1020 },
-		Tuesday: { start: 480, end: 1020 },
-		Wednesday: { start: 480, end: 1020 },
-		Thursday: { start: 600, end: 1020 },
-		Friday: { start: 600, end: 1020 },
-	},
-	ticketPrices: {
-		Adult: 120,
-		Child: 60,
-		Senior: 0,
-	},
-	tags: [
-		"Shopping", // Example ObjectIds referencing Tag objects
-		"Family-friendly",
-		"Pets allowed",
-	],
-};
+function handleSiteValues(site) {
+	if (!site.rating) {
+		site.rating = getRandomRating();
+	}
+	if (!site.reviews) {
+		site.reviews = getRandomReviews();
+	}
+}
+
 
 function Site() {
+	const { siteId } = useParams();
+	const [site, setSite] = useState(null);
+
+	const getSite = async () => {
+		let response = await getSiteById(siteId);
+		console.log(response);
+
+		if (response.error) {
+			console.error(response.message);
+		} else {
+			handleSiteValues(response);
+			setSite(response);
+		}
+	};
+
+	useEffect(() => {
+		getSite();
+	}, []);
+
+	if (!site) {
+		return <p>Loading...</p>;
+	}
+
+	const fullStars = site.rating;
+	const emptyStar = 5 - fullStars;
+
 	return (
 		<div className="min-h-screen h-full flex justify-center items-center bg-primary-950">
 			<div className="w-full max-w-7xl px-8 py-8 bg-primary-900 shadow-lg rounded-md">
@@ -84,7 +79,6 @@ function Site() {
 										/>
 									))}
 
-									{/*hasHalfStar && <StarHalf fill="yellow" strokeWidth={0} />*/}
 
 									{Array.from({ length: emptyStar }, (_, index) => (
 										<Star
@@ -95,7 +89,7 @@ function Site() {
 									))}
 								</div>
 								<p className="text-light">
-									{rating}/5 ({reviews})
+									{site.rating}/5 ({site.reviews})
 								</p>
 								<div className="border-2 h-0 w-0 rounded-full self-center"></div>
 								{/*CHANGE THIS WITH THE CATEGORY OF PLACE*/}
@@ -110,10 +104,10 @@ function Site() {
 							<div className="flex flex-wrap gap-2">
 								{site.tags.map((tag) => (
 									<div
-										key={tag}
+										key={tag._id}
 										className="px-3 py-1 bg-primary-950 rounded-full border cursor-default"
 									>
-										{tag}
+										{tag.name}
 									</div>
 								))}
 							</div>

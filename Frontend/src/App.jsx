@@ -8,7 +8,7 @@ import { Navigate } from "react-router-dom";
 import Timeline from "./pages/Timeline";
 import Itinerary from "./pages/ItineraryView";
 import Activity from "./pages/ActivityView";
-import Site from "./pages/SitesView";
+import Site from "./pages/SiteView";
 import ProductView from "./pages/ProductView";
 import AdminManagementView from "./pages/AdminManagementView"; 
 
@@ -33,10 +33,11 @@ function App() {
 					<Route path="management" element={<AdminManagementView />} />
 					<Route path="itinerary/:itineraryId" element={<Itinerary />} />
 					<Route path="activity/:activityId" element={<Activity />} />
+					<Route path="site/:siteId" element={<Site />} />
 				</Route>
 				<Route path="/login" element={<LogIn />} />
 				<Route path="/signup" element={<SignUp />} />
-				<Route path="/site" element={<Site />} />
+
 				<Route path="/" element={<Navigate to="/app" replace />} />
 			</Routes>
 		</main>
