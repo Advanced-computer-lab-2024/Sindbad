@@ -13,7 +13,7 @@ const Tag = require("../models/tagModel");
  */
 const getItinerary = async (req, res) => {
   try {
-    const itinerary = await Itinerary.findById(req.params.id);
+    const itinerary = await Itinerary.findById(req.params.id).populate("activities");
     if (!itinerary) {
       return res.status(404).json({ message: "Itinerary not found" });
     }

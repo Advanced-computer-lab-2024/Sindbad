@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import GoogleMapRead from "@/components/custom/maps/GoogleMapRead";
 import { getItineraryById } from "@/services/ItineraryApiHandler";
 import { useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function getRandomRating() {
 	return (Math.round(Math.random() * 10) / 2).toFixed(1);
@@ -140,9 +141,7 @@ const Itinerary = () => {
 							</div>
 						</div>
 
-						<p className="text-light">
-							{itinerary.description}
-						</p>
+						<p className="text-light">{itinerary.description}</p>
 
 						{/* Supported Languages */}
 						<div className="my-6">
@@ -186,7 +185,7 @@ const Itinerary = () => {
 				{/*Itinerary + Availbility*/}
 				<div className="grid grid-cols-9 grid-rows gap-8 mt-8 p-8">
 					<div className="col-span-3">
-						<h2 className="text-2xl font-semibold mb-4">Itinerary</h2>
+						<h2 className="text-2xl font-semibold mb-4">Timeline</h2>
 						<ul>
 							<li>
 								<div className="flex items-start space-x-2">
@@ -196,9 +195,6 @@ const Itinerary = () => {
 									<div>
 										<p>Starting at,</p>
 										<p>{itinerary.pickUpLocation}</p>
-										<a href="#" className="text-secondary">
-											See details
-										</a>
 									</div>
 								</div>
 							</li>
@@ -213,10 +209,7 @@ const Itinerary = () => {
 												{index + 1}
 											</div>
 											<div>
-												<p>Location {stop}</p>
-												<a href="#" className="text-secondary">
-													See details
-												</a>
+												<p>{stop}</p>
 											</div>
 										</div>
 									</li>
@@ -233,22 +226,36 @@ const Itinerary = () => {
 									<div>
 										<p>Finishing at,</p>
 										<p>{itinerary.dropOffLocation}</p>
-										<a href="#" className="text-secondary">
-											See details
-										</a>
 									</div>
 								</div>
 							</li>
 						</ul>
 					</div>
 
-					<div className="col-span-3 bg-light h-full w-full rounded-lg">
-						{/* Google Map Read component */}
-						<GoogleMapRead
-							key={selectedDate}
-							lat={itinerary.locations[selectedDate]?.coordinates?.lat}
-							lng={itinerary.locations[selectedDate]?.coordinates?.lng}
-						/>
+					<div className="col-span-3">
+						<h2 className="text-2xl font-semibold mb-4">Activities</h2>
+						<ul>
+							{itinerary.activities.map((activity, index) => (
+								<div key={index}>
+									<li>
+										<div className="flex items-start space-x-2 py-2">
+											<div className="flex-shrink-0 bg-light text-dark font-semibold w-10 h-10 flex items-center justify-center rounded-full">
+												{index + 1}
+											</div>
+											<div>
+												<p>{activity.location}</p>
+												<Link
+													to={`/app/activity/${activity._id}`}
+													className="text-secondary"
+												>
+													See details
+												</Link>
+											</div>
+										</div>
+									</li>
+								</div>
+							))}
+						</ul>
 					</div>
 
 					<div className="col-span-3 p-4">
