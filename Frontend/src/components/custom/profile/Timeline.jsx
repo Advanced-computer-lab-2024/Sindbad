@@ -72,7 +72,7 @@ function Timeline({ userData, userId, id, userType, cardData }) {
                         </p>
                     }
 
-                    {(userType === "advertiser" && (userData?.createdActivities?.length === 0 || !userData?.createdActivities)) &&
+                    {(userType === "advertiser" && cardData.length === 0) &&
                         <p className="text-neutral-400 text-sm italic">
                             {userId !== id ? "No activities to show." : "You have not created any activities yet. Click the + button to get started!"}
                         </p>

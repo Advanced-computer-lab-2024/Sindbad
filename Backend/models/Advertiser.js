@@ -39,7 +39,7 @@ const AdvertiserSchema = new mongoose.Schema({
 	companyProfile: {
 		name: {
 			type: String,
-			required: true,
+			// required: true,
 			validate: {
 				validator: (v) => v.length > 0,
 				message: "Company name is required.",
