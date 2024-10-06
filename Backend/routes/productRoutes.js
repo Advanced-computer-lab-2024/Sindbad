@@ -3,21 +3,18 @@ const {
   createProduct,
   updateProduct,
   getAllProducts,
-  getProductById, // Include the new function
+  getProductById,
+  addReview,
+  deleteProduct,
 } = require("../controllers/productController");
 
 const router = express.Router();
 
-// Route to add a product
 router.post("/", createProduct);
-
-// Route to update a product
 router.put("/:id", updateProduct);
-
-// Route to get all products with optional search and sort
-router.get("/", getAllProducts); // This seems to be a separate filtering route
-
-// Route to get a product by ID
-router.get("/:id", getProductById); // Use getProductById here
+router.post("/review/:id",addReview);
+router.get("/", getAllProducts);
+router.get("/:id", getProductById);
+router.delete("/:id",deleteProduct)
 
 module.exports = router;
