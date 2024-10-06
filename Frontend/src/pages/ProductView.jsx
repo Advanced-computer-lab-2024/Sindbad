@@ -71,10 +71,16 @@ function ProductView() {
 
                                 {/* Seller */}
                                 <div className="flex items-center mb-4">
-                                    <span className="">Sold by:</span>
-                                    <a className="ml-2 hover:underline" href={`/app/profile/${productData.seller?._id}`}>
-                                        {productData.seller?.firstName} {productData.seller?.lastName}
-                                    </a>
+                                    {productData.seller && productData.seller !== null ?
+                                        <>
+                                            <span className="">Sold by:</span>
+                                            <a className="ml-2 hover:underline" href={`/app/profile/${productData.seller?._id}`}>
+                                                {productData.seller?.firstName} {productData.seller?.lastName}
+                                            </a>
+                                        </>
+                                        :
+                                        <span className="">Sold by Sindbad</span>
+                                    }
                                 </div>
 
                                 {/* Ratings */}
