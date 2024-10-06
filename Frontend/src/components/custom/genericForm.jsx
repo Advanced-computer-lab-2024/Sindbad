@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -28,9 +29,13 @@ import { createActivity } from "@/services/ActivityApiHandler";
 import { createSite } from "@/services/SiteApiHandler";
 import { updateActivity } from "@/services/ActivityApiHandler";
 import { updateSite } from "@/services/SiteApiHandler";
-import GoogleMapWrite from "./maps/GoogleMapWrite";
+
+import { useNavigate } from "react-router-dom";
 
 export function GenericForm({ type, data, id }) {
+	// To refresh the page after form submissions
+	const navigate = useNavigate();
+
 	// formSchemaObject is an object that will be used to create the form schema. It will contain the keys of the temporaryHardCodedValues object,
 	// and the values will be zod types based on the type of the value in the temporaryHardCodedValues object.
 
@@ -41,7 +46,6 @@ export function GenericForm({ type, data, id }) {
 
 	// Parse the form schema to get the fields.
 	const fields = parseZodSchema(formSchema);
-	console.log(fields);
 
 	if (data) {
 		for (const key in fields) {
@@ -161,6 +165,7 @@ export function GenericForm({ type, data, id }) {
 			};
 			updateAdvertiser(body, id);
 		}
+		navigate(0);
 	}
 
 	function ArrayFieldRenderer({ name, control, initialValue }) {
@@ -187,7 +192,11 @@ export function GenericForm({ type, data, id }) {
 									<FormControl>
 										<Input
 											{...field}
-											type={initialValue === "number" ? "number" : "text"} // Set type based on initialValue
+											type={
+												initialValue === "number"
+													? "number"
+													: "text"
+											} // Set type based on initialValue
 											className="text-black"
 											placeholder={`Item ${index + 1}`}
 											onChange={(e) => {
@@ -215,7 +224,9 @@ export function GenericForm({ type, data, id }) {
 				))}
 				<Button
 					type="button"
-					onClick={() => append(initialValue === "number" ? 1 : "string")} // Initialize with a number or string based on the type
+					onClick={() =>
+						append(initialValue === "number" ? 1 : "string")
+					} // Initialize with a number or string based on the type
 					className="bg-blue-500 text-white"
 				>
 					Add Item
@@ -227,9 +238,9 @@ export function GenericForm({ type, data, id }) {
 	function renderFields(values, path = "") {
 		return Object.keys(values).map((key) => {
 			const fullPath = path ? `${path}.${key}` : key;
-			const isCoordinates = key === "coordinates";
 			const isArray = Array.isArray(values[key]);
-			const isObject = typeof values[key] === "object" && values[key] !== null;
+			const isObject =
+				typeof values[key] === "object" && values[key] !== null;
 
 			if (isArray) {
 				return (
@@ -238,29 +249,6 @@ export function GenericForm({ type, data, id }) {
 						name={fullPath}
 						control={form.control}
 						initialValue={typeof values[key][0]}
-					/>
-				);
-			}
-
-			if (isCoordinates) {
-				return (
-					<FormField
-						key={`${fullPath}.coordinates`}
-						control={form.control}
-						name={fullPath}
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>{key.toUpperCase()}</FormLabel>
-								<FormControl>
-									<GoogleMapWrite
-                    lat = {field.value.lat}
-                    lng = {field.value.lng}
-										onChange={(newPosition) => field.onChange(newPosition)} // Pass onChange function
-									/>
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
 					/>
 				);
 			}
@@ -293,13 +281,19 @@ export function GenericForm({ type, data, id }) {
 										type="checkbox"
 										className="form-checkbox h-4 w-4 text-blue-600 border-gray-300 rounded"
 										checked={field.value}
-										onChange={(e) => field.onChange(e.target.checked)}
+										onChange={(e) =>
+											field.onChange(e.target.checked)
+										}
 									/>
 								) : (
 									<Input
 										{...field}
 										type={
-											isNumberField ? "number" : isDateField ? "date" : "text"
+											isNumberField
+												? "number"
+												: isDateField
+												? "date"
+												: "text"
 										}
 										className="text-black"
 										onChange={(e) => {
@@ -332,7 +326,10 @@ export function GenericForm({ type, data, id }) {
 	return (
 		<div>
 			<Form {...form}>
-				<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+				<form
+					onSubmit={form.handleSubmit(onSubmit)}
+					className="space-y-8"
+				>
 					{renderFields(fields)}
 					<Button type="submit" className="bg-dark text-white">
 						Submit
