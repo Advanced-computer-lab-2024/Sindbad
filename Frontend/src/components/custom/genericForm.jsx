@@ -140,9 +140,12 @@ export function GenericForm({ type, data, id }) {
 			const body = {
 				previousWork: {
 					...previousWork,
-					_id: data._id,
 				},
 			};
+
+			if (data) {
+				body.previousWork._id = data._id;
+			}
 
 			updateTourGuide(id, body);
 		}

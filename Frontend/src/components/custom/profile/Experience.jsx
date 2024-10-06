@@ -50,7 +50,6 @@ function Experience({ userData, userId, id }) {
 												: ""
 										}
 										id={id}
-										data={userData}
 									/>
 								</DialogHeader>
 							</DialogContent>
