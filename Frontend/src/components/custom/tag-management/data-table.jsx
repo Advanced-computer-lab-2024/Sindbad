@@ -81,7 +81,7 @@ export function DataTable({ columns, data, handleCreateTag }) {
                                     onChange={(e) => setNewTagName(e.target.value)}
                             ></Input>
 						</TableCell>
-						<TableCell colSpan="1" className="flex items-center justify-center">
+						<TableCell colSpan="1">
 							<Button
 								variant="ghost"
 								className="p-3 "
