@@ -2,8 +2,11 @@ import { Button } from "../ui/button";
 import { deleteSite } from "../../services/SiteApiHandler";
 import { deleteActivity } from "../../services/ActivityApiHandler";
 import { deleteItinerary } from "../../services/ItineraryApiHandler";
+import { deleteProduct } from "../../services/ProductApiHandler";
 
 function DeleteForm( {type, data} ) {
+
+  console.log(data)
     
     const handleButtonClick = () => {
         if (type === "site") {
