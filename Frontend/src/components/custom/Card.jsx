@@ -14,8 +14,16 @@ import DeleteForm from "./deleteForm";
 function Card({ data, id, userId, type }) {
     return (
         <article className="w-full flex flex-col border border-primary-700/80 rounded-md overflow-clip bg-gradient-to-br from-dark to-primary-900/50 group">
-            <div className="h-[156px] relative shrink-0">
-                <ImagePlaceholder />
+            <div className="h-[156px] relative shrink-0 bg-neutral-800">
+                {data.imageUris && data.imageUris.length !== 0 ? (
+                    <img
+                        src={data.imageUris[0]}
+                        alt={data.name}
+                        className="object-cover h-full w-full"
+                    />
+                ) : (
+                    <ImagePlaceholder />
+                )}
                 {type === "tourist" &&
                     <button className="absolute top-2 right-2 border-2 border-dark opacity-0 group-hover:opacity-100 transition-all hover:border-secondary bg-primary-900 p-1.5 rounded-full">
                         <Bookmark fill="currentColor" size={16} />

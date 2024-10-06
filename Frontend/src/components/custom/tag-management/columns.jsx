@@ -40,9 +40,8 @@ export const columns = (handleDeleteTag, handleUpdateTag) => [
 		header: "Actions",
 		cell: ({ row }) => {
 			const id = row.original._id;
-
 			return (
-				<Button
+				<Button Button
 					variant="ghostDestructive"
 					className="p-3"
 					onClick={() => {
@@ -50,7 +49,7 @@ export const columns = (handleDeleteTag, handleUpdateTag) => [
 					}}
 				>
 					Delete
-				</Button>
+				</Button >
 			);
 		},
 	},
