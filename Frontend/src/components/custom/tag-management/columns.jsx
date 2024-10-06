@@ -39,7 +39,7 @@ export const columns = (handleDeleteTag, handleUpdateTag) => [
 		accessorKey: "actions",
 		header: "Actions",
 		cell: ({ row }) => {
-			const id = row.original._id;=
+			const id = row.original._id;
 			return (
 				<Button Button
 					variant="ghostDestructive"
