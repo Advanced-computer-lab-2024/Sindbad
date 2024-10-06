@@ -41,7 +41,7 @@ function ProductCard({ data }) {
                         <ArrowRight size={13} />
                     </div>
                 </Button>
-                {navigateToProduct ? <Navigate to={`/app/product/${data.id}`} /> : null}
+                {navigateToProduct ? <Navigate to={`/app/product/${data._id}`} /> : null}
             </div>
         </article>
     );

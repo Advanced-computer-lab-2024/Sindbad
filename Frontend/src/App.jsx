@@ -29,7 +29,7 @@ function App() {
 					<Route path="profile/:userId" element={<Profile />} />
 					<Route path="timeline" element={<Timeline />} />
 					<Route path="store" element={<ShoppingPage />} />
-					<Route path="product" element={<ProductView />} />
+					<Route path="product/:productId" element={<ProductView />} />
 					<Route path="management" element={<AdminManagementView />} />
 				</Route>
 				<Route path="/login" element={<LogIn />} />
