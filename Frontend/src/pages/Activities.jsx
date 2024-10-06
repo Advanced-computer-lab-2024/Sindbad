@@ -3,6 +3,7 @@ import GenericFilter from "@/components/custom/GenericFilter";
 import Card from "@/components/custom/Card";
 import CardContainer from "@/components/CardContainer";
 import { getAllProducts } from "@/services/ProductApiHandler";
+import { getAllActivities } from "@/services/ActivityApiHandler";
 
 function Activities() {
 	const [loading, setLoading] = useState(false);
@@ -13,10 +14,11 @@ function Activities() {
 			min: 0,
 			max: 1000,
 		},
-		budget2: {
+		ratings: {
 			min: 0,
-			max: 1000,
+			max: 5,
 		},
+
 	});
 
 	const formFields = {
@@ -30,21 +32,15 @@ function Activities() {
 			min: 0,
 			max: 1000,
 		},
-		budget2: {
-			type: "range",
-			label: "Budget2",
-			min: 0,
-			max: 1000,
-		},
 	};
 
 	// Function to fetch products
 	const fetchProducts = async () => {
 		setLoading(true);
-		const response = await getAllProducts(
+		const response = await getAllActivities(
 			activeFilters.name,
-			activeFilters.budget.min,
-			activeFilters.budget.max
+			// activeFilters.budget.min,
+			// activeFilters.budget.max
 		);
 		if (!response.error) {
 			setProducts(response);
