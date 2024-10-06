@@ -1,5 +1,8 @@
 import { Star, MapPin, CalendarDays } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useState, useEffect, act } from "react";
+import { getTag } from "@/services/TagApiHandler";
+import axios from "axios";
 
 function getRandomRating(){
     {/*return (Math.floor(Math.random() * 6));*/}
@@ -16,28 +19,54 @@ const reviews = (getRandomReviews());
 const rating = Math.floor(getRandomRating());
 const fullStars = rating;
 const emptyStar = 5 - fullStars;
-
-const activity = {
-    name: "Historical City Tour",
-    dateTime: new Date("2024-10-15T09:00:00"), // Example date and time
-    location: "Old Town Square, City Center",
-    price: { min: 50, max: 100 }, // Example price range (could also be a single number like 75)
-    category: "City day tour", // Example ObjectId for Category
-    tags: [
-      "Sight-seeing", // Example ObjectId for Tag 1
-      "Family-friendly",
-      "Food-included" // Example ObjectId for Tag 2
-    ],
-    discounts: 20, // 20% discount
-    isBookingOpen: true,
-    creatorId: "652a86b0b06d9c3240a1d30e", // Example ObjectId for Advertiser
-    headCount: 35, // 35 people booked
-    rating: 4.5, // Example rating
-    description: "With the history going back to 420 B.C., this tour includes sights throughout history. From the local alley drug dealer to the Queen's castle.",
-  };
   
+  const activity = {
+    _id: "66f7049e75a75a8aefc8ccc1",
+    name: "Yoga Class",
+    dateTime: new Date("2024-09-30T10:00:00.000Z"), // Date and time for the activity
+    location: "Community Center", // Location of the activity
+    price: { 
+      min: 10, 
+      max: 20 // Price range for the activity
+    },
+    category: "66f6b76979faeed4f154facb", // Category reference (ObjectId)
+    tags: [
+      "66faa4f7e6afc4ffe0dcdef6",  // Tags (Array of ObjectIds)
+    ],
+    discounts: 15, // Discount on the activity
+    isBookingOpen: true, // Is booking open for the activity
+    creatorId: "66f823447b0fe45d3c6d3768", // Creator (ObjectId)
+    headCount: 0, // Current headcount
+    __v: 0 // Mongoose version key
+  };
 
 function Activity(){
+
+    const [fetchedTags, setFetchedTags] = useState([]);
+    
+  
+    const getTagById = async (tag) => {
+        const response = await getTag(tag);
+
+        if (response.error) {
+            console.error(response.message);
+        } else {
+            return response
+        }
+    };
+    useEffect(() => {
+        const fetchTags = async () => {
+            if (activity.tags && activity.tags.length !== 0) {
+                // Use Promise.all to wait for all fetches to complete
+                const tagPromises = activity.tags.map(tag => getTagById(tag));
+                
+                const resolvedTags = await Promise.all(tagPromises);
+                // Filter out any null values (from errors) and set state
+                setFetchedTags(resolvedTags.filter(tag => tag !== null));
+            }
+        };
+        fetchTags();
+    }, []);
     
     return(
         <div className="min-h-screen flex justify-center items-center bg-primary-950">
@@ -77,19 +106,17 @@ function Activity(){
                         {/*description*/}
                         <div className= "text-light">
                             <p>
-                                {
-                                    activity.description
-                                }
+                                With the history going back to 420 B.C., this tour includes sights throughout history. From the local alley drug dealer to the Queen's castle.
                             </p>
                         </div>
                         {/*Tags*/}
                         <div className="my-6">
                             <div className="flex flex-wrap gap-2">
-                                {activity.tags.map((lang) => (
+                                {fetchedTags.map((tags) => (
                                     <div 
-                                    key={lang} 
-                                    className="px-3 py-1 bg-primary-950 rounded-full border cursor-default">
-                                        {lang}
+                                    key={tags._id} 
+                                    className="px-3 py-1 bg-primary-950 rounded-full border cursor-default text-light">
+                                        {tags.name}
                                     </div>
                                 ))}
                             </div>

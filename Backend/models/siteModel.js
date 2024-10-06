@@ -55,10 +55,10 @@ const siteSchema = new mongoose.Schema({
 		type: Map,
 		of: Number,
 		validate: {
-			validator: function (arr) {
-				return arr.every((price) => price >= 0);
+			validator: function (map) {
+				return Array.from(map.values()).every((price) => price >= 0);
 			},
-			message: "Ticket prices must be non-negative",
+			message: "All ticket prices must be non-negative",
 		},
 	},
 	tags: [

@@ -1,116 +1,80 @@
+import { DataTable } from "@/components/custom/tag-management/data-table";
+import { useState, useEffect } from "react";
+import { columns } from "@/components/custom/tag-management/columns";
 import {
-	Accordion,
-	AccordionContent,
-	AccordionItem,
-	AccordionTrigger,
-} from "@/components/ui/accordion";
+	getAllTags,
+	createTag,
+	updateTag,
+	deleteTag,
+} from "@/services/AdminApiHandler";
+import TableSkeleton from "../TableSkeleton";
 
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from "@/components/ui/form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { userSignUp } from "@/services/LoginSignupApiHandler";
-import { useState } from "react"; // Import useState for managing messages
+// TagManagement Component
+export default function TagManagement() {
+	// State management for data, loading, and message
+	const [data, setData] = useState(null);
+	const [loading, setLoading] = useState(true);
+	const [message, setMessage] = useState(null); // message replaces error
 
-export default function PrivilegeManagement() {
-	// Default password is the same as email
-	const formSchema = z.object({
-		username: z.string().min(2, {
-			message: "Username must be at least 2 characters",
-		}),
-		email: z.string().regex(/^\S+@\S+\.\S+$/, {
-			message: "Invalid email",
-		}),
-	});
+	// useEffect to load data on component mount
+	useEffect(() => {
+		fetchData();
+	}, []);
 
-	const defaultValues = {
-		username: "",
-		email: "",
-	};
-
-	// State for feedback messages
-	const [message, setMessage] = useState(null);
-
-	// Create a hook form instance for Admin and Tourism Governor
-	const adminForm = useForm({
-		resolver: zodResolver(formSchema),
-		defaultValues: defaultValues,
-	});
-
-	const governorForm = useForm({
-		resolver: zodResolver(formSchema),
-		defaultValues: defaultValues,
-	});
-
-	// Handle form submission
-	const handleAdminSubmit = async (data) => {
+	// Fetch data function
+	const fetchData = async () => {
+		setLoading(true);
 		try {
-			await userSignUp({ ...data, role: "Admin" });
-			setMessage({ type: "success", text: "Admin added successfully." });
+			const result = await getAllTags();
+			if (result && result.data) {
+				setData(result.data);
+			} else {
+				setMessage({ type: "error", text: "No tags available." });
+			}
 		} catch (error) {
-			console.error("Failed to add admin:", error);
-			setMessage({ type: "error", text: "Failed to add admin." });
+			setMessage({ type: "error", text: "Failed to load tag data." });
+		} finally {
+			setLoading(false);
 		}
 	};
 
-	const handleGovernorSubmit = async (data) => {
+	const handleDeleteTag = async (tagId) => {
 		try {
-			await userSignUp({ ...data, role: "Tourism Governor" });
-			setMessage({
-				type: "success",
-				text: "Tourism Governor added successfully.",
-			});
+			await deleteTag(tagId);
+			setMessage({ type: "success", text: "Tag deleted successfully." });
+			await fetchData(); // Refresh the data after deletion
 		} catch (error) {
-			console.error("Failed to add tourism governor:", error);
-			setMessage({ type: "error", text: "Failed to add tourism governor." });
+			console.error("Failed to delete tag:", error);
+			setMessage({ type: "error", text: "Failed to delete tag." });
 		}
 	};
 
-	// Form fields rendering helper
-	const renderFormFields = (form) => (
-		<div className="flex gap-4">
-			<FormField
-				control={form.control}
-				name="username"
-				render={({ field }) => (
-					<FormItem className="w-full">
-						<FormLabel htmlFor="username">Username</FormLabel>
-						<FormControl>
-							<Input id="username" {...field} />
-						</FormControl>
-						<FormMessage />
-					</FormItem>
-				)}
-			/>
-			<FormField
-				control={form.control}
-				name="email"
-				render={({ field }) => (
-					<FormItem className="w-full">
-						<FormLabel htmlFor="email">Email</FormLabel>
-						<FormControl>
-							<Input id="email" {...field} />
-						</FormControl>
-						<FormMessage />
-					</FormItem>
-				)}
-			/>
-		</div>
-	);
+	const handleUpdateTag = async (tagId, name) => {
+		try {
+			await updateTag({ id: tagId, name });
+			setMessage({ type: "success", text: "Tag updated successfully." });
+			await fetchData(); // Refresh the data after update
+		} catch (error) {
+			console.error("Failed to update tag:", error);
+			setMessage({ type: "error", text: "Failed to update tag." });
+		}
+	};
+
+	const handleCreateTag = async (name) => {
+		try {
+			await createTag({ name });
+			setMessage({ type: "success", text: "Tag created successfully." });
+			await fetchData(); // Refresh the data after creation
+		} catch (error) {
+			console.error("Failed to create tag:", error);
+			setMessage({ type: "error", text: "Failed to create tag." });
+		}
+	};
 
 	return (
 		<>
 			<div className="flex items-center gap-6">
-				<h1 className="text-3xl font-extrabold">Add Privileges</h1>
+				<h1 className="text-3xl font-extrabold">Tags</h1>
 				<hr className="border-neutral-700 border w-full mt-1.5" />
 			</div>
 
@@ -126,51 +90,18 @@ export default function PrivilegeManagement() {
 				</div>
 			)}
 
-			<Accordion type="single" collapsible className="w-full">
-				<AccordionItem value="item-1">
-					<AccordionTrigger>New Admin</AccordionTrigger>
-					<AccordionContent>
-						<Form {...adminForm}>
-							<form
-								onSubmit={adminForm.handleSubmit(handleAdminSubmit)}
-								className="space-y-4"
-							>
-								{renderFormFields(adminForm)}
-								<div className="flex justify-end">
-									<Button
-										type="submit"
-										className="bg-primary-700 px-4 py-2 w-auto"
-									>
-										Add Admin
-									</Button>
-								</div>
-							</form>
-						</Form>
-					</AccordionContent>
-				</AccordionItem>
-
-				<AccordionItem value="item-2">
-					<AccordionTrigger>New Tourism Governor</AccordionTrigger>
-					<AccordionContent>
-						<Form {...governorForm}>
-							<form
-								onSubmit={governorForm.handleSubmit(handleGovernorSubmit)}
-								className="space-y-4"
-							>
-								{renderFormFields(governorForm)}
-								<div className="flex justify-end">
-									<Button
-										type="submit"
-										className="bg-primary-700 px-4 py-2 w-auto"
-									>
-										Add Tourism Governor
-									</Button>
-								</div>
-							</form>
-						</Form>
-					</AccordionContent>
-				</AccordionItem>
-			</Accordion>
+			{/* Conditional rendering based on loading, error, and data state */}
+			{loading ? (
+				<TableSkeleton rows={3} cols={2} />
+			) : data ? (
+				<DataTable
+					columns={columns(handleDeleteTag, handleUpdateTag)}
+					data={data}
+					handleCreateTag={handleCreateTag}
+				/>
+			) : (
+				<div>Unable to get tags.</div> // Message when no data is available
+			)}
 		</>
 	);
 }

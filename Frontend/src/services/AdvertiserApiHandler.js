@@ -44,9 +44,9 @@ export const getAdvertiser = async (advertiserId) => {
     }
 };
 
-export const updateAdvertiser = async (updatedValues) => {
+export const updateAdvertiser = async (updatedValues, id) => {
     try {
-        const response = axios.put(`${baseURL}/advertiser/profile`, updatedValues, {
+        const response = axios.put(`${baseURL}/advertiser/profile/${id}`, updatedValues, {
             headers: {
                 'Content-Type': 'application/json',
             },

@@ -59,7 +59,7 @@ function Profile() {
             console.error(response.message);
         } else {
             setUserType(response.role);
-            console.log("User type:", response.role);
+            // console.log("User type:", response.role);
             return response.role;
         }
     }
@@ -68,7 +68,9 @@ function Profile() {
         console.log("userType:", userType, "userData:", userData);
         let response;
         if (userType === "advertiser" && userData?.createdActivities && userData?.createdActivities.length !== 0) {
+            console.log(userId)
             response = await getMyActivities(userId);
+            console.log(response);
             if (response.error) {
                 console.error(response.message);
             } else {
