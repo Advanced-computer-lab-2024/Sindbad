@@ -2,8 +2,6 @@ import Card from "@/components/custom/Card";
 import ProductCard from "@/components/custom/ProductCard";
 import { CirclePlus } from "lucide-react";
 import { useUser } from '@/state management/userInfo';
-import { useEffect, useState } from 'react';
-import { getMyActivities } from "@/services/ActivityApiHandler";
 import {
     Dialog,
     DialogContent,
@@ -28,19 +26,17 @@ function Timeline({ userData, userId, id, userType, cardData }) {
                 </h1>
                 <hr className="border-neutral-700 border w-full mt-1.5" />
                 {type !== "tourist" && userId === id &&
-                <Dialog>
-                    <DialogTrigger>
-                    <button className="shrink-0 mt-1.5 text-neutral-600 hover:text-light transition-all">
-                        <CirclePlus size={24} />
-                    </button>
-                    </DialogTrigger>
-                    <DialogContent className="overflow-y-scroll max-h-[50%]">
-                        <DialogHeader>
-                            <DialogTitle>Edit Profile</DialogTitle>
-                            <GenericForm type={type === "seller" ? "product" : type === "advertiser" ? "activity" : type === "tourGuide" ? "itinerary" : "site"} id={id} />
-                        </DialogHeader>
-                    </DialogContent>
-                </Dialog>
+                    <Dialog>
+                        <DialogTrigger className="shrink-0 mt-1.5 text-neutral-600 hover:text-light transition-all">
+                            <CirclePlus size={24} />
+                        </DialogTrigger>
+                        <DialogContent className="overflow-y-scroll max-h-[50%]">
+                            <DialogHeader>
+                                <DialogTitle>Edit Profile</DialogTitle>
+                                <GenericForm type={type === "seller" ? "product" : type === "advertiser" ? "activity" : type === "tourGuide" ? "itinerary" : "site"} id={id} />
+                            </DialogHeader>
+                        </DialogContent>
+                    </Dialog>
                 }
             </div>
             <div>
@@ -55,7 +51,7 @@ function Timeline({ userData, userId, id, userType, cardData }) {
                     {userType === "advertiser" && cardData?.map((activity, index) => (<Card key={index} data={activity} id={id} userId={userId} type={type} />))}
 
                     {userType === "tourismGovernor" && cardData?.map((site, index) => (<Card key={index} data={site} id={id} userId={userId} type={type} />))}
-                    
+
                 </div>
                 <div>
                     {(userType === "tourist" && (userData?.bookmarks?.length === 0 || !userData?.bookmarks)) &&

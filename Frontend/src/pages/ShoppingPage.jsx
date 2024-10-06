@@ -4,7 +4,22 @@ import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
 import { getAllProducts } from "@/services/ProductApiHandler";
 import { useUser } from "@/state management/userInfo";
-import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select"; // Import Select components
+import {
+    Select,
+    SelectTrigger,
+    SelectContent,
+    SelectItem,
+    SelectValue
+} from "@/components/ui/select";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+import GenericForm from "@/components/custom/genericForm";
+import { CirclePlus } from "lucide-react";
 
 function ShoppingPage() {
     const [products, setProducts] = useState([]);
@@ -35,9 +50,24 @@ function ShoppingPage() {
 
     return (
         <div className="py-8 px-24 max-w-[1200px] flex flex-col gap-4 mx-auto">
-            <div className="flex items-center gap-6 mb-6">
-                <h1 className="text-3xl font-extrabold">Products</h1>
+            <div className="flex items-center gap-6">
+                <h1 className="text-3xl font-extrabold shrink-0">
+                    Products
+                </h1>
                 <hr className="border-neutral-700 border w-full mt-1.5" />
+                {type === "admin" &&
+                    <Dialog>
+                        <DialogTrigger className="shrink-0 mt-1.5 text-neutral-600 hover:text-light transition-all">
+                            <CirclePlus size={24} />
+                        </DialogTrigger>
+                        <DialogContent className="overflow-y-scroll max-h-[50%]">
+                            <DialogHeader>
+                                <DialogTitle>Add Product</DialogTitle>
+                                <GenericForm type="product" id={id} />
+                            </DialogHeader>
+                        </DialogContent>
+                    </Dialog>
+                }
             </div>
             <div className="flex gap-10">
                 <div className="flex flex-col gap-7">
