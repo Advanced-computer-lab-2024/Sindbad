@@ -204,7 +204,7 @@ const getActivities = async (req, res) => {
       const parsedBudget = Number(budget);
       filterCriteria.$or = [
         { price: { $lte: parsedBudget } }, // For fixed price activities
-        { "price.max": { $lte: parsedBudget } }, // For activities with price ranges
+        { "price.min": { $lte: parsedBudget } }, // For activities with price ranges
       ];
     }
 
