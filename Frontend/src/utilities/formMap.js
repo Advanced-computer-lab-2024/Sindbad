@@ -213,8 +213,7 @@ const siteSchema = {
 	location: locationSchema,
 	openingHours: daysOfWeek, // Opening hours per day of the week
 	ticketPrices: ticketPricesSchema, // Explicit keys for ticket categories
-	tags: z.array(z.string().nonempty()), // assuming ObjectId can be represented as a string
-	creatorId: z.string().nonempty("Creator ID is required"), // Assuming creatorId can be treated as a string
+	tags: z.array(z.string().nonempty()), // assuming ObjectId can be represented as a string// Assuming creatorId can be treated as a string
 };
 
 const companyProfileSchema = {
