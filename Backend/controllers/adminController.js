@@ -1,9 +1,6 @@
 const Admin = require("../models/adminModel");
-const Tourist = require("../models/tourist");
-const TourGuide = require("../models/TourGuide");
-const Advertiser = require("../models/Advertiser");
-const Seller = require("../models/Seller");
 const TourismGovernor = require("../models/TourismGovernor");
+const { isUniqueUsername } = require("./userController");
 
 /**
  * Creates a new admin.
@@ -144,7 +141,7 @@ const addTourismGovernor = async (req, res) => {
 			return res.status(400).json({ message: "Password is required" });
 		}
 
-		const isUnique = await isUsernameUnique(username);
+		const isUnique = await isUniqueUsername(username);
 		if (!isUnique)
 			return res.status(400).json({ message: "Username already exists" });
 
@@ -176,34 +173,14 @@ const getTourismGovernorById = async (req, res) => {
 	try {
 		const tourismGovernor = await TourismGovernor.findById(req.params.id);
 		if (!tourismGovernor) {
-			return res.status(404).json({ message: "Tourism governor not found" });
+			return res
+				.status(404)
+				.json({ message: "Tourism governor not found" });
 		}
 		res.status(200).json(tourismGovernor);
 	} catch (err) {
 		res.status(500).json({ message: err.message });
 	}
-};
-
-const isUsernameUnique = async (username) => {
-	const admin = await Admin.findOne({ username });
-	if (admin) return false;
-
-	const tourist = await Tourist.findOne({ username });
-	if (tourist) return false;
-
-	const tourGuide = await TourGuide.findOne({ username });
-	if (tourGuide) return false;
-
-	const advertiser = await Advertiser.findOne({ username });
-	if (advertiser) return false;
-
-	const seller = await Seller.findOne({ username });
-	if (seller) return false;
-
-	const tourismGovernor = await TourismGovernor.findOne({ username });
-	if (tourismGovernor) return false;
-
-	return true;
 };
 
 module.exports = {

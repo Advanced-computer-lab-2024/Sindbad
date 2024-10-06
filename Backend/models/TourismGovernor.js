@@ -10,7 +10,6 @@ const TourismGovernorSchema = new mongoose.Schema({
 	email: {
 		//TODO: Make this required after sprint 1 lol
 		type: String,
-		unique: true,
 		validate: {
 			validator: (v) => /^\S+@\S+\.\S+$/.test(v),
 			message: (props) => `${props.value} is not a valid email!`,

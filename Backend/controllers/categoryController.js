@@ -32,21 +32,26 @@ const createCategory = async (req, res) => {
 /**
  * Retrieves a category by its ID
  *
- * @param {Object} req - The request object containing the category ID in the body
+ * @param {Object} req - The request object containing the category ID/name in params
  * @param {Object} res - The response object used to send the retrieved category or an error message
  * @returns {Object} - A JSON object of the retrieved category or an error message
  */
 
 const getCategory = async (req, res) => {
-  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-    return res.status(400).json({ message: "Invalid category ID format" });
-  }
+  const { id } = req.params;
+
   try {
-    const category = await Category.findById(req.params.id);
+    let category;
+
+    if (mongoose.Types.ObjectId.isValid(id)) {
+      category = await Category.findById(id);
+    } else {
+      category = await Category.findOne({ name: id });
+    }
+
     if (!category) {
       return res.status(404).json({ message: "Category not found" });
     }
-
     res.status(200).json(category);
   } catch (error) {
     return res.status(500).json({
