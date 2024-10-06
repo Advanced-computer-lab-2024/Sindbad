@@ -30,7 +30,7 @@ function Experience({ userData, userId, id }) {
                         <DialogContent className="overflow-y-scroll max-h-[50%]">
                             <DialogHeader>
                                 <DialogTitle>Edit Profile</DialogTitle>
-                                <GenericForm type={type === "advertiser" ? "company" : type === "tourGuide" ? "experience" : ""} id={id} />
+                                <GenericForm type={type === "advertiser" ? "company" : type === "tourGuide" ? "experience" : ""} id={id} data={userData} />
                             </DialogHeader>
                         </DialogContent>
                     </Dialog>
