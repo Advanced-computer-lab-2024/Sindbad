@@ -32,21 +32,26 @@ const createTag = async (req, res) => {
 /**
  * Retrieves a tag by its ID
  *
- * @param {Object} req - The request object containing the tag ID in params
+ * @param {Object} req - The request object containing the tag ID or name in params
  * @param {Object} res - The response object used to send the retrieved tag or an error message
  * @returns {Object} - A JSON object of the retrieved tag or an error message
  */
 
 const getTag = async (req, res) => {
-  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-    return res.status(400).json({ message: "Invalid tag ID format" });
-  }
+  const { id } = req.params;
+
   try {
-    const tag = await Tag.findById(req.params.id);
-    if (!tag) {
-      return res.status(404).json({ message: "tag not found" });
+    let tag;
+
+    if (mongoose.Types.ObjectId.isValid(id)) {
+      tag = await Tag.findById(id);
+    } else {
+      tag = await Tag.findOne({ name: id });
     }
 
+    if (!tag) {
+      return res.status(404).json({ message: "Tag not found" });
+    }
     res.status(200).json(tag);
   } catch (error) {
     return res.status(500).json({
