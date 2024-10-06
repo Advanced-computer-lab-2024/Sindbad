@@ -73,10 +73,10 @@ app.use("/product", productRoutes);
 app.use("/tag", tagRoutes);
 
 //Tourist routes
-app.use("/tourist", touristRoutes); // All admin-related routes will start with /api/admin
+app.use("/tourist", touristRoutes);
 
 //TourGuide routes
-app.use("/tourGuide", tourGuideRoutes); // All admin-related routes will start with /api/admin
+app.use("/tourGuide", tourGuideRoutes);
 
 // Fallback route for unknown endpoints
 app.use((req, res, next) => {

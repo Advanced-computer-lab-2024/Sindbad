@@ -1,11 +1,17 @@
 import ImagePlaceholder from "../ImagePlaceholder";
 import { BadgeCheck, Phone, Link } from "lucide-react";
-import { useUser } from '@/state management/userInfo';
 import { Edit3, Mail, Cake, Globe2, Briefcase } from "lucide-react";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+import GenericForm from "../genericForm";
 
-function ProfileBanner({ userData, userId, id }) {
-    const { type } = useUser();
 
+function ProfileBanner({ userData, userId, id, userType }) {
     function camelCaseToEnglish(str) {
         let result = str.replace(/([A-Z])/g, ' $1').replace(/^./, function (match) {
             return match.toUpperCase();
@@ -23,9 +29,20 @@ function ProfileBanner({ userData, userId, id }) {
             <div className="h-[110px] w-full">
                 <ImagePlaceholder />
                 {id === userId &&
-                    <button className="absolute top-2 right-2 border-2 border-dark opacity-0 group-hover:opacity-100 transition-all hover:border-secondary bg-primary-900 p-1.5 rounded-full">
-                        <Edit3 size={16} />
-                    </button>
+                        <Dialog>
+                        <DialogTrigger>
+                        <button className="absolute top-2 right-2 border-2 border-dark opacity-0 group-hover:opacity-100 transition-all hover:border-secondary bg-primary-900 p-1.5 rounded-full">
+                            <Edit3 size={16} />
+                        </button>
+                        </DialogTrigger>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle>Edit Profile</DialogTitle>
+                                <GenericForm type={userType} data={userData} id={id} />
+                            </DialogHeader>
+                        </DialogContent>
+                    </Dialog>
+
                 }
             </div>
             <div className="px-6 w-full flex flex-col gap-5">
@@ -36,9 +53,9 @@ function ProfileBanner({ userData, userId, id }) {
                     <div>
                         <div className="flex items-center justify-center gap-1.5">
                             <h3 className="font-inter font-bold text-xl break-all text-center">
-                                {type !== "seller" && type !== "advertiser" ? userData.username : userData.firstName + " " + userData.lastName}
+                                {userType !== "seller" ? userData.username : userData.firstName + " " + userData.lastName}
                             </h3>
-                            {type !== "tourist" &&
+                            {userType !== "tourist" && userData.isAccepted && userData.isAccepted === true &&
                                 <div className="shrink-0">
                                     <BadgeCheck size={19} />
                                 </div>
@@ -46,18 +63,18 @@ function ProfileBanner({ userData, userId, id }) {
                         </div>
                         <h4 className="text-center font-semibold text-base text-neutral-500">
                             <span className="break-all">
-                                {(type === "seller" || type === "advertiser") && `@${userData.username} ‧ `}
+                                {userType === "seller" && `@${userData.username} ‧ `}
                             </span>
-                            {camelCaseToEnglish(type)}
+                            {camelCaseToEnglish(userType)}
                         </h4>
                         <p className="text-xs leading-[11px] text-center mt-3">{userData.description}</p>
                     </div>
-                    {userData.mobileNumber &&
+                    {(userData.mobileNumber || userData.hotline) &&
                         <div className="flex gap-1 items-center bg-gradient-to-br from-primary-700 to-primary-900 px-3 py-1.5 rounded-full">
                             <div className="shrink-0">
                                 <Phone size={16} />
                             </div>
-                            <p className="text-xs leading-[11px]">{userData.mobileNumber}</p>
+                            <p className="text-xs leading-[11px]">{userType === "advertiser" ? userData.hotline : userData.mobileNumber}</p>
                         </div>
                     }
                 </div>
@@ -72,7 +89,7 @@ function ProfileBanner({ userData, userId, id }) {
                             {userData.email}
                         </a>
                     </div>
-                    {type === "tourist" && userId === id &&
+                    {userType === "tourist" && userId === id &&
                         <>
                             <div className="flex gap-2">
                                 <div className="shrink-0">
@@ -100,26 +117,19 @@ function ProfileBanner({ userData, userId, id }) {
                             </div>
                         </>
                     }
+                    {userType === "advertiser" && userData.websiteLink &&
+                        <div className="flex flex-col gap-2">
+                            <div className="flex gap-2">
+                                <div className="shrink-0">
+                                    <Link size={16} />
+                                </div>
+                                <a className="text-xs break-all pt-[1px] hover:underline" href={`https://${userData.websiteLink}`} target="_blank" rel="noreferrer">
+                                    {userData.websiteLink}
+                                </a>
+                            </div>
+                        </div>
+                    }
                 </div>
-                {/* <hr className="border-neutral-700 border" />
-                <div className="flex flex-col gap-2">
-                    <div className="flex gap-2">
-                        <div className="shrink-0">
-                            <Link size={16} />
-                        </div>
-                        <a className="text-xs break-all pt-[1px]">
-                            Link 1
-                        </a>
-                    </div>
-                    <div className="flex gap-2">
-                        <div className="shrink-0">
-                            <Link size={16} />
-                        </div>
-                        <a className="text-xs break-all pt-[1px]">
-                            Link 2
-                        </a>
-                    </div>
-                </div> */}
             </div>
         </section>
     );

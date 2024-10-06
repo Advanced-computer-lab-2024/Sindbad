@@ -52,6 +52,7 @@ const setActivity = async (req, res) => {
   try {
     const { category, tags, ...activityData } = req.body; // Extract category, tags, and other activity data
 
+    console.log(req.body);
     // Check if the category exists (optional)
     const existingCategory = await Category.findById(category);
     if (!existingCategory) {
@@ -107,6 +108,7 @@ const updateActivity = async (req, res) => {
       isBookingOpen,
       creatorId,
       headCount,
+      description,
     } = req.body;
 
     const updatedActivity = await Activity.findByIdAndUpdate(
@@ -122,6 +124,7 @@ const updateActivity = async (req, res) => {
         isBookingOpen,
         creatorId,
         headCount,
+        description,
       },
       { new: true, runValidators: true } // Return the updated document and run validators
     );

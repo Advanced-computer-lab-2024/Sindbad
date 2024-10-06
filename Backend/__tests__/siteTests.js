@@ -9,6 +9,25 @@ const Tag = require("../models/tagModel"); // Assuming you have a Tag model
 let tagId;
 let creatorId;
 
+const baseSiteData = {
+	name: "Test Site",
+	description: "This is a test site.",
+	imageUris: ["http://example.com/image1.jpg"],
+	location: {
+		address: "123 Test St",
+		coordinates: {
+			lat: 40.7128,
+			lng: -74.006,
+		},
+	},
+	openingHours: {
+		monday: { start: 420, end: 1020 },
+	},
+	ticketPrices: { adult: 20, child: 15 },
+	tags: [], // Will assign tagId later
+	creatorId: "", // Will assign creatorId later
+};
+
 // Before all tests, start the in-memory MongoDB server
 beforeAll(async () => {
 	await startServer();
@@ -17,6 +36,9 @@ beforeAll(async () => {
 	tagId = savedTag._id; // Ensure tagId is correctly assigned
 	"Saved Tag ID", tagId;
 	creatorId = new mongoose.Types.ObjectId();
+
+	baseSiteData.tags = [tagId];
+	baseSiteData.creatorId = creatorId;
 });
 
 // After each test, clear the database
@@ -32,26 +54,7 @@ afterAll(async () => {
 
 describe("Site CRUD Operations", () => {
 	it("should create a new site", async () => {
-		const res = await request(app)
-			.post("/site")
-			.send({
-				name: "Test Site",
-				description: "This is a test site.",
-				imageUris: ["http://example.com/image1.jpg"],
-				location: {
-					address: "123 Test St",
-					coordinates: {
-						lat: 40.7128,
-						long: -74.006,
-					},
-				},
-				openingHours: {
-					monday: { start: 420, end: 1020 },
-				},
-				ticketPrices: [10, 15],
-				tags: [tagId],
-				creatorId: creatorId,
-			});
+		const res = await request(app).post("/site").send(baseSiteData);
 
 		expect(res.status).toBe(201);
 		const site = await Site.findOne({ name: "Test Site" });
@@ -60,26 +63,7 @@ describe("Site CRUD Operations", () => {
 	});
 
 	it("should retrieve all sites", async () => {
-		await request(app)
-			.post("/site")
-			.send({
-				name: "Test Site",
-				description: "This is a test site.",
-				imageUris: ["http://example.com/image1.jpg"],
-				location: {
-					address: "123 Test St",
-					coordinates: {
-						lat: 40.7128,
-						long: -74.006,
-					},
-				},
-				openingHours: {
-					monday: { start: 420, end: 1020 },
-				},
-				ticketPrices: [10, 15],
-				tags: [tagId],
-				creatorId: creatorId,
-			});
+		await request(app).post("/site").send(baseSiteData);
 
 		const res = await request(app).get("/site");
 		expect(res.status).toBe(200);
@@ -89,24 +73,7 @@ describe("Site CRUD Operations", () => {
 
 	it("should populate tags when retrieving all sites", async () => {
 		"tagId", tagId; // Check if tagId is valid here
-		const site = new Site({
-			name: "Test Site",
-			description: "This is a test site.",
-			imageUris: ["http://example.com/image1.jpg"],
-			location: {
-				address: "123 Test St",
-				coordinates: {
-					lat: 40.7128,
-					long: -74.006,
-				},
-			},
-			openingHours: {
-				monday: { start: 420, end: 1020 },
-			},
-			ticketPrices: [10, 15],
-			tags: [tagId],
-			creatorId: creatorId,
-		});
+		const site = new Site(baseSiteData);
 		await site.save();
 		const res = await request(app).get("/site");
 		"Response Body", res.body; // Log the response body to see the actual data
@@ -118,38 +85,14 @@ describe("Site CRUD Operations", () => {
 	});
 
 	it("should retrieve sites with a partially matching site name", async () => {
-		const site1 = new Site({
-			name: "Test Mosque",
-			description: "This is a mosque site.",
-			imageUris: ["http://example.com/image1.jpg"],
-			location: {
-				address: "123 Test St",
-				coordinates: {
-					lat: 40.7128,
-					long: -74.006,
-				},
-			},
-			openingHours: { monday: { start: 420, end: 1020 } },
-			ticketPrices: [10, 15],
-			tags: [tagId],
-			creatorId: creatorId,
-		});
-		const site2 = new Site({
-			name: "Cathedral",
-			description: "This is a cathedral site.",
-			imageUris: ["http://example.com/image2.jpg"],
-			location: {
-				address: "123 Test St",
-				coordinates: {
-					lat: 40.7128,
-					long: -74.006,
-				},
-			},
-			openingHours: { monday: { start: 420, end: 1020 } },
-			ticketPrices: [10, 15],
-			tags: [tagId],
-			creatorId: creatorId,
-		});
+		siteData1 = JSON.parse(JSON.stringify(baseSiteData));
+		siteData1.name = "Test Mosque";
+
+		siteData2 = JSON.parse(JSON.stringify(baseSiteData));
+		siteData2.name = "Cathedral";
+
+		const site1 = new Site(siteData1);
+		const site2 = new Site(siteData2);
 
 		await site1.save();
 		await site2.save();
@@ -161,22 +104,10 @@ describe("Site CRUD Operations", () => {
 	});
 
 	it("should retrieve sites with a partially matching tag name", async () => {
-		const site1 = new Site({
-			name: "Test Mosque",
-			description: "This is a mosque site.",
-			imageUris: ["http://example.com/image1.jpg"],
-			location: {
-				address: "123 Test St",
-				coordinates: {
-					lat: 40.7128,
-					long: -74.006,
-				},
-			},
-			openingHours: { monday: { start: 420, end: 1020 } },
-			ticketPrices: [10, 15],
-			tags: [tagId],
-			creatorId: creatorId,
-		});
+		siteData1 = JSON.parse(JSON.stringify(baseSiteData));
+		siteData1.name = "Test Mosque";
+
+		const site1 = new Site(siteData1);
 
 		await site1.save();
 
@@ -191,22 +122,10 @@ describe("Site CRUD Operations", () => {
 	});
 
 	it("should retrieve sites with both matching site name and tag name", async () => {
-		const site1 = new Site({
-			name: "Test Mosque",
-			description: "This is a mosque site.",
-			imageUris: ["http://example.com/image1.jpg"],
-			location: {
-				address: "123 Test St",
-				coordinates: {
-					lat: 40.7128,
-					long: -74.006,
-				},
-			},
-			openingHours: { monday: { start: 420, end: 1020 } },
-			ticketPrices: [10, 15],
-			tags: [tagId],
-			creatorId: creatorId,
-		});
+		siteData1 = JSON.parse(JSON.stringify(baseSiteData));
+		siteData1.name = "Test Mosque";
+
+		const site1 = new Site(siteData1);
 
 		await site1.save();
 
@@ -217,24 +136,7 @@ describe("Site CRUD Operations", () => {
 	});
 
 	it("should retrieve a site by ID", async () => {
-		const site = new Site({
-			name: "Test Site",
-			description: "This is a test site.",
-			imageUris: ["http://example.com/image1.jpg"],
-			location: {
-				address: "123 Test St",
-				coordinates: {
-					lat: 40.7128,
-					long: -74.006,
-				},
-			},
-			openingHours: {
-				monday: { start: 420, end: 1020 },
-			},
-			ticketPrices: [10, 15],
-			tags: [tagId],
-			creatorId: creatorId,
-		});
+		const site = new Site(baseSiteData);
 		await site.save();
 
 		const res = await request(app).get(`/site/${site._id}`);
@@ -243,24 +145,7 @@ describe("Site CRUD Operations", () => {
 	});
 
 	it("should update a site by ID", async () => {
-		const site = new Site({
-			name: "Test Site",
-			description: "This is a test site.",
-			imageUris: ["http://example.com/image1.jpg"],
-			location: {
-				address: "123 Test St",
-				coordinates: {
-					lat: 40.7128,
-					long: -74.006,
-				},
-			},
-			openingHours: {
-				monday: { start: 420, end: 1020 },
-			},
-			ticketPrices: [10, 15],
-			tags: [tagId],
-			creatorId: creatorId,
-		});
+		const site = new Site(baseSiteData);
 		await site.save();
 
 		const res = await request(app)
@@ -273,24 +158,7 @@ describe("Site CRUD Operations", () => {
 	});
 
 	it("should delete a site by ID", async () => {
-		const site = new Site({
-			name: "Test Site",
-			description: "This is a test site.",
-			imageUris: ["http://example.com/image1.jpg"],
-			location: {
-				address: "123 Test St",
-				coordinates: {
-					lat: 40.7128,
-					long: -74.006,
-				},
-			},
-			openingHours: {
-				monday: { start: 420, end: 1020 },
-			},
-			ticketPrices: [10, 15],
-			tags: [tagId],
-			creatorId: creatorId,
-		});
+		const site = new Site(baseSiteData);
 		await site.save();
 
 		const res = await request(app).delete(`/site/${site._id}`);
@@ -302,44 +170,16 @@ describe("Site CRUD Operations", () => {
 	});
 
 	it("should retrieve all sites created by a user", async () => {
-		const site1 = new Site({
-			name: "Test Site 1",
-			description: "This is a test site.",
-			imageUris: ["http://example.com/image1.jpg"],
-			location: {
-				address: "123 Test St",
-				coordinates: {
-					lat: 40.7128,
-					long: -74.006,
-				},
-			},
-			openingHours: {
-				monday: { start: 420, end: 1020 },
-			},
-			ticketPrices: [10, 15],
-			tags: [tagId],
-			creatorId: creatorId,
-		});
+		siteData1 = JSON.parse(JSON.stringify(baseSiteData));
+		siteData1.name = "Test Site 1";
+
+		siteData2 = JSON.parse(JSON.stringify(baseSiteData));
+		siteData2.name = "Test Site 2";
+
+		const site1 = new Site(siteData1);
 		await site1.save();
 
-		const site2 = new Site({
-			name: "Test Site 2",
-			description: "This is another test site.",
-			imageUris: ["http://example.com/image2.jpg"],
-			location: {
-				address: "123 Test St",
-				coordinates: {
-					lat: 40.7128,
-					long: -74.006,
-				},
-			},
-			openingHours: {
-				monday: { start: 420, end: 1020 },
-			},
-			ticketPrices: [10, 15],
-			tags: [tagId],
-			creatorId: creatorId,
-		});
+		const site2 = new Site(siteData2);
 		await site2.save();
 
 		const res = await request(app).get(`/site/my-sites/${creatorId}`);
@@ -353,25 +193,10 @@ describe("Site CRUD Operations", () => {
 describe("Site CRUD Operations - Failing Tests", () => {
 	// Test for creating a site without a name
 	it("should not create a site without a name", async () => {
-		const res = await request(app)
-			.post("/site")
-			.send({
-				description: "This is a test site.",
-				imageUris: ["http://example.com/image1.jpg"],
-				location: {
-					address: "123 Test St",
-					coordinates: {
-						lat: 40.7128,
-						long: -74.006,
-					},
-				},
-				openingHours: {
-					monday: { start: 420, end: 1020 },
-				},
-				ticketPrices: [10, 15],
-				tags: [tagId],
-				creatorId: creatorId,
-			});
+		failSiteData = { ...baseSiteData };
+		delete failSiteData.name;
+
+		const res = await request(app).post("/site").send(failSiteData);
 
 		expect(res.status).toBe(400);
 		expect(res.body.message).toMatch(/Please add a name for your site/);
@@ -379,69 +204,16 @@ describe("Site CRUD Operations - Failing Tests", () => {
 
 	// Test for creating a site with a duplicate name
 	it("should not create a site with a duplicate name", async () => {
-		await request(app)
-			.post("/site")
-			.send({
-				name: "Test Site",
-				description: "This is a test site.",
-				imageUris: ["http://example.com/image1.jpg"],
-				location: {
-					address: "123 Test St",
-					coordinates: {
-						lat: 40.7128,
-						long: -74.006,
-					},
-				},
-				openingHours: {
-					monday: { start: 420, end: 1020 },
-				},
-				ticketPrices: [10, 15],
-				tags: [tagId],
-				creatorId: creatorId,
-			});
+		await request(app).post("/site").send(baseSiteData);
 
-		const res = await request(app)
-			.post("/site")
-			.send({
-				name: "Test Site", // Same name as before
-				description: "This is a duplicate test site.",
-				imageUris: ["http://example.com/image2.jpg"],
-				location: {
-					address: "123 Test St",
-					coordinates: {
-						lat: 40.7128,
-						long: -74.006,
-					},
-				},
-				openingHours: {
-					monday: { start: 420, end: 1020 },
-				},
-				ticketPrices: [10, 15],
-				tags: [tagId],
-				creatorId: creatorId,
-			});
+		const res = await request(app).post("/site").send(baseSiteData);
 
 		expect(res.status).toBe(400);
 		expect(res.body.message).toMatch(/duplicate key error/);
 	});
 
 	it("should return an empty array for non-matching site name", async () => {
-		const site = new Site({
-			name: "Test Mosque",
-			description: "This is a mosque site.",
-			imageUris: ["http://example.com/image1.jpg"],
-			location: {
-				address: "123 Test St",
-				coordinates: {
-					lat: 40.7128,
-					long: -74.006,
-				},
-			},
-			openingHours: { monday: { start: 420, end: 1020 } },
-			ticketPrices: [10, 15],
-			tags: [tagId],
-			creatorId: creatorId,
-		});
+		const site = new Site(baseSiteData);
 
 		await site.save();
 
@@ -451,22 +223,7 @@ describe("Site CRUD Operations - Failing Tests", () => {
 	});
 
 	it("should return an empty array for non-matching tag name", async () => {
-		const site = new Site({
-			name: "Test Mosque",
-			description: "This is a mosque site.",
-			imageUris: ["http://example.com/image1.jpg"],
-			location: {
-				address: "123 Test St",
-				coordinates: {
-					lat: 40.7128,
-					long: -74.006,
-				},
-			},
-			openingHours: { monday: { start: 420, end: 1020 } },
-			ticketPrices: [10, 15],
-			tags: [tagId],
-			creatorId: creatorId,
-		});
+		const site = new Site(baseSiteData);
 
 		await site.save();
 
@@ -476,22 +233,7 @@ describe("Site CRUD Operations - Failing Tests", () => {
 	});
 
 	it("should not return site if site name matches but tag name does not match", async () => {
-		const site = new Site({
-			name: "Test Mosque",
-			description: "This is a mosque site.",
-			imageUris: ["http://example.com/image1.jpg"],
-			location: {
-				address: "123 Test St",
-				coordinates: {
-					lat: 40.7128,
-					long: -74.006,
-				},
-			},
-			openingHours: { monday: { start: 420, end: 1020 } },
-			ticketPrices: [10, 15],
-			tags: [tagId],
-			creatorId: creatorId,
-		});
+		const site = new Site(baseSiteData);
 
 		await site.save();
 
@@ -527,26 +269,9 @@ describe("Site CRUD Operations - Failing Tests", () => {
 
 	// Test for creating a site with invalid opening hours (end time before start time)
 	it("should not create a site with invalid opening hours", async () => {
-		const res = await request(app)
-			.post("/site")
-			.send({
-				name: "Invalid Hours Site",
-				description: "This site has invalid opening hours.",
-				imageUris: ["http://example.com/image1.jpg"],
-				location: {
-					address: "123 Test St",
-					coordinates: {
-						lat: 40.7128,
-						long: -74.006,
-					},
-				},
-				openingHours: {
-					monday: { start: 1020, end: 420 }, // Invalid opening hours
-				},
-				ticketPrices: [10, 15],
-				tags: [tagId],
-				creatorId: creatorId,
-			});
+		failSiteData = { ...baseSiteData };
+		failSiteData.openingHours.monday = { start: 1020, end: 420 }; // Invalid opening hours
+		const res = await request(app).post("/site").send(failSiteData);
 
 		expect(res.status).toBe(400);
 		expect(res.body.message).toMatch(/Closing time/);
@@ -554,29 +279,12 @@ describe("Site CRUD Operations - Failing Tests", () => {
 
 	// Test for creating a site with negative ticket prices
 	it("should not create a site with negative ticket prices", async () => {
-		const res = await request(app)
-			.post("/site")
-			.send({
-				name: "Negative Price Site",
-				description: "This site has negative ticket prices.",
-				imageUris: ["http://example.com/image1.jpg"],
-				location: {
-					address: "123 Test St",
-					coordinates: {
-						lat: 40.7128,
-						long: -74.006,
-					},
-				},
-				openingHours: {
-					monday: { start: 420, end: 1020 },
-				},
-				ticketPrices: [-10, 15], // Invalid ticket prices
-				tags: [tagId],
-				creatorId: creatorId,
-			});
+		failSiteData = { ...baseSiteData };
+		failSiteData.ticketPrices = { adult: -20, child: 15 }; // Invalid ticket prices
+		const res = await request(app).post("/site").send(failSiteData);
 
 		expect(res.status).toBe(400);
-		expect(res.body.message).toMatch(/Ticket prices must be non-negative/);
+		expect(res.body.message).toMatch(/ticket prices must be non-negative/);
 	});
 
 	// Test for retrieving all sites created by a user that does not exist

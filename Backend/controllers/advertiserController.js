@@ -17,10 +17,23 @@ const getProfile = async (req, res) => {
 	}
 };
 
+// Controller to get all advertiser profiles
+const getAllProfiles = async (req, res) => {
+	try {
+		const advertisers = await Advertiser.find();
+
+		return res.status(200).json(advertisers);
+	} catch (error) {
+		console.error("Error fetching all advertiser profiles:", error);
+		return res.status(500).json({ message: "Internal server error" });
+	}
+};
+
 // Controller to update advertiser profile
 const updateProfile = async (req, res) => {
 	try {
-		const { username, websiteLink, hotline, companyProfile } = req.body; // Get username and other fields from the body
+		const { id } = req.params; // Get username from the params
+		const { websiteLink, hotline, companyProfile, email } = req.body; // Get username and other fields from the body
 
 		// Create an object to hold the fields that need to be updated
 		const updateData = {};
@@ -35,9 +48,12 @@ const updateProfile = async (req, res) => {
 		if (companyProfile !== undefined) {
 			updateData.companyProfile = companyProfile;
 		}
+		if (email !== undefined) {
+			updateData.email = email;
+		}
 
-		const advertiser = await Advertiser.findOneAndUpdate(
-			{ username },
+		const advertiser = await Advertiser.findByIdAndUpdate(
+			id,
 			{ $set: updateData }, // Use $set to only update specified fields
 			{ new: true } // Return the updated document
 		);
@@ -55,5 +71,6 @@ const updateProfile = async (req, res) => {
 
 module.exports = {
 	getProfile,
+	getAllProfiles,
 	updateProfile,
 };

@@ -1,7 +1,17 @@
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { CirclePlus } from "lucide-react";
-
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+import GenericForm from "../genericForm";
+import { useUser } from '@/state management/userInfo';
+import { Edit, MapPin } from "lucide-react";
 function Experience({ userData, userId, id }) {
+    const { type } = useUser();
     return (
         <div className="flex flex-col gap-6">
             <div>
@@ -11,9 +21,19 @@ function Experience({ userData, userId, id }) {
                     </h1>
                     <hr className="border-neutral-700 border w-full mt-1.5" />
                     {userId === id &&
-                        <button className="shrink-0 mt-1.5 text-neutral-600 hover:text-light transition-all">
-                            <CirclePlus size={24} />
-                        </button>
+                        <Dialog>
+                        <DialogTrigger>
+                            <button className="shrink-0 mt-1.5 text-neutral-600 hover:text-light transition-all">
+                                <CirclePlus size={24} />
+                            </button>
+                        </DialogTrigger>
+                        <DialogContent className="overflow-y-scroll max-h-[50%]">
+                            <DialogHeader>
+                                <DialogTitle>Edit Profile</DialogTitle>
+                                <GenericForm type={type === "advertiser" ? "company" : type === "tourGuide" ? "experience" : ""} id={id} data={userData} />
+                            </DialogHeader>
+                        </DialogContent>
+                    </Dialog>
                     }
                 </div>
             </div>
@@ -24,9 +44,24 @@ function Experience({ userData, userId, id }) {
                     </p>
                 }
                 {userData?.previousWork?.map((experience, index) => (
-                    <Accordion key={index} type="single" defaultValue={index} collapsible>
-                        <AccordionItem value={index}>
-                            <AccordionTrigger>{experience.jobTitle}</AccordionTrigger>
+                    <Accordion key={index + 1} type="single" defaultValue={index + 1} collapsible>
+                        <AccordionItem value={index + 1}>
+                            <div className="relative">
+                                <AccordionTrigger>{experience.jobTitle}</AccordionTrigger>
+                                <Dialog>
+                                    <DialogTrigger>
+                                        <button>
+                                            <Edit size={16} className="text-neutral-600" />
+                                        </button>
+                                    </DialogTrigger>
+                                    <DialogContent className="overflow-y-scroll max-h-[50%]">
+                                        <DialogHeader>
+                                            <DialogTitle>Edit Profile</DialogTitle>
+                                            <GenericForm type={type === "advertiser" ? "company" : type === "tourGuide" ? "experience" : ""} id={id} data={experience} />
+                                        </DialogHeader>
+                                    </DialogContent>
+                                </Dialog>
+                            </div>
                             <AccordionContent>
                                 <div className="flex gap-5">
                                     <div className="border-l-[2px] border-neutral-500"></div>

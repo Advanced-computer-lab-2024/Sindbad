@@ -7,6 +7,7 @@ const {
 	updateAdmin,
 	deleteAdmin,
 	addTourismGovernor,
+	getTourismGovernorById,
 } = require("../controllers/adminController");
 
 router
@@ -21,5 +22,6 @@ router
 	.delete(deleteAdmin);
 
 router.post("/add-tourism-governor", addTourismGovernor);
+router.get("/tourism-governor/:id", getTourismGovernorById);
 
 module.exports = router;
