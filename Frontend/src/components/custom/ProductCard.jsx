@@ -1,10 +1,18 @@
 import ImagePlaceholder from "@/components/custom/ImagePlaceholder";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Edit3 } from 'lucide-react';
 import { useState } from "react";
 import { Navigate } from "react-router-dom";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+import GenericForm from "./genericForm";
 
-function ProductCard({ data }) {
+function ProductCard({ data, id, userId, type }) {
     const [navigateToProduct, setNavigateToProduct] = useState(false);
 
     return (
@@ -20,6 +28,20 @@ function ProductCard({ data }) {
                 ) : (
                     <ImagePlaceholder />
                 )}
+                {type !== "tourist" && id === userId &&
+                    <div>
+                        <Dialog>
+                            <DialogTrigger className="absolute top-2 right-2 border-2 border-dark opacity-0 group-hover:opacity-100 transition-all hover:border-secondary bg-primary-900 p-1.5 rounded-full">
+                                <Edit3 fill="currentColor" size={16} />
+                            </DialogTrigger>
+                            <DialogContent className="overflow-y-scroll max-h-[50%]">
+                                <DialogHeader>
+                                    <GenericForm type={type === "seller" ? "product" : type === "advertiser" ? "activity" : type === "tourGuide" ? "itinerary" : "site"} id={id} data={data} />
+                                </DialogHeader>
+                            </DialogContent>
+                        </Dialog>
+                    </div>
+                }
             </div>
             <div className="flex flex-col p-3 gap-5 h-full justify-between">
                 <div>
@@ -28,7 +50,7 @@ function ProductCard({ data }) {
                         {data.name}
                     </h4>
                     <p className="text-xs leading-[11px] font-medium text-neutral-500 mt-1">
-                        Rating: {data.rating? `${data.rating} / 5` : "N/A"}
+                        Rating: {data.averageRating ? `${Math.round(data.averageRating * 2) / 2} / 5` : "N/A"}
                     </p>
                 </div>
                 <Button

@@ -13,7 +13,6 @@ export const getAllProducts = async (search, minprice, maxprice) => {
             console.log("success: ", response.data);
             return response.data;
         } else if (response.status === 404) {
-            console.log("fail: ", response.data);
             return {
                 error: true,
                 message: 'No products found.',

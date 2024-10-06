@@ -7,6 +7,7 @@ function ProductView() {
     const { productId } = useParams();
     const [error, setError] = useState(false);
     const [productData, setProductData] = useState({});
+    const [totalRatings, setTotalRatings] = useState(0);
 
     const getProductData = async (productId) => {
         const response = await getProductById(productId);
@@ -17,22 +18,14 @@ function ProductView() {
         } else {
             setError(false);
             setProductData(response);
+            console.log(response);
+            setTotalRatings(Object.values(response.rating).reduce((acc, cur) => acc + cur, 0));
         }
-    };
-
-    // Example data for the ratings distribution
-    const totalReviews = 500;
-    const ratingsDistribution = {
-        5: 300, // 300 five-star reviews
-        4: 100,
-        3: 50,
-        2: 30,
-        1: 20,
     };
 
     // Helper function to calculate the percentage of each rating
     const getRatingPercentage = (count) => {
-        return ((count / totalReviews) * 100).toFixed(1); // Rounded to 1 decimal place
+        return ((count / totalRatings) * 100).toFixed(1); // Rounded to 1 decimal place
     };
 
     useEffect(() => {
@@ -79,13 +72,15 @@ function ProductView() {
                                 {/* Seller */}
                                 <div className="flex items-center mb-4">
                                     <span className="">Sold by:</span>
-                                    <p className="ml-2 hover:underline">{productData.seller?.firstName} {productData.seller?.lastName}</p>
+                                    <a className="ml-2 hover:underline" href={`/app/profile/${productData.seller?._id}`}>
+                                        {productData.seller?.firstName} {productData.seller?.lastName}
+                                    </a>
                                 </div>
 
                                 {/* Ratings */}
                                 <div className="flex items-center mb-6">
                                     <p className="leading-[11px] font-medium">
-                                        Rating: {productData.rating ? `${productData.rating} / 5` : "N/A"}
+                                        Rating: {productData.averageRating ? `${Math.round(productData.averageRating * 2) / 2} / 5` : "N/A"}
                                     </p>
                                     {/* <p className="ml-2 text-gray-600">(123 reviews)</p> */}
                                 </div>
@@ -106,52 +101,44 @@ function ProductView() {
 
                             {/* Ratings Summary */}
                             <div className="space-y-2">
-                                {[5, 4, 3, 2, 1].map((star) => (
+                                {[5, 4, 3, 2, 1, 0].map((star) => (
                                     <div key={star} className="flex items-center">
                                         <span className="w-12">{star} star</span>
                                         <div className="flex-grow bg-neutral-200 rounded-lg h-3 mx-2">
                                             <div
                                                 className="bg-yellow-400 h-3 rounded-lg"
                                                 style={{
-                                                    width: `${getRatingPercentage(ratingsDistribution[star])}%`,
+                                                    width: `${getRatingPercentage(productData.rating?.[star] || 0)}%`,
                                                 }}
                                             ></div>
                                         </div>
                                         <span className="ml-2">
-                                            {getRatingPercentage(ratingsDistribution[star])}%
+                                            {getRatingPercentage(productData.rating?.[star] || 0)}%
                                         </span>
                                     </div>
                                 ))}
                             </div>
+
                         </div>
 
                         {/* Reviews Section */}
                         <div className="w-2/3 mt-0">
                             <h2 className="text-2xl font-bold mb-4">Customer Reviews</h2>
                             <div className="space-y-6">
-                                <div className="p-4 rounded-md shadow">
-                                    <div className="flex items-center mb-2">
-                                        <p className="font-semibold">User 1</p>
-                                        <div className="flex items-center ml-2 text-yellow-400">
-                                            <span>★★★★☆</span>
+                                {productData.reviews?.map((review) => (
+                                    <div key={review._id} className="p-4 rounded-md shadow">
+                                        <div className="flex items-center mb-2">
+                                            <p className="font-semibold">{review.username}</p>
+                                            <div className="flex items-center ml-2 text-yellow-400">
+                                                <span>{'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}</span>
+                                            </div>
                                         </div>
+                                        <p className="">{review.comment}</p>
                                     </div>
-                                    <p className="">Great product! Highly recommend it.</p>
-                                </div>
-
-                                <div className="p-4 rounded-md shadow">
-                                    <div className="flex items-center mb-2">
-                                        <p className="font-semibold">User 2</p>
-                                        <div className="flex items-center ml-2 text-yellow-400">
-                                            <span>★★★☆☆</span>
-                                        </div>
-                                    </div>
-                                    <p className="">
-                                        Decent, but could have been better in some areas.
-                                    </p>
-                                </div>
+                                ))}
                             </div>
                         </div>
+
                     </div>
                 </>
                 :
