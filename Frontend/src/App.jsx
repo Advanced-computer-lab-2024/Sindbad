@@ -33,11 +33,8 @@ function App() {
 					<Route path="sites" element={<SitesPage />} />
 					<Route path="itineraries" element={<ItinerariesPage />} />
 					<Route path="store" element={<ShoppingPage />} />
-					<Route path="product" element={<ProductView />} />
-					<Route
-						path="management"
-						element={<AdminManagementView />}
-					/>
+					<Route path="product/:productId" element={<ProductView />} />
+					<Route path="management" element={<AdminManagementView />} />
 				</Route>
 				<Route path="/login" element={<LogIn />} />
 				<Route path="/signup" element={<SignUp />} />

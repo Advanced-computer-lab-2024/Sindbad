@@ -3,6 +3,7 @@ import { PriceFilter } from "@/components/ui/price-filter";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
 import { getAllProducts } from "@/services/ProductApiHandler";
+import { useUser } from "@/state management/userInfo";
 
 function ShoppingPage() {
     const [products, setProducts] = useState([]);
@@ -10,6 +11,8 @@ function ShoppingPage() {
     const [minPrice, setMinPrice] = useState(0);
     const [maxPrice, setMaxPrice] = useState(1000); // Example default range
     const [loading, setLoading] = useState(false);
+    const { type, id } = useUser();
+
 
     // Function to fetch products based on filters
     const fetchProducts = async () => {
@@ -59,7 +62,7 @@ function ShoppingPage() {
                         <p>Loading products...</p>
                     ) : products.length > 0 ? (
                         products.map((item, index) => (
-                            <ProductCard key={index} data={item} />
+                            <ProductCard key={index} data={item} type={type} id={id} userId={item.seller} />
                         ))
                     ) : (
                         <p>No products found.</p>

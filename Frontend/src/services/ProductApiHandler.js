@@ -13,7 +13,6 @@ export const getAllProducts = async (search, minprice, maxprice) => {
             console.log("success: ", response.data);
             return response.data;
         } else if (response.status === 404) {
-            console.log("fail: ", response.data);
             return {
                 error: true,
                 message: 'No products found.',
@@ -82,6 +81,7 @@ export const updateProduct = async (productId, productData) => {
         }
     }
 };
+
 export const createProduct = async (productData) => {
     try {
         const response = await axios.post(`${baseURL}/product`, productData, {
@@ -119,16 +119,24 @@ export const createProduct = async (productData) => {
     }
 }
 
-export const deleteProduct = async (productId) => {
+export const getProductById = async (productId) => {
     try {
-        const response = await axios.delete(`${baseURL}/product/${productId}`, {
+        const response = await axios.get(`${baseURL}/product/${productId}`, {
             headers: {
                 'Content-Type': 'application/json',
             },
         });
 
         if (response.status === 200) {
+            console.log("success: ", response.data);
             return response.data;
+        } else if (response.status === 404) {
+            console.log("fail: ", response.data);
+            return {
+                error: true,
+                message: 'Product not found.',
+                status: 404,
+            };
         } else {
             return {
                 error: true,

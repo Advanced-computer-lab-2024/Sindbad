@@ -1,4 +1,5 @@
 import Card from "@/components/custom/Card";
+import ProductCard from "@/components/custom/ProductCard";
 import { CirclePlus } from "lucide-react";
 import { useUser } from '@/state management/userInfo';
 import { useEffect, useState } from 'react';
@@ -49,7 +50,7 @@ function Timeline({ userData, userId, id, userType, cardData }) {
 
                     {userType === "tourGuide" && cardData.length !== 0 && cardData.map((itinerary, index) => (<Card key={index} data={itinerary} id={id} userId={userId} type={type} />))}
 
-                    {userType === "seller" && cardData?.map((product, index) => (<Card key={index} data={product} id={id} userId={userId} type={type} />))}
+                    {userType === "seller" && cardData?.map((product, index) => (<ProductCard key={index} data={product} id={id} userId={userId} type={type} />))}
 
                     {userType === "advertiser" && cardData?.map((activity, index) => (<Card key={index} data={activity} id={id} userId={userId} type={type} />))}
 
