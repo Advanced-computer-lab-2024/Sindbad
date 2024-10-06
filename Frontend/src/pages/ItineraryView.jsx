@@ -149,7 +149,6 @@ function Itinerary() {
 
 	const [selectedDate, setSelectedDate] = useState(0);
 	const [selectedTime, setSelectedTime] = useState(0);
-	const [selectedLocation, setSelectedLocation] = useState(0);
 
 	return (
 		<div className="min-h-screen flex justify-center items-center bg-primary-950">
@@ -257,12 +256,9 @@ function Itinerary() {
 									<div>
 										<p>Starting at, </p>
 										<p>{itinerary.pickUpLocation}</p>
-										<button
-											onClick={() => setSelectedLocation(0)}
-											className="text-secondary"
-										>
+										<a href="#" className="text-secondary">
 											See details
-										</button>
+										</a>
 									</div>
 								</div>
 							</li>
@@ -281,12 +277,9 @@ function Itinerary() {
 											</div>
 											<div>
 												<p>Location {stop}</p>
-												<button
-													onClick={() => setSelectedLocation(index + 1)}
-													className="text-secondary"
-												>
+												<a href="#" className="text-secondary">
 													See details
-												</button>
+												</a>
 											</div>
 										</div>
 									</li>
@@ -306,14 +299,9 @@ function Itinerary() {
 									<div>
 										<p>Finishing at, </p>
 										<p>{itinerary.dropOffLocation}</p>
-										<button
-											onClick={() =>
-												setSelectedLocation(itinerary.locations.length - 1)
-											}
-											className="text-secondary"
-										>
+										<a href="#" className="text-secondary">
 											See details
-										</button>
+										</a>
 									</div>
 								</div>
 							</li>
@@ -322,11 +310,11 @@ function Itinerary() {
 
 					{/* Map Placeholder*/}
 					<div className="col-span-3 bg-light h-full w-full rounded-lg">
-						<GoogleMapRead
+						{/* <GoogleMapRead
 							key={selectedLocation}
 							lat={itinerary.locations[selectedLocation].coordinates.lat}
-							lng={itinerary.locations[selectedLocation].coordinates.long}
-						/>
+							long={itinerary.locations[selectedLocation].coordinates.long}
+						/> */}
 					</div>
 
 					{/*Availibility Section

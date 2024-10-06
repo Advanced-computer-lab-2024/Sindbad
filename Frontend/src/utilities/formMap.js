@@ -1,5 +1,14 @@
 import { z } from "zod";
 
+// Schema for location
+const locationSchema = z.object({
+  address: z.string().nonempty("Address is required"),
+  coordinates: z.object({
+    lat: z.number().min(-90).max(90, "Latitude must be between -90 and 90"),
+    long: z.number().min(-180).max(180, "Longitude must be between -180 and 180"),
+  }),
+});
+
 const TouristSchema = {
     email: z.string()
       .email({ message: "Invalid email address!" })
@@ -134,8 +143,7 @@ const activitySchema = {
     message: "Invalid date of birth",
   }),
 
-  location: z.string()
-    .min(1, { message: "Please add the location of the activity" }),
+  location: locationSchema,
 
   price: z.number().min(0, { message: "Price must be a non-negative number" }),
 
@@ -169,14 +177,7 @@ const daysOfWeek = z.object({
   sunday: openingHoursSchema,
 });
 
-// Schema for location
-const locationSchema = z.object({
-  address: z.string().nonempty("Address is required"),
-  coordinates: z.object({
-    lat: z.number().min(-90).max(90, "Latitude must be between -90 and 90"),
-    long: z.number().min(-180).max(180, "Longitude must be between -180 and 180"),
-  }),
-});
+
 
 // Ticket prices schema
 const ticketPricesSchema = z.object({
