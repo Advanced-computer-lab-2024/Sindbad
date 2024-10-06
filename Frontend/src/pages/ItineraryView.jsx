@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import { Accessibility, MapPin, Star, EarOff, EyeOff, Speech, ArrowBigRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import GoogleMap from "@/components/custom/GoogleMap";
 
 function getRandomRating(){
     {/*return (Math.floor(Math.random() * 6));*/}
@@ -250,7 +251,9 @@ function Itinerary(){
                     </div>
                     
                     {/* Map Placeholder*/}
-                    <div className="col-span-3 bg-light h-full w-full rounded-lg"></div>
+                    <div className="col-span-3 bg-light h-full w-full rounded-lg">
+                        <GoogleMap lat={itinerary.locations} lng={}/>
+                    </div>
                     
                     {/*Availibility Section
                     TODO: add conditional for selected element to have thicker border, seperate day and month to make them appear vertical, lookup map docs*/}
