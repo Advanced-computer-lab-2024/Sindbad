@@ -11,6 +11,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 import GenericForm from "../genericForm";
+import TagManagement from "../admin/TagManagement";
 
 function Timeline({ userData, userId, id, userType, cardData }) {
     const { type } = useUser();
@@ -53,6 +54,7 @@ function Timeline({ userData, userId, id, userType, cardData }) {
                     {userType === "advertiser" && cardData?.map((activity, index) => (<Card key={index} data={activity} id={id} userId={userId} type={type} />))}
 
                     {userType === "tourismGovernor" && cardData?.map((site, index) => (<Card key={index} data={site} id={id} userId={userId} type={type} />))}
+                    
                 </div>
                 <div>
                     {(userType === "tourist" && (userData?.bookmarks?.length === 0 || !userData?.bookmarks)) &&
@@ -84,6 +86,9 @@ function Timeline({ userData, userId, id, userType, cardData }) {
                             {userId !== id ? "No historical places or museums to show." : "You have not added any historical places or museums yet. Click the + button to get started!"}
                         </p>
                     }
+                </div>
+                <div>
+                    {userType === "tourismGovernor" && userId === id && <TagManagement />}
                 </div>
             </div>
         </div>
