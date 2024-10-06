@@ -33,6 +33,15 @@ function handleActivityValues(activity) {
 		activity.category = { name: "N/A" };
 	}
 
+	if (!activity.location || typeof activity.location === "object") {
+		activity.location = { address: "N/A", coordinates: { lat: 0, lng: 0 } }; 
+	} else if (typeof activity.location === "string") {
+		activity.location = {
+			address: activity.location,
+			coordinates: { lat: 0, lng: 0 },
+		};
+	}
+
 	if (!activity.location.address) {
 		activity.location.address = "N/A";
 	}
@@ -40,7 +49,6 @@ function handleActivityValues(activity) {
 	if (!activity.location.coordinates) {
 		activity.location.coordinates = { lat: 0, lng: 0 };
 	}
-
 }
 
 function Activity() {
