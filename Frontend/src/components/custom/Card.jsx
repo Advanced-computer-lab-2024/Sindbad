@@ -22,37 +22,32 @@ function Card({ data, id, userId, type }) {
                     </button>
                 }
                 {type !== "tourist" && id === userId &&
-                <div>
-                    <Dialog>
-                        <DialogTrigger>
-                        <button className="absolute top-2 right-2 border-2 border-dark opacity-0 group-hover:opacity-100 transition-all hover:border-secondary bg-primary-900 p-1.5 rounded-full">
-                            <Edit3 fill="currentColor" size={16} />
-                        </button>
-                        </DialogTrigger>
-                        <DialogContent className="overflow-y-scroll max-h-[50%]">
-                            <DialogHeader>
-                                <GenericForm type={type === "seller" ? "product" : type === "advertiser" ? "activity" : type === "tourGuide" ? "itinerary" : "site"} id={id} data={data}/>
-                            </DialogHeader>
-                        </DialogContent>
-                    </Dialog>
-                    <Dialog>
-                        <DialogTrigger>
-                        <button className="absolute top-12 right-2 border-2 border-dark opacity-0 group-hover:opacity-100 transition-all hover:border-secondary bg-primary-900 p-1.5 rounded-full">
-                            <CircleX size={16} />
-                        </button>
-                        </DialogTrigger>
-                        <DialogContent className="overflow-y-scroll max-h-[50%]">
-                            <DialogTitle>
-                                Are you sure you want to delete this {type === "advertiser" ? "activity" : type === "tourGuide" ? "itinerary" : "site"}?
-                            </DialogTitle>
-                            <DialogHeader>
-                                <DeleteForm type={type === "advertiser" ? "activity" : type === "tourGuide" ? "itinerary" : "site"} data={data}/>
-                            </DialogHeader>
-                        </DialogContent>
-                    </Dialog>
-                </div>
+                    <div>
+                        <Dialog>
+                            <DialogTrigger className="absolute top-2 right-2 border-2 border-dark opacity-0 group-hover:opacity-100 transition-all hover:border-secondary bg-primary-900 p-1.5 rounded-full">
+                                <Edit3 fill="currentColor" size={16} />
+                            </DialogTrigger>
+                            <DialogContent className="overflow-y-scroll max-h-[50%]">
+                                <DialogHeader>
+                                    <GenericForm type={type === "seller" ? "product" : type === "advertiser" ? "activity" : type === "tourGuide" ? "itinerary" : "site"} id={id} data={data} />
+                                </DialogHeader>
+                            </DialogContent>
+                        </Dialog>
+                        <Dialog>
+                            <DialogTrigger className="absolute top-12 right-2 border-2 border-dark opacity-0 group-hover:opacity-100 transition-all hover:border-secondary bg-primary-900 p-1.5 rounded-full">
+                                <CircleX size={16} />
+                            </DialogTrigger>
+                            <DialogContent className="overflow-y-scroll max-h-[50%]">
+                                <DialogTitle>
+                                    Are you sure you want to delete this {type === "advertiser" ? "activity" : type === "tourGuide" ? "itinerary" : "site"}?
+                                </DialogTitle>
+                                <DialogHeader>
+                                    <DeleteForm type={type === "advertiser" ? "activity" : type === "tourGuide" ? "itinerary" : "site"} data={data} />
+                                </DialogHeader>
+                            </DialogContent>
+                        </Dialog>
+                    </div>
                 }
-                
             </div>
             <div className="flex flex-col p-3 gap-5 h-full justify-between">
                 <div>
@@ -69,11 +64,9 @@ function Card({ data, id, userId, type }) {
                             (1092)
                         </p>
                     </div> */}
-                    {data.rating &&
-                        <p className="text-xs leading-[11px] font-medium text-neutral-500 mt-1">
-                            rating: {data.rating}
-                        </p>
-                    }
+                    <p className="text-xs leading-[11px] font-medium text-neutral-500 mt-1">
+                        Rating: {data.rating ? `${data.rating} / 5` : "N/A"}
+                    </p>
                 </div>
                 <Button
                     onClick={() => console.log(data)}
