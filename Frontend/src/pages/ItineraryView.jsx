@@ -9,7 +9,7 @@ import {
 	ArrowBigRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import GoogleMap from "@/components/custom/GoogleMap";
+import GoogleMapRead from "@/components/custom/GoogleMapRead";
 
 function getRandomRating() {
 	{
@@ -323,7 +323,7 @@ function Itinerary() {
 					{/* Map Placeholder*/}
 					<div className="col-span-3 bg-light h-full w-full rounded-lg">
 						{console.log(selectedLocation)}
-						<GoogleMap
+						<GoogleMapRead
 							key={selectedLocation}
 							lat={itinerary.locations[selectedLocation].coordinates.lat}
 							lng={itinerary.locations[selectedLocation].coordinates.long}

@@ -2,14 +2,12 @@ import { APIProvider, Map } from "@vis.gl/react-google-maps";
 
 import { MapPin } from "lucide-react";
 
-export default function GoogleMap({ lat, lng, zoom = 13 }) {
+export default function GoogleMapRead({ lat, lng, zoom = 13 }) {
 	const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-    console.log("lat: ", lat, "lng: ", lng);
+	console.log("lat: ", lat, "lng: ", lng);
 
 	return (
-		<APIProvider
-			apiKey={apiKey}
-		>
+		<APIProvider apiKey={apiKey}>
 			<div className="relative w-full h-full">
 				<Map
 					defaultZoom={zoom}
