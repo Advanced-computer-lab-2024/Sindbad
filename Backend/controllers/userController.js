@@ -5,8 +5,6 @@ const Seller = require("../models/Seller");
 const Admin = require("../models/adminModel");
 const TourismGovernor = require("../models/TourismGovernor");
 
-
-
 const models = {
 	tourist: Tourist,
 	tourguide: TourGuide,
@@ -42,25 +40,28 @@ const defaultFields = {
 		isAccepted: false,
 	},
 	admin: {},
-	tourismgovernor: {}
+	tourismgovernor: {},
 };
 
 const UserController = {
 	signUp: async (req, res) => {
 		try {
-			const { email, username, passwordHash, role, ...userData } = req.body;
+			const { email, username, passwordHash, role, ...userData } =
+				req.body;
 
 			if (!role) {
 				throw new Error("Role is required");
 			}
 
+			//check username has no spaces
+			if (username.includes(" ")) {
+				throw new Error("Username has spaces");
+			}
+			
 			// Check for unique email and username
-			const isUnique = await UserController.isUniqueEmailAndUsername(
-				email,
-				username
-			);
+			const isUnique = await UserController.isUniqueUsername(username);
 			if (!isUnique) {
-				throw new Error("Email or username already exists");
+				throw new Error("Username already exists");
 			}
 
 			// Get the model based on role
@@ -112,7 +113,9 @@ const UserController = {
 					if (role === "tourguide") {
 						return res.status(200).json({ role: "tourGuide" });
 					} else if (role === "tourismgovernor") {
-						return res.status(200).json({ role: "tourismGovernor" });
+						return res
+							.status(200)
+							.json({ role: "tourismGovernor" });
 					} else {
 						return res.status(200).json({ role });
 					}
@@ -128,11 +131,11 @@ const UserController = {
 		}
 	},
 
-	isUniqueEmailAndUsername: async (email, username) => {
-		// Check all models for unique email/username
+	isUniqueUsername: async (username) => {
+		// Check all models for unique username
 		for (let model in models) {
 			const existingUser = await models[model]
-				.findOne({ $or: [{ email }, { username }] })
+				.findOne({ username })
 				.exec();
 			if (existingUser) {
 				return false;
@@ -153,7 +156,7 @@ const UserController = {
 			const combinedUsers = results.flat();
 			return res.status(200).json(combinedUsers);
 		} catch (error) {
-			console.log(error)
+			console.log(error);
 			return res.status(500).json({ message: error.message });
 		}
 	},
@@ -173,7 +176,9 @@ const UserController = {
 			}
 
 			await Model.findByIdAndDelete(id);
-			return res.status(200).json({ message: "User deleted successfully" });
+			return res
+				.status(200)
+				.json({ message: "User deleted successfully" });
 		} catch (error) {
 			return res.status(500).json({ message: error.message });
 		}

@@ -5,7 +5,6 @@ const TouristSchema = new mongoose.Schema({
 	email: {
 		type: String,
 		required: true,
-		unique: true,
 		validate: {
 			validator: (v) => /^\S+@\S+\.\S+$/.test(v),
 			message: (props) => `${props.value} is not a valid email!`,

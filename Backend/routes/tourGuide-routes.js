@@ -6,13 +6,13 @@ const {
 	getTourGuide,
 	updateTourGuide,
 	deleteTourGuide,
-  } = require("../controllers/tourGuideController");
-  
-	router.get("/", getAllTourGuides)
-	router.get("/:id",getTourGuide)
-	router.put("/:id", updateTourGuide);
-	router.delete("/:id", deleteTourGuide); 
+	deletePreviousWork,
+} = require("../controllers/tourGuideController");
 
-
+router.get("/", getAllTourGuides);
+router.get("/:id", getTourGuide);
+router.put("/:id", updateTourGuide);
+router.delete("/:id", deleteTourGuide);
+router.delete("/:id/previous-work/:previousWorkId", deletePreviousWork);
 
 module.exports = router;
