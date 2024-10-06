@@ -161,7 +161,7 @@ const activitySchema = {
 			required_error: "Please add the date of the activity",
 		})
 		.refine((val) => !isNaN(Date.parse(val)), {
-			message: "Invalid date of birth",
+			message: "Invalid date",
 		}),
 
 	location: locationSchema,
@@ -174,7 +174,6 @@ const activitySchema = {
 
 	tags: z
 		.array(z.string())
-		.nonempty({ message: "Please add the tags of the activity" })
 		.max(10, { message: "You can only add up to 10 tags." }),
 
 	discounts: z

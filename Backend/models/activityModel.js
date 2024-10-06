@@ -9,7 +9,7 @@ const activitySchema = mongoose.Schema({
 		type: Date,
 		required: [true, "Please add the date of the activity"],
 	},
-	location: [
+	location: 
 		{
 			address: { type: String, required: true },
 			coordinates: {
@@ -17,7 +17,6 @@ const activitySchema = mongoose.Schema({
 				lng: { type: Number, required: true },
 			},
 		},
-	],
 	price: {
 		type: mongoose.Schema.Types.Mixed,
 		required: [true, "Please add the price of the activity"],
@@ -47,13 +46,6 @@ const activitySchema = mongoose.Schema({
 		{
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Tag",
-			required: [true, "Please add the tags of the activity"],
-			//   validate: {
-			//     validator: function(tags) {
-			//         return tags.length <= 10; //Limiting tags to 10
-			//     },
-			//     message: "You can only add up to 10 tags.""
-			// }
 		},
 	],
 	discounts: {

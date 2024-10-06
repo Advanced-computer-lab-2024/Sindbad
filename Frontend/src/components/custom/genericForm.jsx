@@ -253,6 +253,8 @@ export function GenericForm({ type, data, id }) {
 								<FormLabel>{key.toUpperCase()}</FormLabel>
 								<FormControl>
 									<GoogleMapWrite
+                    lat = {field.value.lat}
+                    lng = {field.value.lng}
 										onChange={(newPosition) => field.onChange(newPosition)} // Pass onChange function
 									/>
 								</FormControl>
