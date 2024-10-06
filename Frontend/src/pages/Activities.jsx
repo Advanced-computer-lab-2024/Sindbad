@@ -4,6 +4,7 @@ import Card from "@/components/custom/Card";
 import CardContainer from "@/components/CardContainer";
 import { getAllProducts } from "@/services/ProductApiHandler";
 import { getAllActivities } from "@/services/ActivityApiHandler";
+import { max } from "date-fns";
 
 function Activities() {
 	const [loading, setLoading] = useState(false);
@@ -14,10 +15,19 @@ function Activities() {
 			min: 0,
 			max: 1000,
 		},
-		ratings: {
+		date: {
+			start: "",
+			end: "",
+		},
+		category: {
+			selected: "",
+		},
+		rating: {
 			min: 0,
 			max: 5,
 		},
+		sortBy: "",
+		sortOrder: "",
 
 	});
 
@@ -32,6 +42,31 @@ function Activities() {
 			min: 0,
 			max: 1000,
 		},
+		date: {
+			type: "date",
+			label: "Date",
+		},
+		category: {
+			type: "select",
+			label: "Category",
+			options: ["Adventure", "Relaxation", "Cultural"],
+		},
+		rating: {
+			type: "range",
+			label: "Ratings",
+			min: 0,
+			max: 5,
+		},
+		sortBy: {
+			type: "select",
+			label: "Sort By",
+			options: ["price", "rating"],
+		},
+		sortOrder: {
+			type: "select",
+			label: "Sort Order",
+			options: ["asc", "desc"],
+		},
 	};
 
 	// Function to fetch products
@@ -39,8 +74,12 @@ function Activities() {
 		setLoading(true);
 		const response = await getAllActivities(
 			activeFilters.name,
-			// activeFilters.budget.min,
-			// activeFilters.budget.max
+			{ min: activeFilters.budget.min, max: activeFilters.budget.max }, // Pass min and max separately
+			{ start: activeFilters.date.start, end: activeFilters.date.end }, // Pass start and end separately
+			activeFilters.category.selected,
+			activeFilters.rating.min,
+			activeFilters.sortBy,
+			activeFilters.sortOrder
 		);
 		if (!response.error) {
 			setProducts(response);

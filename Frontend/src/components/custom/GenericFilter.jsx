@@ -12,6 +12,36 @@ const GenericFilter = ({ formFields, setActiveFilters, activeFilters }) => {
 		}));
 	};
 
+	const Select = ({ options, value, onChange }) => {
+		return (
+			<select value={value} onChange={onChange} className="border rounded p-2">
+				<option value="">Select...</option>
+				{options.map((option, index) => (
+					<option key={index} value={option}>
+						{option}
+					</option>
+				))}
+			</select>
+		);
+	};
+
+	const DateRange = ({ startDate, endDate, onStartDateChange, onEndDateChange }) => {
+		return (
+			<div className="flex gap-4">
+				<Input
+					type="date"
+					value={startDate}
+					onChange={(e) => onStartDateChange(e.target.value)}
+				/>
+				<Input
+					type="date"
+					value={endDate}
+					onChange={(e) => onEndDateChange(e.target.value)}
+				/>
+			</div>
+		);
+	};
+
 	return (
 		<div className="flex flex-col gap-7">
 			{Object.keys(formFields).map((key) => {
@@ -57,6 +87,55 @@ const GenericFilter = ({ formFields, setActiveFilters, activeFilters }) => {
 								minPrice={filterValues.min} // Use current or default min
 								maxPrice={filterValues.max} // Use current or default max
 								label={field.label}
+							/>
+						</div>
+					);
+				}
+				// Render the date range input
+				if (field.type === "date") {
+					const filterValues = activeFilters[key];
+
+					return (
+						<div key={key}>
+							<h2 className="text-md font-semibold mb-2">
+								{field.label}
+							</h2>
+							<DateRange
+								startDate={filterValues.start}
+								endDate={filterValues.end}
+								onStartDateChange={(start) =>
+									handleChange(key, {
+										...filterValues,
+										start: start, // Override the "start" value
+									})
+								}
+								onEndDateChange={(end) =>
+									handleChange(key, {
+										...filterValues,
+										end: end, // Override the "end" value
+									})
+								}
+							/>
+						</div>
+					);
+				}
+
+				// Render the select inputs
+				if (field.type === "select") {
+					return (
+						<div key={key}>
+							<h2 className="text-md font-semibold mb-2">
+								{field.label}
+							</h2>
+							<Select
+								options={field.options}
+								value={activeFilters[key].selected}
+								onChange={(e) =>
+									handleChange(key, {
+										...activeFilters[key],
+										selected: e.target.value, // Spread the existing values
+									})
+								}
 							/>
 						</div>
 					);
