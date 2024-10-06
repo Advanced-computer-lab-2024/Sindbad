@@ -18,12 +18,12 @@ const rating = Math.floor(getRandomRating());
 const fullStars = rating;
 const emptyStar = 5 - fullStars;
 
-const accessibilityFeatures = [
-    { icon: <Accessibility/>, label:"Mobility aid friendly" },
-    { icon: <EarOff/>, label:"Hearing impaired support" },
-    { icon: <EyeOff/>, label:"Vision impaired support" },
-    { icon: <Speech/>, label:"Text-to-speech devices" },
-];
+// const accessibilityFeatures = [
+//     { icon: <Accessibility/>, label:"Mobility aid friendly" },
+//     { icon: <EarOff/>, label:"Hearing impaired support" },
+//     { icon: <EyeOff/>, label:"Vision impaired support" },
+//     { icon: <Speech/>, label:"Text-to-speech devices" },
+// ];
 
 const itinerary = {
     _id: "66fec47696a5a727ea518498",
@@ -81,6 +81,7 @@ const itinerary = {
 
 function Itinerary(){
 
+
         // State to store the current count
     const [adult, setAdult] = useState(0);
     const [child, setChild] = useState(0);
@@ -112,8 +113,6 @@ function Itinerary(){
 
     const [selectedDate, setSelectedDate] = useState(0);
     const [selectedTime, setSelectedTime] = useState(0);
-
-    const locations = [1,2,3];
 
     return(
         <div className="min-h-screen flex justify-center items-center bg-primary-950">
