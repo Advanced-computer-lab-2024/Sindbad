@@ -69,11 +69,9 @@ function Card({ data, id, userId, type }) {
                             (1092)
                         </p>
                     </div> */}
-                    {data.rating &&
-                        <p className="text-xs leading-[11px] font-medium text-neutral-500 mt-1">
-                            rating: {data.rating}
-                        </p>
-                    }
+                    <p className="text-xs leading-[11px] font-medium text-neutral-500 mt-1">
+                        Rating: {data.rating? `${data.rating} / 5` : "N/A"}
+                    </p>
                 </div>
                 <Button
                     onClick={() => console.log(data)}
