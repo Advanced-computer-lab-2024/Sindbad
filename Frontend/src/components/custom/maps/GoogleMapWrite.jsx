@@ -5,7 +5,7 @@ import { useCallback } from "react";
 export default function GoogleMapWrite({
 	onChange, // Receive onChange function from form
 	lat = 30.0444,
-	long = 31.2357,
+	lng = 31.2357,
 	zoom = 13,
 }) {
 	const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
@@ -13,22 +13,24 @@ export default function GoogleMapWrite({
 	// Function to handle the new camera position
 	const setPosition = useCallback(
 		(center) => {
-			const newLocation = { lat: center.lat, long: center.long }; // Get new lat/long from Google Maps
+			const newLocation = { lat: center.lat, lng: center.lng }; // Get new lat/lng from Google Maps
 			onChange(newLocation); // Call onChange to update form value
 		},
 		[onChange]
 	);
 
-    console.log("lat: ", lat, "long: ", long);
+	console.log("lat: ", lat, "lng: ", lng);
 
 	return (
 		<APIProvider apiKey={apiKey}>
 			<div className="relative w-full h-[200px]">
 				<Map
 					defaultZoom={zoom}
-					defaultCenter={{ lat, long }}
+					defaultCenter={{ lat, lng }}
 					className="h-full"
-					onCameraChanged={(ev) => { setPosition(ev.detail.center); }} // Update position on camera change
+					onCameraChanged={(ev) => {
+						setPosition(ev.detail.center);
+					}} // Update position on camera change
 				/>
 
 				{/* Centered MapPin */}

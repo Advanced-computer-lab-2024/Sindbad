@@ -46,35 +46,35 @@ const itinerary = {
 			address: "123 Main St, Cityville",
 			coordinates: {
 				lat: 40.7128,
-				long: -74.006,
+				lng: -74.006,
 			},
 		},
 		{
 			address: "456 Park Ave, Cityville",
 			coordinates: {
 				lat: 41.713,
-				long: -71.007,
+				lng: -71.007,
 			},
 		},
 		{
 			address: "789 Park Ave, Cityville",
 			coordinates: {
 				lat: 42.713,
-				long: -72.007,
+				lng: -72.007,
 			},
 		},
 		{
 			address: "456 Park Ave, Cityville",
 			coordinates: {
 				lat: 49.713,
-				long: -99.007,
+				lng: -99.007,
 			},
 		},
 		{
 			address: "789 Park Ave, Cityville",
 			coordinates: {
 				lat: 41.713,
-				long: -72.007,
+				lng: -72.007,
 			},
 		},
 	],
@@ -313,7 +313,7 @@ function Itinerary() {
 						{/* <GoogleMapRead
 							key={selectedLocation}
 							lat={itinerary.locations[selectedLocation].coordinates.lat}
-							long={itinerary.locations[selectedLocation].coordinates.long}
+							lng={itinerary.locations[selectedLocation].coordinates.lng}
 						/> */}
 					</div>
 

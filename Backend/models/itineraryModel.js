@@ -17,7 +17,7 @@ const itinerarySchema = mongoose.Schema({
 			address: { type: String, required: true },
 			coordinates: {
 				lat: { type: Number, required: true },
-				long: { type: Number, required: true },
+				lng: { type: Number, required: true },
 			},
 		},
 	],
