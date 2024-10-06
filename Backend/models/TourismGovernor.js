@@ -8,7 +8,7 @@ const TourismGovernorSchema = new mongoose.Schema({
 		unique: true,
 	},
 	email: {
-		//TODP: Make this required after sprint 1 lol
+		//TODO: Make this required after sprint 1 lol
 		type: String,
 		unique: true,
 		validate: {

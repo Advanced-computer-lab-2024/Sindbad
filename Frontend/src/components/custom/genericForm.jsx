@@ -84,7 +84,11 @@ export function GenericForm({ type, data, id }) {
       if (data) {
         updateProduct(data._id, values);
       } else {
-        createProduct(values);
+        const productWithId = {
+          ...values,
+          seller: id,
+        }
+        createProduct(productWithId);
       }
     }
     if (type === "activity") {

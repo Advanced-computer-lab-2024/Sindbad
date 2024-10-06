@@ -119,9 +119,6 @@ const productSchema = {
   description: z.string()
     .min(1, { message: "Please add a product description" }),
 
-  seller: z.string()
-    .min(1, { message: "Please add the seller of the product" }),
-
   quantity: z.number()
     .min(0, { message: "Quantity must be a non-negative number" }),
   
