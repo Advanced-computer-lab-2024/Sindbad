@@ -15,7 +15,7 @@ const reviews = (getRandomReviews());
 const rating = Math.floor(getRandomRating());
 const fullStars = rating;
 const emptyStar = 5 - fullStars;
-const isAccessible = true; //open to public
+//const isAccessible = true; //open to public
 
 
 const convertMinutesToTime = (minutes) => {
@@ -66,6 +66,9 @@ const site = {
 
 
 function Site(){
+
+    
+
     return(
     <div className="min-h-screen h-full flex justify-center items-center bg-primary-950">
         <div className="w-full max-w-7xl px-8 py-8 bg-primary-900 shadow-lg rounded-md">
