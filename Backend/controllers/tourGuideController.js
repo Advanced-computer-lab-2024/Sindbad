@@ -131,34 +131,70 @@ const deleteTourGuide = async (req, res) => {
 	}
 };
 
+const deletePreviousWork = async (req, res) => {
+	const { id, previousWorkId } = req.params;
+
+	// Check if tourGuide ID is provided
+	if (!id) {
+		return res.status(400).json({ message: "Tour Guide ID is required" });
+	}
+
+	// Check if previousWorkId is provided
+	if (!previousWorkId) {
+		return res.status(400).json({ message: "previousWorkId is required" });
+	}
+
+	let tourGuide;
+
+	try {
+		// Retrieve Tour Guide by ID
+		tourGuide = await TourGuide.findById(id);
+		if (!tourGuide) {
+			return res.status(404).json({ message: "Tour Guide not found" });
+		}
+	} catch (err) {
+		return res.status(500).json({
+			message: "Error retrieving Tour Guide",
+			error: err.message,
+		});
+	}
+
+	// Check if the tour guide is accepted
+	if (!tourGuide.isAccepted) {
+		return res.status(400).json({ message: "Tour Guide not accepted yet" });
+	}
+
+	// Find and remove the previous work entry
+	const existingIndex = tourGuide.previousWork.findIndex(
+		(work) => work._id.toString() === previousWorkId
+	);
+
+	if (existingIndex === -1) {
+		return res.status(404).json({ message: "Previous work not found" });
+	}
+
+	// Remove the entry at the found index
+	tourGuide.previousWork.splice(existingIndex, 1);
+
+	try {
+		// Save the updated Tour Guide document
+		const updatedTourGuide = await tourGuide.save();
+		res.status(200).json({
+			message: "Previous work removed successfully",
+			updatedTourGuide,
+		});
+	} catch (err) {
+		return res.status(400).json({
+			message: "Error saving Tour Guide's information",
+			error: err.message,
+		});
+	}
+};
+
 module.exports = {
 	getAllTourGuides,
 	getTourGuide,
 	updateTourGuide,
 	deleteTourGuide,
+	deletePreviousWork,
 };
-
-/*
-//create
-//Create a tourguide profile
-//Register (sign up) as a tour guide/ advertiser/ seller on the system with username, email and password
-router.post("/", async (req, res) => {
-	
-	const tourGuide = new TourGuide({
-		email: req.body.email,
-		username : req.body.username,
-		passwordHash : req.body.passwordHash
-
-	})
-	try{
-		const newTourGuide = await tourGuide.save();
-		res.status(201).json(newTourGuide)
-	}catch(err){
-		res.status(400).json({message:err.message});
-	}
-	
-});
-
-
-
-*/
