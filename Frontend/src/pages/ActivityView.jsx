@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { getActivityById } from "@/services/ActivityApiHandler";
 import { useParams } from "react-router-dom";
+import GoogleMapRead from "@/components/custom/maps/GoogleMapRead";
 
 function getRandomRating() {
 	return (Math.round(Math.random() * 10) / 2).toFixed(1);
@@ -19,19 +20,27 @@ function handleActivityValues(activity) {
 	if (!activity.reviews) {
 		activity.reviews = getRandomReviews();
 	}
-    if (!activity.description) {
-        activity.description = "With the history going back to 420 B.C., this tour includes sights throughout history. From the local alley drug dealer to the Queen's castle";
-    }
+	if (!activity.description) {
+		activity.description =
+			"With the history going back to 420 B.C., this tour includes sights throughout history. From the local alley drug dealer to the Queen's castle";
+	}
 
-    if (!activity.tags) {
-        activity.tags = [
-            { name: "N/A" },
-        ];
-    }
+	if (!activity.tags) {
+		activity.tags = [{ name: "N/A" }];
+	}
 
-    if (!activity.category) {
-        activity.category = { name: "N/A" };
-    }
+	if (!activity.category) {
+		activity.category = { name: "N/A" };
+	}
+
+	if (!activity.location.address) {
+		activity.location.address = "N/A";
+	}
+
+	if (!activity.location.coordinates) {
+		activity.location.coordinates = { lat: 0, lng: 0 };
+	}
+
 }
 
 function Activity() {
@@ -54,12 +63,12 @@ function Activity() {
 		getActivity();
 	}, []);
 
-    if (!activity) {
-        return <div>Loading...</div>;
-    }
+	if (!activity) {
+		return <div>Loading...</div>;
+	}
 
-    const fullStars = activity.rating;
-    const emptyStar = 5 - fullStars;
+	const fullStars = activity.rating;
+	const emptyStar = 5 - fullStars;
 
 	return (
 		<div className="min-h-screen flex justify-center items-center bg-primary-950">
@@ -98,9 +107,7 @@ function Activity() {
 						</div>
 						{/*description*/}
 						<div className="text-light">
-							<p>
-								{activity.description}
-							</p>
+							<p>{activity.description}</p>
 						</div>
 						{/*Tags*/}
 						<div className="my-6">
@@ -120,10 +127,17 @@ function Activity() {
 					{/*right section*/}
 					<div className="grid grid-cols-2 col-span-2 gap-1 bg-primary-700 rounded-md h-96 p-6">
 						<div className=" m-2">
-							<div className="bg-light h-2/3 rounded-lg m-2"></div>
+							<div className="bg-light h-2/3 rounded-lg m-2">
+								<GoogleMapRead
+									lat={activity.location.coordinates.lat}
+									lng={activity.location.coordinates.lng}
+								/>
+							</div>
 							<div className="flex flex-row my-4">
 								<MapPin className=" w-6 h-6 mx-2 fill-primary-900 text-light stroke-1" />
-								<span className="text-lg font-light">{activity.location.address}</span>
+								<span className="text-lg font-light">
+									{activity.location.address}
+								</span>
 							</div>
 							<div className="flex flex-row my-4">
 								<CalendarDays className=" w-6 h-6 mx-2 fill-primary-900 text-light stroke-1" />
