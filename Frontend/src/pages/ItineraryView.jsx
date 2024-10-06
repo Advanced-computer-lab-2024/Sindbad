@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
 	Accessibility,
 	MapPin,
@@ -9,7 +9,6 @@ import {
 	ArrowBigRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import GoogleMapRead from "@/components/custom/maps/GoogleMapRead";
 import { getItineraryById } from "@/services/ItineraryApiHandler";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
@@ -74,7 +73,6 @@ const Itinerary = () => {
 
 	// Ensure itinerary is not null or undefined before rendering
 	if (!itinerary) {
-		console.log("itinerary: " + itinerary);
 		return <p>Loading...</p>; // You can return a loading spinner or message here
 	}
 
