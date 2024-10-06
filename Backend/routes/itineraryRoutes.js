@@ -5,20 +5,21 @@ const {
   createItinerary,
   updateItinerary,
   deleteItinerary,
-  getAllItineraries,
+  // getAllItineraries,
+  getItineraries,
   getItinerariesByCreator,
-  searchItineraries,
-  getSortedItineraries,
-  filterItineraries,
+  // searchItineraries,
+  // getSortedItineraries,
+  // filterItineraries,
 } = require("../controllers/itineraryController");
 
-router.route("/sort").get(getSortedItineraries);
+// router.route("/sort").get(getSortedItineraries);
 
-router.route("/search").get(searchItineraries);
+// router.route("/search").get(searchItineraries);
 
-router.route("/filter").get(filterItineraries);
+// router.route("/filter").get(filterItineraries);
 
-router.route("/").post(createItinerary).get(getAllItineraries);
+router.route("/").post(createItinerary).get(getItineraries);
 
 router
   .route("/:id")
