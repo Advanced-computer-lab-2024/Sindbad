@@ -66,7 +66,7 @@ const itinerarySchema = mongoose.Schema({
   },
   creatorId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Advertiser",
+    ref: "TourGuide",
     required: [true, "Please add the creator of the itinerary"],
   },
   headCount: {
