@@ -2,13 +2,13 @@ import { useState, useEffect } from "react";
 import GenericFilter from "@/components/custom/GenericFilter";
 import Card from "@/components/custom/Card";
 import CardContainer from "@/components/CardContainer";
-import { getAllProducts } from "@/services/ProductApiHandler";
 import { getAllActivities } from "@/services/ActivityApiHandler";
-import { max } from "date-fns";
-
+import { getAllCategories } from "@/services/AdminApiHandler";
 function Activities() {
 	const [loading, setLoading] = useState(false);
 	const [products, setProducts] = useState([]);
+	const [categories, setCategories] = useState([]);
+	const [categoryNames, setCategoryNames] = useState([]);
 	const [activeFilters, setActiveFilters] = useState({
 		name: "",
 		budget: {
@@ -28,7 +28,6 @@ function Activities() {
 		},
 		sortBy: "",
 		sortOrder: "",
-
 	});
 
 	const formFields = {
@@ -49,7 +48,7 @@ function Activities() {
 		category: {
 			type: "select",
 			label: "Category",
-			options: ["Adventure", "Relaxation", "Cultural"],
+			options: categoryNames,
 		},
 		rating: {
 			type: "range",
@@ -70,20 +69,25 @@ function Activities() {
 	};
 
 	// Function to fetch products
-	const fetchProducts = async () => {
+	const fetchActivities = async () => {
 		setLoading(true);
+		let categoryToSend = "";
+		if (activeFilters.category.selected !== "") {
+			categoryToSend = categories.find((category) => category.name === activeFilters.category.selected);
+		}
 		const response = await getAllActivities(
 			activeFilters.name,
-			{ min: activeFilters.budget.min, max: activeFilters.budget.max }, // Pass min and max separately
-			{ start: activeFilters.date.start, end: activeFilters.date.end }, // Pass start and end separately
-			activeFilters.category.selected,
+			activeFilters.budget.max, // Pass min and max separately
+			activeFilters.date, // Pass start and end separately
+			categoryToSend, // Send the category ID
 			activeFilters.rating.min,
-			activeFilters.sortBy,
-			activeFilters.sortOrder
+			activeFilters.sortBy.selected,
+			activeFilters.sortOrder.selected
 		);
 		if (!response.error) {
 			setProducts(response);
 		} else {
+			setProducts([]);
 			console.error(response.message);
 		}
 		setLoading(false);
@@ -93,7 +97,7 @@ function Activities() {
 	useEffect(() => {
 		const delayDebounceFn = setTimeout(() => {
 			// Only fetch products after a 1-second delay
-			fetchProducts();
+			fetchActivities();
 		}, 500); // Adjust debounce time as needed (e.g., 500ms, 1000ms)
 
 		// Clear the timeout if activeFilters changes before the timeout is complete
@@ -101,6 +105,23 @@ function Activities() {
 		return () => clearTimeout(delayDebounceFn);
 	}, [activeFilters]); // Dependency on activeFilters
 
+	const fetchCategories = async () => {
+		try {
+			const response = await getAllCategories();
+			if (!response.error) {
+				setCategories(response.data);
+				const set = new Set(response.data.map((category) => category.name));
+				setCategoryNames(Array.from(set));
+			} else {
+				console.error(response.message);
+			}
+		} catch (error) {
+			console.error("Error fetching categories: ", error);
+		}
+	}
+	useEffect(() => {
+		fetchCategories();
+	}, []);
 	return (
 		<div className="py-8 px-24 max-w-[1200px] flex flex-col gap-4 mx-auto">
 			<div className="flex items-center gap-6 mb-6">
