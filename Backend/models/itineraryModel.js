@@ -12,15 +12,10 @@ const itinerarySchema = mongoose.Schema({
 			required: [true, "Please add the activities of the itinerary"],
 		},
 	],
-	locations: [
-		{
-			address: { type: String, required: true },
-			coordinates: {
-				lat: { type: Number, required: true },
-				long: { type: Number, required: true },
-			},
-		},
-	],
+	locations: {
+		type: [String],
+		required: [true, "Please add the locations of the itinerary"],
+	},
 	timeline: {
 		type: [String],
 		required: [true, "Please add the timeline of the itinerary"],

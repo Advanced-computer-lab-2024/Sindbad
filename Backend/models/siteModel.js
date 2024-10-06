@@ -43,7 +43,7 @@ const siteSchema = new mongoose.Schema({
 		},
 		coordinates: {
 			lat: { type: Number, required: true },
-			long: { type: Number, required: true },
+			lng: { type: Number, required: true },
 		},
 	},
 	openingHours: {

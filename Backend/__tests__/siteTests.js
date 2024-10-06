@@ -17,13 +17,13 @@ const baseSiteData = {
 		address: "123 Test St",
 		coordinates: {
 			lat: 40.7128,
-			long: -74.006,
+			lng: -74.006,
 		},
 	},
 	openingHours: {
 		monday: { start: 420, end: 1020 },
 	},
-	ticketPrices: {adult: 20, child: 15},
+	ticketPrices: { adult: 20, child: 15 },
 	tags: [], // Will assign tagId later
 	creatorId: "", // Will assign creatorId later
 };
@@ -54,9 +54,7 @@ afterAll(async () => {
 
 describe("Site CRUD Operations", () => {
 	it("should create a new site", async () => {
-		const res = await request(app)
-			.post("/site")
-			.send(baseSiteData);
+		const res = await request(app).post("/site").send(baseSiteData);
 
 		expect(res.status).toBe(201);
 		const site = await Site.findOne({ name: "Test Site" });
@@ -65,9 +63,7 @@ describe("Site CRUD Operations", () => {
 	});
 
 	it("should retrieve all sites", async () => {
-		await request(app)
-			.post("/site")
-			.send(baseSiteData);
+		await request(app).post("/site").send(baseSiteData);
 
 		const res = await request(app).get("/site");
 		expect(res.status).toBe(200);
@@ -89,10 +85,10 @@ describe("Site CRUD Operations", () => {
 	});
 
 	it("should retrieve sites with a partially matching site name", async () => {
-		siteData1 = JSON.parse(JSON.stringify(baseSiteData));;
+		siteData1 = JSON.parse(JSON.stringify(baseSiteData));
 		siteData1.name = "Test Mosque";
 
-		siteData2 = JSON.parse(JSON.stringify(baseSiteData));;
+		siteData2 = JSON.parse(JSON.stringify(baseSiteData));
 		siteData2.name = "Cathedral";
 
 		const site1 = new Site(siteData1);
@@ -108,7 +104,7 @@ describe("Site CRUD Operations", () => {
 	});
 
 	it("should retrieve sites with a partially matching tag name", async () => {
-		siteData1 = JSON.parse(JSON.stringify(baseSiteData));;
+		siteData1 = JSON.parse(JSON.stringify(baseSiteData));
 		siteData1.name = "Test Mosque";
 
 		const site1 = new Site(siteData1);
@@ -126,7 +122,7 @@ describe("Site CRUD Operations", () => {
 	});
 
 	it("should retrieve sites with both matching site name and tag name", async () => {
-		siteData1 = JSON.parse(JSON.stringify(baseSiteData));;
+		siteData1 = JSON.parse(JSON.stringify(baseSiteData));
 		siteData1.name = "Test Mosque";
 
 		const site1 = new Site(siteData1);
@@ -174,10 +170,10 @@ describe("Site CRUD Operations", () => {
 	});
 
 	it("should retrieve all sites created by a user", async () => {
-		siteData1 = JSON.parse(JSON.stringify(baseSiteData));;
+		siteData1 = JSON.parse(JSON.stringify(baseSiteData));
 		siteData1.name = "Test Site 1";
 
-		siteData2 = JSON.parse(JSON.stringify(baseSiteData));;
+		siteData2 = JSON.parse(JSON.stringify(baseSiteData));
 		siteData2.name = "Test Site 2";
 
 		const site1 = new Site(siteData1);
@@ -208,9 +204,7 @@ describe("Site CRUD Operations - Failing Tests", () => {
 
 	// Test for creating a site with a duplicate name
 	it("should not create a site with a duplicate name", async () => {
-		await request(app)
-			.post("/site")
-			.send(baseSiteData);
+		await request(app).post("/site").send(baseSiteData);
 
 		const res = await request(app).post("/site").send(baseSiteData);
 
