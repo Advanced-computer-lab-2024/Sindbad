@@ -7,7 +7,7 @@ const CardContainer = ({ cardList, CardComponent }) => {
 				cardList.map((item, index) => (
 					<div
 						key={index}
-						className="card-container h-fit bg-green-400"
+						className="card-container h-fit"
 					>
 						<CardComponent data={item} />
 					</div>
