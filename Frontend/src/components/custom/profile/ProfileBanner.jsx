@@ -38,7 +38,7 @@ function ProfileBanner({ userData, userId, id, userType }) {
                         <DialogContent>
                             <DialogHeader>
                                 <DialogTitle>Edit Profile</DialogTitle>
-                                <GenericForm type={userType} userData={userData} id={id} />
+                                <GenericForm type={userType} data={userData} id={id} />
                             </DialogHeader>
                         </DialogContent>
                     </Dialog>
