@@ -128,7 +128,7 @@ function Experience({ userData, userId, id }) {
 																id,
 																experience._id
 															);
-															navigate(0);
+															// navigate(0);
 														}}
 													>
 														Delete

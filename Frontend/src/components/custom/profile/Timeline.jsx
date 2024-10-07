@@ -69,6 +69,7 @@ function Timeline({ userData, userId, id, userType, cardData }) {
 									id={id}
 									userId={userId}
 									type={type}
+									cardType="activity"
 								/>
 							))}
 
@@ -81,6 +82,7 @@ function Timeline({ userData, userId, id, userType, cardData }) {
 									id={id}
 									userId={userId}
 									type={type}
+									cardType="itinerary"
 								/>
 							))}
 
@@ -103,6 +105,7 @@ function Timeline({ userData, userId, id, userType, cardData }) {
 									id={id}
 									userId={userId}
 									type={type}
+									cardType="activity"
 								/>
 							))}
 
@@ -114,6 +117,7 @@ function Timeline({ userData, userId, id, userType, cardData }) {
 									id={id}
 									userId={userId}
 									type={type}
+									cardType="site"
 								/>
 							))}
 					</div>

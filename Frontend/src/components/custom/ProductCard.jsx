@@ -52,6 +52,9 @@ function ProductCard({ data, id, userId, type }) {
                     <p className="text-xs leading-[11px] font-medium text-neutral-500 mt-1">
                         Rating: {data.averageRating ? `${Math.round(data.averageRating * 2) / 2} / 5` : "N/A"}
                     </p>
+                    <p className="text-xs leading-[11px] font-medium text-neutral-500 mt-1">
+                        Price: {data.price ? `${data.price}EGP` : "N/A"}
+                    </p>
                 </div>
                 <Button
                     onClick={() => setNavigateToProduct(true)}

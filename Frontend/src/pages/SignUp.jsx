@@ -172,7 +172,7 @@ function SignUp() {
                     <FormItem>
                         <FormLabel htmlFor="DOB">Date of Birth</FormLabel>
                         <FormControl>
-                            <Input id="DOB" type="date" {...field} />
+                            <Input className="signup-date" id="DOB" type="date" {...field} />
                         </FormControl>
                         <FormMessage />
                     </FormItem>

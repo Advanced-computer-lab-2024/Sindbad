@@ -109,6 +109,7 @@ function Activity() {
 						{/*description*/}
 						<div className="text-light">
 							<p>{activity.description}</p>
+							<p className="text-neutral-500">id: {activity._id}</p>
 						</div>
 						{/*Tags*/}
 						<div className="my-6">
@@ -129,7 +130,7 @@ function Activity() {
 					<div className="grid grid-cols-2 col-span-2 gap-1 bg-primary-700 rounded-md h-96 p-6">
 						<div className=" m-2">
 							<div className="bg-light h-2/3 rounded-lg m-2">
-							{console.log(activity.location.coordinates.lat)}
+								{console.log(activity.location.coordinates.lat)}
 								<GoogleMapRead
 									lat={activity.location.coordinates.lat}
 									lng={activity.location.coordinates.lng}
