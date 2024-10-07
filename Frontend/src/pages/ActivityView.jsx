@@ -33,21 +33,12 @@ function handleActivityValues(activity) {
 		activity.category = { name: "N/A" };
 	}
 
-	if (!activity.location || typeof activity.location === "object") {
-		activity.location = { address: "N/A", coordinates: { lat: 0, lng: 0 } }; 
-	} else if (typeof activity.location === "string") {
+	if (typeof activity.location === "string") {
+		console.log("Location is a string");
 		activity.location = {
 			address: activity.location,
 			coordinates: { lat: 0, lng: 0 },
 		};
-	}
-
-	if (!activity.location.address) {
-		activity.location.address = "N/A";
-	}
-
-	if (!activity.location.coordinates) {
-		activity.location.coordinates = { lat: 0, lng: 0 };
 	}
 }
 
@@ -77,6 +68,8 @@ function Activity() {
 
 	const fullStars = activity.rating;
 	const emptyStar = 5 - fullStars;
+
+	console.log(activity);
 
 	return (
 		<div className="min-h-screen flex justify-center items-center bg-primary-950">
@@ -136,6 +129,7 @@ function Activity() {
 					<div className="grid grid-cols-2 col-span-2 gap-1 bg-primary-700 rounded-md h-96 p-6">
 						<div className=" m-2">
 							<div className="bg-light h-2/3 rounded-lg m-2">
+							{console.log(activity.location.coordinates.lat)}
 								<GoogleMapRead
 									lat={activity.location.coordinates.lat}
 									lng={activity.location.coordinates.lng}
