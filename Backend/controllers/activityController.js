@@ -187,18 +187,16 @@ const getActivities = async (req, res) => {
 	try {
 		const {
 			searchTerm,
-			budgetMin,
-			budgetMax,
-			startDate,
-			endDate,
+			budget,
+			date = {},
 			category,
-			ratingMin,
-			ratingMax,
+			rating = {},
 			sortBy = 'dateTime', // Default sorting by activity date
 			sortOrder = 'asc',
 			page = 1,
 			limit = 10,
 		} = req.query;
+
 
 		// Create filter object based on provided criteria
 		const filter = {
@@ -206,18 +204,18 @@ const getActivities = async (req, res) => {
 		};
 
 		// Budget filter
-		if (budgetMin || budgetMax) {
+		if (budget.min || budget.max) {
 			filter.$or = [
-				{ price: { ...(budgetMin && { $gte: +budgetMin }), ...(budgetMax && { $lte: +budgetMax }) } },
-				{ "price.min": { ...(budgetMin && { $gte: +budgetMin }), ...(budgetMax && { $lte: +budgetMax }) } },
+				{ price: { ...(budget.min && { $gte: +budget.min }), ...(budget.max && { $lte: +budget.max }) } },
+				{ "price.min": { ...(budget.min && { $gte: +budget.min }), ...(budget.max && { $lte: +budget.max }) } },
 			];
 		}
 
 		// Date filter
-		if (startDate || endDate) {
+		if (date.start || date.end) {
 			filter.dateTime = {
-				...(startDate && { $gte: new Date(startDate) }),
-				...(endDate && { $lte: new Date(new Date(endDate).setHours(23, 59, 59, 999)) }), // End of the day
+				...(date.start && { $gte: new Date(date.start) }),
+				...(date.end && { $lte: new Date(new Date(date.end).setHours(23, 59, 59, 999)) }), // End of the day
 			};
 		}
 
@@ -227,10 +225,10 @@ const getActivities = async (req, res) => {
 		}
 
 		// Rating filter
-		if (ratingMin || ratingMax) {
+		if (rating.min || rating.max) {
 			filter.rating = {
-				...(ratingMin && { $gte: +ratingMin }),
-				...(ratingMax && { $lte: +ratingMax }),
+				...(rating.min && { $gte: +rating.min }),
+				...(rating.max && { $lte: +rating.max }),
 			};
 		}
 
@@ -250,6 +248,11 @@ const getActivities = async (req, res) => {
 		// Sorting and pagination
 		const sortOptions = { [sortBy]: sortOrder === 'asc' ? 1 : -1 };
 		const skip = (page - 1) * limit;
+
+    console.log(filter);
+    console.log(sortOptions);
+    console.log(skip);
+    console.log(limit);
 
 		// Fetch activities with filters, sorting, and pagination
     // TODO: Add pagination back after 
