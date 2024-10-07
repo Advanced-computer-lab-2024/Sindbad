@@ -95,13 +95,11 @@ function Itineraries() {
 			activeFilters.sortBy.selected,
 			activeFilters.sortOrder.selected
 		);
-
-		const updatedItineraries = response.map((itinerary) => ({
-			...itinerary, // retain other properties of the itinerary
-			activities: itinerary.activities.map((activity) => activity._id), // map activities to _id
-		}));
-		console.log("response:", response);
 		if (!response.error) {
+			const updatedItineraries = response.map((itinerary) => ({
+				...itinerary, // retain other properties of the itinerary
+				activities: itinerary.activities.map((activity) => activity._id), // map activities to _id
+			}));
 			setProducts(updatedItineraries);
 		} else {
 			setProducts([]);

@@ -178,7 +178,9 @@ export const getAllItineraries = async (
 
 		// Date filter
 		if (date && (date.start || date.end)) {
-			params.date = date;
+			params.date = {};
+            if (date.start) params.startDate = date.start;
+            if (date.end) params.endDate = date.end;
 		}
 
 		// Category filter
