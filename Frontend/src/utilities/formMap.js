@@ -157,10 +157,10 @@ const activitySchema = {
 	price: z.object({
 		min: z
 			.number()
-			.min(0, "Start time must be a positive number"),
+			.min(1, "Start time must be a positive number"),
 		max: z
 			.number()
-			.min(0, "End time must be a positive number")
+			.min(1, "End time must be a positive number")
 	}),
 
 	category: z

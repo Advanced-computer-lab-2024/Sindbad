@@ -13,7 +13,7 @@ const userSlice = createSlice({
 		// type: "seller",
 		// id: "66f99b77497c76922f03104e"
 		// type: "advertiser",
-		// id: "66f823447b0fe45d3c6d3768"
+		// id: "66f9741bf74fa1c054a9b166"
 		// type: "tourismGovernor",
 		// id: "66fff189a0a316baace5a99b"
 		// type: "admin",
