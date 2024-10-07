@@ -241,7 +241,7 @@ const Itinerary = () => {
 												{index + 1}
 											</div>
 											<div>
-												<p>{activity.location}</p>
+												<p>{activity.location.address}</p>
 												<Link
 													to={`/app/activity/${activity._id}`}
 													className="text-secondary"
