@@ -2,12 +2,14 @@ import ImagePlaceholder from "@/components/custom/ImagePlaceholder";
 import { useParams } from 'react-router-dom';
 import { getProductById } from "@/services/ProductApiHandler";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 function ProductView() {
     const { productId } = useParams();
     const [error, setError] = useState(false);
     const [productData, setProductData] = useState({});
     const [totalRatings, setTotalRatings] = useState(0);
+    const navigate = useNavigate();
 
     const getProductData = async (productId) => {
         const response = await getProductById(productId);
@@ -74,7 +76,7 @@ function ProductView() {
                                     {productData.seller && productData.seller !== null ?
                                         <>
                                             <span className="">Sold by:</span>
-                                            <a className="ml-2 hover:underline" href={`/app/profile/${productData.seller?._id}`}>
+                                            <a className="ml-2 hover:underline cursor-pointer" onClick={() => navigate(`/app/profile/${productData.seller?._id}`, { replace: true })}>
                                                 {productData.seller?.firstName} {productData.seller?.lastName}
                                             </a>
                                         </>
