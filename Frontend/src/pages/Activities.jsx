@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
 import GenericFilter from "@/components/custom/GenericFilter";
 import CardContainer from "@/components/CardContainer";
@@ -13,7 +14,6 @@ function Activities() {
 		budget: {
 			min: 0,
 			max: 1000,
-			step: 10,
 		},
 		date: {
 			start: "",
@@ -25,7 +25,6 @@ function Activities() {
 		rating: {
 			min: 0,
 			max: 5,
-			step: 1,
 		},
 		sortBy: "",
 		sortOrder: "",
@@ -41,6 +40,7 @@ function Activities() {
 			label: "Budget",
 			min: 0,
 			max: 1000,
+			step: 10,
 		},
 		date: {
 			type: "date",
@@ -53,9 +53,10 @@ function Activities() {
 		},
 		rating: {
 			type: "range",
-			label: "Ratings",
+			label: "Rating",
 			min: 0,
 			max: 5,
+			step: 1,
 		},
 		sortBy: {
 			type: "select",
