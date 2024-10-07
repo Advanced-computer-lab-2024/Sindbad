@@ -77,6 +77,10 @@ const GenericFilter = ({ formFields, setActiveFilters, activeFilters }) => {
 				// Render the budget range using PriceFilter
 				if (field.type === "range") {
 					const filterValues = activeFilters[key];
+					const priceRange = {
+						minProductsPrice: field.min,
+						maxProductsPrice: field.max,
+					};
 
 					return (
 						<div key={key}>
@@ -95,6 +99,8 @@ const GenericFilter = ({ formFields, setActiveFilters, activeFilters }) => {
 								}
 								minPrice={filterValues.min} // Use current or default min
 								maxPrice={filterValues.max} // Use current or default max
+								priceRange={priceRange}
+								step={field.step}
 								label={field.label}
 							/>
 						</div>

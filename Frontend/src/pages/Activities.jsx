@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import GenericFilter from "@/components/custom/GenericFilter";
-import Card from "@/components/custom/Card";
 import CardContainer from "@/components/CardContainer";
 import { getAllActivities } from "@/services/ActivityApiHandler";
 import { getAllCategories } from "@/services/AdminApiHandler";
@@ -14,6 +13,7 @@ function Activities() {
 		budget: {
 			min: 0,
 			max: 1000,
+			step: 10,
 		},
 		date: {
 			start: "",
@@ -25,6 +25,7 @@ function Activities() {
 		rating: {
 			min: 0,
 			max: 5,
+			step: 1,
 		},
 		sortBy: "",
 		sortOrder: "",
@@ -73,7 +74,9 @@ function Activities() {
 		setLoading(true);
 		let categoryToSend = "";
 		if (activeFilters.category.selected !== "") {
-			categoryToSend = categories.find((category) => category.name === activeFilters.category.selected);
+			categoryToSend = categories.find(
+				(category) => category.name === activeFilters.category.selected
+			);
 		}
 		const response = await getAllActivities(
 			activeFilters.name,
@@ -110,7 +113,9 @@ function Activities() {
 			const response = await getAllCategories();
 			if (!response.error) {
 				setCategories(response.data);
-				const set = new Set(response.data.map((category) => category.name));
+				const set = new Set(
+					response.data.map((category) => category.name)
+				);
 				setCategoryNames(Array.from(set));
 			} else {
 				console.error(response.message);
@@ -118,7 +123,7 @@ function Activities() {
 		} catch (error) {
 			console.error("Error fetching categories: ", error);
 		}
-	}
+	};
 	useEffect(() => {
 		fetchCategories();
 	}, []);
@@ -135,10 +140,7 @@ function Activities() {
 					setActiveFilters={setActiveFilters}
 				/>
 				{!loading && (
-					<CardContainer
-						cardList={products}
-						type={"tourGuide"}
-					/>
+					<CardContainer cardList={products} type={"tourGuide"} />
 				)}
 			</div>
 		</div>
