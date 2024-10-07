@@ -1,5 +1,4 @@
 /* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
 import { Input } from "@/components/ui/input";
 import { PriceFilter } from "@/components/ui/price-filter";
 
@@ -14,7 +13,12 @@ const GenericFilter = ({ formFields, setActiveFilters, activeFilters }) => {
 
 	const Select = ({ options, value, onChange }) => {
 		return (
-			<select value={value} onChange={onChange} className="border rounded p-2">
+			<select
+				style={{ backgroundColor: "rgb(17, 17, 17)" }} // Added this line because idk the color of the background
+				className="border rounded p-2 text-white"
+				value={value}
+				onChange={onChange}
+			>
 				<option value="">Select...</option>
 				{options.map((option, index) => (
 					<option key={index} value={option}>
@@ -25,7 +29,12 @@ const GenericFilter = ({ formFields, setActiveFilters, activeFilters }) => {
 		);
 	};
 
-	const DateRange = ({ startDate, endDate, onStartDateChange, onEndDateChange }) => {
+	const DateRange = ({
+		startDate,
+		endDate,
+		onStartDateChange,
+		onEndDateChange,
+	}) => {
 		return (
 			<div className="flex gap-4">
 				<Input
