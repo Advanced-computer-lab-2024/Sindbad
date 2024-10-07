@@ -227,20 +227,20 @@ const getActivities = async (req, res) => {
 			filterCriteria.category = category;
 		}
 
-		// // Apply rating filter if provided
-		// if (rating) {
-		// 	filterCriteria.rating = {};
+		// Apply rating filter if provided
+		if (rating) {
+			filterCriteria.rating = {};
 
-		// 	// Check for min rating
-		// 	if (rating.min) {
-		// 		filterCriteria.rating.$gte = rating.min;
-		// 	}
+			// Check for min rating
+			if (rating.min) {
+				filterCriteria.rating.$gte = rating.min;
+			}
 
-		// 	// Check for max rating
-		// 	if (rating.max) {
-		// 		filterCriteria.rating.$lte = rating.max;
-		// 	}
-		// }
+			// Check for max rating
+			if (rating.max) {
+				filterCriteria.rating.$lte = rating.max;
+			}
+		}
 
 		// Fetch activities that match the filter criteria
 		let activities = await Activity.find(filterCriteria);
