@@ -227,7 +227,7 @@ function SignUp() {
         <div className="w-full min-h-screen grid grid-cols-2">
             <div className="bg-primary-700">
                 <div className="flex flex-col justify-center items-center h-full">
-                    <Button onClick={() => navigate(`/app/timeline`, { replace: true })} variant="link">
+                    <Button onClick={() => navigate(`/app/itineraries`, { replace: true })} variant="link">
                         Back to browsing
                     </Button>
                 </div>

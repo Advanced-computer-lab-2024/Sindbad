@@ -110,6 +110,7 @@ function ShoppingPage() {
 						setMaxPrice={setMaxPrice}
 						priceRange={priceRange}
 						step={10}
+						label="Price"
 					/>
 					<div>
 						<h2 className="text-md font-semibold mb-2">Sort by</h2>

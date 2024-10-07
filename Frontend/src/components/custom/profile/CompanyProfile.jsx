@@ -28,7 +28,7 @@ function CompanyProfile({ userData, userId, id }) {
                         <DialogContent className="overflow-y-scroll max-h-[50%]">
                             <DialogHeader>
                                 <DialogTitle>Edit Profile</DialogTitle>
-                                <GenericForm type={type === "advertiser" ? "company" : type === "tourGuide" ? "experience" : ""} id={id} />
+                                <GenericForm data={userData.companyProfile} type={type === "advertiser" ? "company" : type === "tourGuide" ? "experience" : ""} id={id} />
                             </DialogHeader>
                         </DialogContent>
                     </Dialog>

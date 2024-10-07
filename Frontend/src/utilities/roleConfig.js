@@ -1,7 +1,6 @@
 // Desc: Map for each role to return pages they are allowed to access
 const rolePermissions = {
 	admin: [
-		"profile",
 		"activities",
 		"sites",
 		"itineraries",

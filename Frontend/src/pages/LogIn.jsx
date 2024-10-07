@@ -61,7 +61,7 @@ function LogIn() {
     function onSubmit(values) {
         if (values.username === "tourist" && values.password === "tourist") {
             dispatch(login({ type: "tourist", id: "66f97308f74fa1c054a9b15c" }));
-            navigate(`/app/timeline`, { replace: true });
+            navigate(`/app/itineraries`, { replace: true });
         }
         else if (values.username === "tourGuide" && values.password === "tourGuide") {
             dispatch(login({ type: "tourGuide", id: "66f8630f55f21e927d7455cc" }));
@@ -85,7 +85,7 @@ function LogIn() {
         }
         else if (values.username === "guest" && values.password === "guest") {
             dispatch(login({ type: "guest", id: null }));
-            navigate(`/app/timeline`, { replace: true });
+            navigate(`/app/itineraries`, { replace: true });
         }
         else {
             console.log("Invalid username or password");
@@ -129,7 +129,7 @@ function LogIn() {
         <div className="w-screen h-screen grid grid-cols-2">
             <div className="bg-primary-700">
                 <div className="flex flex-col justify-center items-center h-full">
-                    <Button onClick={() => navigate(`/app/timeline`, { replace: true })} variant="link">
+                    <Button onClick={() => navigate(`/app/itineraries`, { replace: true })} variant="link">
                         Back to browsing
                     </Button>
                 </div>
