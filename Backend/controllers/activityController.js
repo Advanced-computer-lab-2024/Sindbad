@@ -209,23 +209,6 @@ const getActivities = async (req, res) => {
 			dateTime: { $gte: new Date() },
 		};
 
-		// Apply budget filter if provided
-		if (budget) {
-			if (typeof budget === "number") {
-				// If budget is a number, use price with $lte
-				const parsedBudget = Number(budget);
-				filterCriteria.price = { $lte: parsedBudget };
-			} else if (typeof budget === "object") {
-				// If budget is an object with min and/or max values
-				if (budget.min) {
-					filterCriteria["price.min"] = { $gte: Number(budget.min) };
-				}
-				if (budget.max) {
-					filterCriteria["price.max"] = { $lte: Number(budget.max) };
-				}
-			}
-		}
-
 		// Apply date filter if provided
 		if (date) {
 			if (date.start) {
@@ -244,10 +227,20 @@ const getActivities = async (req, res) => {
 			filterCriteria.category = category;
 		}
 
-		// Apply rating filter if provided
-		if (rating) {
-			filterCriteria.rating = { $gte: rating };
-		}
+		// // Apply rating filter if provided
+		// if (rating) {
+		// 	filterCriteria.rating = {};
+
+		// 	// Check for min rating
+		// 	if (rating.min) {
+		// 		filterCriteria.rating.$gte = rating.min;
+		// 	}
+
+		// 	// Check for max rating
+		// 	if (rating.max) {
+		// 		filterCriteria.rating.$lte = rating.max;
+		// 	}
+		// }
 
 		// Fetch activities that match the filter criteria
 		let activities = await Activity.find(filterCriteria);
@@ -291,6 +284,25 @@ const getActivities = async (req, res) => {
 			);
 		}
 
+		console.log(activities);
+		console.log("activites length", activities.length);
+
+		if (budget) {
+			activities = activities.filter((activity) => {
+				if (typeof activity.price === "object") {
+					return (
+						activity.price.min >= budget.min &&
+						activity.price.max <= budget.max
+					);
+				} else {
+					return (
+						activity.price >= budget.min &&
+						activity.price <= budget.max
+					);
+				}
+			});
+		}
+
 		// Apply sorting
 		const order = sortOrder === "asc" ? 1 : -1;
 
@@ -310,9 +322,9 @@ const getActivities = async (req, res) => {
 			return product.price.min || product.price;
 		}
 
-		// Apply pagination
-		const skip = (page - 1) * limit;
-		activities = activities.slice(skip, skip + Number(limit));
+		// // Apply pagination
+		// const skip = (page - 1) * limit;
+		// activities = activities.slice(skip, skip + Number(limit));
 
 		res.status(200).json(activities);
 	} catch (error) {
