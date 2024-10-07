@@ -32,6 +32,7 @@ import { updateSite } from "@/services/SiteApiHandler";
 
 import { useNavigate } from "react-router-dom";
 import { createDropdownMenuScope } from "@radix-ui/react-dropdown-menu";
+import GoogleMapWrite from "./maps/GoogleMapWrite";
 
 export function GenericForm({ type, data, id }) {
 	// To refresh the page after form submissions
@@ -243,6 +244,7 @@ export function GenericForm({ type, data, id }) {
 	function renderFields(values, path = "") {
 		return Object.keys(values).map((key) => {
 			const fullPath = path ? `${path}.${key}` : key;
+			const isCoordinates = key === "coordinates";
 			const isArray = Array.isArray(values[key]);
 			const isObject =
 				typeof values[key] === "object" && values[key] !== null;
@@ -254,6 +256,29 @@ export function GenericForm({ type, data, id }) {
 						name={fullPath}
 						control={form.control}
 						initialValue={typeof values[key][0]}
+					/>
+				);
+			}
+
+			if (isCoordinates) {
+				return (
+					<FormField
+						key={`${fullPath}.coordinates`}
+						control={form.control}
+						name={fullPath}
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel>{key.toUpperCase()}</FormLabel>
+								<FormControl>
+									<GoogleMapWrite
+										lat={field.value.lat}
+										lng={field.value.lng}
+										onChange={(newPosition) => field.onChange(newPosition)} // Pass onChange function
+									/>
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
 					/>
 				);
 			}
