@@ -33,11 +33,12 @@ const getProductById = async (req, res) => {
       query.name = { $regex: search, $options: "i" };
       // console.log("Log", "hi");
     }
-  
+
     // Ensure minprice and maxprice are parsed as numbers
     const minPriceNum = minprice ? Number(minprice) : null;
     const maxPriceNum = maxprice ? Number(maxprice) : null;
-  
+    
+
     // Apply price filter if provided
     if (minPriceNum || maxPriceNum) {
       query.price = {};
@@ -67,6 +68,21 @@ const getProductById = async (req, res) => {
 
   };
   
+  const getMinMaxPrices = async (req, res) => {
+      //get minimum price of all products
+      const minProduct = await Product.findOne({}, {}, { sort: { price: 1 } });
+      const minProductsPrice = minProduct ? minProduct.price : null; 
+      //get maximum price of all products
+      const maxProduct = await Product.findOne({}, {}, { sort: { price: -1 } });
+      const maxProductsPrice = maxProduct ? maxProduct.price : null;
+
+
+      res.json({
+        minProductsPrice,
+        maxProductsPrice
+      });
+  }
+
   
   
 /**
@@ -136,4 +152,5 @@ module.exports = {
     deleteProduct,
     getAllProducts,
     getProductById,
+    getMinMaxPrices,
   };
