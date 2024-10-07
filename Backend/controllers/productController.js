@@ -116,11 +116,11 @@ const createProduct = async (req, res) => {
 const updateProduct = async (req, res) => {
   try {
     const { id } = req.params; // Extract the id from req.params
-    const { name, price, description, quantity } = req.body;
+    const { name, price, description, picture, quantity } = req.body;
 
     const updatedProduct = await Product.findByIdAndUpdate(
       id,
-      { name, price, description, quantity },
+      { name, price, description, picture, quantity },
       { new: true, runValidators: true } // Return the updated document and run validators
     );
 

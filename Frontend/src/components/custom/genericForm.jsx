@@ -90,6 +90,7 @@ export function GenericForm({ type, data, id }) {
 		if (type === "product") {
 			if (data) {
 				updateProduct(data._id, values);
+				console.log(values);
 			} else {
 				const productWithId = {
 					...values,
@@ -169,7 +170,7 @@ export function GenericForm({ type, data, id }) {
 			};
 			updateAdvertiser(body, id);
 		}
-		navigate(0);
+		// navigate(0);
 	}
 
 	function ArrayFieldRenderer({ name, control, initialValue }) {
