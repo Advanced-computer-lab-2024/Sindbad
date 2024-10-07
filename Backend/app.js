@@ -1,10 +1,23 @@
 const express = require("express");
+const cors = require('cors');
 const mongoose = require("mongoose");
 const passport = require("passport");
 const session = require("express-session");
-const Admin = require("./models/admin");
-const adminRoutes = require("./routes/admin-routes");
 require("dotenv").config();
+
+const Admin = require("./models/adminModel");
+const adminRoutes = require("./routes/adminRoutes");
+const siteRoutes = require("./routes/siteRoutes");
+const activityRoutes = require("./routes/activityRoutes");
+const itineraryRoutes = require("./routes/itineraryRoutes");
+const categoryRoutes = require("./routes/categoryRoutes");
+const tagRoutes = require("./routes/tagRoutes");
+const userRoutes = require("./routes/user-routes");
+const advertiserRoutes = require("./routes/advertiserRoutes");
+const touristRoutes = require("./routes/tourist-routes");
+const tourGuideRoutes = require("./routes/tourGuide-routes");
+const productRoutes = require("./routes/productRoutes");
+const sellerRoutes = require("./routes/sellerRoutes");
 
 const app = express();
 
@@ -12,51 +25,81 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Connect to MongoDB
-mongoose
-	.connect(process.env.MONGO_URI)
-	.then(() => {
-		console.log("Connected to MongoDB");
-	})
-	.catch((err) => {
-		console.error("Database connection error:", err);
-	});
+app.use(cors({
+	origin: 'http://localhost:5173',
+	methods: 'GET,POST,PUT,DELETE',
+	credentials: true,
+}));
 
-// Session configuration (necessary for passport-local-mongoose)
-app.use(
-	session({
-		secret: process.env.SECRET_KEY,
-		resave: false,
-		saveUninitialized: false,
-	})
-);
+// Connect to MongoDB, and prevent connecting to the database during testing
+if (process.env.NODE_ENV !== "test") {
+  mongoose
+    .connect(process.env.MONGO_URI)
+    .then(() => {
+      console.log("Connected to MongoDB");
+    })
+    .catch((err) => {
+      console.error("Database connection error:", err);
+    });
+}
 
-// Initialize Passport.js for handling user authentication
-app.use(passport.initialize());
-app.use(passport.session());
 
-passport.use(Admin.createStrategy());
-passport.serializeUser(Admin.serializeUser());
-passport.deserializeUser(Admin.deserializeUser());
+app.use("/user", userRoutes);
+
+app.use("/advertiser", advertiserRoutes);
 
 // Admin routes
-app.use("/api", adminRoutes); // All admin-related routes will start with /api/admin
+app.use("/admin", adminRoutes);
+
+// Site routes
+app.use("/site", siteRoutes);
+
+// Activity routes
+app.use("/activity", activityRoutes);
+
+// Itinerary routes
+app.use("/itinerary", itineraryRoutes);
+
+//seller routes
+app.use("/seller", sellerRoutes);
+
+// Activities' categories routes
+app.use("/category", categoryRoutes);
+
+// Product routes
+app.use("/product", productRoutes);
+
+// Activities' tags routes
+app.use("/tag", tagRoutes);
+
+//Tourist routes
+app.use("/tourist", touristRoutes);
+
+//TourGuide routes
+app.use("/tourGuide", tourGuideRoutes);
 
 // Fallback route for unknown endpoints
 app.use((req, res, next) => {
-	res.status(404).json({ message: "Endpoint not found" });
+  res.status(404).json({ message: "Endpoint not found" });
 });
 
 // Global error handler
 app.use((err, req, res, next) => {
-	console.error(err.stack);
-	res.status(500).json({ message: "Something went wrong", error: err.message });
+  console.error(err.stack);
+  res.status(500).json({
+    message: "Something went wrong",
+    error: err.message,
+  });
 });
 
 // Start the server
-const PORT = process.env.PORT || 3000;
+let PORT = process.env.PORT || 3000;
+if (process.env.NODE_ENV === "test") {
+  PORT = 0; // Finds first available port, to prevent conflicts when running test suites in parallel
+}
+
 const server = app.listen(PORT, () => {
-	console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
 
-module.exports = {app, server};
+module.exports = { app, server };
