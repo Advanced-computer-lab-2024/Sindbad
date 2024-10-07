@@ -23,6 +23,7 @@ import { Navigate } from "react-router-dom";
 import { userSignUp } from "@/services/LoginSignupApiHandler";
 import SpinnerSVG from '@/SVGs/Spinner.jsx';
 import { ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 function SignUp() {
     const [registerType, setRegisterType] = useState("Tourist");
@@ -31,6 +32,7 @@ function SignUp() {
     const [formValues, setFormValues] = useState({});
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     const handleRegisterTypeChange = (value) => {
         setRegisterType(value);
@@ -223,7 +225,13 @@ function SignUp() {
 
     return (
         <div className="w-full min-h-screen grid grid-cols-2">
-            <div className="bg-primary-700"></div>
+            <div className="bg-primary-700">
+                <div className="flex flex-col justify-center items-center h-full">
+                    <Button onClick={() => navigate(`/app/timeline`, { replace: true })} variant="link">
+                        Back to browsing
+                    </Button>
+                </div>
+            </div>
             <div className="bg-primary-900 flex flex-col shadow-2xl">
                 <div className="text-right p-8 absolute right-0">
                     <Button onClick={() => setLogInRedirect(true)} variant="link">

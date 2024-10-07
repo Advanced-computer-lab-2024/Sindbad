@@ -91,6 +91,7 @@ function MainPage() {
                                             else {
                                                 setCurrentRole("guest");
                                                 dispatch(logout());
+                                                navigate(`/app/timeline`, { replace: true });
                                             }
                                         }}
                                     >
