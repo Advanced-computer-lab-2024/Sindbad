@@ -90,7 +90,7 @@ function Sites() {
 					setActiveFilters={setActiveFilters}
 				/>
 				{!loading && (
-					<CardContainer cardList={sites} type={"tourGuide"} />
+					<CardContainer cardList={sites} type={"site"} />
 				)}
 			</div>
 		</div>

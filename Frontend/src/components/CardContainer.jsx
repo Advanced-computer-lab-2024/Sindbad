@@ -7,7 +7,7 @@ const CardContainer = ({ cardList, type }) => {
 			{cardList.length > 0 ? ( // Check if the array has items
 				cardList.map((item, index) => (
 					<div key={index} className="card-container h-fit">
-						<Card data={item} type={type} />
+						<Card data={item} cardType={type} />
 					</div>
 				))
 			) : (

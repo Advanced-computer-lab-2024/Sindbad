@@ -11,11 +11,14 @@ import {
 } from "@/components/ui/dialog"
 import GenericForm from "./genericForm";
 import DeleteForm from "./deleteForm";
+import { useUser } from "@/state management/userInfo";
 
 //TODO: The type should be the type of the card and not the type of the user, this is very confusing
 //Change this also in CarContainer.jsx
-function Card({ data, id, userId, type }) {
+function Card({ data, id, userId, cardType }) {
     const navigate = useNavigate();
+	const { type } = useUser();
+
     return (
 			<article className="w-full flex flex-col border border-primary-700/80 rounded-md overflow-clip bg-gradient-to-br from-dark to-primary-900/50 group">
 				<div className="h-[156px] relative shrink-0 bg-neutral-800">
@@ -110,13 +113,7 @@ function Card({ data, id, userId, type }) {
 					<Button
 						onClick={() =>
 							navigate(
-								`/app/${
-									type === "advertiser"
-										? "activity"
-										: type === "tourGuide"
-										? "itinerary"
-										: "site"
-								}/${data._id}`
+								`/app/${cardType}/${data._id}`
 							)
 						}
 					>

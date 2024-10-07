@@ -150,7 +150,7 @@ function Itineraries() {
 					setActiveFilters={setActiveFilters}
 				/>
 				{!loading && (
-					<CardContainer cardList={products} type={"tourGuide"} />
+					<CardContainer cardList={products} type={"itinerary"} />
 				)}
 			</div>
 		</div>

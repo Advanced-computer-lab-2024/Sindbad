@@ -141,7 +141,7 @@ function Activities() {
 					setActiveFilters={setActiveFilters}
 				/>
 				{!loading && (
-					<CardContainer cardList={products} type={"tourGuide"} />
+					<CardContainer cardList={products} type={"activity"} />
 				)}
 			</div>
 		</div>
