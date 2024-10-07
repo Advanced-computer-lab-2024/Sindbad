@@ -5,13 +5,21 @@ import { PriceFilter } from "@/components/ui/price-filter";
 const GenericFilter = ({ formFields, setActiveFilters, activeFilters }) => {
 	// Function to handle changes and update the filter object
 	const handleChange = (key, value) => {
-		setActiveFilters((prev) => ({
-			...prev,
-			[key]: {
-				...prev[key],
-				...value, // Merge the existing filter values with the new ones
-			},
-		}));
+		// Check if value is an object or a direct value
+		if (typeof value === "object" && value !== null) {
+			setActiveFilters((prev) => ({
+				...prev,
+				[key]: {
+					...prev[key],
+					...value, // Merge the existing filter values with the new ones
+				},
+			}));
+		} else {
+			setActiveFilters((prev) => ({
+				...prev,
+				[key]: value, // Directly set the filter value for the given key
+			}));
+		}
 	};
 
 	const Select = ({ options, value, onChange }) => {
