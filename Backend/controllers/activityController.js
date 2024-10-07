@@ -191,23 +191,32 @@ const getActivities = async (req, res) => {
 			date = {},
 			category,
 			rating = {},
-			sortBy = 'dateTime', // Default sorting by activity date
-			sortOrder = 'asc',
+			sortBy = "dateTime", // Default sorting by activity date
+			sortOrder = "asc",
 			page = 1,
 			limit = 10,
 		} = req.query;
 
-
 		// Create filter object based on provided criteria
 		const filter = {
-			dateTime: { $gte: new Date() }, // Only upcoming activities by default
+			//dateTime: { $gte: new Date() }, // Only upcoming activities by default
 		};
 
 		// Budget filter
 		if (budget.min || budget.max) {
 			filter.$or = [
-				{ price: { ...(budget.min && { $gte: +budget.min }), ...(budget.max && { $lte: +budget.max }) } },
-				{ "price.min": { ...(budget.min && { $gte: +budget.min }), ...(budget.max && { $lte: +budget.max }) } },
+				{
+					price: {
+						...(budget.min && { $gte: +budget.min }),
+						...(budget.max && { $lte: +budget.max }),
+					},
+				},
+				{
+					"price.min": {
+						...(budget.min && { $gte: +budget.min }),
+						...(budget.max && { $lte: +budget.max }),
+					},
+				},
 			];
 		}
 
@@ -215,7 +224,9 @@ const getActivities = async (req, res) => {
 		if (date.start || date.end) {
 			filter.dateTime = {
 				...(date.start && { $gte: new Date(date.start) }),
-				...(date.end && { $lte: new Date(new Date(date.end).setHours(23, 59, 59, 999)) }), // End of the day
+				...(date.end && {
+					$lte: new Date(new Date(date.end).setHours(23, 59, 59, 999)),
+				}), // End of the day
 			};
 		}
 
@@ -235,31 +246,29 @@ const getActivities = async (req, res) => {
 		// Search term filter (name, category, or tags)
 		if (searchTerm) {
 			const regex = new RegExp(searchTerm, "i"); // Case-insensitive
-			const categories = await Category.find({ name: regex }).select('_id');
-			const tags = await Tag.find({ name: regex }).select('_id');
-			
+			const categories = await Category.find({ name: regex }).select("_id");
+			const tags = await Tag.find({ name: regex }).select("_id");
+
 			filter.$or = [
 				{ name: regex },
-				{ category: { $in: categories.map(c => c._id) } },
-				{ tags: { $in: tags.map(t => t._id) } },
+				{ category: { $in: categories.map((c) => c._id) } },
+				{ tags: { $in: tags.map((t) => t._id) } },
 			];
 		}
 
 		// Sorting and pagination
-		const sortOptions = { [sortBy]: sortOrder === 'asc' ? 1 : -1 };
+		const sortOptions = { [sortBy]: sortOrder === "asc" ? 1 : -1 };
 		const skip = (page - 1) * limit;
 
-    console.log(filter);
-    console.log(sortOptions);
-    console.log(skip);
-    console.log(limit);
+		console.log("filter:", filter);
+		console.log("sortOptions:", sortOptions);
+
 
 		// Fetch activities with filters, sorting, and pagination
-    // TODO: Add pagination back after 
-		const activities = await Activity.find(filter)
-			.sort(sortOptions)
-			//.skip(skip)
-			//.limit(+limit);
+		// TODO: Add pagination back after adding page navigation to the frontend
+		const activities = await Activity.find(filter).sort(sortOptions);
+		//.skip(skip)
+		//.limit(+limit);
 
 		if (activities.length === 0) {
 			return res.status(204).send(); // 204 No Content for no results
@@ -267,7 +276,6 @@ const getActivities = async (req, res) => {
 
 		// Respond with activities
 		res.status(200).json(activities);
-
 	} catch (error) {
 		console.error(error);
 		res.status(500).json({

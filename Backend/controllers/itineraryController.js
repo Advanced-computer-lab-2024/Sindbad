@@ -2,6 +2,7 @@ const Itinerary = require("../models/itineraryModel");
 const Category = require("../models/categoryModel");
 const Activity = require("../models/activityModel");
 const Tag = require("../models/tagModel");
+const mongoose = require("mongoose");
 
 /**
  * @route GET /itinerary/:id
@@ -12,18 +13,18 @@ const Tag = require("../models/tagModel");
  * @returns {Object} 500 - Error message if an error occurs
  */
 const getItinerary = async (req, res) => {
-  try {
-    const itinerary = await Itinerary.findById(req.params.id);
-    if (!itinerary) {
-      return res.status(404).json({ message: "Itinerary not found" });
-    }
-    res.status(200).json(itinerary);
-  } catch (error) {
-    return res.status(500).json({
-      message: "Error getting itinerary",
-      error: error.message,
-    });
-  }
+	try {
+		const itinerary = await Itinerary.findById(req.params.id);
+		if (!itinerary) {
+			return res.status(404).json({ message: "Itinerary not found" });
+		}
+		res.status(200).json(itinerary);
+	} catch (error) {
+		return res.status(500).json({
+			message: "Error getting itinerary",
+			error: error.message,
+		});
+	}
 };
 
 /**
@@ -34,15 +35,15 @@ const getItinerary = async (req, res) => {
  * @returns {Object} 500 - Error message if an error occurs
  */
 const createItinerary = async (req, res) => {
-  try {
-    const newItinerary = await Itinerary.create(req.body);
-    res.status(201).json(newItinerary);
-  } catch (error) {
-    return res.status(500).json({
-      message: "Error creating itinerary",
-      error: error.message,
-    });
-  }
+	try {
+		const newItinerary = await Itinerary.create(req.body);
+		res.status(201).json(newItinerary);
+	} catch (error) {
+		return res.status(500).json({
+			message: "Error creating itinerary",
+			error: error.message,
+		});
+	}
 };
 
 /**
@@ -55,30 +56,30 @@ const createItinerary = async (req, res) => {
  * @returns {Object} 500 - Error message if an error occurs
  */
 const updateItinerary = async (req, res) => {
-  try {
-    const itineraryId = req.params.id;
-    const updatedData = req.body;
+	try {
+		const itineraryId = req.params.id;
+		const updatedData = req.body;
 
-    const updatedItinerary = await Itinerary.findByIdAndUpdate(
-      itineraryId,
-      updatedData,
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
+		const updatedItinerary = await Itinerary.findByIdAndUpdate(
+			itineraryId,
+			updatedData,
+			{
+				new: true,
+				runValidators: true,
+			}
+		);
 
-    if (!updatedItinerary) {
-      return res.status(404).json({ message: "Itinerary not found" });
-    }
+		if (!updatedItinerary) {
+			return res.status(404).json({ message: "Itinerary not found" });
+		}
 
-    res.status(200).json(updatedItinerary);
-  } catch (error) {
-    return res.status(500).json({
-      message: "Error updating itinerary",
-      error: error.message,
-    });
-  }
+		res.status(200).json(updatedItinerary);
+	} catch (error) {
+		return res.status(500).json({
+			message: "Error updating itinerary",
+			error: error.message,
+		});
+	}
 };
 
 /**
@@ -91,45 +92,30 @@ const updateItinerary = async (req, res) => {
  * @throws {500} - Error deleting itinerary if there is a server issue.
  */
 const deleteItinerary = async (req, res) => {
-  try {
-    const itineraryId = req.params.id;
+	try {
+		const itineraryId = req.params.id;
 
-    const itinerary = await Itinerary.findById(itineraryId);
+		const itinerary = await Itinerary.findById(itineraryId);
 
-    if (!itinerary) {
-      return res.status(404).json({ message: "Itinerary not found" });
-    }
+		if (!itinerary) {
+			return res.status(404).json({ message: "Itinerary not found" });
+		}
 
-    if (itinerary.headCount > 0) {
-      return res.status(400).json({
-        message: "Cannot delete itinerary because it has been booked already",
-      });
-    }
+		if (itinerary.headCount > 0) {
+			return res.status(400).json({
+				message: "Cannot delete itinerary because it has been booked already",
+			});
+		}
 
-    await Itinerary.findByIdAndDelete(itineraryId);
+		await Itinerary.findByIdAndDelete(itineraryId);
 
-    res.status(200).json({ message: "Itinerary deleted successfully" });
-  } catch (error) {
-    return res.status(500).json({
-      message: "Error deleting itinerary",
-      error: error.message,
-    });
-  }
-};
-
-/**
- * @description Retrieves all itineraries from the database.
- * @route GET /
- * @returns {Array} - An array of itineraries.
- * @throws {500} - Error fetching itineraries if there is a server issue.
- */
-const getAllItineraries = async (req, res) => {
-  try {
-    const itineraries = await Itinerary.find();
-    res.status(200).json(itineraries);
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching itineraries" });
-  }
+		res.status(200).json({ message: "Itinerary deleted successfully" });
+	} catch (error) {
+		return res.status(500).json({
+			message: "Error deleting itinerary",
+			error: error.message,
+		});
+	}
 };
 
 /**
@@ -141,21 +127,21 @@ const getAllItineraries = async (req, res) => {
  * @throws {500} - Error fetching itineraries if there is a server issue.
  */
 const getItinerariesByCreator = async (req, res) => {
-  const { id } = req.params;
+	const { id } = req.params;
 
-  try {
-    const itineraries = await Itinerary.find({ creatorId: id });
+	try {
+		const itineraries = await Itinerary.find({ creatorId: id });
 
-    if (itineraries.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No itineraries found for this creator." });
-    }
+		if (itineraries.length === 0) {
+			return res
+				.status(404)
+				.json({ message: "No itineraries found for this creator." });
+		}
 
-    res.status(200).json(itineraries);
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching itineraries" });
-  }
+		res.status(200).json(itineraries);
+	} catch (error) {
+		res.status(500).json({ message: "Error fetching itineraries" });
+	}
 };
 
 /**
@@ -169,159 +155,144 @@ const getItinerariesByCreator = async (req, res) => {
  * @throws {500} - If there is an error during the retrieval process.
  */
 const getItineraries = async (req, res) => {
-  try {
-    const {
-      searchTerm,
-      sortBy,
-      sortOrder = "asc",
-      page = 1,
-      limit = 10,
-      budget,
-      startDate,
-      endDate,
-      preferences,
-      languages,
-    } = req.query;
+	try {
+		const {
+			searchTerm,
+			budget,
+			date = {},
+			tag,
+			rating = {},
+			language,
+			sortBy = "availableDatesTimes", // Default sorting by available dates times
+			sortOrder = "asc",
+			page = 1,
+			limit = 10,
+		} = req.query;
 
-    // Initialize filter object
-    const filter = {
-      availableDatesTimes: {
-        $elemMatch: {
-          $gt: new Date(),
-        },
-      },
-    };
+		// Create filter object based on provided criteria
+		const filter = {
+			// Uncomment if needed to filter for upcoming available date times
+			// availableDateTimes: { $elemMatch: { $gte: new Date() } },
+		};
 
-    // Handle search term
-    if (searchTerm) {
-      const regex = new RegExp(searchTerm, "i"); // Case-insensitive search
-      const categories = await Category.find({ name: regex });
-      const categoryIds = categories.map((category) => category._id);
-      const activitiesByCategory = await Activity.find({
-        category: { $in: categoryIds },
-      });
+		// Budget filter
+		if (budget.min || budget.max) {
+			filter.$or = [
+				{
+					price: {
+						...(budget.min && { $gte: +budget.min }),
+						...(budget.max && { $lte: +budget.max }),
+					},
+				},
+				{
+					"price.min": {
+						...(budget.min && { $gte: +budget.min }),
+						...(budget.max && { $lte: +budget.max }),
+					},
+				},
+			];
+		}
 
-      const tags = await Tag.find({ name: regex });
-      const tagIds = tags.map((tag) => tag._id);
-      const activitiesByTags = await Activity.find({ tags: { $in: tagIds } });
+		// Date filter
+		if (date.start || date.end) {
+			filter.availableDatesTimes = {
+				$elemMatch: {
+					...(date.start && { $gte: new Date(date.start) }),
+					...(date.end && {
+						$lte: new Date(new Date(date.end).setHours(23, 59, 59, 999)), // End of the day
+					}),
+				},
+			};
+		}
 
-      const allActivities = [...activitiesByCategory, ...activitiesByTags];
-      const uniqueActivityIds = [
-        ...new Set(allActivities.map((activity) => activity._id)),
-      ];
+		// Tag filter
+		if (tag) {
+			// Ensure that the tag is in ObjectId format
+			const tagObjectId = new mongoose.Types.ObjectId(tag._id); // Convert to ObjectId if tag is a string
 
-      const itinerariesByName = await Itinerary.find({ name: regex });
-      const itineraryIdsFromActivities = await Itinerary.find({
-        activities: { $in: uniqueActivityIds },
-      });
+			filter.activities = {
+				$elemMatch: { tags: tagObjectId },
+			}; // Use $elemMatch to find itineraries with activities containing the tag
+		}
 
-      const allItineraries = [
-        ...itinerariesByName,
-        ...itineraryIdsFromActivities,
-      ];
-      const uniqueItineraryIds = [
-        ...new Set(allItineraries.map((itinerary) => itinerary._id)),
-      ];
+		// Rating filter
+		if (rating && (rating.min || rating.max)) {
+			filter.rating = {
+				...(rating.min && { $gte: +rating.min }),
+				...(rating.max && { $lte: +rating.max }),
+			};
+		}
 
-      if (uniqueItineraryIds.length === 0) {
-        return res
-          .status(404)
-          .json({ message: "No itineraries found matching the search term" });
-      }
+		// Language filter
+		if (language) {
+			filter.languages = {
+				$regex: new RegExp(language, "i"), // 'i' for case insensitive
+			}; // Check if the itinerary supports this language with a case-insensitive regex
+		}
 
-      // Finalize itineraries to return by filtering unique ones
-      filter._id = { $in: uniqueItineraryIds };
-    }
+		// Search term filter
+		if (searchTerm) {
+			const regex = new RegExp(searchTerm, "i"); // Case-insensitive
+			filter.$or = [{ name: regex }, { description: regex }];
+		}
 
-    if (budget) {
-      const parsedBudget = Number(budget);
-      filter.$or = [
-        { price: { $lte: parsedBudget } }, // For fixed price activities
-        { "price.min": { $lte: parsedBudget } }, // For activities with price ranges
-      ];
-    }
+		// Sorting and pagination
+		const sortOptions = { [sortBy]: sortOrder === "asc" ? 1 : -1 };
+		const skip = (page - 1) * limit;
 
-    if (startDate && endDate) {
-      filter.availableDatesTimes = {
-        $elemMatch: {
-          $gte: new Date(Math.max(new Date(), new Date(startDate))),
-          $lte: new Date(endDate),
-        },
-      };
-    }
+		console.log("filter:", filter);
+    console.log("sortOptions:", sortOptions);
 
-    // Handle activity preferences (tags)
-    if (preferences) {
-      const tagArray = preferences.split(",").map((tag) => tag.trim());
-      const tags = await Tag.find({ name: { $in: tagArray } }).select("_id");
-      const tagIds = tags.map((tag) => tag._id);
+		// Fetch itineraries with aggregation
+		const itineraries = await Itinerary.aggregate([
+			{
+				$lookup: {
+					from: "activities", // The name of the collection to join
+					localField: "activities", // The field from the itineraries collection
+					foreignField: "_id", // The field from the activities collection
+					as: "activities", // The name of the new array field to add to the itineraries documents
+				},
+			},
+			{
+				$match: filter, // Apply your filtering here
+			},
+			{
+				$sort: sortOptions, // Sort the results
+			},
+			// {
+			// 	$skip: skip, // Pagination
+			// },
+			// {
+			// 	$limit: +limit, // Limit the number of results
+			// },
+		]);
 
-      const activitiesByTags = await Activity.find({
-        tags: { $in: tagIds }, // Ensure tagIds is already an array of ObjectIds
-      }).select("_id");
+		if (itineraries.length === 0) {
+			return res.status(204).send(); // 204 No Content for no results
+		}
 
-      const activityIds = activitiesByTags.map((activity) => activity._id);
-
-      if (activityIds.length > 0) {
-        filter.activities = { $in: activityIds };
-      } else {
-        return res.status(200).json([]); // Return an empty array if no activities are found
-      }
-    }
-
-    // Handle language filtering
-    if (languages) {
-      const languageArray = languages.split(",").map((lang) => lang.trim());
-      filter.languages = { $in: languageArray };
-    }
-
-    // Pagination settings
-    const skip = (page - 1) * limit;
-    // Fetch itineraries with applied filters, sorting, and pagination
-    let itineraries = await Itinerary.find(filter).skip(skip).limit(limit);
-    const order = sortOrder === "asc" ? 1 : -1;
-
-    // Sorting
-    if (sortBy === "price") {
-      itineraries = itineraries.sort((a, b) =>
-        order === 1
-          ? getPriceValue(a) - getPriceValue(b)
-          : getPriceValue(b) - getPriceValue(a)
-      );
-    } else if (sortBy === "rating") {
-      itineraries = itineraries.sort((a, b) =>
-        order === 1 ? a.rating - b.rating : b.rating - a.rating
-      );
-    }
-
-    function getPriceValue(product) {
-      return product.price.min || product.price;
-    }
-
-    if (itineraries.length === 0) {
-      return res.status(404).json({
-        message: "No itineraries found matching the specified criteria",
-      });
-    }
-
-    res.status(200).json(itineraries);
-  } catch (error) {
-    res.status(500).json({
-      message: "Error retrieving itineraries",
-      error: error.message,
-    });
-  }
+		// Respond with itineraries
+		res.status(200).json(itineraries);
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({
+			message: "Error occurred while fetching itineraries.",
+			error: error.message,
+		});
+	}
 };
 
+
+
 module.exports = {
-  getItinerary,
-  createItinerary,
-  updateItinerary,
-  deleteItinerary,
-  getItineraries,
-  // getAllItineraries,
-  getItinerariesByCreator,
-  // searchItineraries,
-  // getSortedItineraries,
-  // filterItineraries,
+	getItinerary,
+	createItinerary,
+	updateItinerary,
+	deleteItinerary,
+	getItineraries,
+	// getAllItineraries,
+	getItinerariesByCreator,
+	// searchItineraries,
+	// getSortedItineraries,
+	// filterItineraries,
 };

@@ -2,11 +2,14 @@ import { useState, useEffect } from "react";
 import GenericFilter from "@/components/custom/GenericFilter";
 import Card from "@/components/custom/Card";
 import CardContainer from "@/components/CardContainer";
-import { getAllActivities } from "@/services/ActivityApiHandler";
+import { getAllItineraries } from "@/services/ItineraryApiHandler";
+import { getAllTags } from "@/services/AdminApiHandler";
 
 function Itineraries() {
 	const [loading, setLoading] = useState(false);
 	const [products, setProducts] = useState([]);
+	const [tags, setTags] = useState([]);
+	const [tagNames, setTagNames] = useState([]);
 	const [activeFilters, setActiveFilters] = useState({
 		name: "",
 		budget: {
@@ -17,13 +20,14 @@ function Itineraries() {
 			start: "",
 			end: "",
 		},
-		category: {
+		tag: {
 			selected: "",
 		},
 		rating: {
 			min: 0,
 			max: 5,
 		},
+		language: "",
 		sortBy: "",
 		sortOrder: "",
 	});
@@ -43,16 +47,20 @@ function Itineraries() {
 			type: "date",
 			label: "Date",
 		},
-		category: {
+		tag: {
 			type: "select",
-			label: "Category",
-			options: ["Adventure", "Relaxation", "Cultural"],
+			label: "Tag",
+			options: tagNames,
 		},
 		rating: {
 			type: "range",
 			label: "Ratings",
 			min: 0,
 			max: 5,
+		},
+		language: {
+			type: "search",
+			label: "Language",
 		},
 		sortBy: {
 			type: "select",
@@ -67,14 +75,21 @@ function Itineraries() {
 	};
 
 	// Function to fetch products
-	const fetchActivities = async () => {
+	const fetchItineraries = async () => {
 		setLoading(true);
-		const response = await getAllActivities(
+		let tagToSend = "";
+		if (activeFilters.tag.selected !== "") {
+			tagToSend = tags.find(
+				(tag) => tag.name === activeFilters.tag.selected
+			);
+		}
+		const response = await getAllItineraries(
 			activeFilters.name,
-			activeFilters.budget.max, // Pass min and max separately
-			activeFilters.date, // Pass start and end separately
-			activeFilters.category.selected,
-			activeFilters.rating.min,
+			activeFilters.budget,
+			activeFilters.date,
+			tagToSend,
+			activeFilters.rating,
+			activeFilters.language,
 			activeFilters.sortBy.selected,
 			activeFilters.sortOrder.selected
 		);
@@ -91,13 +106,30 @@ function Itineraries() {
 	useEffect(() => {
 		const delayDebounceFn = setTimeout(() => {
 			// Only fetch products after a 1-second delay
-			fetchActivities();
+			fetchItineraries();
 		}, 500); // Adjust debounce time as needed (e.g., 500ms, 1000ms)
 
 		// Clear the timeout if activeFilters changes before the timeout is complete
 		// console.log("activeFilters changed", activeFilters);
 		return () => clearTimeout(delayDebounceFn);
 	}, [activeFilters]); // Dependency on activeFilters
+
+	const fetchTags = async () => {
+		const response = await getAllTags();
+		if (!response.error) {
+			setTags(response.data);
+			const set = new Set(
+				response.data.map((tag) => tag.name)
+			);
+			setTagNames(Array.from(set));
+		} else {
+			console.error(response.message);
+		}
+	};
+
+	useEffect(() => {
+		fetchTags();
+	}, []);
 
 	return (
 		<div className="py-8 px-24 max-w-[1200px] flex flex-col gap-4 mx-auto">
@@ -111,9 +143,7 @@ function Itineraries() {
 					activeFilters={activeFilters}
 					setActiveFilters={setActiveFilters}
 				/>
-				{!loading && (
-					<CardContainer cardList={products} CardComponent={Card} />
-				)}
+				{!loading && <CardContainer cardList={products} type={"tourGuide"} />}
 			</div>
 		</div>
 	);
