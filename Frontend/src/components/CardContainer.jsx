@@ -1,5 +1,7 @@
+
+import Card from "./custom/Card";
 /* eslint-disable react/prop-types */
-const CardContainer = ({ cardList, CardComponent }) => {
+const CardContainer = ({ cardList, type }) => {
 	// Provide a default value
 	return (
 		<div className="grid gap-6 grid-cols-3 w-full">
@@ -9,7 +11,7 @@ const CardContainer = ({ cardList, CardComponent }) => {
 						key={index}
 						className="card-container h-fit"
 					>
-						<CardComponent data={item} />
+						<Card data={item} type={type} />
 					</div>
 				))
 			) : (

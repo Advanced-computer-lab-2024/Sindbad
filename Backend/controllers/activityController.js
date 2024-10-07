@@ -184,131 +184,142 @@ const deleteActivity = async (req, res) => {
  * @returns {Object} - A JSON object containing an array of activities or an error message.
  */
 const getActivities = async (req, res) => {
-  try {
-    const {
-      searchTerm,
-      budget,
-      date,
-      category,
-      rating,
-      sortBy,
-      sortOrder = "asc",
-      page = 1,
-      limit = 10,
-    } = req.query;
+	try {
+		const {
+			searchTerm,
+			budget = {}, // Initialize budget as an empty object
+			date,
+			category,
+			rating = {}, // Initialize rating as an empty object
+			sortBy,
+			sortOrder = "asc",
+			page = 1,
+			limit = 10,
+		} = req.query;
 
-    // Set default filter for upcoming activities
-    const filterCriteria = {
-      dateTime: { $gte: new Date() },
-    };
+		// Set default filter for upcoming activities
+		const filterCriteria = {
+			dateTime: { $gte: new Date() },
+		};
 
-    // Apply budget filter if provided
-    if (budget) {
-      const parsedBudget = Number(budget);
-      filterCriteria.$or = [
-        { price: { $lte: parsedBudget } }, // For fixed price activities
-        { "price.min": { $lte: parsedBudget } }, // For activities with price ranges
-      ];
-    }
+		// Apply budget filter if provided (handling both min and max values)
+		if (budget.min || budget.max) {
+			filterCriteria.$or = [
+				{
+					price: {
+						...(budget.min && { $gte: Number(budget.min) }), // Minimum budget
+						...(budget.max && { $lte: Number(budget.max) }), // Maximum budget
+					},
+				},
+				{
+					"price.min": {
+						...(budget.min && { $gte: Number(budget.min) }), // Minimum budget for range prices
+						...(budget.max && { $lte: Number(budget.max) }), // Maximum budget for range prices
+					},
+				},
+			];
+		}
 
-    // Apply date filter if provided
-    if (date) {
-      if (date.start) {
-        filterCriteria.dateTime.$gte = new Date(date.start); // Start date
-      }
-      if (date.end) {
-        // Set end date to the end of the day
-        const endDate = new Date(date.end);
-        endDate.setHours(23, 59, 59, 999); // Set time to the end of the day
-        filterCriteria.dateTime.$lte = endDate; // End date
-      }
-    }
+		// Apply date filter if provided
+		if (date) {
+			if (date.start) {
+				filterCriteria.dateTime.$gte = new Date(date.start); // Start date
+			}
+			if (date.end) {
+				const endDate = new Date(date.end);
+				endDate.setHours(23, 59, 59, 999); // Set time to the end of the day
+				filterCriteria.dateTime.$lte = endDate; // End date
+			}
+		}
 
-    // Apply category filter if provided
-    if (category) {
-      filterCriteria.category = category;
-    }
+		// Apply category filter if provided
+		if (category) {
+			filterCriteria.category = category;
+		}
 
-    // Apply rating filter if provided
-    if (rating) {
-      filterCriteria.rating = { $gte: rating };
-    }
+		// Apply rating filter if provided (handling both min and max values)
+		if (rating.min || rating.max) {
+			filterCriteria.rating = {
+				...(rating.min && { $gte: Number(rating.min) }), // Minimum rating
+				...(rating.max && { $lte: Number(rating.max) }), // Maximum rating
+			};
+		}
 
-    // Fetch activities that match the filter criteria
-    let activities = await Activity.find(filterCriteria);
+		// Fetch activities that match the filter criteria
+		let activities = await Activity.find(filterCriteria);
 
-    // Apply search term filter if provided
-    if (searchTerm) {
-      const regex = new RegExp(searchTerm, "i"); // Case-insensitive search
-      const activitiesByName = await Activity.find({ name: regex });
-      const categories = await Category.find({ name: regex });
-      const categoryIds = categories.map((category) => category._id);
-      const activitiesByCategory = await Activity.find({
-        category: { $in: categoryIds },
-      });
-      const tags = await Tag.find({ name: regex });
-      const tagIds = tags.map((tag) => tag._id);
-      const activitiesByTags = await Activity.find({
-        tags: { $in: tagIds },
-      });
+		// Apply search term filter if provided
+		if (searchTerm) {
+			const regex = new RegExp(searchTerm, "i"); // Case-insensitive search
+			const activitiesByName = await Activity.find({ name: regex });
+			const categories = await Category.find({ name: regex });
+			const categoryIds = categories.map((category) => category._id);
+			const activitiesByCategory = await Activity.find({
+				category: { $in: categoryIds },
+			});
+			const tags = await Tag.find({ name: regex });
+			const tagIds = tags.map((tag) => tag._id);
+			const activitiesByTags = await Activity.find({
+				tags: { $in: tagIds },
+			});
 
-      const allSearchedActivities = [
-        ...activitiesByName,
-        ...activitiesByCategory,
-        ...activitiesByTags,
-      ];
+			const allSearchedActivities = [
+				...activitiesByName,
+				...activitiesByCategory,
+				...activitiesByTags,
+			];
 
-      const uniqueSearchedActivities = [
-        ...new Set(allSearchedActivities.map((activity) => activity._id)),
-      ].map((id) =>
-        allSearchedActivities.find((activity) => activity._id === id)
-      );
+			const uniqueSearchedActivities = [
+				...new Set(allSearchedActivities.map((activity) => activity._id)),
+			].map((id) =>
+				allSearchedActivities.find((activity) => activity._id === id)
+			);
 
-      // Filter original activities list with searched activities
-      activities = activities.filter((activity) =>
-        uniqueSearchedActivities.some(
-          (searchedActivity) =>
-            searchedActivity._id.toString() === activity._id.toString()
-        )
-      );
-    }
+			// Filter original activities list with searched activities
+			activities = activities.filter((activity) =>
+				uniqueSearchedActivities.some(
+					(searchedActivity) =>
+						searchedActivity._id.toString() === activity._id.toString()
+				)
+			);
+		}
 
-    if (activities.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No activities found matching the criteria" });
-    }
+		if (activities.length === 0) {
+			return res
+				.status(404)
+				.json({ message: "No activities found matching the criteria" });
+		}
 
-    // Apply sorting
-    const order = sortOrder === "asc" ? 1 : -1;
+		// Apply sorting
+		const order = sortOrder === "asc" ? 1 : -1;
 
-    if (sortBy === "price") {
-      activities = activities.sort((a, b) =>
-        order === 1
-          ? getPriceValue(a) - getPriceValue(b)
-          : getPriceValue(b) - getPriceValue(a)
-      );
-    } else if (sortBy === "rating") {
-      activities = activities.sort((a, b) =>
-        order === 1 ? a.rating - b.rating : b.rating - a.rating
-      );
-    }
+		if (sortBy === "price") {
+			activities = activities.sort((a, b) =>
+				order === 1
+					? getPriceValue(a) - getPriceValue(b)
+					: getPriceValue(b) - getPriceValue(a)
+			);
+		} else if (sortBy === "rating") {
+			activities = activities.sort((a, b) =>
+				order === 1 ? a.rating - b.rating : b.rating - a.rating
+			);
+		}
 
-    function getPriceValue(product) {
-      return product.price.min || product.price;
-    }
+		function getPriceValue(product) {
+			return product.price.min || product.price;
+		}
 
-    // Apply pagination
-    const skip = (page - 1) * limit;
-    activities = activities.slice(skip, skip + Number(limit));
+		// Apply pagination
+		const skip = (page - 1) * limit;
+		activities = activities.slice(skip, skip + Number(limit));
 
-    res.status(200).json(activities);
-  } catch (error) {
-    res.status(500).json({
-      message: "Error searching, filtering, or sorting activities",
-      error: error.message,
-    });
-  }
+		res.status(200).json(activities);
+	} catch (error) {
+		res.status(500).json({
+			message: "Error searching, filtering, or sorting activities",
+			error: error.message,
+		});
+	}
 };
 module.exports = {
   setActivity,

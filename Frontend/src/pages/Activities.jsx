@@ -77,10 +77,10 @@ function Activities() {
 		}
 		const response = await getAllActivities(
 			activeFilters.name,
-			activeFilters.budget.max, // Pass min and max separately
+			activeFilters.budget,
 			activeFilters.date, // Pass start and end separately
 			categoryToSend, // Send the category ID
-			activeFilters.rating.min,
+			activeFilters.rating,
 			activeFilters.sortBy.selected,
 			activeFilters.sortOrder.selected
 		);
@@ -135,7 +135,10 @@ function Activities() {
 					setActiveFilters={setActiveFilters}
 				/>
 				{!loading && (
-					<CardContainer cardList={products} CardComponent={Card} />
+					<CardContainer
+						cardList={products}
+						type={"tourGuide"}
+					/>
 				)}
 			</div>
 		</div>

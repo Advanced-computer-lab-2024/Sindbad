@@ -11,6 +11,8 @@ import {
 import GenericForm from "./genericForm";
 import DeleteForm from "./deleteForm";
 
+//TODO: The type should be the type of the card and not the type of the user, this is very confusing
+//Change this also in CarContainer.jsx
 function Card({ data, id, userId, type }) {
     return (
         <article className="w-full flex flex-col border border-primary-700/80 rounded-md overflow-clip bg-gradient-to-br from-dark to-primary-900/50 group">
