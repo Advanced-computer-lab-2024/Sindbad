@@ -68,9 +68,7 @@ function Profile() {
         console.log("userType:", userType, "userData:", userData);
         let response;
         if (userType === "advertiser") {
-            console.log(userId)
             response = await getMyActivities(userId);
-            console.log(response);
             if (response.error) {
                 console.error(response.message);
             } else {

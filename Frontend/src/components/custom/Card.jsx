@@ -12,6 +12,8 @@ import {
 import GenericForm from "./genericForm";
 import DeleteForm from "./deleteForm";
 
+//TODO: The type should be the type of the card and not the type of the user, this is very confusing
+//Change this also in CarContainer.jsx
 function Card({ data, id, userId, type }) {
     const navigate = useNavigate();
     return (

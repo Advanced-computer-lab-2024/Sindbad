@@ -13,49 +13,41 @@ const locationSchema = z.object({
 });
 
 const TouristSchema = {
-	email: z
-		.string()
-		.email({ message: "Invalid email address!" })
-		.min(1, { message: "Email is required!" }),
-
-	mobileNumber: z
-		.string()
-		.regex(/^\+?[1-9]\d{1,14}$/, { message: "Invalid mobile number!" })
-		.min(1, { message: "Mobile number is required!" }),
-
-	nationality: z.string().min(1, { message: "Nationality is required!" }),
-
-	DOB: z
-		.string({})
-		.min(1, { message: "Date of birth is required!" })
-		.refine((val) => !isNaN(Date.parse(val)), {
-			message: "Invalid date of birth",
-		}),
-	//   required_error: "Date of birth is required!",
-	//   invalid_type_error: "Invalid date format!",
-	// }),
-
-	job: z.string().min(1, { message: "Job is required!" }),
-
-	// addresses: z.array(
-	//   z.object({
-	//     label: z.string().min(1, { message: "Label is required!" }),
-	//     street: z.string().min(1, { message: "Street is required!" }),
-	//     city: z.string().min(1, { message: "City is required!" }),
-	//     state: z.string().min(1, { message: "State is required!" }),
-	//     zip: z.string().min(1, { message: "Zip code is required!" }),
-	//     country: z.string().min(1, { message: "Country is required!" }),
-	//   })
-	// ).default([]),
+    email: z.string()
+      .email({ message: "Invalid email address!" })
+      .min(1, { message: "Email is required!" }),
+    
+    mobileNumber: z.string()
+      .regex(/^\+?[1-9]\d{1,14}$/, { message: "Invalid mobile number!" })
+      .min(1, { message: "Mobile number is required!" }),
+    
+    nationality: z.string()
+      .min(1, { message: "Nationality is required!" }),
+  
+    //   required_error: "Date of birth is required!",
+    //   invalid_type_error: "Invalid date format!",
+    // }),
+  
+    job: z.string()
+      .min(1, { message: "Job is required!" }),
+  
+    // addresses: z.array(
+    //   z.object({
+    //     label: z.string().min(1, { message: "Label is required!" }),
+    //     street: z.string().min(1, { message: "Street is required!" }),
+    //     city: z.string().min(1, { message: "City is required!" }),
+    //     state: z.string().min(1, { message: "State is required!" }),
+    //     zip: z.string().min(1, { message: "Zip code is required!" }),
+    //     country: z.string().min(1, { message: "Country is required!" }),
+    //   })
+    // ).default([]),
 };
 
 const TourGuideSchema = {
-	email: z
-		.string()
-		.email({ message: "Invalid email address!" })
-		.min(1, { message: "Email is required!" }),
-
-	username: z.string().min(1, { message: "Username is required!" }),
+  email: z.string()
+    .email({ message: "Invalid email address!" })
+    .min(1, { message: "Email is required!" }),
+  
 
 	mobileNumber: z
 		.string()
@@ -69,7 +61,6 @@ const SellerSchema = {
 		.email({ message: "Invalid email address!" })
 		.min(1, { message: "Email is required!" }),
 
-	username: z.string().min(1, { message: "Username is required!" }),
 
 	firstName: z.string().optional(),
 
@@ -84,9 +75,7 @@ const AdvertiserSchema = {
 		.email({ message: "Invalid email address!" })
 		.min(1, { message: "Email is required!" }),
 
-	username: z.string().min(1, { message: "Username is required!" }),
-
-	websiteLink: z.string(),
+  websiteLink: z.string(),
 
 	hotline: z
 		.string()
@@ -129,9 +118,8 @@ const itinerarySchema = {
 		.string()
 		.min(1, { message: "Please add the pick-up location" }),
 
-	dropOffLocation: z
-		.string()
-		.min(1, { message: "Please add the drop-off location" }),
+  dropOffLocation: z.string().min(1, { message: "Please add the drop-off location" }),
+
 };
 const productSchema = {
 	name: z.string().min(1, { message: "Please add the product name" }),
@@ -180,6 +168,8 @@ const activitySchema = {
 		.number()
 		.min(0, { message: "Discount must be between 0 and 100" })
 		.max(100, { message: "Discount must be between 0 and 100" }),
+
+    isBookingOpen: z.boolean(),
 };
 
 // Schema for opening hours per day
@@ -223,8 +213,7 @@ const siteSchema = {
 	location: locationSchema,
 	openingHours: daysOfWeek, // Opening hours per day of the week
 	ticketPrices: ticketPricesSchema, // Explicit keys for ticket categories
-	tags: z.array(z.string().nonempty()), // assuming ObjectId can be represented as a string
-	creatorId: z.string().nonempty("Creator ID is required"), // Assuming creatorId can be treated as a string
+	tags: z.array(z.string().nonempty()), // assuming ObjectId can be represented as a string// Assuming creatorId can be treated as a string
 };
 
 const companyProfileSchema = {

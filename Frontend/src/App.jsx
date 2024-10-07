@@ -5,15 +5,17 @@ import MainPage from "./pages/MainPage";
 import LogIn from "./pages/LogIn";
 import SignUp from "./pages/SignUp";
 import { Navigate } from "react-router-dom";
-import Timeline from "./pages/Timeline";
 import Itinerary from "./pages/ItineraryView";
 import Activity from "./pages/ActivityView";
 import Site from "./pages/SiteView";
 import ProductView from "./pages/ProductView";
-import AdminManagementView from "./pages/AdminManagementView"; 
+import AdminManagementView from "./pages/AdminManagementView";
 
 import { useUser } from "@/state management/userInfo";
 import ShoppingPage from "./pages/ShoppingPage";
+import ActivitiesPage from "./pages/Activities";
+import SitesPage from "./pages/Sites";
+import ItinerariesPage from "./pages/Itineraries";
 
 function App() {
 	const { id } = useUser();
@@ -27,7 +29,9 @@ function App() {
 						element={<Navigate to={`/app/profile/${id}`} replace />}
 					/>
 					<Route path="profile/:userId" element={<Profile />} />
-					<Route path="timeline" element={<Timeline />} />
+					<Route path="activities" element={<ActivitiesPage />} />
+					<Route path="sites" element={<SitesPage />} />
+					<Route path="itineraries" element={<ItinerariesPage />} />
 					<Route path="store" element={<ShoppingPage />} />
 					<Route path="product/:productId" element={<ProductView />} />
 					<Route path="management" element={<AdminManagementView />} />

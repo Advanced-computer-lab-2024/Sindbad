@@ -6,9 +6,9 @@ export function PriceFilter({ minPrice, maxPrice, setMinPrice, setMaxPrice, pric
         setMinPrice(value);
     };
 
-    const handleMaxPriceChange = (value) => {
-        setMaxPrice(value);
-    };
+	const handleMaxPriceChange = (value) => {
+		setMaxPrice(value);
+	};
 
     return (
         <div className="">
@@ -58,6 +58,6 @@ export function PriceFilter({ minPrice, maxPrice, setMinPrice, setMaxPrice, pric
             {/* <p className="text-sm text-muted-foreground">
                 Showing products between ${minPrice} and ${maxPrice}
             </p> */}
-        </div>
-    );
+		</div>
+	);
 }
