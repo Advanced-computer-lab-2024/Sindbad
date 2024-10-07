@@ -54,8 +54,23 @@ const getAllProducts = async (req, res) => {
   }
 };
 
-  
-  
+
+
+const getMinMaxPrices = async (req, res) => {
+  //get minimum price of all products
+  const minProduct = await Product.findOne({}, {}, { sort: { price: 1 } });
+  const minProductsPrice = minProduct ? minProduct.price : null; 
+  //get maximum price of all products
+  const maxProduct = await Product.findOne({}, {}, { sort: { price: -1 } });
+  const maxProductsPrice = maxProduct ? maxProduct.price : null;
+
+
+  res.json({
+    minProductsPrice,
+    maxProductsPrice
+  });
+}
+ 
 
 const createProduct = async (req, res) => {
   try {
@@ -192,4 +207,5 @@ module.exports = {
     getAllProducts,
     getProductById,
     addReview,
+    getMinMaxPrices,
   };
