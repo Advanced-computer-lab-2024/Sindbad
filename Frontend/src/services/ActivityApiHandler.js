@@ -28,6 +28,9 @@ export const getAllActivities = async (searchTerm, budget, date, category, ratin
 
         if (sortBy) params.sortBy = sortBy;
         if (sortOrder) params.sortOrder = sortOrder;
+
+        console.log('params:', params);
+
         // Make the request with the dynamic params
         const response = await axios.get(`${baseURL}/activity/`, {
             headers: {
@@ -35,6 +38,8 @@ export const getAllActivities = async (searchTerm, budget, date, category, ratin
             },
             params, // Pass the dynamically built params object
         });
+
+        console.log('response:', response);
 
         // Handle the response as before
         if (response.status === 200) {

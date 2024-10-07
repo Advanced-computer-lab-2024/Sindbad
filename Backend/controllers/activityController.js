@@ -187,140 +187,94 @@ const getActivities = async (req, res) => {
 	try {
 		const {
 			searchTerm,
-			budget = {}, // Initialize budget as an empty object
-			date,
+			budgetMin,
+			budgetMax,
+			startDate,
+			endDate,
 			category,
-			rating = {}, // Initialize rating as an empty object
-			sortBy,
-			sortOrder = "asc",
+			ratingMin,
+			ratingMax,
+			sortBy = 'dateTime', // Default sorting by activity date
+			sortOrder = 'asc',
 			page = 1,
 			limit = 10,
 		} = req.query;
 
-		// Set default filter for upcoming activities
-		const filterCriteria = {
-			dateTime: { $gte: new Date() },
+		// Create filter object based on provided criteria
+		const filter = {
+			dateTime: { $gte: new Date() }, // Only upcoming activities by default
 		};
 
-		// Apply budget filter if provided (handling both min and max values)
-		if (budget.min || budget.max) {
-			filterCriteria.$or = [
-				{
-					price: {
-						...(budget.min && { $gte: Number(budget.min) }), // Minimum budget
-						...(budget.max && { $lte: Number(budget.max) }), // Maximum budget
-					},
-				},
-				{
-					"price.min": {
-						...(budget.min && { $gte: Number(budget.min) }), // Minimum budget for range prices
-						...(budget.max && { $lte: Number(budget.max) }), // Maximum budget for range prices
-					},
-				},
+		// Budget filter
+		if (budgetMin || budgetMax) {
+			filter.$or = [
+				{ price: { ...(budgetMin && { $gte: +budgetMin }), ...(budgetMax && { $lte: +budgetMax }) } },
+				{ "price.min": { ...(budgetMin && { $gte: +budgetMin }), ...(budgetMax && { $lte: +budgetMax }) } },
 			];
 		}
 
-		// Apply date filter if provided
-		if (date) {
-			if (date.start) {
-				filterCriteria.dateTime.$gte = new Date(date.start); // Start date
-			}
-			if (date.end) {
-				const endDate = new Date(date.end);
-				endDate.setHours(23, 59, 59, 999); // Set time to the end of the day
-				filterCriteria.dateTime.$lte = endDate; // End date
-			}
-		}
-
-		// Apply category filter if provided
-		if (category) {
-			filterCriteria.category = category;
-		}
-
-		// Apply rating filter if provided (handling both min and max values)
-		if (rating.min || rating.max) {
-			filterCriteria.rating = {
-				...(rating.min && { $gte: Number(rating.min) }), // Minimum rating
-				...(rating.max && { $lte: Number(rating.max) }), // Maximum rating
+		// Date filter
+		if (startDate || endDate) {
+			filter.dateTime = {
+				...(startDate && { $gte: new Date(startDate) }),
+				...(endDate && { $lte: new Date(new Date(endDate).setHours(23, 59, 59, 999)) }), // End of the day
 			};
 		}
 
-		// Fetch activities that match the filter criteria
-		let activities = await Activity.find(filterCriteria);
-
-		// Apply search term filter if provided
-		if (searchTerm) {
-			const regex = new RegExp(searchTerm, "i"); // Case-insensitive search
-			const activitiesByName = await Activity.find({ name: regex });
-			const categories = await Category.find({ name: regex });
-			const categoryIds = categories.map((category) => category._id);
-			const activitiesByCategory = await Activity.find({
-				category: { $in: categoryIds },
-			});
-			const tags = await Tag.find({ name: regex });
-			const tagIds = tags.map((tag) => tag._id);
-			const activitiesByTags = await Activity.find({
-				tags: { $in: tagIds },
-			});
-
-			const allSearchedActivities = [
-				...activitiesByName,
-				...activitiesByCategory,
-				...activitiesByTags,
-			];
-
-			const uniqueSearchedActivities = [
-				...new Set(allSearchedActivities.map((activity) => activity._id)),
-			].map((id) =>
-				allSearchedActivities.find((activity) => activity._id === id)
-			);
-
-			// Filter original activities list with searched activities
-			activities = activities.filter((activity) =>
-				uniqueSearchedActivities.some(
-					(searchedActivity) =>
-						searchedActivity._id.toString() === activity._id.toString()
-				)
-			);
+		// Category filter
+		if (category) {
+			filter.category = category;
 		}
+
+		// Rating filter
+		if (ratingMin || ratingMax) {
+			filter.rating = {
+				...(ratingMin && { $gte: +ratingMin }),
+				...(ratingMax && { $lte: +ratingMax }),
+			};
+		}
+
+		// Search term filter (name, category, or tags)
+		if (searchTerm) {
+			const regex = new RegExp(searchTerm, "i"); // Case-insensitive
+			const categories = await Category.find({ name: regex }).select('_id');
+			const tags = await Tag.find({ name: regex }).select('_id');
+			
+			filter.$or = [
+				{ name: regex },
+				{ category: { $in: categories.map(c => c._id) } },
+				{ tags: { $in: tags.map(t => t._id) } },
+			];
+		}
+
+		// Sorting and pagination
+		const sortOptions = { [sortBy]: sortOrder === 'asc' ? 1 : -1 };
+		const skip = (page - 1) * limit;
+
+		// Fetch activities with filters, sorting, and pagination
+    // TODO: Add pagination back after 
+		const activities = await Activity.find(filter)
+			.sort(sortOptions)
+			//.skip(skip)
+			//.limit(+limit);
 
 		if (activities.length === 0) {
-			return res
-				.status(404)
-				.json({ message: "No activities found matching the criteria" });
+			return res.status(204).send(); // 204 No Content for no results
 		}
 
-		// Apply sorting
-		const order = sortOrder === "asc" ? 1 : -1;
-
-		if (sortBy === "price") {
-			activities = activities.sort((a, b) =>
-				order === 1
-					? getPriceValue(a) - getPriceValue(b)
-					: getPriceValue(b) - getPriceValue(a)
-			);
-		} else if (sortBy === "rating") {
-			activities = activities.sort((a, b) =>
-				order === 1 ? a.rating - b.rating : b.rating - a.rating
-			);
-		}
-
-		function getPriceValue(product) {
-			return product.price.min || product.price;
-		}
-
-		// Apply pagination
-		const skip = (page - 1) * limit;
-		activities = activities.slice(skip, skip + Number(limit));
-
+		// Respond with activities
 		res.status(200).json(activities);
+
 	} catch (error) {
+		console.error(error);
 		res.status(500).json({
-			message: "Error searching, filtering, or sorting activities",
+			message: "Error occurred while fetching activities.",
 			error: error.message,
 		});
 	}
 };
+
+
 module.exports = {
   setActivity,
   getActivity,
