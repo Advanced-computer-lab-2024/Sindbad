@@ -72,7 +72,7 @@ function LogIn() {
             navigate(`/app/store`, { replace: true });
         }
         else if (values.username === "advertiser" && values.password === "advertiser") {
-            dispatch(login({ type: "advertiser", id: "66f823447b0fe45d3c6d3768" }));
+            dispatch(login({ type: "advertiser", id: "66f9741bf74fa1c054a9b166" }));
             navigate(`/app/profile`, { replace: true });
         }
         else if (values.username === "tourismGovernor" && values.password === "tourismGovernor") {
