@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 
-export function PriceFilter({ minPrice, maxPrice, setMinPrice, setMaxPrice }) {
+export function PriceFilter({ minPrice, maxPrice, setMinPrice, setMaxPrice, priceRange }) {
     const handleMinPriceChange = (value) => {
         setMinPrice(value);
     };
@@ -21,8 +21,8 @@ export function PriceFilter({ minPrice, maxPrice, setMinPrice, setMaxPrice }) {
                     <Input
                         id="min-price"
                         type="number"
-                        min="0"
-                        max={maxPrice}
+                        min={priceRange.minProductsPrice}
+                        max={priceRange.maxProductsPrice}
                         value={minPrice}
                         onChange={(e) => handleMinPriceChange(Number(e.target.value))}
                         className="w-16 h-8 p-2"
@@ -36,8 +36,8 @@ export function PriceFilter({ minPrice, maxPrice, setMinPrice, setMaxPrice }) {
                     <Input
                         id="max-price"
                         type="number"
-                        min={minPrice}
-                        max="1000"
+                        min={priceRange.minProductsPrice}
+                        max={priceRange.maxProductsPrice}
                         value={maxPrice}
                         onChange={(e) => handleMaxPriceChange(Number(e.target.value))}
                         className="w-16 h-8 p-2"
@@ -45,8 +45,8 @@ export function PriceFilter({ minPrice, maxPrice, setMinPrice, setMaxPrice }) {
                 </div>
             </div>
             <Slider
-                min={0}
-                max={1000}
+                min={priceRange.minProductsPrice}
+                max={priceRange.maxProductsPrice}
                 step={10}
                 value={[minPrice, maxPrice]}
                 onValueChange={(values) => {

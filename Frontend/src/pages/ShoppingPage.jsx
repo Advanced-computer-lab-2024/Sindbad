@@ -2,7 +2,7 @@ import ProductCard from "@/components/custom/ProductCard";
 import { PriceFilter } from "@/components/ui/price-filter";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
-import { getAllProducts } from "@/services/ProductApiHandler";
+import { getAllProducts, getPriceMinMax } from "@/services/ProductApiHandler";
 import { useUser } from "@/state management/userInfo";
 import {
     Select,
@@ -28,6 +28,7 @@ function ShoppingPage() {
     const [maxPrice, setMaxPrice] = useState(1000);
     const [loading, setLoading] = useState(false);
     const { type, id } = useUser();
+    const [priceRange, setPriceRange] = useState({ minProductsPrice: 0, maxProductsPrice: 1000 });
 
     const [sortOrder, setSortOrder] = useState("none"); // Default value is 'none' for no sorting
 
@@ -43,10 +44,26 @@ function ShoppingPage() {
         setLoading(false);
     };
 
+    const getPriceRange = async () => {
+        const response = await getPriceMinMax();
+        if (!response.error) {
+            setPriceRange(response);
+            setMinPrice(response.minProductsPrice);
+            setMaxPrice(response.maxProductsPrice);
+            console.log(response)
+        } else {
+            console.error(response.message);
+        }
+    };
+
     // Fetch products whenever the search, price range, or sortOrder changes
     useEffect(() => {
         fetchProducts();
     }, [search, minPrice, maxPrice, sortOrder]);
+
+    useEffect(() => {
+        getPriceRange();
+    }, [search, sortOrder]);
 
     return (
         <div className="py-8 px-24 max-w-[1200px] flex flex-col gap-4 mx-auto">
@@ -85,6 +102,7 @@ function ShoppingPage() {
                         maxPrice={maxPrice}
                         setMinPrice={setMinPrice}
                         setMaxPrice={setMaxPrice}
+                        priceRange={priceRange}
                     />
                     <div>
                         <h2 className="text-md font-semibold mb-2">Sort by</h2>
