@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
 import GenericFilter from "@/components/custom/GenericFilter";
-import CardContainer from "@/components/CardContainer";
+import CardContainer from "@/components/custom/CardContainer";
 import { getAllSites } from "@/services/SiteApiHandler";
 import { getAllTags } from "@/services/AdminApiHandler";
 
@@ -90,7 +90,7 @@ function Sites() {
 					setActiveFilters={setActiveFilters}
 				/>
 				{!loading && (
-					<CardContainer cardList={sites} type={"site"} />
+					<CardContainer cardList={sites} cardType={"site"} />
 				)}
 			</div>
 		</div>

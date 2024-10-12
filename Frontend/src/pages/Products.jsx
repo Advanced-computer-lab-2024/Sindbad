@@ -27,7 +27,7 @@ function ShoppingPage() {
 	const [minPrice, setMinPrice] = useState(0);
 	const [maxPrice, setMaxPrice] = useState(1000);
 	const [loading, setLoading] = useState(false);
-	const { type, id } = useUser();
+	const { role, id } = useUser();
 	const [priceRange, setPriceRange] = useState({
 		minPrice: 0,
 		maxPrice: 1000,
@@ -78,7 +78,7 @@ function ShoppingPage() {
 			<div className="flex items-center gap-6">
 				<h1 className="text-3xl font-extrabold shrink-0">Products</h1>
 				<hr className="border-neutral-700 border w-full mt-1.5" />
-				{type === "admin" && (
+				{role === "admin" && (
 					<Dialog>
 						<DialogTrigger className="shrink-0 mt-1.5 text-neutral-600 hover:text-light transition-all">
 							<CirclePlus size={24} />
@@ -139,9 +139,8 @@ function ShoppingPage() {
 							<ProductCard
 								key={index}
 								data={item}
-								type={type}
 								id={id}
-								userId={item.seller}
+								profilelId={item.seller}
 							/>
 						))
 					) : (

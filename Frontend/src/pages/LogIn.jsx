@@ -23,17 +23,17 @@ function LogIn() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const {type, id} = useUser();
+    const {role, id} = useUser();
 
-    useEffect(() => {
-        const getUserData = async () => {
-            if (userData) {
-                dispatch(login({ type: type, id: id }));
-            }
-        };
+    // useEffect(() => {
+    //     const getUserData = async () => {
+    //         if (userData) {
+    //             dispatch(login({ role: role, id: id }));
+    //         }
+    //     };
 
-        getUserData();
-    }, [dispatch]);
+    //     getUserData();
+    // }, [dispatch]);
 
     const [signUpRedirect, setSignUpRedirect] = useState(false);
 
@@ -60,31 +60,31 @@ function LogIn() {
 
     function onSubmit(values) {
         if (values.username === "tourist" && values.password === "tourist") {
-            dispatch(login({ type: "tourist", id: "66f97308f74fa1c054a9b15c" }));
+            dispatch(login({ role: "tourist", id: "66f97308f74fa1c054a9b15c" }));
             navigate(`/app/itineraries`, { replace: true });
         }
         else if (values.username === "tourGuide" && values.password === "tourGuide") {
-            dispatch(login({ type: "tourGuide", id: "66f8630f55f21e927d7455cc" }));
+            dispatch(login({ role: "tourGuide", id: "66f8630f55f21e927d7455cc" }));
             navigate(`/app/profile`, { replace: true });
         }
         else if (values.username === "seller" && values.password === "seller") {
-            dispatch(login({ type: "seller", id: "66f99b77497c76922f03104e" }));
+            dispatch(login({ role: "seller", id: "66f99b77497c76922f03104e" }));
             navigate(`/app/store`, { replace: true });
         }
         else if (values.username === "advertiser" && values.password === "advertiser") {
-            dispatch(login({ type: "advertiser", id: "66f9741bf74fa1c054a9b166" }));
+            dispatch(login({ role: "advertiser", id: "66f9741bf74fa1c054a9b166" }));
             navigate(`/app/profile`, { replace: true });
         }
         else if (values.username === "tourismGovernor" && values.password === "tourismGovernor") {
-            dispatch(login({ type: "tourismGovernor", id: "66fff189a0a316baace5a99b" }));
+            dispatch(login({ role: "tourismGovernor", id: "66fff189a0a316baace5a99b" }));
             navigate(`/app/profile`, { replace: true });
         }
         else if (values.username === "admin" && values.password === "admin") {
-            dispatch(login({ type: "admin", id: "66ffd995f2226d9aa3157374" }));
+            dispatch(login({ role: "admin", id: "66ffd995f2226d9aa3157374" }));
             navigate(`/app/management`, { replace: true });
         }
         else if (values.username === "guest" && values.password === "guest") {
-            dispatch(login({ type: "guest", id: null }));
+            dispatch(login({ role: "guest", id: null }));
             navigate(`/app/itineraries`, { replace: true });
         }
         else {

@@ -12,26 +12,26 @@ import {
 import GenericForm from "../genericForm";
 import TagManagement from "../admin/TagManagement";
 
-function Timeline({ userData, userId, id, userType, cardData }) {
-    const { type } = useUser();
+function Timeline({ userData, profileId, id, profileRole, cardData }) {
+    const { role } = useUser();
     return (
 			<div className="flex flex-col gap-6">
 				<div className="flex items-center gap-6">
 					<h1 className="text-3xl font-extrabold shrink-0">
-						{userType === "tourist"
+						{profileRole === "tourist"
 							? "Bookmarks"
-							: userType === "seller"
+							: profileRole === "seller"
 							? "Products"
-							: userType === "advertiser"
+							: profileRole === "advertiser"
 							? "Activities"
-							: userType === "tourismGovernor"
+							: profileRole === "tourismGovernor"
 							? "Historical Places & Museums"
 							: "Itineraries"}
 					</h1>
-					<hr className="border-neutral-700 border w-full mt-1.5" />
-					{type !== "tourist" && userId === id && (
+					<hr className="border-neutral-300 border w-full mt-1.5" />
+					{role !== "tourist" && profileId === id && (
 						<Dialog>
-							<DialogTrigger className="shrink-0 mt-1.5 text-neutral-600 hover:text-light transition-all">
+							<DialogTrigger className="shrink-0 mt-1.5 text-neutral-400 hover:text-neutral-600 transition-all">
 								<CirclePlus size={24} />
 							</DialogTrigger>
 							<DialogContent className="overflow-y-scroll max-h-[50%]">
@@ -39,11 +39,11 @@ function Timeline({ userData, userId, id, userType, cardData }) {
 									<DialogTitle>Edit Profile</DialogTitle>
 									<GenericForm
 										type={
-											type === "seller"
+											role === "seller"
 												? "product"
-												: type === "advertiser"
+												: role === "advertiser"
 												? "activity"
-												: type === "tourGuide"
+												: role === "tourGuide"
 												? "itinerary"
 												: "site"
 										}
@@ -57,113 +57,113 @@ function Timeline({ userData, userId, id, userType, cardData }) {
 				<div>
 					<div
 						className={`grid gap-6 ${
-							userType === "tourismGovernor" ? "grid-cols-5" : "grid-cols-3"
+							profileRole === "tourismGovernor" ? "grid-cols-5" : "grid-cols-3"
 						}`}
 					>
 						{/* hook up to API in later sprint*/}
-						{userType === "tourist" &&
+						{profileRole === "tourist" &&
 							userData?.bookmarks?.map((bookmark, index) => (
 								<Card
 									key={index}
 									data={bookmark}
 									id={id}
-									userId={userId}
-									type={type}
+									profileId={profileId}
+									role={role}
 									cardType="activity"
 								/>
 							))}
 
-						{userType === "tourGuide" &&
+						{profileRole === "tourGuide" &&
 							cardData.length !== 0 &&
 							cardData.map((itinerary, index) => (
 								<Card
 									key={index}
 									data={itinerary}
 									id={id}
-									userId={userId}
-									type={type}
+									profileId={profileId}
+									role={role}
 									cardType="itinerary"
 								/>
 							))}
 
-						{userType === "seller" &&
+						{profileRole === "seller" &&
 							cardData?.map((product, index) => (
 								<ProductCard
 									key={index}
 									data={product}
 									id={id}
-									userId={userId}
-									type={type}
+									profileId={profileId}
+									role={role}
 								/>
 							))}
 
-						{userType === "advertiser" &&
+						{profileRole === "advertiser" &&
 							cardData?.map((activity, index) => (
 								<Card
 									key={index}
 									data={activity}
 									id={id}
-									userId={userId}
-									type={type}
+									profileId={profileId}
+									role={role}
 									cardType="activity"
 								/>
 							))}
 
-						{userType === "tourismGovernor" &&
+						{profileRole === "tourismGovernor" &&
 							cardData?.map((site, index) => (
 								<Card
 									key={index}
 									data={site}
 									id={id}
-									userId={userId}
-									type={type}
+									profileId={profileId}
+									role={role}
 									cardType="site"
 								/>
 							))}
 					</div>
 					<div>
-						{userType === "tourist" &&
+						{profileRole === "tourist" &&
 							(userData?.bookmarks?.length === 0 || !userData?.bookmarks) && (
 								<p className="text-neutral-400 text-sm italic">
 									{"You have not bookmarked any events yet."}
 								</p>
 							)}
 
-						{userType === "tourGuide" && cardData.length === 0 && (
+						{profileRole === "tourGuide" && cardData.length === 0 && (
 							<p className="text-neutral-400 text-sm italic">
-								{userId !== id
+								{profileId !== id
 									? "No itineraries to show."
 									: "You have not created any itineraries yet. Click the + button to get started!"}
 							</p>
 						)}
 
-						{userType === "seller" &&
+						{profileRole === "seller" &&
 							(userData?.products?.length === 0 || !userData?.products) && (
 								<p className="text-neutral-400 text-sm italic">
-									{userId !== id
+									{profileId !== id
 										? "No products to show."
 										: "You have not added any products yet. Click the + button to get started!"}
 								</p>
 							)}
 
-						{userType === "advertiser" && cardData.length === 0 && (
+						{profileRole === "advertiser" && cardData.length === 0 && (
 							<p className="text-neutral-400 text-sm italic">
-								{userId !== id
+								{profileId !== id
 									? "No activities to show."
 									: "You have not created any activities yet. Click the + button to get started!"}
 							</p>
 						)}
 
-						{userType === "tourismGovernor" && cardData.length === 0 && (
+						{profileRole === "tourismGovernor" && cardData.length === 0 && (
 							<p className="text-neutral-400 text-sm italic">
-								{userId !== id
+								{profileId !== id
 									? "No historical places or museums to show."
 									: "You have not added any historical places or museums yet. Click the + button to get started!"}
 							</p>
 						)}
 					</div>
 					<div>
-						{userType === "tourismGovernor" && userId === id && (
+						{profileRole === "tourismGovernor" && profileId === id && (
 							<TagManagement />
 						)}
 					</div>

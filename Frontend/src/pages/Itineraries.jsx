@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
 import GenericFilter from "@/components/custom/GenericFilter";
-import CardContainer from "@/components/CardContainer";
+import CardContainer from "@/components/custom/CardContainer";
 import { getAllItineraries } from "@/services/ItineraryApiHandler";
 import { getAllTags } from "@/services/AdminApiHandler";
 
@@ -148,7 +148,7 @@ function Itineraries() {
 					setActiveFilters={setActiveFilters}
 				/>
 				{!loading && (
-					<CardContainer cardList={products} type={"itinerary"} />
+					<CardContainer cardList={products} cardType={"itinerary"} />
 				)}
 			</div>
 		</div>

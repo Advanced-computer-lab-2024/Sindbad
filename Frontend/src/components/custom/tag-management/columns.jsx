@@ -14,7 +14,7 @@ export const columns = (handleDeleteTag, handleUpdateTag) => [
 			const [name, setName] = useState(row.original.name);
 			const isDirty = name !== originalName;
 			const id = row.original._id;
-			const { type } = useUser();
+			const { role } = useUser();
 
 			const handleKeyDown = async (e) => {
 				if (e.key === "Enter") {
@@ -34,7 +34,7 @@ export const columns = (handleDeleteTag, handleUpdateTag) => [
 					onChange={(e) => setName(e.target.value)}
 					onKeyDown={handleKeyDown}
 					className={isDirty ? "bg-secondary-900 text-dark" : ""}
-					disabled={type !== "admin"}
+					disabled={role !== "admin"}
 				/>
 			);
 		},
@@ -44,8 +44,8 @@ export const columns = (handleDeleteTag, handleUpdateTag) => [
 		header: "Actions",
 		cell: ({ row }) => {
 			const id = row.original._id;
-			const { type } = useUser();
-			return type === "admin" ? (
+			const { role } = useUser();
+			return role === "admin" ? (
 				<Button Button
 					variant="ghostDestructive"
 					className="p-3"

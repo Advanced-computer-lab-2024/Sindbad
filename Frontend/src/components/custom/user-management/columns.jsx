@@ -25,7 +25,6 @@ export const columns = (handleDeleteUser) => [
 					variant="ghostDestructive"
 					className="p-3"
 					onClick={() => {
-						console.log(userId, role);
 						handleDeleteUser(userId, role);
 					}}
 				>
