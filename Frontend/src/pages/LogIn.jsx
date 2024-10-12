@@ -1,29 +1,22 @@
-import { useEffect } from "react";
+import { useState } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
+
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { useState } from "react"
-import { Navigate } from "react-router-dom";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+
 import { useDispatch } from 'react-redux';
-import { login } from '@/state management/userInfo';
-import { useNavigate } from "react-router-dom";
-import { useUser } from "@/state management/userInfo";
+import { useUser, login } from "@/state management/userInfo";
 
 function LogIn() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const {role, id} = useUser();
+    const { role, id } = useUser();
 
     // useEffect(() => {
     //     const getUserData = async () => {

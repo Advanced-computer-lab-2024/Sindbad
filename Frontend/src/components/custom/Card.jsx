@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import ImagePlaceholder from "@/components/custom/ImagePlaceholder";
 import GenericForm from "./genericForm";
 import DeleteForm from "./deleteForm";
+import StarRating from "./StarRating";
 
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
@@ -10,7 +11,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { ArrowRight, Bookmark, Edit3, X, Wallet } from 'lucide-react';
 
 import { useUser } from "@/state management/userInfo";
-import StarRating from "./StarRating";
 
 function Card({ data, id, profileId, cardType }) {
 	const navigate = useNavigate();

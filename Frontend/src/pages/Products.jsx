@@ -1,25 +1,18 @@
-import ProductCard from "@/components/custom/ProductCard";
-import { PriceFilter } from "@/components/ui/price-filter";
-import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
-import { getAllProducts, getPriceMinMax } from "@/services/ProductApiHandler";
-import { useUser } from "@/state management/userInfo";
-import {
-	Select,
-	SelectTrigger,
-	SelectContent,
-	SelectItem,
-	SelectValue,
-} from "@/components/ui/select";
-import {
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from "@/components/ui/dialog";
+
+import ProductCard from "@/components/custom/ProductCard";
 import GenericForm from "@/components/custom/genericForm";
+
+import { Input } from "@/components/ui/input";
+import { PriceFilter } from "@/components/ui/price-filter";
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+
+import { getAllProducts, getPriceMinMax } from "@/services/ProductApiHandler";
+
 import { CirclePlus } from "lucide-react";
+
+import { useUser } from "@/state management/userInfo";
 
 function ShoppingPage() {
 	const [products, setProducts] = useState([]);

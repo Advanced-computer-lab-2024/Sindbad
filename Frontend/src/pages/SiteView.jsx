@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { Star, MapPin, Frown } from "lucide-react";
-import { getSiteById } from "@/services/SiteApiHandler";
 import { useParams } from "react-router-dom";
 
+import { getSiteById } from "@/services/SiteApiHandler";
+
+import { Star, MapPin, Frown } from "lucide-react";
 
 function getRandomRating() {
 	return (Math.round(Math.random() * 10) / 2).toFixed(1);

@@ -1,15 +1,14 @@
 import { useNavigate } from "react-router-dom";
+
 import ImagePlaceholder from "@/components/custom/ImagePlaceholder";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Edit3, Wallet } from 'lucide-react';
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTrigger,
-} from "@/components/ui/dialog"
 import GenericForm from "./genericForm";
 import StarRating from "./StarRating";
+
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "@/components/ui/dialog"
+
+import { ArrowRight, Edit3, Wallet } from 'lucide-react';
+
 import { useUser } from "@/state management/userInfo";
 
 function ProductCard({ data, id, profileId }) {

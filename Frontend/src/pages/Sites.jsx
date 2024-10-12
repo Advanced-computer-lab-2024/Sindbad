@@ -1,7 +1,8 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
+
 import GenericFilter from "@/components/custom/GenericFilter";
 import CardContainer from "@/components/custom/CardContainer";
+
 import { getAllSites } from "@/services/SiteApiHandler";
 import { getAllTags } from "@/services/AdminApiHandler";
 

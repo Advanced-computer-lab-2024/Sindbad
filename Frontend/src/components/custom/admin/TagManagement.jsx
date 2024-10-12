@@ -1,13 +1,10 @@
-import { DataTable } from "@/components/custom/tag-management/data-table";
 import { useState, useEffect } from "react";
-import { columns } from "@/components/custom/tag-management/columns";
-import {
-	getAllTags,
-	createTag,
-	updateTag,
-	deleteTag,
-} from "@/services/AdminApiHandler";
+
 import TableSkeleton from "../TableSkeleton";
+import { DataTable } from "@/components/custom/tag-management/data-table";
+import { columns } from "@/components/custom/tag-management/columns";
+
+import { getAllTags, createTag, updateTag, deleteTag } from "@/services/AdminApiHandler";
 
 // TagManagement Component
 export default function TagManagement() {
@@ -80,11 +77,10 @@ export default function TagManagement() {
 
 			{message && (
 				<div
-					className={`p-2 rounded-lg ${
-						message.type === "error"
+					className={`p-2 rounded-lg ${message.type === "error"
 							? "bg-destructive text-light"
 							: "bg-secondary text-dark"
-					}`}
+						}`}
 				>
 					{message.text}
 				</div>

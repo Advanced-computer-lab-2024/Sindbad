@@ -1,9 +1,11 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
+
 import GenericFilter from "@/components/custom/GenericFilter";
 import CardContainer from "@/components/custom/CardContainer";
+
 import { getAllActivities } from "@/services/ActivityApiHandler";
 import { getAllCategories } from "@/services/AdminApiHandler";
+
 function Activities() {
 	const [loading, setLoading] = useState(false);
 	const [products, setProducts] = useState([]);

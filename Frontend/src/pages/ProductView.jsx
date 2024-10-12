@@ -1,8 +1,9 @@
-import ImagePlaceholder from "@/components/custom/ImagePlaceholder";
-import { useParams } from 'react-router-dom';
-import { getProductById } from "@/services/ProductApiHandler";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from 'react-router-dom';
+
+import ImagePlaceholder from "@/components/custom/ImagePlaceholder";
+
+import { getProductById } from "@/services/ProductApiHandler";
 
 function ProductView() {
     const { productId } = useParams();

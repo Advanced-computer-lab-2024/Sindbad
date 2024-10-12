@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import GenericForm from "../genericForm";
 
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";

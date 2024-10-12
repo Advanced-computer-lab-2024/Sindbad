@@ -1,25 +1,22 @@
 import { useNavigate } from "react-router-dom";
 import { Outlet } from "react-router-dom/dist";
-import {
-	NavigationMenu,
-	NavigationMenuItem,
-	NavigationMenuLink,
-	NavigationMenuList,
-	navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu";
-import { logout } from "@/state management/userInfo";
-import { getRolePermissions } from "@/utilities/roleConfig";
+
+import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, navigationMenuTriggerStyle } from "@/components/ui/navigation-menu";
+
 import LogoSVG from "@/SVGs/Logo";
 import { CircleUserRound } from "lucide-react";
+
+import { getRolePermissions } from "@/utilities/roleConfig";
+
 import { useDispatch } from "react-redux";
-import { useUser } from "@/state management/userInfo";
+import { useUser, logout } from "@/state management/userInfo";
 
 function MainPage() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { role } = useUser();
     const renderedFields = getRolePermissions(role);
-  
+
     function camelCaseToEnglish(str) {
         let result = str
             .replace(/([A-Z])/g, " $1") // Insert a space before each uppercase letter

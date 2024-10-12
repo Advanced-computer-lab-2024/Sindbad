@@ -1,17 +1,11 @@
 import { useState, useEffect } from "react";
-import {
-	Accessibility,
-	MapPin,
-	Star,
-	EarOff,
-	EyeOff,
-	Speech,
-	ArrowBigRight,
-} from "lucide-react";
+import { useParams, Link } from "react-router-dom";
+
 import { Button } from "@/components/ui/button";
+
+import { MapPin, Star, ArrowBigRight } from "lucide-react";
+
 import { getItineraryById } from "@/services/ItineraryApiHandler";
-import { useParams } from "react-router-dom";
-import { Link } from "react-router-dom";
 
 function getRandomRating() {
 	return (Math.round(Math.random() * 10) / 2).toFixed(1);
@@ -26,9 +20,9 @@ function handleItineraryValues(itinerary) {
 		itinerary.rating = getRandomRating();
 	}
 
-    if (!itinerary.description) {
-        itinerary.description = "Lorem Ipsum...";
-    }
+	if (!itinerary.description) {
+		itinerary.description = "Lorem Ipsum...";
+	}
 
 	if (
 		itinerary.price !== null &&
@@ -62,7 +56,7 @@ const Itinerary = () => {
 		if (response.error) {
 			console.error(response.message);
 		} else {
-            handleItineraryValues(response);
+			handleItineraryValues(response);
 			setItinerary(response);
 		}
 	};
@@ -263,11 +257,10 @@ const Itinerary = () => {
 								<button
 									key={idx}
 									onClick={() => setSelectedDate(idx)}
-									className={`border py-2 px-6 min-h-20 max-w-24 rounded-lg bg-primary-700 text-center ${
-										selectedDate === idx
+									className={`border py-2 px-6 min-h-20 max-w-24 rounded-lg bg-primary-700 text-center ${selectedDate === idx
 											? "border-light border-2"
 											: "border-transparent"
-									}`}
+										}`}
 								>
 									<span className="text-sm text-light">
 										{date.split(" ")[0]}
@@ -295,11 +288,10 @@ const Itinerary = () => {
 								<button
 									key={idx}
 									onClick={() => setSelectedTime(idx)}
-									className={`border py-2 px-4 rounded-2xl bg-primary-700 ${
-										selectedTime === idx
+									className={`border py-2 px-4 rounded-2xl bg-primary-700 ${selectedTime === idx
 											? "border-light border-2 "
 											: "border-transparent"
-									}`}
+										}`}
 								>
 									{time}
 								</button>

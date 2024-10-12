@@ -1,8 +1,10 @@
-import { DataTable } from "@/components/custom/user-management/data-table";
 import { useState, useEffect } from "react";
-import { columns } from "@/components/custom/user-management/columns";
-import { getAllUsers, deleteUser } from "@/services/AdminApiHandler";
+
 import TableSkeleton from "../TableSkeleton";
+import { DataTable } from "@/components/custom/user-management/data-table";
+import { columns } from "@/components/custom/user-management/columns";
+
+import { getAllUsers, deleteUser } from "@/services/AdminApiHandler";
 
 // UserManagement Component
 export default function UserManagement() {
