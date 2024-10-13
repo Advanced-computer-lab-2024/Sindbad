@@ -1,9 +1,13 @@
-import { Star, MapPin, CalendarDays } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
-import { getActivityById } from "@/services/ActivityApiHandler";
 import { useParams } from "react-router-dom";
+
 import GoogleMapRead from "@/components/custom/maps/GoogleMapRead";
+
+import { Button } from "@/components/ui/button";
+
+import { Star, MapPin, CalendarDays } from "lucide-react";
+
+import { getActivityById } from "@/services/ActivityApiHandler";
 
 function getRandomRating() {
 	return (Math.round(Math.random() * 10) / 2).toFixed(1);

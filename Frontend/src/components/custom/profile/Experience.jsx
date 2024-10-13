@@ -1,53 +1,39 @@
-/* eslint-disable react/prop-types */
-import {
-	Accordion,
-	AccordionItem,
-	AccordionTrigger,
-	AccordionContent,
-} from "@/components/ui/accordion";
-import { CirclePlus } from "lucide-react";
-import {
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-	DialogClose,
-} from "@/components/ui/dialog";
 import GenericForm from "../genericForm";
-import { useUser } from "@/state management/userInfo";
-import { Edit, CircleX } from "lucide-react";
+
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
+
+import { Edit, CircleX, CirclePlus, MapPin, Calendar } from "lucide-react";
 
 import { removeTourGuideWork } from "@/services/TourGuideApiHandler";
-import { useNavigate } from "react-router-dom";
 
-function Experience({ userData, userId, id }) {
-	const { type } = useUser();
-	const navigate = useNavigate();
+import { useUser } from "@/state management/userInfo";
+
+function Experience({ userData, profileId, id }) {
+	const { role } = useUser();
 
 	return (
-		<div className="flex flex-col gap-6">
+		<div className="flex flex-col gap-3">
 			<div>
 				<div className="flex items-center gap-6">
 					<h1 className="text-3xl font-extrabold">Experience</h1>
-					<hr className="border-neutral-700 border w-full mt-1.5" />
-					{userId === id && (
+					<hr className="border-neutral-300 border w-full mt-1.5" />
+					{/* button to add experience if it's your profile */}
+					{profileId === id && (
 						<Dialog>
-							<DialogTrigger>
-								<span className="shrink-0 mt-1.5 text-neutral-600 hover:text-light transition-all">
-									<CirclePlus size={24} />
-								</span>
+							<DialogTrigger className="shrink-0 mt-1.5 text-neutral-400 hover:text-neutral-600 transition-all">
+								<CirclePlus size={24} />
 							</DialogTrigger>
 							<DialogContent className="overflow-y-scroll max-h-[50%]">
 								<DialogHeader>
 									<DialogTitle>Edit Profile</DialogTitle>
 									<GenericForm
 										type={
-											type === "advertiser"
+											role === "advertiser"
 												? "company"
-												: type === "tourGuide"
-												? "experience"
-												: ""
+												: role === "tourGuide"
+													? "experience"
+													: ""
 										}
 										id={id}
 									/>
@@ -58,14 +44,14 @@ function Experience({ userData, userId, id }) {
 				</div>
 			</div>
 			<div className="flex flex-col gap-3">
-				{(userData?.previousWork?.length === 0 ||
-					!userData?.previousWork) && (
-					<p className="text-neutral-400 text-sm italic">
-						{userId !== id
+				{(userData?.previousWork?.length === 0 || !userData?.previousWork) &&
+					<p className="text-neutral-500 text-sm italic">
+						{profileId !== id
 							? "No experience to show."
-							: "You have not added any experience yet. Click the + button to get started!"}
+							: "You have not added any experience yet. Click the + button to get started!"
+						}
 					</p>
-				)}
+				}
 				{userData?.previousWork?.map((experience, index) => (
 					<Accordion
 						key={experience._id} // Use the experience's _id as the key
@@ -75,90 +61,99 @@ function Experience({ userData, userId, id }) {
 					>
 						<AccordionItem value={experience._id}>
 							<div className="relative">
-								<AccordionTrigger>
-									{experience.jobTitle}
-								</AccordionTrigger>
-								<div className="flex gap-2">
-									<Dialog>
-										<DialogTrigger>
-											<Edit
-												size={16}
-												className="text-neutral-600"
-											/>
-										</DialogTrigger>
-										<DialogContent className="overflow-y-scroll max-h-[50%]">
-											<DialogHeader>
-												<DialogTitle>
-													Edit Profile
-												</DialogTitle>
-												<GenericForm
-													type={
-														type === "advertiser"
-															? "company"
-															: type ===
-															  "tourGuide"
-															? "experience"
-															: ""
-													}
-													id={id}
-													data={experience}
-												/>
-											</DialogHeader>
-										</DialogContent>
-									</Dialog>
-									<Dialog>
-										<DialogTrigger>
-											<CircleX
-												size={16}
-												className="text-red-500"
-											/>
-										</DialogTrigger>
-										<DialogContent className="overflow-y-scroll max-h-[50%]">
-											<DialogTitle>
-												Are you sure you want to delete
-												this work?
-											</DialogTitle>
-											<div className="flex justify-end space-x-4 mt-4">
-												<DialogClose asChild>
-													{/* Delete Button */}
-													<button
-														className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
-														onClick={() => {
-															removeTourGuideWork(
-																id,
-																experience._id
-															);
-															// navigate(0);
-														}}
-													>
-														Delete
-													</button>
-												</DialogClose>
+								<div className="flex justify-between items-center gap-2">
+									<AccordionTrigger>
+										{experience.jobTitle}
+									</AccordionTrigger>
+									{profileId === id &&
+										<div className="shrink-0 flex gap-2 text-neutral-400">
+											<Dialog>
+												<DialogTrigger>
+													<Edit
+														size={16}
+														className="hover:text-neutral-600"
+													/>
+												</DialogTrigger>
+												<DialogContent className="overflow-y-scroll max-h-[50%]">
+													<DialogHeader>
+														<DialogTitle>
+															Edit Profile
+														</DialogTitle>
+														<GenericForm
+															type={
+																role === "advertiser"
+																	? "company"
+																	: role ===
+																		"tourGuide"
+																		? "experience"
+																		: ""
+															}
+															id={id}
+															data={experience}
+														/>
+													</DialogHeader>
+												</DialogContent>
+											</Dialog>
+											<Dialog>
+												<DialogTrigger>
+													<CircleX
+														size={16}
+														className="hover:text-destructive"
+													/>
+												</DialogTrigger>
+												<DialogContent className="overflow-y-scroll max-h-[50%]">
+													<DialogTitle>
+														Are you sure you want to delete
+														this work?
+													</DialogTitle>
+													<div className="flex justify-end space-x-4 mt-4">
+														<DialogClose asChild>
+															{/* Delete Button */}
+															<button
+																className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
+																onClick={() => {
+																	removeTourGuideWork(
+																		id,
+																		experience._id
+																	);
+																}}
+															>
+																Delete
+															</button>
+														</DialogClose>
 
-												<DialogClose asChild>
-													<span
-														type="button"
-														className="bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 px-4 rounded"
-													>
-														Close
-													</span>
-												</DialogClose>
-											</div>
-										</DialogContent>
-									</Dialog>
+														<DialogClose asChild>
+															<span
+																type="button"
+																className="bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 px-4 rounded"
+															>
+																Close
+															</span>
+														</DialogClose>
+													</div>
+												</DialogContent>
+											</Dialog>
+										</div>
+									}
 								</div>
 							</div>
 							<AccordionContent>
 								<div className="flex gap-5">
-									<div className="border-l-[2px] border-neutral-500"></div>
+									<div className="border-l-[2px] border-neutral-300"></div>
 									<div className="flex flex-col gap-2">
-										<div>
-											<h4 className="text-base text-neutral-400">
-												{experience.companyName}
-											</h4>
-											<h4 className="text-base text-neutral-400">
-												{experience.duration}
-											</h4>
+										<div className="-ml-1 text-neutral-500">
+											<div className="flex items-start gap-1">
+												<MapPin size={18} className="pt-1 shrink-0" />
+												<h4 className="text-base">
+													{experience.companyName}
+												</h4>
+											</div>
+											<div className="flex items-start gap-1">
+												<Calendar size={18} className="pt-1 shrink-0" />
+												<h4 className="text-base">
+													{experience.duration}
+												</h4>
+											</div>
 										</div>
 										<p className="leading-5 text-xs">
 											{experience.description}

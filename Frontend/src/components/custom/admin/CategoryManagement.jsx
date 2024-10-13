@@ -1,13 +1,10 @@
-import { DataTable } from "@/components/custom/category-management/data-table";
 import { useState, useEffect } from "react";
+
+import { DataTable } from "@/components/custom/category-management/data-table";
 import { columns } from "@/components/custom/category-management/columns";
-import {
-	getAllCategories,
-	createCategory,
-	updateCategory,
-	deleteCategory,
-} from "@/services/AdminApiHandler";
 import TableSkeleton from "../TableSkeleton";
+
+import { getAllCategories, createCategory, updateCategory, deleteCategory } from "@/services/AdminApiHandler";
 
 // CategoryManagement Component
 export default function CategoryManagement() {
@@ -80,11 +77,10 @@ export default function CategoryManagement() {
 
 			{message && (
 				<div
-					className={`p-2 rounded-lg ${
-						message.type === "error"
+					className={`p-2 rounded-lg ${message.type === "error"
 							? "bg-destructive text-light"
 							: "bg-secondary text-dark"
-					}`}
+						}`}
 				>
 					{message.text}
 				</div>

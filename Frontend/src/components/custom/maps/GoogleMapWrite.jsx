@@ -1,6 +1,8 @@
-import { APIProvider, Map } from "@vis.gl/react-google-maps";
-import { MapPin } from "lucide-react";
 import { useCallback } from "react";
+
+import { APIProvider, Map } from "@vis.gl/react-google-maps";
+
+import { MapPin } from "lucide-react";
 
 export default function GoogleMapWrite({
 	onChange, // Receive onChange function from form

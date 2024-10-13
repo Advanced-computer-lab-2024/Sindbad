@@ -1,11 +1,4 @@
-import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function TableSkeleton({ rows = 5, cols = 3 }) {
@@ -16,7 +9,7 @@ export default function TableSkeleton({ rows = 5, cols = 3 }) {
 				<TableRow>
 					{Array.from({ length: cols }).map((_, j) => (
 						<TableHead key={j} className="w-[100px]">
-							<Skeleton className="w-full h-4 bg-light"/>
+							<Skeleton className="w-full h-4 bg-light" />
 						</TableHead>
 					))}
 				</TableRow>
