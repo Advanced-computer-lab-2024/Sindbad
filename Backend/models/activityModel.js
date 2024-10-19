@@ -6,6 +6,9 @@ const activitySchema = mongoose.Schema(
 			type: String,
 			required: [true, "Please add a the name of the activity"],
 		},
+		imageUris: {
+			type: [String],
+		},
 		dateTime: {
 			type: Date,
 			required: [true, "Please add the date of the activity"],

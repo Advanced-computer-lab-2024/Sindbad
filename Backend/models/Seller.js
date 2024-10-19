@@ -15,10 +15,23 @@ const SellerSchema = new mongoose.Schema(
 			type: String,
 			required: true,
 			unique: true,
+			validate: {
+				validator: function (v) {
+					return !/\s/.test(v); // Check if there are no spaces
+				},
+				message: (props) =>
+					`${props.value} contains spaces, which are not allowed!`,
+			},
 		},
 		passwordHash: {
 			type: String,
 			required: true,
+		},
+		profileImageUri: {
+			type: String,
+		},
+		bannerImageUri: {
+			type: String,
 		},
 		firstName: {
 			type: String,
