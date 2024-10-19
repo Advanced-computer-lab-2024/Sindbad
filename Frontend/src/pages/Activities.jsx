@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
+
 import GenericFilter from "@/components/custom/GenericFilter";
-import CardContainer from "@/components/CardContainer";
+import CardContainer from "@/components/custom/CardContainer";
+
 import { getAllActivities } from "@/services/ActivityApiHandler";
 import { getAllCategories } from "@/services/AdminApiHandler";
+
 function Activities() {
 	const [loading, setLoading] = useState(false);
 	const [products, setProducts] = useState([]);
@@ -13,7 +16,6 @@ function Activities() {
 		budget: {
 			min: 0,
 			max: 1000,
-			step: 10,
 		},
 		date: {
 			start: "",
@@ -25,7 +27,6 @@ function Activities() {
 		rating: {
 			min: 0,
 			max: 5,
-			step: 1,
 		},
 		sortBy: "",
 		sortOrder: "",
@@ -41,6 +42,7 @@ function Activities() {
 			label: "Budget",
 			min: 0,
 			max: 1000,
+			step: 10,
 		},
 		date: {
 			type: "date",
@@ -53,9 +55,10 @@ function Activities() {
 		},
 		rating: {
 			type: "range",
-			label: "Ratings",
+			label: "Rating",
 			min: 0,
 			max: 5,
+			step: 1,
 		},
 		sortBy: {
 			type: "select",
@@ -140,7 +143,7 @@ function Activities() {
 					setActiveFilters={setActiveFilters}
 				/>
 				{!loading && (
-					<CardContainer cardList={products} type={"tourGuide"} />
+					<CardContainer cardList={products} cardType={"activity"} />
 				)}
 			</div>
 		</div>

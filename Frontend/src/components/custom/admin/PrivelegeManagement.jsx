@@ -1,25 +1,15 @@
-import {
-	Accordion,
-	AccordionContent,
-	AccordionItem,
-	AccordionTrigger,
-} from "@/components/ui/accordion";
+import { useState } from "react";
 
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from "@/components/ui/form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+
 import { userSignUp } from "@/services/LoginSignupApiHandler";
-import { useState } from "react"; // Import useState for managing messages
 
 export default function PrivilegeManagement() {
 	// Default password is the same as email
@@ -134,11 +124,10 @@ export default function PrivilegeManagement() {
 
 			{message && (
 				<div
-					className={`p-2 rounded-lg ${
-						message.type === "error"
-							? "bg-destructive text-light"
-							: "bg-secondary text-dark"
-					}`}
+					className={`p-2 rounded-lg ${message.type === "error"
+						? "bg-destructive text-light"
+						: "bg-secondary text-dark"
+						}`}
 				>
 					{message.text}
 				</div>

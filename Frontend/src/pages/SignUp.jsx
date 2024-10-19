@@ -1,29 +1,19 @@
 import { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form";
+import { Navigate, useNavigate } from "react-router-dom";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Navigate } from "react-router-dom";
+
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+
 import { userSignUp } from "@/services/LoginSignupApiHandler";
+
 import SpinnerSVG from '@/SVGs/Spinner.jsx';
 import { ArrowLeft } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 
 function SignUp() {
     const [registerType, setRegisterType] = useState("Tourist");
@@ -172,7 +162,7 @@ function SignUp() {
                     <FormItem>
                         <FormLabel htmlFor="DOB">Date of Birth</FormLabel>
                         <FormControl>
-                            <Input id="DOB" type="date" {...field} />
+                            <Input className="signup-date" id="DOB" type="date" {...field} />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -227,7 +217,7 @@ function SignUp() {
         <div className="w-full min-h-screen grid grid-cols-2">
             <div className="bg-primary-700">
                 <div className="flex flex-col justify-center items-center h-full">
-                    <Button onClick={() => navigate(`/app/timeline`, { replace: true })} variant="link">
+                    <Button onClick={() => navigate(`/app/itineraries`, { replace: true })} variant="link">
                         Back to browsing
                     </Button>
                 </div>

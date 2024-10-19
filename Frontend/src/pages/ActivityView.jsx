@@ -1,9 +1,13 @@
-import { Star, MapPin, CalendarDays } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
-import { getActivityById } from "@/services/ActivityApiHandler";
 import { useParams } from "react-router-dom";
+
 import GoogleMapRead from "@/components/custom/maps/GoogleMapRead";
+
+import { Button } from "@/components/ui/button";
+
+import { Star, MapPin, CalendarDays } from "lucide-react";
+
+import { getActivityById } from "@/services/ActivityApiHandler";
 
 function getRandomRating() {
 	return (Math.round(Math.random() * 10) / 2).toFixed(1);
@@ -33,21 +37,12 @@ function handleActivityValues(activity) {
 		activity.category = { name: "N/A" };
 	}
 
-	if (!activity.location || typeof activity.location === "object") {
-		activity.location = { address: "N/A", coordinates: { lat: 0, lng: 0 } }; 
-	} else if (typeof activity.location === "string") {
+	if (typeof activity.location === "string") {
+		console.log("Location is a string");
 		activity.location = {
 			address: activity.location,
 			coordinates: { lat: 0, lng: 0 },
 		};
-	}
-
-	if (!activity.location.address) {
-		activity.location.address = "N/A";
-	}
-
-	if (!activity.location.coordinates) {
-		activity.location.coordinates = { lat: 0, lng: 0 };
 	}
 }
 
@@ -77,6 +72,8 @@ function Activity() {
 
 	const fullStars = activity.rating;
 	const emptyStar = 5 - fullStars;
+
+	console.log(activity);
 
 	return (
 		<div className="min-h-screen flex justify-center items-center bg-primary-950">
@@ -116,6 +113,7 @@ function Activity() {
 						{/*description*/}
 						<div className="text-light">
 							<p>{activity.description}</p>
+							<p className="text-neutral-500">id: {activity._id}</p>
 						</div>
 						{/*Tags*/}
 						<div className="my-6">
@@ -136,6 +134,7 @@ function Activity() {
 					<div className="grid grid-cols-2 col-span-2 gap-1 bg-primary-700 rounded-md h-96 p-6">
 						<div className=" m-2">
 							<div className="bg-light h-2/3 rounded-lg m-2">
+								{console.log(activity.location.coordinates.lat)}
 								<GoogleMapRead
 									lat={activity.location.coordinates.lat}
 									lng={activity.location.coordinates.lng}

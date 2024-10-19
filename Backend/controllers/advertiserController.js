@@ -1,7 +1,7 @@
 const Advertiser = require("../models/Advertiser");
 
 // Controller to get advertiser profile
-const getProfile = async (req, res) => {
+const getAdvertiserById = async (req, res) => {
 	try {
 		const { id } = req.params; // Get username from the params
 		const advertiser = await Advertiser.findById(id);
@@ -18,7 +18,7 @@ const getProfile = async (req, res) => {
 };
 
 // Controller to get all advertiser profiles
-const getAllProfiles = async (req, res) => {
+const getAllAdvertisers = async (req, res) => {
 	try {
 		const advertisers = await Advertiser.find();
 
@@ -30,7 +30,7 @@ const getAllProfiles = async (req, res) => {
 };
 
 // Controller to update advertiser profile
-const updateProfile = async (req, res) => {
+const updateAdveriser = async (req, res) => {
 	try {
 		const { id } = req.params; // Get username from the params
 		const { websiteLink, hotline, companyProfile, email } = req.body; // Get username and other fields from the body
@@ -70,7 +70,7 @@ const updateProfile = async (req, res) => {
 };
 
 module.exports = {
-	getProfile,
-	getAllProfiles,
-	updateProfile,
+	getAdvertiserById,
+	getAllAdvertisers,
+	updateAdveriser,
 };

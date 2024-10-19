@@ -9,9 +9,9 @@ const mongoose = require("mongoose");
  * @returns {Object} - A JSON object of the retrieved tourist or an error message
  */
 
-const getTourist = async (req,res) => {
-    let tourist
-	try{
+const getTouristById = async (req, res) => {
+	let tourist;
+	try {
 		tourist = await Tourist.findById(req.params.id);
 		if (tourist == null) {
 			return res.status(404).json({ message: "Tourist not found" });
@@ -25,21 +25,20 @@ const getTourist = async (req,res) => {
 	return res.json(tourist);
 };
 
-
 /**
  * Retrieves all tourists
  * @param {Object} req - The request object
  * @param {Object} res - The response object used to send the retrieved tourists or an error message
  * @returns {Object} - A JSON object of the retrieved tourists or an error message
  */
-const getAllTourists = async (req,res) => {
-	try{
+const getAllTourists = async (req, res) => {
+	try {
 		const tourists = await Tourist.find();
 		res.json(tourists);
-	}catch{
-		res.status(500).json({message:err.message});
+	} catch {
+		res.status(500).json({ message: err.message });
 	}
-}
+};
 
 /**
  * Updates a tourist's profile
@@ -49,9 +48,9 @@ const getAllTourists = async (req,res) => {
  * @returns {Object} - Updated tourist profile or error message
  */
 
-const updateTourist = async(req,res) => {
-    let tourist
-	try{
+const updateTourist = async (req, res) => {
+	let tourist;
+	try {
 		tourist = await Tourist.findById(req.params.id);
 		if (tourist == null) {
 			return res.status(404).json({ message: "Tourist not found" });
@@ -64,36 +63,35 @@ const updateTourist = async(req,res) => {
 	}
 	res.tourist = tourist;
 
-
-	if(req.body.email !=null){
+	if (req.body.email != null) {
 		res.tourist.email = req.body.email;
 	}
-	if(req.body.username !=null){
+	if (req.body.username != null) {
 		res.tourist.username = req.body.username;
 	}
-	if(req.body.passwordHash !=null){
+	if (req.body.passwordHash != null) {
 		res.tourist.passwordHash = req.body.passwordHash;
 	}
-	if(req.body.mobileNumber !=null){
+	if (req.body.mobileNumber != null) {
 		res.tourist.mobileNumber = req.body.mobileNumber;
 	}
-	if(req.body.nationality !=null){
+	if (req.body.nationality != null) {
 		res.tourist.nationality = req.body.nationality;
 	}
-	if(req.body.DOB !=null){
+	if (req.body.DOB != null) {
 		res.tourist.DOB = req.body.DOB;
 	}
-	if(req.body.job !=null){
+	if (req.body.job != null) {
 		res.tourist.job = req.body.job;
 	}
-	if(req.body.wallet !=null){
+	if (req.body.wallet != null) {
 		res.tourist.wallet = req.body.wallet;
 	}
 
-	try{
+	try {
 		const updatedTourist = await res.tourist.save();
 		res.json(updatedTourist);
-	} catch(err){
+	} catch (err) {
 		return res.status(400).json({
 			message: "Error updating tourist",
 			error: err.message,
@@ -107,12 +105,12 @@ const updateTourist = async(req,res) => {
  * @param {Object} req - Request with tourist ID
  * @returns {Object} - Deleted tourist profile or error message
  */
-const deleteTourist = async (req,res) => {
-	try{
+const deleteTourist = async (req, res) => {
+	try {
 		const deletedTourist = await Tourist.findByIdAndDelete(req.params.id);
 		if (deletedTourist == null) {
 			return res.status(404).json({ message: "Tourist not found" });
-		}else{
+		} else {
 			res.json(deletedTourist);
 		}
 	} catch (err) {
@@ -125,12 +123,11 @@ const deleteTourist = async (req,res) => {
 
 module.exports = {
 	getAllTourists,
-    getTourist,
+	getTouristById,
 	getAllTourists,
-    updateTourist,
+	updateTourist,
 	deleteTourist,
-  };
-
+};
 
 /*
 //create

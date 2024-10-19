@@ -1,27 +1,22 @@
 import { useNavigate } from "react-router-dom";
 import { Outlet } from "react-router-dom/dist";
-import {
-	NavigationMenu,
-	NavigationMenuItem,
-	NavigationMenuLink,
-	NavigationMenuList,
-	navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu";
-import { logout } from "@/state management/userInfo";
-import { getRolePermissions } from "@/utilities/roleConfig";
+
+import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, navigationMenuTriggerStyle } from "@/components/ui/navigation-menu";
+
 import LogoSVG from "@/SVGs/Logo";
 import { CircleUserRound } from "lucide-react";
-import { useState } from "react";
+
+import { getRolePermissions } from "@/utilities/roleConfig";
+
 import { useDispatch } from "react-redux";
-import { useUser } from "@/state management/userInfo";
+import { useUser, logout } from "@/state management/userInfo";
 
 function MainPage() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { type } = useUser();
-    const [currentRole, setCurrentRole] = useState(type); // change this state to change the role of the user
-    const renderedFields = getRolePermissions(currentRole);
-  
+    const { role } = useUser();
+    const renderedFields = getRolePermissions(role);
+
     function camelCaseToEnglish(str) {
         let result = str
             .replace(/([A-Z])/g, " $1") // Insert a space before each uppercase letter
@@ -56,7 +51,7 @@ function MainPage() {
 
     return (
         <div>
-            <div className="bg-primary-900/50 flex justify-center items-center sticky top-0 z-50 backdrop-blur-md">
+            <div className="bg-primary-700/50 flex justify-center items-center sticky top-0 z-50 backdrop-blur-md">
                 <div className="px-24 py-2 max-w-[1200px] w-full justify-between flex gap-4">
                     <div className="flex gap-6 items-center justify-center">
                         <LogoSVG
@@ -84,18 +79,17 @@ function MainPage() {
                                 <NavigationMenuItem>
                                     <NavigationMenuLink to="profile" className="nav-underline"
                                         onClick={() => {
-                                            if (currentRole === "guest") {
+                                            if (role === "guest") {
                                                 navigate(`/login`, { replace: true });
                                                 return;
                                             }
                                             else {
-                                                setCurrentRole("guest");
                                                 dispatch(logout());
-                                                navigate(`/app/timeline`, { replace: true });
+                                                navigate(`/app/itineraries`, { replace: true });
                                             }
                                         }}
                                     >
-                                        {currentRole == "guest" ? "Log In" : "Log Out"}
+                                        {role == "guest" ? "Log In" : "Log Out"}
                                     </NavigationMenuLink>
                                 </NavigationMenuItem>
                             </NavigationMenuList>

@@ -1,26 +1,20 @@
-/* eslint-disable react/prop-types */
+import { useNavigate } from "react-router-dom";
+
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
+import { format } from "date-fns";
+
+import GoogleMapWrite from "./maps/GoogleMapWrite";
 
 import { Button } from "@/components/ui/button";
-import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import formMap from "@/utilities/formMap";
+
 import { updateSeller } from "@/services/SellerApiHandler";
 import { updateTourGuide } from "@/services/TourGuideApiHandler";
 import { updateTourist } from "@/services/TouristApiHandler";
 import { updateAdvertiser } from "@/services/AdvertiserApiHandler";
-import { parseZodSchema } from "@/utilities/formMap";
-import { useFieldArray } from "react-hook-form";
-import { format } from "date-fns";
 import { updateItinerary } from "@/services/ItineraryApiHandler";
 import { createItinerary } from "@/services/ItineraryApiHandler";
 import { updateProduct } from "@/services/ProductApiHandler";
@@ -30,7 +24,8 @@ import { createSite } from "@/services/SiteApiHandler";
 import { updateActivity } from "@/services/ActivityApiHandler";
 import { updateSite } from "@/services/SiteApiHandler";
 
-import { useNavigate } from "react-router-dom";
+import { parseZodSchema } from "@/utilities/formMap";
+import formMap from "@/utilities/formMap";
 
 export function GenericForm({ type, data, id }) {
 	// To refresh the page after form submissions
@@ -89,6 +84,7 @@ export function GenericForm({ type, data, id }) {
 		if (type === "product") {
 			if (data) {
 				updateProduct(data._id, values);
+				console.log(values);
 			} else {
 				const productWithId = {
 					...values,
@@ -168,7 +164,7 @@ export function GenericForm({ type, data, id }) {
 			};
 			updateAdvertiser(body, id);
 		}
-		navigate(0);
+		// navigate(0);
 	}
 
 	function ArrayFieldRenderer({ name, control, initialValue }) {
@@ -241,6 +237,7 @@ export function GenericForm({ type, data, id }) {
 	function renderFields(values, path = "") {
 		return Object.keys(values).map((key) => {
 			const fullPath = path ? `${path}.${key}` : key;
+			const isCoordinates = key === "coordinates";
 			const isArray = Array.isArray(values[key]);
 			const isObject =
 				typeof values[key] === "object" && values[key] !== null;
@@ -252,6 +249,29 @@ export function GenericForm({ type, data, id }) {
 						name={fullPath}
 						control={form.control}
 						initialValue={typeof values[key][0]}
+					/>
+				);
+			}
+
+			if (isCoordinates) {
+				return (
+					<FormField
+						key={`${fullPath}.coordinates`}
+						control={form.control}
+						name={fullPath}
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel>{key.toUpperCase()}</FormLabel>
+								<FormControl>
+									<GoogleMapWrite
+										lat={field.value.lat}
+										lng={field.value.lng}
+										onChange={(newPosition) => field.onChange(newPosition)} // Pass onChange function
+									/>
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
 					/>
 				);
 			}
@@ -295,8 +315,8 @@ export function GenericForm({ type, data, id }) {
 											isNumberField
 												? "number"
 												: isDateField
-												? "date"
-												: "text"
+													? "date"
+													: "text"
 										}
 										className="text-black"
 										onChange={(e) => {

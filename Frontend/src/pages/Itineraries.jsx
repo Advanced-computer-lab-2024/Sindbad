@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
+
 import GenericFilter from "@/components/custom/GenericFilter";
-import Card from "@/components/custom/Card";
-import CardContainer from "@/components/CardContainer";
+import CardContainer from "@/components/custom/CardContainer";
+
 import { getAllItineraries } from "@/services/ItineraryApiHandler";
 import { getAllTags } from "@/services/AdminApiHandler";
 
@@ -42,6 +43,7 @@ function Itineraries() {
 			label: "Budget",
 			min: 0,
 			max: 1000,
+			step: 10,
 		},
 		date: {
 			type: "date",
@@ -54,9 +56,10 @@ function Itineraries() {
 		},
 		rating: {
 			type: "range",
-			label: "Ratings",
+			label: "Rating",
 			min: 0,
 			max: 5,
+			step: 1,
 		},
 		language: {
 			type: "search",
@@ -94,7 +97,11 @@ function Itineraries() {
 			activeFilters.sortOrder.selected
 		);
 		if (!response.error) {
-			setProducts(response);
+			const updatedItineraries = response.map((itinerary) => ({
+				...itinerary, // retain other properties of the itinerary
+				activities: itinerary.activities.map((activity) => activity._id), // map activities to _id
+			}));
+			setProducts(updatedItineraries);
 		} else {
 			setProducts([]);
 			console.error(response.message);
@@ -118,9 +125,7 @@ function Itineraries() {
 		const response = await getAllTags();
 		if (!response.error) {
 			setTags(response.data);
-			const set = new Set(
-				response.data.map((tag) => tag.name)
-			);
+			const set = new Set(response.data.map((tag) => tag.name));
 			setTagNames(Array.from(set));
 		} else {
 			console.error(response.message);
@@ -143,7 +148,9 @@ function Itineraries() {
 					activeFilters={activeFilters}
 					setActiveFilters={setActiveFilters}
 				/>
-				{!loading && <CardContainer cardList={products} type={"tourGuide"} />}
+				{!loading && (
+					<CardContainer cardList={products} cardType={"itinerary"} />
+				)}
 			</div>
 		</div>
 	);

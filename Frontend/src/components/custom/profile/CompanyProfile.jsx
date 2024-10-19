@@ -1,15 +1,14 @@
-import { Edit, MapPin } from "lucide-react";
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog"
 import GenericForm from "../genericForm";
+
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+
+import { Edit, MapPin } from "lucide-react";
+
 import { useUser } from '@/state management/userInfo';
-function CompanyProfile({ userData, userId, id }) {
-    const { type } = useUser();
+
+function CompanyProfile({ userData, profileId, id }) {
+    const { role } = useUser();
+
     return (
         <div className="flex flex-col gap-2">
             <div>
@@ -17,28 +16,26 @@ function CompanyProfile({ userData, userId, id }) {
                     <h1 className="text-3xl font-extrabold">
                         Company
                     </h1>
-                    <hr className="border-neutral-700 border w-full mt-1.5" />
-                    {userId === id &&
-                    <Dialog>
-                        <DialogTrigger>
-                            <button className="shrink-0 mt-1.5 text-neutral-600 hover:text-light transition-all">
+                    <hr className="border-neutral-300 border w-full mt-1.5" />
+                    {profileId === id &&
+                        <Dialog>
+                            <DialogTrigger className="icon-button">
                                 <Edit size={24} />
-                            </button>
-                        </DialogTrigger>
-                        <DialogContent className="overflow-y-scroll max-h-[50%]">
-                            <DialogHeader>
-                                <DialogTitle>Edit Profile</DialogTitle>
-                                <GenericForm type={type === "advertiser" ? "company" : type === "tourGuide" ? "experience" : ""} id={id} />
-                            </DialogHeader>
-                        </DialogContent>
-                    </Dialog>
+                            </DialogTrigger>
+                            <DialogContent className="overflow-y-scroll max-h-[50%]">
+                                <DialogHeader>
+                                    <DialogTitle>Edit Profile</DialogTitle>
+                                    <GenericForm data={userData.companyProfile} type={role === "advertiser" ? "company" : role === "tourGuide" ? "experience" : ""} id={id} />
+                                </DialogHeader>
+                            </DialogContent>
+                        </Dialog>
                     }
                 </div>
             </div>
             <div className="flex flex-col gap-3">
                 {(userData?.companyProfile?.name === "" || !userData?.companyProfile?.name) ?
-                    <p className="text-neutral-400 text-sm italic">
-                        {userId !== id ? "No company details to show." : "You have not added your company's details yet. Click the edit button to get started!"}
+                    <p className="text-neutral-500 text-sm italic">
+                        {profileId !== id ? "No company details to show." : "You have not added your company's details yet. Click the edit button to get started!"}
                     </p>
                     :
                     <div>
@@ -48,7 +45,7 @@ function CompanyProfile({ userData, userId, id }) {
                         <div className="flex gap-5">
                             <div className="border-l-[2px] border-neutral-500"></div>
                             <div className="flex flex-col gap-2">
-                                <div className="flex items-start gap-1 text-neutral-400">
+                                <div className="flex items-start gap-1 -ml-1 text-neutral-500">
                                     <MapPin size={18} className="pt-1 shrink-0" />
                                     <h4 className="text-base">
                                         {userData.companyProfile.location}

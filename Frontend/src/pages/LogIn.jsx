@@ -1,39 +1,32 @@
-import { useEffect } from "react";
+import { useState } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
+
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { useState } from "react"
-import { Navigate } from "react-router-dom";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+
 import { useDispatch } from 'react-redux';
-import { login } from '@/state management/userInfo';
-import { useNavigate } from "react-router-dom";
-import { useUser } from "@/state management/userInfo";
+import { useUser, login } from "@/state management/userInfo";
 
 function LogIn() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const {type, id} = useUser();
+    const { role, id } = useUser();
 
-    useEffect(() => {
-        const getUserData = async () => {
-            if (userData) {
-                dispatch(login({ type: type, id: id }));
-            }
-        };
+    // useEffect(() => {
+    //     const getUserData = async () => {
+    //         if (userData) {
+    //             dispatch(login({ role: role, id: id }));
+    //         }
+    //     };
 
-        getUserData();
-    }, [dispatch]);
+    //     getUserData();
+    // }, [dispatch]);
 
     const [signUpRedirect, setSignUpRedirect] = useState(false);
 
@@ -60,32 +53,32 @@ function LogIn() {
 
     function onSubmit(values) {
         if (values.username === "tourist" && values.password === "tourist") {
-            dispatch(login({ type: "tourist", id: "66f97308f74fa1c054a9b15c" }));
-            navigate(`/app/timeline`, { replace: true });
+            dispatch(login({ role: "tourist", id: "66f97308f74fa1c054a9b15c" }));
+            navigate(`/app/itineraries`, { replace: true });
         }
         else if (values.username === "tourGuide" && values.password === "tourGuide") {
-            dispatch(login({ type: "tourGuide", id: "66f8630f55f21e927d7455cc" }));
+            dispatch(login({ role: "tourGuide", id: "66f8630f55f21e927d7455cc" }));
             navigate(`/app/profile`, { replace: true });
         }
         else if (values.username === "seller" && values.password === "seller") {
-            dispatch(login({ type: "seller", id: "66f99b77497c76922f03104e" }));
+            dispatch(login({ role: "seller", id: "66f99b77497c76922f03104e" }));
             navigate(`/app/store`, { replace: true });
         }
         else if (values.username === "advertiser" && values.password === "advertiser") {
-            dispatch(login({ type: "advertiser", id: "66f823447b0fe45d3c6d3768" }));
+            dispatch(login({ role: "advertiser", id: "66f9741bf74fa1c054a9b166" }));
             navigate(`/app/profile`, { replace: true });
         }
         else if (values.username === "tourismGovernor" && values.password === "tourismGovernor") {
-            dispatch(login({ type: "tourismGovernor", id: "66fff189a0a316baace5a99b" }));
+            dispatch(login({ role: "tourismGovernor", id: "66fff189a0a316baace5a99b" }));
             navigate(`/app/profile`, { replace: true });
         }
         else if (values.username === "admin" && values.password === "admin") {
-            dispatch(login({ type: "admin", id: "66ffd995f2226d9aa3157374" }));
+            dispatch(login({ role: "admin", id: "66ffd995f2226d9aa3157374" }));
             navigate(`/app/management`, { replace: true });
         }
         else if (values.username === "guest" && values.password === "guest") {
-            dispatch(login({ type: "guest", id: null }));
-            navigate(`/app/timeline`, { replace: true });
+            dispatch(login({ role: "guest", id: null }));
+            navigate(`/app/itineraries`, { replace: true });
         }
         else {
             console.log("Invalid username or password");
@@ -129,7 +122,7 @@ function LogIn() {
         <div className="w-screen h-screen grid grid-cols-2">
             <div className="bg-primary-700">
                 <div className="flex flex-col justify-center items-center h-full">
-                    <Button onClick={() => navigate(`/app/timeline`, { replace: true })} variant="link">
+                    <Button onClick={() => navigate(`/app/itineraries`, { replace: true })} variant="link">
                         Back to browsing
                     </Button>
                 </div>
