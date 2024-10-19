@@ -12,21 +12,21 @@ const mongoose = require("mongoose");
  */
 
 const createCategory = async (req, res) => {
-  try {
-    const category = await Category.create(req.body);
-    res.status(201).json(category);
-  } catch (error) {
-    if (error.code === 11000) {
-      // MongoDB duplicate key error
-      return res.status(400).json({
-        message: "Category name already exists",
-      });
-    }
-    return res.status(500).json({
-      message: "Error creating category",
-      error: error.message,
-    });
-  }
+	try {
+		const category = await Category.create(req.body);
+		res.status(201).json(category);
+	} catch (error) {
+		if (error.code === 11000) {
+			// MongoDB duplicate key error
+			return res.status(400).json({
+				message: "Category name already exists",
+			});
+		}
+		return res.status(500).json({
+			message: "Error creating category",
+			error: error.message,
+		});
+	}
 };
 
 /**
@@ -37,28 +37,28 @@ const createCategory = async (req, res) => {
  * @returns {Object} - A JSON object of the retrieved category or an error message
  */
 
-const getCategory = async (req, res) => {
-  const { id } = req.params;
+const getCategoryById = async (req, res) => {
+	const { id } = req.params;
 
-  try {
-    let category;
+	try {
+		let category;
 
-    if (mongoose.Types.ObjectId.isValid(id)) {
-      category = await Category.findById(id);
-    } else {
-      category = await Category.findOne({ name: id });
-    }
+		if (mongoose.Types.ObjectId.isValid(id)) {
+			category = await Category.findById(id);
+		} else {
+			category = await Category.findOne({ name: id });
+		}
 
-    if (!category) {
-      return res.status(404).json({ message: "Category not found" });
-    }
-    res.status(200).json(category);
-  } catch (error) {
-    return res.status(500).json({
-      message: "Error getting category",
-      error: error.message,
-    });
-  }
+		if (!category) {
+			return res.status(404).json({ message: "Category not found" });
+		}
+		res.status(200).json(category);
+	} catch (error) {
+		return res.status(500).json({
+			message: "Error getting category",
+			error: error.message,
+		});
+	}
 };
 
 /**
@@ -69,15 +69,15 @@ const getCategory = async (req, res) => {
  * @returns {Object} - A JSON array of all categories or an error message
  */
 const getAllCategories = async (req, res) => {
-  try {
-    const categories = await Category.find();
-    res.status(200).json(categories);
-  } catch (error) {
-    return res.status(500).json({
-      message: "Error getting categories",
-      error: error.message,
-    });
-  }
+	try {
+		const categories = await Category.find();
+		res.status(200).json(categories);
+	} catch (error) {
+		return res.status(500).json({
+			message: "Error getting categories",
+			error: error.message,
+		});
+	}
 };
 
 /**
@@ -88,20 +88,20 @@ const getAllCategories = async (req, res) => {
  */
 
 const deleteCategory = async (req, res) => {
-  try {
-    const deletedCategory = await Category.findByIdAndDelete(req.params.id);
+	try {
+		const deletedCategory = await Category.findByIdAndDelete(req.params.id);
 
-    if (!deletedCategory) {
-      return res.status(404).json({ message: "Category not found" });
-    }
+		if (!deletedCategory) {
+			return res.status(404).json({ message: "Category not found" });
+		}
 
-    res.status(200).json({ message: "Category deleted successfully" });
-  } catch (error) {
-    res.status(500).json({
-      message: "Error deleting category",
-      error: error.message,
-    });
-  }
+		res.status(200).json({ message: "Category deleted successfully" });
+	} catch (error) {
+		res.status(500).json({
+			message: "Error deleting category",
+			error: error.message,
+		});
+	}
 };
 
 /**
@@ -113,32 +113,32 @@ const deleteCategory = async (req, res) => {
  */
 
 const updateCategory = async (req, res) => {
-  try {
-    const { name } = req.body;
-    const { id } = req.params;
+	try {
+		const { name } = req.body;
+		const { id } = req.params;
 
-    const updatedCategory = await Category.findByIdAndUpdate(
-      id,
-      { name },
-      { new: true, runValidators: true }
-    );
+		const updatedCategory = await Category.findByIdAndUpdate(
+			id,
+			{ name },
+			{ new: true, runValidators: true }
+		);
 
-    if (!updatedCategory) {
-      return res.status(404).json({ message: "Category not found" });
-    }
+		if (!updatedCategory) {
+			return res.status(404).json({ message: "Category not found" });
+		}
 
-    res.status(200).json(updatedCategory);
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error updating category", error: error.message });
-  }
+		res.status(200).json(updatedCategory);
+	} catch (error) {
+		res
+			.status(500)
+			.json({ message: "Error updating category", error: error.message });
+	}
 };
 
 module.exports = {
-  createCategory,
-  getCategory,
-  deleteCategory,
-  updateCategory,
-  getAllCategories,
+	createCategory,
+	getCategoryById,
+	deleteCategory,
+	updateCategory,
+	getAllCategories,
 };
