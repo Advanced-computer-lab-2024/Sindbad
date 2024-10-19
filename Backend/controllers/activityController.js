@@ -106,13 +106,17 @@ const addRating = async (req, res) => {
       return res.status(404).json({ message: "Activity not found" });
     }
 
-    
+    // Ensure that activity.rating is a Map
+    if (!(activity.rating instanceof Map)) {
+      activity.rating = new Map(Object.entries(activity.rating));
+    }
+
     // Increment the count of the given rating
     const currentCount = activity.rating.get(rating.toString()) || 0;
     activity.rating.set(rating.toString(), currentCount + 1);
-    
-    
-    activity.averageRating = calculateAverageRating(ra)
+
+    // Recalculate the average rating
+    activity.averageRating = calculateAverageRating(activity.rating);
     await activity.save();
 
     res.status(200).json({ message: "Rating added successfully", activity });
@@ -123,6 +127,7 @@ const addRating = async (req, res) => {
     });
   }
 };
+
 
 const calculateAverageRating = (ratings) => {
   let totalRating = 0;
@@ -136,6 +141,7 @@ const calculateAverageRating = (ratings) => {
 
   return totalVotes > 0 ? totalRating / totalVotes : 0; // Return average or 0 if no votes
 };
+
 
 
 /**
@@ -220,8 +226,9 @@ const deleteActivity = async (req, res) => {
   }
 };
 
+
 /**
- * Searches, filters, and sorts activities based on search term, budget, date, category, rating, and sorting options.
+ * Searches, filters, and sorts activities based on search term, budget, date, category, average rating, and sorting options.
  *
  * @route GET /activity
  * @param {Object} req - Request object with search, filter, and sort criteria in query parameters.
@@ -230,8 +237,8 @@ const deleteActivity = async (req, res) => {
  * @param {Date} [req.query.date.start] - Optional start date for filtering activities.
  * @param {Date} [req.query.date.end] - Optional end date for filtering activities.
  * @param {string} [req.query.category] - Optional category for filtering activities.
- * @param {number} [req.query.rating] - Optional minimum rating for filtering activities.
- * @param {string} [req.query.sortBy] - Optional field to sort by ("price" or "rating").
+ * @param {number} [req.query.minRating] - Optional minimum average rating for filtering activities.
+ * @param {string} [req.query.sortBy] - Optional field to sort by ("price", "averageRating", or "dateTime").
  * @param {string} [req.query.sortOrder="asc"] - Optional sort order ("asc" or "desc"). Default is "asc".
  * @param {number} [req.query.page=1] - Optional page number for pagination. Default is 1.
  * @param {number} [req.query.limit=10] - Optional number of activities per page. Default is 10.
@@ -239,106 +246,100 @@ const deleteActivity = async (req, res) => {
  * @returns {Object} - A JSON object containing an array of activities or an error message.
  */
 const getActivities = async (req, res) => {
-	try {
-		const {
-			searchTerm,
-			budget,
-			date = {},
-			category,
-			rating = {},
-			sortBy = "dateTime", // Default sorting by activity date
-			sortOrder = "asc",
-			page = 1,
-			limit = 10,
-		} = req.query;
+    try {
+        const {
+            searchTerm,
+            budget,
+            date = {},
+            category,
+            minRating,
+            sortBy = "dateTime", // Default sorting by activity date
+            sortOrder = "asc",
+            page = 1,
+            limit = 10,
+        } = req.query;
 
-		// Create filter object based on provided criteria
-		const filter = {
-			//dateTime: { $gte: new Date() }, // Only upcoming activities by default
-		};
+        // Create filter object based on provided criteria
+        const filter = {};
 
-		// Budget filter
-		if (budget.min || budget.max) {
-			filter.$or = [
-				{
-					price: {
-						...(budget.min && { $gte: +budget.min }),
-						...(budget.max && { $lte: +budget.max }),
-					},
-				},
-				{
-					"price.min": {
-						...(budget.min && { $gte: +budget.min }),
-						...(budget.max && { $lte: +budget.max }),
-					},
-				},
-			];
-		}
+        // Budget filter
+        if (budget && (budget.min || budget.max)) {
+            filter.$or = [
+                {
+                    price: {
+                        ...(budget.min && { $gte: +budget.min }),
+                        ...(budget.max && { $lte: +budget.max }),
+                    },
+                },
+                {
+                    "price.min": {
+                        ...(budget.min && { $gte: +budget.min }),
+                        ...(budget.max && { $lte: +budget.max }),
+                    },
+                },
+            ];
+        }
 
-		// Date filter
-		if (date.start || date.end) {
-			filter.dateTime = {
-				...(date.start && { $gte: new Date(date.start) }),
-				...(date.end && {
-					$lte: new Date(new Date(date.end).setHours(23, 59, 59, 999)),
-				}), // End of the day
-			};
-		}
+        // Date filter
+        if (date.start || date.end) {
+            filter.dateTime = {
+                ...(date.start && { $gte: new Date(date.start) }),
+                ...(date.end && {
+                    $lte: new Date(new Date(date.end).setHours(23, 59, 59, 999)),
+                }), // End of the day
+            };
+        }
 
-		// Category filter
-		if (category) {
-			filter.category = category;
-		}
+        // Category filter
+        if (category) {
+            filter.category = category;
+        }
 
-		// Rating filter
-		if (rating.min || rating.max) {
-			filter.rating = {
-				...(rating.min && { $gte: +rating.min }),
-				...(rating.max && { $lte: +rating.max }),
-			};
-		}
+        // Average rating filter
+        if (minRating) {
+            filter.averageRating = { $gte: +minRating };
+        }
 
-		// Search term filter (name, category, or tags)
-		if (searchTerm) {
-			const regex = new RegExp(searchTerm, "i"); // Case-insensitive
-			const categories = await Category.find({ name: regex }).select("_id");
-			const tags = await Tag.find({ name: regex }).select("_id");
+        // Search term filter (name, category, or tags)
+        if (searchTerm) {
+            const regex = new RegExp(searchTerm, "i"); // Case-insensitive
+            const categories = await Category.find({ name: regex }).select("_id");
+            const tags = await Tag.find({ name: regex }).select("_id");
 
-			filter.$or = [
-				{ name: regex },
-				{ category: { $in: categories.map((c) => c._id) } },
-				{ tags: { $in: tags.map((t) => t._id) } },
-			];
-		}
+            filter.$or = [
+                { name: regex },
+                { category: { $in: categories.map((c) => c._id) } },
+                { tags: { $in: tags.map((t) => t._id) } },
+            ];
+        }
 
-		// Sorting and pagination
-		const sortOptions = { [sortBy]: sortOrder === "asc" ? 1 : -1 };
-		const skip = (page - 1) * limit;
+        // Sorting and pagination
+        const sortOptions = { [sortBy]: sortOrder === "asc" ? 1 : -1 };
+        const skip = (page - 1) * limit;
 
-		console.log("filter:", filter);
-		console.log("sortOptions:", sortOptions);
+        console.log("filter:", filter);
+        console.log("sortOptions:", sortOptions);
 
+        // Fetch activities with filters, sorting, and pagination
+        const activities = await Activity.find(filter).sort(sortOptions)
+            .skip(skip)
+            .limit(+limit);
 
-		// Fetch activities with filters, sorting, and pagination
-		// TODO: Add pagination back after adding page navigation to the frontend
-		const activities = await Activity.find(filter).sort(sortOptions);
-		//.skip(skip)
-		//.limit(+limit);
+        if (activities.length === 0) {
+            return res.status(204).send(); // 204 No Content for no results
+        }
 
-		if (activities.length === 0) {
-			return res.status(204).send(); // 204 No Content for no results
-		}
-
-		// Respond with activities
-		res.status(200).json(activities);
-	} catch (error) {
-		console.error(error);
-		res.status(500).json({
-			message: "Error occurred while fetching activities.",
-			error: error.message,
-		});
-	}
+        // Respond with activities
+        res.status(200).json(activities);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: "Error occurred while fetching activities.",
+            error: error.message,
+        });
+    }
 };
+
 
 
 module.exports = {
