@@ -32,7 +32,6 @@ const productSchema = mongoose.Schema({
     type: Map,
     of: Number,
     default: {
-      "0": 0,
       "1": 0,
       "2": 0,
       "3": 0,
@@ -52,7 +51,7 @@ const productSchema = mongoose.Schema({
       },
       rating: {
         type: Number,
-        min: 0,
+        min: 1,
         max: 5,
         required: [true, "Rating is required"],
       },

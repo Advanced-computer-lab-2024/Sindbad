@@ -78,7 +78,6 @@ const createProduct = async (req, res) => {
       const productData = {
           ...req.body,
           rating: req.body.rating || new Map([
-              ["0", 0],
               ["1", 0],
               ["2", 0],
               ["3", 0],
@@ -146,7 +145,7 @@ const addReview = async (req, res) => {
     }
     const { username, rating, comment } = req.body;
 
-    if (rating < 0 || rating > 5) {
+    if (rating < 1 || rating > 5) {
       return res.status(400).json({ message: "Rating must be between 0 and 5" });
     }
 
