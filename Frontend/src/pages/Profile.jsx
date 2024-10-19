@@ -11,7 +11,7 @@ import { getTourist } from "@/services/TouristApiHandler";
 import { getTourGuide } from "@/services/TourGuideApiHandler";
 import { getSeller, getMyProducts } from "@/services/SellerApiHandler";
 import { getAdvertiser } from "@/services/AdvertiserApiHandler";
-import { getTourismGovernor } from "@/services/AdminApiHandler";
+import { getTourismGovernor } from "@/services/TourismGovernorApiHandler";
 import { getMyActivities } from "@/services/ActivityApiHandler";
 import { getMyItineraries } from "@/services/ItineraryApiHandler";
 import { getMySites } from "@/services/SiteApiHandler";
