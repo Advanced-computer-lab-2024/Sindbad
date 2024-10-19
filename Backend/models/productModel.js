@@ -6,9 +6,8 @@ const productSchema = mongoose.Schema(
 			type: String,
 			required: [true, "Please add the product name"],
 		},
-		picture: {
-			type: String,
-			required: [true, "Please add a product picture URL"],
+		imageUris: {
+			type: [String],
 		},
 		price: {
 			type: Number,
