@@ -12,6 +12,7 @@ const {
   // getSortedItineraries,
   // filterItineraries,
 } = require("../controllers/itineraryController");
+const { addRating } = require("../controllers/itineraryController");
 
 // router.route("/sort").get(getSortedItineraries);
 
@@ -25,7 +26,8 @@ router
   .route("/:id")
   .get(getItinerary)
   .put(updateItinerary)
-  .delete(deleteItinerary);
+  .delete(deleteItinerary)
+  .post(addRating);
 
 router.route("/myItineraries/:id").get(getItinerariesByCreator);
 
