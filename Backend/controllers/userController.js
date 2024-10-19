@@ -52,11 +52,6 @@ const UserController = {
 			if (!role) {
 				throw new Error("Role is required");
 			}
-
-			//check username has no spaces
-			if (username.includes(" ")) {
-				throw new Error("Username has spaces");
-			}
 			
 			// Check for unique email and username
 			const isUnique = await UserController.isUniqueUsername(username);
