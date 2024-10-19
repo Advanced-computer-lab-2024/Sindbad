@@ -9,10 +9,18 @@ const {
 	deletePreviousWork,
 } = require("../controllers/tourGuideController");
 
-router.get("/", getAllTourGuides);
-router.get("/:id", getTourGuide);
-router.put("/:id", updateTourGuide);
-router.delete("/:id", deleteTourGuide);
-router.delete("/:id/previous-work/:previousWorkId", deletePreviousWork);
+router
+	.route("/")
+	.get(getAllTourGuides);
+
+router
+	.route("/:id")
+	.get(getTourGuide)
+	.put(updateTourGuide)
+	.delete(deleteTourGuide);
+
+router
+	.route("/:id/previous-work/:previousWorkId")
+	.delete(deletePreviousWork);
 
 module.exports = router;
