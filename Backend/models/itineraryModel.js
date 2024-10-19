@@ -6,6 +6,10 @@ const itinerarySchema = mongoose.Schema(
 			type: String,
 			required: [true, "Please add the name of the itinerary"],
 		},
+    description: {
+      type: String,
+      required: [true, "Please add the description of the itinerary"],
+    },
 		activities: [
 			{
 				type: mongoose.Schema.Types.ObjectId,
@@ -13,6 +17,9 @@ const itinerarySchema = mongoose.Schema(
 				required: [true, "Please add the activities of the itinerary"],
 			},
 		],
+		imageUris: {
+			type: [String]
+		},
 		locations: {
 			type: [String],
 			required: [true, "Please add the locations of the itinerary"],
