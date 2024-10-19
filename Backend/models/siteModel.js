@@ -22,55 +22,58 @@ const openingHoursSchema = new mongoose.Schema(
 	{ _id: false } // Disable automatic _id generation for sub-documents
 );
 
-const siteSchema = new mongoose.Schema({
-	name: {
-		type: String,
-		required: [true, "Please add a name for your site"],
-		unique: true,
-	},
-	description: {
-		type: String,
-		required: [true, "Please add a description for your site"],
-	},
-	imageUris: {
-		type: [String],
-		required: [true, "Please add an image for your site"],
-	},
-	location: {
-		address: {
+const siteSchema = new mongoose.Schema(
+	{
+		name: {
 			type: String,
+			required: [true, "Please add a name for your site"],
+			unique: true,
+		},
+		description: {
+			type: String,
+			required: [true, "Please add a description for your site"],
+		},
+		imageUris: {
+			type: [String],
+			required: [true, "Please add an image for your site"],
+		},
+		location: {
+			address: {
+				type: String,
+				required: true,
+			},
+			coordinates: {
+				lat: { type: Number, required: true },
+				lng: { type: Number, required: true },
+			},
+		},
+		openingHours: {
+			type: Map,
+			of: openingHoursSchema, // One openingHours object per day
+			required: [true, "Please add opening hours for your site"],
+		},
+		ticketPrices: {
+			type: Map,
+			of: Number,
+			validate: {
+				validator: function (map) {
+					return Array.from(map.values()).every((price) => price >= 0);
+				},
+				message: "All ticket prices must be non-negative",
+			},
+		},
+		tags: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "Tag",
+			},
+		],
+		creatorId: {
+			type: mongoose.Schema.Types.ObjectId,
 			required: true,
 		},
-		coordinates: {
-			lat: { type: Number, required: true },
-			lng: { type: Number, required: true },
-		},
 	},
-	openingHours: {
-		type: Map,
-		of: openingHoursSchema, // One openingHours object per day
-		required: [true, "Please add opening hours for your site"],
-	},
-	ticketPrices: {
-		type: Map,
-		of: Number,
-		validate: {
-			validator: function (map) {
-				return Array.from(map.values()).every((price) => price >= 0);
-			},
-			message: "All ticket prices must be non-negative",
-		},
-	},
-	tags: [
-		{
-			type: mongoose.Schema.Types.ObjectId,
-			ref: "Tag",
-		},
-	],
-	creatorId: {
-		type: mongoose.Schema.Types.ObjectId,
-		required: true,
-	},
-});
+	{ timestamps: true }
+);
 
 module.exports = mongoose.model("Site", siteSchema);
