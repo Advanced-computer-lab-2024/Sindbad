@@ -70,9 +70,20 @@ const activitySchema = mongoose.Schema({
 		default: 0,
 	},
 	rating: {
+		type: Map,
+		of: Number,
+		default: {
+		  "1": 0,
+		  "2": 0,
+		  "3": 0,
+		  "4": 0,
+		  "5": 0
+		}
+	  },
+	averageRating: {
 		type: Number,
 		default: 0,
-	},
+	},  
 	description: {
 		type: String,
 		default: "",

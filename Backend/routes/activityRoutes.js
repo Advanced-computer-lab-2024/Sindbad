@@ -7,6 +7,7 @@ const {
   deleteActivity,
   getMyActivities,
   getActivities,
+  addRating,
 } = require("../controllers/activityController");
 
 router.route("/my-activities/:creatorId").get(getMyActivities);
@@ -17,6 +18,7 @@ router
   .route("/:id")
   .get(getActivity)
   .put(updateActivity)
-  .delete(deleteActivity);
+  .delete(deleteActivity)
+  .post(addRating);
 
 module.exports = router;

@@ -84,6 +84,61 @@ const setActivity = async (req, res) => {
 };
 
 /**
+ * Adds a rating to an activity
+ *
+ * @route POST /activity/:id/rate
+ * @param {Object} req - The request object containing the rating in the body
+ * @param {Object} res - The response object used to send a confirmation message or error
+ * @returns {Object} - A JSON object with a confirmation message or an error message if not found
+ */
+const addRating = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { rating } = req.body;
+
+    if (rating < 1 || rating > 5) {
+      return res.status(400).json({ message: "Rating must be between 1 and 5." });
+    }
+
+    const activity = await Activity.findById(id);
+
+    if (!activity) {
+      return res.status(404).json({ message: "Activity not found" });
+    }
+
+    
+    // Increment the count of the given rating
+    const currentCount = activity.rating.get(rating.toString()) || 0;
+    activity.rating.set(rating.toString(), currentCount + 1);
+    
+    
+    activity.averageRating = calculateAverageRating(ra)
+    await activity.save();
+
+    res.status(200).json({ message: "Rating added successfully", activity });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error adding rating",
+      error: error.message,
+    });
+  }
+};
+
+const calculateAverageRating = (ratings) => {
+  let totalRating = 0;
+  let totalVotes = 0;
+
+  // Use the entries of the Map and a for...of loop
+  for (const [rating, count] of ratings.entries()) {
+    totalRating += parseInt(rating) * count; // Multiply rating by the number of votes
+    totalVotes += count; // Sum the number of votes
+  }
+
+  return totalVotes > 0 ? totalRating / totalVotes : 0; // Return average or 0 if no votes
+};
+
+
+/**
  * Updates an existing activity in the database
  *
  * @route PUT /activity/:id
@@ -293,4 +348,5 @@ module.exports = {
   deleteActivity,
   getMyActivities,
   getActivities,
+  addRating,
 };
