@@ -61,18 +61,6 @@ const AdvertiserSchema = new mongoose.Schema(
 			type: Boolean,
 			default: false, // Indicates whether the advertiser has been accepted
 		},
-		createdActivities: {
-			type: [String], // Array of activity IDs
-			default: [],
-		},
-		createdIterinaries: {
-			type: [String], // Array of itinerary IDs
-			default: [],
-		},
-		createdHistoricalPlaces: {
-			type: [String], // Array of historical place IDs
-			default: [],
-		},
 	},
 	{ timestamps: true }
 );

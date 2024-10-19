@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-//TODO: Update schema to link with User
 const AdminSchema = new Schema(
 	{
 		email: {
