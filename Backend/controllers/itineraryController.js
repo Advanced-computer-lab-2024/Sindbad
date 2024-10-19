@@ -12,21 +12,21 @@ const mongoose = require("mongoose");
  * @returns {Object} 404 - Itinerary not found
  * @returns {Object} 500 - Error message if an error occurs
  */
-const getItinerary = async (req, res) => {
-  try {
-    const itinerary = await Itinerary.findById(req.params.id).populate(
-      "activities"
-    );
-    if (!itinerary) {
-      return res.status(404).json({ message: "Itinerary not found" });
-    }
-    res.status(200).json(itinerary);
-  } catch (error) {
-    return res.status(500).json({
-      message: "Error getting itinerary",
-      error: error.message,
-    });
-  }
+const getItineraryById = async (req, res) => {
+	try {
+		const itinerary = await Itinerary.findById(req.params.id).populate(
+			"activities"
+		);
+		if (!itinerary) {
+			return res.status(404).json({ message: "Itinerary not found" });
+		}
+		res.status(200).json(itinerary);
+	} catch (error) {
+		return res.status(500).json({
+			message: "Error getting itinerary",
+			error: error.message,
+		});
+	}
 };
 
 /**
@@ -37,15 +37,15 @@ const getItinerary = async (req, res) => {
  * @returns {Object} 500 - Error message if an error occurs
  */
 const createItinerary = async (req, res) => {
-  try {
-    const newItinerary = await Itinerary.create(req.body);
-    res.status(201).json(newItinerary);
-  } catch (error) {
-    return res.status(500).json({
-      message: "Error creating itinerary",
-      error: error.message,
-    });
-  }
+	try {
+		const newItinerary = await Itinerary.create(req.body);
+		res.status(201).json(newItinerary);
+	} catch (error) {
+		return res.status(500).json({
+			message: "Error creating itinerary",
+			error: error.message,
+		});
+	}
 };
 
 /**
@@ -58,30 +58,30 @@ const createItinerary = async (req, res) => {
  * @returns {Object} 500 - Error message if an error occurs
  */
 const updateItinerary = async (req, res) => {
-  try {
-    const itineraryId = req.params.id;
-    const updatedData = req.body;
+	try {
+		const itineraryId = req.params.id;
+		const updatedData = req.body;
 
-    const updatedItinerary = await Itinerary.findByIdAndUpdate(
-      itineraryId,
-      updatedData,
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
+		const updatedItinerary = await Itinerary.findByIdAndUpdate(
+			itineraryId,
+			updatedData,
+			{
+				new: true,
+				runValidators: true,
+			}
+		);
 
-    if (!updatedItinerary) {
-      return res.status(404).json({ message: "Itinerary not found" });
-    }
+		if (!updatedItinerary) {
+			return res.status(404).json({ message: "Itinerary not found" });
+		}
 
-    res.status(200).json(updatedItinerary);
-  } catch (error) {
-    return res.status(500).json({
-      message: "Error updating itinerary",
-      error: error.message,
-    });
-  }
+		res.status(200).json(updatedItinerary);
+	} catch (error) {
+		return res.status(500).json({
+			message: "Error updating itinerary",
+			error: error.message,
+		});
+	}
 };
 
 /**
@@ -94,56 +94,56 @@ const updateItinerary = async (req, res) => {
  * @throws {500} - Error deleting itinerary if there is a server issue.
  */
 const deleteItinerary = async (req, res) => {
-  try {
-    const itineraryId = req.params.id;
+	try {
+		const itineraryId = req.params.id;
 
-    const itinerary = await Itinerary.findById(itineraryId);
+		const itinerary = await Itinerary.findById(itineraryId);
 
-    if (!itinerary) {
-      return res.status(404).json({ message: "Itinerary not found" });
-    }
+		if (!itinerary) {
+			return res.status(404).json({ message: "Itinerary not found" });
+		}
 
-    if (itinerary.headCount > 0) {
-      return res.status(400).json({
-        message: "Cannot delete itinerary because it has been booked already",
-      });
-    }
+		if (itinerary.headCount > 0) {
+			return res.status(400).json({
+				message: "Cannot delete itinerary because it has been booked already",
+			});
+		}
 
-    await Itinerary.findByIdAndDelete(itineraryId);
+		await Itinerary.findByIdAndDelete(itineraryId);
 
-    res.status(200).json({ message: "Itinerary deleted successfully" });
-  } catch (error) {
-    return res.status(500).json({
-      message: "Error deleting itinerary",
-      error: error.message,
-    });
-  }
+		res.status(200).json({ message: "Itinerary deleted successfully" });
+	} catch (error) {
+		return res.status(500).json({
+			message: "Error deleting itinerary",
+			error: error.message,
+		});
+	}
 };
 
 /**
  * @description Retrieves all itineraries created by a specific creator.
- * @route GET /myItineraries/:id
+ * @route GET /my-itineraries/:id
  * @param {string} id - The ID of the creator whose itineraries are to be fetched.
  * @returns {Array} - An array of itineraries created by the specified creator.
  * @throws {404} - No itineraries found for this creator.
  * @throws {500} - Error fetching itineraries if there is a server issue.
  */
-const getItinerariesByCreator = async (req, res) => {
-  const { id } = req.params;
+const getMyItineraries = async (req, res) => {
+	const { id } = req.params;
 
-  try {
-    const itineraries = await Itinerary.find({ creatorId: id });
+	try {
+		const itineraries = await Itinerary.find({ creatorId: id });
 
-    if (itineraries.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No itineraries found for this creator." });
-    }
+		if (itineraries.length === 0) {
+			return res
+				.status(404)
+				.json({ message: "No itineraries found for this creator." });
+		}
 
-    res.status(200).json(itineraries);
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching itineraries" });
-  }
+		res.status(200).json(itineraries);
+	} catch (error) {
+		res.status(500).json({ message: "Error fetching itineraries" });
+	}
 };
 
 /**
@@ -156,13 +156,13 @@ const getItinerariesByCreator = async (req, res) => {
  * @throws {404} - If no itineraries are found matching the criteria.
  * @throws {500} - If there is an error during the retrieval process.
  */
-const getItineraries = async (req, res) => {
+const getAllItineraries = async (req, res) => {
 	try {
 		const {
 			searchTerm,
 			budget,
 			startDate,
-      endDate,
+			endDate,
 			tag,
 			rating = {},
 			language,
@@ -244,7 +244,7 @@ const getItineraries = async (req, res) => {
 		const skip = (page - 1) * limit;
 
 		console.log("filter:", filter);
-    console.log("sortOptions:", sortOptions);
+		console.log("sortOptions:", sortOptions);
 
 		// Fetch itineraries with aggregation
 		const itineraries = await Itinerary.aggregate([
@@ -286,14 +286,14 @@ const getItineraries = async (req, res) => {
 };
 
 module.exports = {
-  getItinerary,
-  createItinerary,
-  updateItinerary,
-  deleteItinerary,
-  getItineraries,
-  // getAllItineraries,
-  getItinerariesByCreator,
-  // searchItineraries,
-  // getSortedItineraries,
-  // filterItineraries,
+	getItineraryById,
+	createItinerary,
+	updateItinerary,
+	deleteItinerary,
+	getAllItineraries,
+	// getAllItineraries,
+	getMyItineraries,
+	// searchItineraries,
+	// getSortedItineraries,
+	// filterItineraries,
 };
