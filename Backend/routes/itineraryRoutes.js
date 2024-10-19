@@ -1,32 +1,22 @@
 const express = require("express");
 const router = express.Router();
 const {
-  getItinerary,
-  createItinerary,
-  updateItinerary,
-  deleteItinerary,
-  // getAllItineraries,
-  getItineraries,
-  getItinerariesByCreator,
-  // searchItineraries,
-  // getSortedItineraries,
-  // filterItineraries,
+	getItineraryById,
+	createItinerary,
+	updateItinerary,
+	deleteItinerary,
+	getAllItineraries,
+	getMyItineraries,
 } = require("../controllers/itineraryController");
 
-// router.route("/sort").get(getSortedItineraries);
-
-// router.route("/search").get(searchItineraries);
-
-// router.route("/filter").get(filterItineraries);
-
-router.route("/").post(createItinerary).get(getItineraries);
+router.route("/").post(createItinerary).get(getAllItineraries);
 
 router
-  .route("/:id")
-  .get(getItinerary)
-  .put(updateItinerary)
-  .delete(deleteItinerary);
+	.route("/:id")
+	.get(getItineraryById)
+	.put(updateItinerary)
+	.delete(deleteItinerary);
 
-router.route("/myItineraries/:id").get(getItinerariesByCreator);
+router.route("/my-itineraries/:creator-id").get(getMyItineraries);
 
 module.exports = router;

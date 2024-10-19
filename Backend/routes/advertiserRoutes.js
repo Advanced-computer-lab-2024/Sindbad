@@ -3,13 +3,11 @@ const AdvertiserController = require("../controllers/advertiserController");
 
 const router = express.Router();
 
-// Route to fetch advertiser profile
-router.get("/profile/:id", AdvertiserController.getProfile);
+router.route("/").get(AdvertiserController.getAllAdvertisers);
 
-// Route to update advertiser profile
-router.put("/profile/:id", AdvertiserController.updateProfile);
-
-// Route to fetch all advertiser profiles
-router.get("/profiles", AdvertiserController.getAllProfiles);
+router
+	.route("/:id")
+	.get(AdvertiserController.getAdvertiserById)
+	.put(AdvertiserController.updateAdveriser);
 
 module.exports = router;

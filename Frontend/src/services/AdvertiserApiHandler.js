@@ -3,7 +3,7 @@ const baseURL = import.meta.env.VITE_BASE_URL;
 
 export const getAdvertiser = async (advertiserId) => {
     try {
-        const response = await axios.get(`${baseURL}/advertiser/profile/${advertiserId}`, {
+        const response = await axios.get(`${baseURL}/advertiser/${advertiserId}`, {
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -46,7 +46,7 @@ export const getAdvertiser = async (advertiserId) => {
 
 export const updateAdvertiser = async (updatedValues, id) => {
     try {
-        const response = axios.put(`${baseURL}/advertiser/profile/${id}`, updatedValues, {
+        const response = axios.put(`${baseURL}/advertiser/${id}`, updatedValues, {
             headers: {
                 'Content-Type': 'application/json',
             },

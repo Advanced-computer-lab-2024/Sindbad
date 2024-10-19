@@ -9,7 +9,7 @@ const {
   getActivities,
 } = require("../controllers/activityController");
 
-router.route("/my-activities/:creatorId").get(getMyActivities);
+router.route("/my-activities/:creator-id").get(getMyActivities);
 
 router.route("/").post(setActivity).get(getActivities);
 
