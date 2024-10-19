@@ -2,19 +2,18 @@ const express = require("express");
 const router = express.Router();
 
 const {
-	getTourist,
+	getTouristById,
 	getAllTourists,
 	updateTourist,
 	deleteTourist,
-  } = require("../controllers/touristController");
+} = require("../controllers/touristController");
 
-  router.get("/",getAllTourists);
-  router.get("/:id",getTourist);
-  router.put("/:id", updateTourist);
-  router.delete("/:id", deleteTourist); 
+router.route("/").get(getAllTourists);
 
-router.route("/getTourist/:id")
-			.get(getTourist)
-			.put(updateTourist);
+router
+	.route("/:id")
+	.get(getTouristById)
+	.put(updateTourist)
+	.delete(deleteTourist);
 
 module.exports = router;
