@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 
 import ProductCard from "@/components/custom/ProductCard";
 import GenericForm from "@/components/custom/genericForm";
+import GenericFilter from "@/components/custom/GenericFilter";
 
 import { Input } from "@/components/ui/input";
 import { PriceFilter } from "@/components/ui/price-filter";
@@ -26,16 +27,44 @@ function ShoppingPage() {
 		maxPrice: 1000,
 	});
 
+	const [activeFilters, setActiveFilters] = useState({
+		name: "",
+		price: {
+			min: 0,
+			max: 1000,
+		},
+		sortBy: "",
+	});
+
+	const formFields = {
+		name: {
+			type: "search",
+			label: "Search",
+		},
+		price: {
+			type: "range",
+			label: "Price",
+			min: 0,
+			max: 1000,
+			step: 1,
+		},
+		sortBy: {
+			type: "select",
+			label: "Sort By",
+			options: ["Rating: Low to High", "Rating: High to Low"],
+		},
+	};
+
 	const [sortOrder, setSortOrder] = useState("none"); // Default value is 'none' for no sorting
 
 	// Function to fetch products based on filters and sorting order
 	const fetchProducts = async () => {
 		setLoading(true);
 		const response = await getAllProducts(
-			search,
-			minPrice,
-			maxPrice,
-			sortOrder
+			activeFilters.name,
+			activeFilters.price.min,
+			activeFilters.price.max,
+			activeFilters.sortBy,
 		);
 		if (!response.error) {
 			setProducts(response);
@@ -44,6 +73,17 @@ function ShoppingPage() {
 		}
 		setLoading(false);
 	};
+
+	useEffect(() => {
+		const delayDebounceFn = setTimeout(() => {
+			// Only fetch products after a 1-second delay
+			fetchProducts();
+		}, 500); // Adjust debounce time as needed (e.g., 500ms, 1000ms)
+
+		// Clear the timeout if activeFilters changes before the timeout is complete
+		// console.log("activeFilters changed", activeFilters);
+		return () => clearTimeout(delayDebounceFn);
+	}, [activeFilters]);
 
 	// Fetch products whenever the search, price range, or sortOrder changes
 	useEffect(() => {
@@ -87,42 +127,11 @@ function ShoppingPage() {
 			</div>
 			<div className="flex gap-10">
 				<div className="flex flex-col gap-7">
-					<div>
-						<h2 className="text-md font-semibold mb-2">Search</h2>
-						<Input
-							type="text"
-							placeholder="Search..."
-							value={search}
-							onChange={(e) => setSearch(e.target.value)}
-						/>
-					</div>
-					<PriceFilter
-						minPrice={minPrice}
-						maxPrice={maxPrice}
-						setMinPrice={setMinPrice}
-						setMaxPrice={setMaxPrice}
-						priceRange={priceRange}
-						step={10}
-						label="Price"
+					<GenericFilter
+						formFields={formFields}
+						activeFilters={activeFilters}
+						setActiveFilters={setActiveFilters}
 					/>
-					<div>
-						<h2 className="text-md font-semibold mb-2">Sort by</h2>
-						{/* Select dropdown for sorting */}
-						<Select value={sortOrder} onValueChange={setSortOrder}>
-							<SelectTrigger>
-								<SelectValue placeholder="Select sorting" />
-							</SelectTrigger>
-							<SelectContent>
-								<SelectItem value="none">Default</SelectItem>
-								<SelectItem value="asc">
-									Rating: Low to High
-								</SelectItem>
-								<SelectItem value="desc">
-									Rating: High to Low
-								</SelectItem>
-							</SelectContent>
-						</Select>
-					</div>
 				</div>
 				<div className="grid gap-6 grid-cols-4 w-full">
 					{loading ? (
