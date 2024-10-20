@@ -244,6 +244,7 @@ const getActivities = async (req, res) => {
 
 		// Fetch activities that match the filter criteria
 		let activities = await Activity.find(filterCriteria);
+		console.log(filterCriteria);
 
 		// Apply search term filter if provided
 		if (searchTerm) {

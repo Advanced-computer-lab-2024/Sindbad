@@ -50,7 +50,7 @@ function ProductCard({ data, id, profileId }) {
 						<h4 className="text-base font-semibold line-clamp-2">
 							{data.name}
 						</h4>
-						<StarRating rating={data.averageRating ? data.averageRating : 0} />
+						<StarRating rating={data.averageRating ? data.averageRating : 0} size={16} />
 						<div className="text-neutral-500 flex gap-1 items-center mt-1">
 							<Wallet size={16} />
 							<p className="text-xs leading-[11px] font-medium text-neutral-500">

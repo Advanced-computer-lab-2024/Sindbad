@@ -243,8 +243,8 @@ const getAllItineraries = async (req, res) => {
 		const sortOptions = { [sortBy]: sortOrder === "asc" ? 1 : -1 };
 		const skip = (page - 1) * limit;
 
-		console.log("filter:", filter);
-		console.log("sortOptions:", sortOptions);
+		// console.log("filter:", filter);
+		// console.log("sortOptions:", sortOptions);
 
 		// Fetch itineraries with aggregation
 		const itineraries = await Itinerary.aggregate([

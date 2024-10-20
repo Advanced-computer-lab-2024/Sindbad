@@ -97,7 +97,7 @@ function Card({ data, id, profileId, cardType }) {
 					<h4 className="text-base font-semibold line-clamp-2">
 						{data.name}
 					</h4>
-					<StarRating rating={data.rating ? data.rating : 0} />
+					<StarRating rating={data.rating ? data.rating : 0} size={16} />
 					<div className="text-neutral-500 flex gap-1 items-center mt-1">
 						<Wallet size={16} />
 						{data.price?.min ?

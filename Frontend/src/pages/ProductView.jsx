@@ -81,12 +81,8 @@ function ProductView() {
 												<span className="">Sold by:</span>
 												<a
 													className="ml-2 hover:underline cursor-pointer"
-													onClick={() =>
-														navigate(
-															`/app/profile/${productData.seller?._id}`,
-															{ replace: true }
-														)
-													}
+													href={`/app/profile/${productData.seller?._id}`}
+													rel="noreferrer"
 												>
 													{productData.seller?.firstName}{" "}
 													{productData.seller?.lastName}
