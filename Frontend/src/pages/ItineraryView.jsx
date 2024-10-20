@@ -2,9 +2,9 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 
-import { MapPin, Star, ArrowBigRight, ArrowRight } from "lucide-react";
+import { MapPin, Star, ArrowRight } from "lucide-react";
 
 import { getItineraryById } from "@/services/ItineraryApiHandler";
 import ImagePlaceholder from "@/components/custom/ImagePlaceholder";
@@ -93,7 +93,7 @@ const Itinerary = () => {
 					<p className="text-neutral-400 text-sm italic">Loading...</p>
 				</div>
 			</div>
-		); // You can return a loading spinner or message here
+		);
 	}
 
 	// Ensure availableDatesTimes exists before accessing it
