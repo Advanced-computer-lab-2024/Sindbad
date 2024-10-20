@@ -139,7 +139,7 @@ function Experience({ userData, profileId, id }) {
 							</div>
 							<AccordionContent>
 								<div className="flex gap-5">
-									<div className="border-l-[2px] border-neutral-300"></div>
+									<div className="border-l-2 border-neutral-300"></div>
 									<div className="flex flex-col gap-2">
 										<div className="-ml-1 text-neutral-500">
 											<div className="flex items-start gap-1">

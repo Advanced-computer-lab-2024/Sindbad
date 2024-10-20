@@ -131,7 +131,7 @@ const Itinerary = () => {
 				<hr className="border-neutral-300 border w-full mt-1.5" />
 			</div>
 			<div className="flex justify-between gap-32 py-6">
-				<div className="flex flex-col gap-6">
+				<div className="flex flex-col gap-6 w-full">
 					<div>
 						<p className="text-base font-medium">
 							{itinerary.duration} day trip offered by{" "}
@@ -373,7 +373,7 @@ const Itinerary = () => {
 						</div>
 
 						{/* Total Cost Section */}
-						<div className="bg-primary-700/60 -mx-6 px-8 py-4 text-sm flex flex-col gap-2">
+						<div className="bg-primary-700/40 -mx-6 px-8 py-4 text-sm flex flex-col gap-2">
 							<div className="flex justify-between">
 								<p>
 									Item count:{" "}

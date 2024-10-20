@@ -6,13 +6,12 @@ import StarRating from "@/components/custom/StarRating";
 import ImagePlaceholder from "@/components/custom/ImagePlaceholder";
 
 import { Button } from "@/components/ui/button";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 
 import { MapPin, CalendarDays, AlarmClock, ArrowRight } from "lucide-react";
 
 import { getActivityById } from "@/services/ActivityApiHandler";
 import { getAdvertiser } from "@/services/AdvertiserApiHandler";
-import { Arrow } from "@radix-ui/react-menubar";
 
 function getRandomRating() {
 	return (Math.round(Math.random() * 10) / 2).toFixed(1);
@@ -111,7 +110,7 @@ function Activity() {
 				<hr className="border-neutral-300 border w-full mt-1.5" />
 			</div>
 			<div className="flex justify-between gap-32 py-6">
-				<div className="flex flex-col gap-6">
+				<div className="flex flex-col gap-6 w-full">
 					<div>
 						<p className="text-base font-medium">
 							Offered by{" "}
@@ -141,7 +140,7 @@ function Activity() {
 							{activity.tags.map((tag) => (
 								<div
 									key={tag._id}
-									className="flex gap-1 text-xs items-center bg-gradient-to-br from-primary-700 to-primary-900 px-3 py-1.5 rounded-full"
+									className="flex gap-1 text-xs text-center items-center bg-gradient-to-br from-primary-700 to-primary-900 px-3 py-1.5 rounded-full"
 								>
 									{tag.name}
 								</div>
@@ -154,7 +153,7 @@ function Activity() {
 							Location
 						</h2>
 						<div className="flex flex-col gap-2">
-							<div className="bg-light h-[200px] rounded-md overflow-clip">
+							<div className="bg-light h-[250px] rounded-md overflow-clip">
 								<GoogleMapRead
 									lat={activity.location.coordinates.lat}
 									lng={activity.location.coordinates.lng}
