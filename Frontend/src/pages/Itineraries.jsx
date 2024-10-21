@@ -7,8 +7,8 @@ import { getAllItineraries } from "@/services/ItineraryApiHandler";
 import { getAllTags } from "@/services/AdminApiHandler";
 
 function Itineraries() {
-	const [loading, setLoading] = useState(false);
-	const [products, setProducts] = useState([]);
+	const [loading, setLoading] = useState(true);
+	const [itineraries, setItineraries] = useState([]);
 	const [tags, setTags] = useState([]);
 	const [tagNames, setTagNames] = useState([]);
 	const [activeFilters, setActiveFilters] = useState({
@@ -77,7 +77,7 @@ function Itineraries() {
 		},
 	};
 
-	// Function to fetch products
+	// Function to fetch itineraries
 	const fetchItineraries = async () => {
 		setLoading(true);
 		let tagToSend = "";
@@ -101,9 +101,9 @@ function Itineraries() {
 				...itinerary, // retain other properties of the itinerary
 				activities: itinerary.activities.map((activity) => activity._id), // map activities to _id
 			}));
-			setProducts(updatedItineraries);
+			setItineraries(updatedItineraries);
 		} else {
-			setProducts([]);
+			setItineraries([]);
 			console.error(response.message);
 		}
 		setLoading(false);
@@ -112,7 +112,7 @@ function Itineraries() {
 	// Debouncing logic for the API call
 	useEffect(() => {
 		const delayDebounceFn = setTimeout(() => {
-			// Only fetch products after a 1-second delay
+			// Only fetch itineraries after a 1-second delay
 			fetchItineraries();
 		}, 500); // Adjust debounce time as needed (e.g., 500ms, 1000ms)
 
@@ -148,8 +148,16 @@ function Itineraries() {
 					activeFilters={activeFilters}
 					setActiveFilters={setActiveFilters}
 				/>
-				{!loading && (
-					<CardContainer cardList={products} cardType={"itinerary"} />
+				{!loading ? (
+					<CardContainer cardList={itineraries} cardType={"itinerary"} />
+				) : (
+					<div className="flex col-span-3 mx-auto">
+						<div className="flex justify-center w-full">
+							<p className="text-neutral-400 text-sm italic">
+								Loading...
+							</p>
+						</div>
+					</div>
 				)}
 			</div>
 		</div>

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import ProductCard from "@/components/custom/ProductCard";
 import GenericForm from "@/components/custom/genericForm";
 import GenericFilter from "@/components/custom/GenericFilter";
+import CardContainer from "@/components/custom/CardContainer";
 
 import { Input } from "@/components/ui/input";
 import { PriceFilter } from "@/components/ui/price-filter";
@@ -20,7 +21,7 @@ function ShoppingPage() {
 	const [search, setSearch] = useState("");
 	const [minPrice, setMinPrice] = useState(0);
 	const [maxPrice, setMaxPrice] = useState(1000);
-	const [loading, setLoading] = useState(false);
+	const [loading, setLoading] = useState(true);
 	const { role, id } = useUser();
 	const [priceRange, setPriceRange] = useState({
 		minPrice: 0,
@@ -85,11 +86,6 @@ function ShoppingPage() {
 		return () => clearTimeout(delayDebounceFn);
 	}, [activeFilters]);
 
-	// Fetch products whenever the search, price range, or sortOrder changes
-	useEffect(() => {
-		fetchProducts();
-	}, [search, minPrice, maxPrice, sortOrder]);
-
 	// const getPriceRange = async () => {
 	// 	const response = await getPriceMinMax();
 	// 	if (!response.error) {
@@ -133,22 +129,19 @@ function ShoppingPage() {
 						setActiveFilters={setActiveFilters}
 					/>
 				</div>
-				<div className="grid gap-6 grid-cols-4 w-full">
-					{loading ? (
-						<p>Loading products...</p>
-					) : products.length > 0 ? (
-						products.map((item, index) => (
-							<ProductCard
-								key={index}
-								data={item}
-								id={id}
-								profilelId={item.seller}
-							/>
-						))
-					) : (
-						<p>No products found.</p>
-					)}
-				</div>
+
+				{!loading ? (
+					<CardContainer cardList={products} cardType={"product"} />
+				) : (
+					<div className="flex col-span-3 mx-auto">
+						<div className="flex justify-center w-full">
+							<p className="text-neutral-400 text-sm italic">
+								Loading...
+							</p>
+						</div>
+					</div>
+				)}
+
 			</div>
 		</div>
 	);

@@ -42,16 +42,18 @@ function handleSiteValues(site) {
 function Site() {
 	const { siteId } = useParams();
 	const [site, setSite] = useState(null);
+	const [error, setError] = useState(false);
 
 	const getSite = async () => {
 		let response = await getSiteById(siteId);
-		console.log(response);
 
 		if (response.error) {
 			console.error(response.message);
+			setError(true);
 		} else {
 			handleSiteValues(response);
 			setSite(response);
+			setError(false);
 		}
 	};
 
@@ -63,7 +65,13 @@ function Site() {
 		return (
 			<div className="py-8 px-24 max-w-[1200px] flex gap-9 mx-auto">
 				<div className="flex justify-center w-full">
-					<p className="text-neutral-400 text-sm italic">Loading...</p>
+					<p className="text-neutral-400 text-sm italic">
+						{error === true ?
+							"Site does not exist."
+							:
+							"Loading..."
+						}
+					</p>
 				</div>
 			</div>
 		);

@@ -23,7 +23,7 @@ function Profile() {
 	const { profileId } = useParams(); // id of the user whose profile is being viewed
 	const { role, id } = useUser(); // details of the logged in user
 	const [profileRole, setProfileRole] = useState("guest"); // role of the user whose profile is being viewed
-	const [userData, setUserData] = useState({}); // details of the user whose profile is being viewed
+	const [userData, setUserData] = useState(null); // details of the user whose profile is being viewed
 	const [cardData, setCardData] = useState([]); // data to be displayed in the timeline (activities, products, itineraries, sites)
 	const [error, setError] = useState(false);
 
@@ -105,7 +105,7 @@ function Profile() {
 	// get the data to be displayed in the timeline (activities, products, itineraries, sites)
 	useEffect(() => {
 		if (
-			profileId &&
+			profileId && userData &&
 			profileRole !== "guest" &&
 			Object.keys(userData).length > 0
 		) {
@@ -113,50 +113,56 @@ function Profile() {
 		}
 	}, [profileRole, userData]);
 
-	return (
-		<div className="py-8 px-24 max-w-[1200px] flex gap-9 mx-auto">
-			{error === false ? (
-				<>
-					{profileRole !== "tourismGovernor" && (
-						<div className="flex flex-col w-max gap-9 self-start">
-							<ProfileBanner
-								userData={userData}
-								profileId={profileId}
-								id={id}
-								profileRole={profileRole}
-							/>
-							{profileRole === "tourist" && profileId === id && (
-								<Wallet userData={userData} />
-							)}
-						</div>
-					)}
-					<div className="w-full flex flex-col gap-12">
-						{profileRole === "advertiser" && (
-							<CompanyProfile
-								userData={userData}
-								profileId={profileId}
-								id={id}
-							/>
-						)}
-						{profileRole === "tourGuide" && (
-							<Experience userData={userData} profileId={profileId} id={id} />
-						)}
-						<Timeline
-							userData={userData}
-							profileId={profileId}
-							id={id}
-							profileRole={profileRole}
-							cardData={cardData}
-						/>
-					</div>
-				</>
-			) : (
+	if (!userData) {
+		return (
+			<div className="py-8 px-24 max-w-[1200px] flex gap-9 mx-auto">
 				<div className="flex justify-center w-full">
 					<p className="text-neutral-400 text-sm italic">
-						Profile does not exist or you are not authorised to view it.
+						{error === true ?
+							"Profile does not exist or you are not authorised to view it."
+							:
+							"Loading..."
+						}
 					</p>
 				</div>
+			</div>
+		);
+	}
+
+	return (
+		<div className="py-8 px-24 max-w-[1200px] flex gap-9 mx-auto">
+			{profileRole !== "tourismGovernor" && (
+				<div className="flex flex-col w-max gap-9 self-start">
+					<ProfileBanner
+						userData={userData}
+						profileId={profileId}
+						id={id}
+						profileRole={profileRole}
+					/>
+					{profileRole === "tourist" && profileId === id && (
+						<Wallet userData={userData} />
+					)}
+				</div>
 			)}
+			<div className="w-full flex flex-col gap-12">
+				{profileRole === "advertiser" && (
+					<CompanyProfile
+						userData={userData}
+						profileId={profileId}
+						id={id}
+					/>
+				)}
+				{profileRole === "tourGuide" && (
+					<Experience userData={userData} profileId={profileId} id={id} />
+				)}
+				<Timeline
+					userData={userData}
+					profileId={profileId}
+					id={id}
+					profileRole={profileRole}
+					cardData={cardData}
+				/>
+			</div>
 		</div>
 	);
 }
