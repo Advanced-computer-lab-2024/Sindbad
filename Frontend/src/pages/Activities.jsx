@@ -7,8 +7,8 @@ import { getAllActivities } from "@/services/ActivityApiHandler";
 import { getAllCategories } from "@/services/AdminApiHandler";
 
 function Activities() {
-	const [loading, setLoading] = useState(false);
-	const [products, setProducts] = useState([]);
+	const [loading, setLoading] = useState(true);
+	const [activities, setActivities] = useState([]);
 	const [categories, setCategories] = useState([]);
 	const [categoryNames, setCategoryNames] = useState([]);
 	const [activeFilters, setActiveFilters] = useState({
@@ -72,7 +72,7 @@ function Activities() {
 		},
 	};
 
-	// Function to fetch products
+	// Function to fetch activities
 	const fetchActivities = async () => {
 		setLoading(true);
 		let categoryToSend = "";
@@ -91,9 +91,9 @@ function Activities() {
 			activeFilters.sortOrder.selected
 		);
 		if (!response.error) {
-			setProducts(response);
+			setActivities(response);
 		} else {
-			setProducts([]);
+			setActivities([]);
 			console.error(response.message);
 		}
 		setLoading(false);
@@ -102,7 +102,7 @@ function Activities() {
 	// Debouncing logic for the API call
 	useEffect(() => {
 		const delayDebounceFn = setTimeout(() => {
-			// Only fetch products after a 1-second delay
+			// Only fetch activities after a 1-second delay
 			fetchActivities();
 		}, 500); // Adjust debounce time as needed (e.g., 500ms, 1000ms)
 
@@ -142,8 +142,16 @@ function Activities() {
 					activeFilters={activeFilters}
 					setActiveFilters={setActiveFilters}
 				/>
-				{!loading && (
-					<CardContainer cardList={products} cardType={"activity"} />
+				{!loading ? (
+					<CardContainer cardList={activities} cardType={"activity"} />
+				) : (
+					<div className="flex col-span-3 mx-auto">
+						<div className="flex justify-center w-full">
+							<p className="text-neutral-400 text-sm italic">
+								Loading...
+							</p>
+						</div>
+					</div>
 				)}
 			</div>
 		</div>

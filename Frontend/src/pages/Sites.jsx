@@ -7,7 +7,7 @@ import { getAllSites } from "@/services/SiteApiHandler";
 import { getAllTags } from "@/services/AdminApiHandler";
 
 function Sites() {
-	const [loading, setLoading] = useState(false);
+	const [loading, setLoading] = useState(true);
 	const [sites, setSites] = useState([]);
 
 	const [tagNames, setTagNames] = useState([]);
@@ -64,7 +64,6 @@ function Sites() {
 
 	useEffect(() => {
 		fetchTags();
-		fetchSites();
 	}, []);
 
 	// Debouncing logic for the API call
@@ -90,8 +89,16 @@ function Sites() {
 					activeFilters={activeFilters}
 					setActiveFilters={setActiveFilters}
 				/>
-				{!loading && (
+				{!loading ? (
 					<CardContainer cardList={sites} cardType={"site"} />
+				) : (
+					<div className="flex col-span-3 mx-auto">
+						<div className="flex justify-center w-full">
+							<p className="text-neutral-400 text-sm italic">
+								Loading...
+							</p>
+						</div>
+					</div>
 				)}
 			</div>
 		</div>

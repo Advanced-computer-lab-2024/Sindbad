@@ -11,9 +11,9 @@ import { ArrowRight, Edit3, Wallet } from 'lucide-react';
 
 import { useUser } from "@/state management/userInfo";
 
-function ProductCard({ data, id, profileId }) {
+function ProductCard({ data, profileId }) {
     const navigate = useNavigate();
-    const { role } = useUser();
+    const { role, id } = useUser();
 
     return (
 			<article className="w-full flex flex-col border border-primary-700/80 rounded-md overflow-clip bg-gradient-to-br from-light to-primary-700/50 group">

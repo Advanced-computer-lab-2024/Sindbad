@@ -51,6 +51,7 @@ const Itinerary = () => {
 	const [selectedDate, setSelectedDate] = useState(0);
 	const [selectedTime, setSelectedTime] = useState(0);
 	const [creator, setCreator] = useState(null);
+	const [error, setError] = useState(false);
 
 	const getItinerary = async () => {
 		let response = await getItineraryById(itineraryId);
@@ -58,9 +59,11 @@ const Itinerary = () => {
 
 		if (response.error) {
 			console.error(response.message);
+			setError(true);
 		} else {
 			handleItineraryValues(response);
 			setItinerary(response);
+			setError(false);
 		}
 	};
 
@@ -90,7 +93,13 @@ const Itinerary = () => {
 		return (
 			<div className="py-8 px-24 max-w-[1200px] flex gap-9 mx-auto">
 				<div className="flex justify-center w-full">
-					<p className="text-neutral-400 text-sm italic">Loading...</p>
+					<p className="text-neutral-400 text-sm italic">
+						{error === true ?
+							"Itinerary does not exist."
+							:
+							"Loading..."
+						}
+					</p>
 				</div>
 			</div>
 		);

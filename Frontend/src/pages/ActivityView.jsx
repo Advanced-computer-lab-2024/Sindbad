@@ -54,22 +54,23 @@ function Activity() {
 	const { activityId } = useParams();
 	const [activity, setActivity] = useState(null);
 	const [creator, setCreator] = useState(null);
+	const [error, setError] = useState(false);
 
 	const getActivity = async () => {
 		let response = await getActivityById(activityId);
 
 		if (response.error) {
 			console.error(response.message);
+			setError(true);
 		} else {
 			handleActivityValues(response);
 			setActivity(response);
+			setError(false);
 		}
 	};
 
 	const getCreator = async () => {
 		let response = await getAdvertiser(activity.creatorId);
-
-		console.log("CREATOR", response);
 
 		if (response.error) {
 			console.error(response.message);
@@ -92,7 +93,13 @@ function Activity() {
 		return (
 			<div className="py-8 px-24 max-w-[1200px] flex gap-9 mx-auto">
 				<div className="flex justify-center w-full">
-					<p className="text-neutral-400 text-sm italic">Loading...</p>
+					<p className="text-neutral-400 text-sm italic">
+						{error === true ?
+							"Activity does not exist."
+							:
+							"Loading..."
+						}
+					</p>
 				</div>
 			</div>
 		);
