@@ -104,7 +104,7 @@ function Card({ data, id, userId, type }) {
                         </p>
                     </div> */}
 						<p className="text-xs leading-[11px] font-medium text-neutral-500 mt-1">
-							Rating: {data.rating ? `${data.rating} / 5` : "N/A"}
+							Rating: {data.averageRating ? `${data.averageRating} / 5` : "N/A"}
 						</p>
 					</div>
 					<Button

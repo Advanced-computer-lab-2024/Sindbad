@@ -218,7 +218,7 @@ const getItineraries = async (req, res) => {
 
 		// Rating filter
 		if (rating && (rating.min || rating.max)) {
-			filter.rating = {
+			filter.averageRating = {
 				...(rating.min && { $gte: +rating.min }),
 				...(rating.max && { $lte: +rating.max }),
 			};
