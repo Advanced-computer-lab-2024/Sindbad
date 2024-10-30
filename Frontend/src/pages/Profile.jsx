@@ -6,7 +6,7 @@ import Wallet from "@/components/custom/profile/Wallet";
 import Experience from "@/components/custom/profile/Experience";
 import CompanyProfile from "@/components/custom/profile/CompanyProfile";
 import Timeline from "@/components/custom/profile/Timeline";
-
+import TagManagement from "@/components/custom/admin/TagManagement";
 import { getTouristById } from "@/services/TouristApiHandler";
 import { getTourGuide } from "@/services/TourGuideApiHandler";
 import { getSeller, getMyProducts } from "@/services/SellerApiHandler";
@@ -32,15 +32,26 @@ function Profile() {
 		const r = await getRole(profileId); // get the role of the user whose profile is being viewed
 
 		if (r === "tourist") {
-			if (profileId == id || role === "admin")
+			if (profileId == id || role === "admin") {
 				// nobody can view the profile of a tourist except the tourist himself or an admin
 				response = await getTouristById(profileId);
-			else response = { error: true, message: "Unauthorized access" };
-		} else if (r === "tourGuide") response = await getTourGuide(profileId);
-		else if (r === "seller") response = await getSeller(profileId);
-		else if (r === "advertiser") response = await getAdvertiser(profileId);
-		else if (r === "tourismGovernor")
+			}
+			else {
+				response = { error: true, message: "Unauthorized access" };
+			}
+		}
+		else if (r === "tourGuide") {
+			response = await getTourGuide(profileId);
+		}
+		else if (r === "seller") {
+			response = await getSeller(profileId);
+		}
+		else if (r === "advertiser") {
+			response = await getAdvertiser(profileId);
+		}
+		else if (r === "tourismGovernor") {
 			response = await getTourismGovernor(profileId);
+		}
 
 		if (response.error) {
 			setError(true);
@@ -48,6 +59,7 @@ function Profile() {
 		} else {
 			setError(false);
 			setUserData(response);
+			console.log(response);
 		}
 	};
 
@@ -129,40 +141,59 @@ function Profile() {
 		);
 	}
 
+	if (userData && userData.isAccepted === false && profileId !== id) {
+		return (
+			<div className="py-8 px-24 max-w-[1200px] flex gap-9 mx-auto">
+				<div className="flex justify-center w-full">
+					<p className="text-neutral-400 text-sm italic">
+						Profile does not exist or you are not authorised to view it.
+					</p>
+				</div>
+			</div>
+		);
+	}
+
 	return (
-		<div className="py-8 px-24 max-w-[1200px] flex gap-9 mx-auto">
-			{profileRole !== "tourismGovernor" && (
-				<div className="flex flex-col w-max gap-9 self-start">
-					<ProfileBanner
+		<div className="py-8 px-24 max-w-[1200px] mx-auto">
+			<div className="flex gap-9">
+				{profileRole !== "tourismGovernor" && (
+					<div className="flex flex-col w-max gap-9 self-start">
+						<ProfileBanner
+							userData={userData}
+							profileId={profileId}
+							id={id}
+							profileRole={profileRole}
+						/>
+						{profileRole === "tourist" && profileId === id && (
+							<Wallet userData={userData} />
+						)}
+					</div>
+				)}
+				<div className="w-full flex flex-col gap-12">
+					{profileRole === "advertiser" && (
+						<CompanyProfile
+							userData={userData}
+							profileId={profileId}
+							id={id}
+						/>
+					)}
+					{profileRole === "tourGuide" && (
+						<Experience userData={userData} profileId={profileId} id={id} />
+					)}
+					<Timeline
 						userData={userData}
 						profileId={profileId}
 						id={id}
 						profileRole={profileRole}
+						cardData={cardData}
 					/>
-					{profileRole === "tourist" && profileId === id && (
-						<Wallet userData={userData} />
-					)}
+				</div>
+			</div>
+			{profileRole === "tourismGovernor" && profileId === id && (
+				<div className="mt-12">
+					<TagManagement />
 				</div>
 			)}
-			<div className="w-full flex flex-col gap-12">
-				{profileRole === "advertiser" && (
-					<CompanyProfile
-						userData={userData}
-						profileId={profileId}
-						id={id}
-					/>
-				)}
-				{profileRole === "tourGuide" && (
-					<Experience userData={userData} profileId={profileId} id={id} />
-				)}
-				<Timeline
-					userData={userData}
-					profileId={profileId}
-					id={id}
-					profileRole={profileRole}
-					cardData={cardData}
-				/>
-			</div>
 		</div>
 	);
 }

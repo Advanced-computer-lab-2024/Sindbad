@@ -19,7 +19,7 @@ function Experience({ userData, profileId, id }) {
 					<h1 className="text-3xl font-extrabold">Experience</h1>
 					<hr className="border-neutral-300 border w-full mt-1.5" />
 					{/* button to add experience if it's your profile */}
-					{profileId === id && (
+					{profileId === id && userData.isAccepted === true && (
 						<Dialog>
 							<DialogTrigger className="shrink-0 mt-1.5 text-neutral-400 hover:text-neutral-600 transition-all">
 								<CirclePlus size={24} />
@@ -65,7 +65,7 @@ function Experience({ userData, profileId, id }) {
 									<AccordionTrigger>
 										{experience.jobTitle}
 									</AccordionTrigger>
-									{profileId === id &&
+									{profileId === id && userData.isAccepted === true &&
 										<div className="shrink-0 flex gap-2 text-neutral-400">
 											<Dialog>
 												<DialogTrigger>

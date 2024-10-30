@@ -38,11 +38,7 @@ const getTourGuide = async (req, res) => {
 		});
 	}
 
-	if (tourGuide.isAccepted) {
-		res.json(tourGuide);
-	} else {
-		return res.status(404).send("TourGuide not accepted yet");
-	}
+	res.status(200).json(tourGuide);
 };
 
 /**

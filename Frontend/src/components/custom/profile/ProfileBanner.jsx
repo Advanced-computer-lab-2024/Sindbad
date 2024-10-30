@@ -27,7 +27,7 @@ function ProfileBanner({ userData, profileId, id, profileRole }) {
                 {/* header image */}
                 <ImagePlaceholder />
                 {/* profile edit button (only visible if logged-in user id is the same id as the profile) */}
-                {id === profileId &&
+                {id === profileId && (userData.isAccepted === undefined || userData.isAccepted === true) &&
                     <Dialog>
                         <DialogTrigger className="icon-button">
                             <Edit3 size={16} />
