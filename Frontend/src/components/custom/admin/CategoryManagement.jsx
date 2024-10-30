@@ -72,7 +72,7 @@ export default function CategoryManagement() {
 		<>
 			<div className="flex items-center gap-6">
 				<h1 className="text-3xl font-extrabold">Categories</h1>
-				<hr className="border-neutral-700 border w-full mt-1.5" />
+				<hr className="border-neutral-300 border w-full mt-1.5" />
 			</div>
 
 			{message && (
