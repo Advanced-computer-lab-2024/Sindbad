@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
-import { userSignUp } from "@/services/LoginSignupApiHandler";
+import { userSignUp } from "@/services/UserApiHandler";
 
 import SpinnerSVG from '@/SVGs/Spinner.jsx';
 import { ArrowLeft } from "lucide-react";
@@ -97,9 +97,8 @@ function SignUp() {
         setLoading(false);
 
         if (response.error) {
-            console.error('Sign-up error:', response.message);
             setCurrentStep(1);
-            setError(response.message);
+            setError(response.display);
         } else {
             setLogInRedirect(true);
         }

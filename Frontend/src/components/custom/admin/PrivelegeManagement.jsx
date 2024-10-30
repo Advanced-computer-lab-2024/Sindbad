@@ -9,7 +9,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-import { userSignUp } from "@/services/LoginSignupApiHandler";
+import { userSignUp } from "@/services/UserApiHandler";
 
 export default function PrivilegeManagement() {
 	// Default password is the same as email
