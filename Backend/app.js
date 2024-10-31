@@ -16,6 +16,7 @@ const userRoutes = require("./routes/user-routes");
 const advertiserRoutes = require("./routes/advertiserRoutes");
 const touristRoutes = require("./routes/tourist-routes");
 const tourGuideRoutes = require("./routes/tourGuide-routes");
+const tourismGovernorRoutes = require("./routes/TourismGovernor");
 const productRoutes = require("./routes/productRoutes");
 const sellerRoutes = require("./routes/sellerRoutes");
 
@@ -77,6 +78,9 @@ app.use("/tourist", touristRoutes);
 
 //TourGuide routes
 app.use("/tourGuide", tourGuideRoutes);
+
+// Tourism Governor routes
+app.use("/tourism-governor", tourismGovernorRoutes);
 
 // Fallback route for unknown endpoints
 app.use((req, res, next) => {

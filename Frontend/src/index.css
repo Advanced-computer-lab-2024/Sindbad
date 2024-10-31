@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -29,6 +30,7 @@
     --chart-5: 27 87% 67%;
     --radius: 0.5rem
   }
+
   .dark {
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
@@ -56,31 +58,39 @@
     --chart-5: 340 75% 55%
   }
 }
+
 @layer base {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
+  .icon-button {
+    @apply absolute top-2 right-2 border-2 border-light opacity-0 group-hover:opacity-100 transition-all hover:border-secondary bg-primary-900 text-light p-1.5 rounded-full;
+  }
+
   input[type="number"]::-webkit-inner-spin-button,
   input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
   }
+
   input[type="number"] {
     -moz-appearance: textfield;
-}
+  }
 }
 
-input[type="date"]::-webkit-inner-spin-button,
-input[type="date"]::-webkit-calendar-picker-indicator {
-    display: none;
-    -webkit-appearance: none;
+.signup-date::-webkit-inner-spin-button,
+.signup-date::-webkit-calendar-picker-indicator {
+  display: none;
+  -webkit-appearance: none;
 }
 
 input:-webkit-autofill,
-input:-webkit-autofill:hover, 
+input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 textarea:-webkit-autofill,
 textarea:-webkit-autofill:hover,
@@ -88,17 +98,19 @@ textarea:-webkit-autofill:focus,
 select:-webkit-autofill,
 select:-webkit-autofill:hover,
 select:-webkit-autofill:focus {
-  -webkit-text-fill-color: #eeeeee;
+  -webkit-text-fill-color: #222222;
   -webkit-box-shadow: none;
   transition: background-color 9999s ease-in-out 0s;
-};
+}
+
+;
 
 .nav-underline {
   display: inline;
   position: relative;
 }
 
-.nav-underline:after {    
+.nav-underline:after {
   background: none repeat scroll 0 0 transparent;
   bottom: -2px;
   content: "";
@@ -106,12 +118,12 @@ select:-webkit-autofill:focus {
   height: 1px;
   left: 50%;
   position: relative;
-  background: #EEEEEE;
+  background: #222222;
   transition: width 0.3s ease 0s, left 0.3s ease 0s;
   width: 0;
 }
 
-.nav-underline:hover:after { 
-  width: 100%; 
-  left: 0; 
+.nav-underline:hover:after {
+  width: 100%;
+  left: 0;
 }

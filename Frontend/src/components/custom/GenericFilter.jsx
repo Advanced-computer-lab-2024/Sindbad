@@ -1,14 +1,24 @@
-/* eslint-disable react/prop-types */
 import { Input } from "@/components/ui/input";
 import { PriceFilter } from "@/components/ui/price-filter";
 
 const GenericFilter = ({ formFields, setActiveFilters, activeFilters }) => {
 	// Function to handle changes and update the filter object
 	const handleChange = (key, value) => {
-		setActiveFilters((prev) => ({
-			...prev,
-			[key]: value,
-		}));
+		// Check if value is an object or a direct value
+		if (typeof value === "object" && value !== null) {
+			setActiveFilters((prev) => ({
+				...prev,
+				[key]: {
+					...prev[key],
+					...value, // Merge the existing filter values with the new ones
+				},
+			}));
+		} else {
+			setActiveFilters((prev) => ({
+				...prev,
+				[key]: value, // Directly set the filter value for the given key
+			}));
+		}
 	};
 
 	const Select = ({ options, value, onChange }) => {
@@ -74,31 +84,25 @@ const GenericFilter = ({ formFields, setActiveFilters, activeFilters }) => {
 					);
 				}
 
-				// Render the budget range using PriceFilter
+				// Render number range using PriceFilter component
 				if (field.type === "range") {
-					const filterValues = activeFilters[key];
+					// const defaultFilterValues = activeFilters[key];
 					const priceRange = {
-						minProductsPrice: field.min,
-						maxProductsPrice: field.max,
+						minPrice: field.min,
+						maxPrice: field.max,
 					};
 
 					return (
 						<div key={key}>
 							<PriceFilter
-								setMinPrice={(min) =>
-									handleChange(key, {
-										...filterValues,
-										min: min, // Override the "min" value
-									})
+								setMinPrice={
+									(min) => handleChange(key, { min }) // Update only the min price here
 								}
-								setMaxPrice={(max) =>
-									handleChange(key, {
-										...filterValues,
-										max: max, // Override the "max" value
-									})
+								setMaxPrice={
+									(max) => handleChange(key, { max }) // Update only the max price here
 								}
-								minPrice={filterValues.min} // Use current or default min
-								maxPrice={filterValues.max} // Use current or default max
+								minPrice={activeFilters[key].min} // Ensure it pulls from activeFilters
+								maxPrice={activeFilters[key].max} // Ensure it pulls from activeFilters
 								priceRange={priceRange}
 								step={field.step}
 								label={field.label}
@@ -108,7 +112,7 @@ const GenericFilter = ({ formFields, setActiveFilters, activeFilters }) => {
 				}
 				// Render the date range input
 				if (field.type === "date") {
-					const filterValues = activeFilters[key];
+					const defaultFilterValues = activeFilters[key];
 
 					return (
 						<div key={key}>
@@ -116,17 +120,17 @@ const GenericFilter = ({ formFields, setActiveFilters, activeFilters }) => {
 								{field.label}
 							</h2>
 							<DateRange
-								startDate={filterValues.start}
-								endDate={filterValues.end}
+								startDate={defaultFilterValues.start}
+								endDate={defaultFilterValues.end}
 								onStartDateChange={(start) =>
 									handleChange(key, {
-										...filterValues,
+										...defaultFilterValues,
 										start: start, // Override the "start" value
 									})
 								}
 								onEndDateChange={(end) =>
 									handleChange(key, {
-										...filterValues,
+										...defaultFilterValues,
 										end: end, // Override the "end" value
 									})
 								}

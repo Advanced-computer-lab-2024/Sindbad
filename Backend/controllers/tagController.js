@@ -12,21 +12,21 @@ const mongoose = require("mongoose");
  */
 
 const createTag = async (req, res) => {
-  try {
-    const tag = await Tag.create(req.body);
-    res.status(201).json(tag);
-  } catch (error) {
-    if (error.code === 11000) {
-      // MongoDB duplicate key error
-      return res.status(400).json({
-        message: "Tag name already exists",
-      });
-    }
-    return res.status(500).json({
-      message: "Error creating tag",
-      error: error.message,
-    });
-  }
+	try {
+		const tag = await Tag.create(req.body);
+		res.status(201).json(tag);
+	} catch (error) {
+		if (error.code === 11000) {
+			// MongoDB duplicate key error
+			return res.status(400).json({
+				message: "Tag name already exists",
+			});
+		}
+		return res.status(500).json({
+			message: "Error creating tag",
+			error: error.message,
+		});
+	}
 };
 
 /**
@@ -37,28 +37,28 @@ const createTag = async (req, res) => {
  * @returns {Object} - A JSON object of the retrieved tag or an error message
  */
 
-const getTag = async (req, res) => {
-  const { id } = req.params;
+const getTagById = async (req, res) => {
+	const { id } = req.params;
 
-  try {
-    let tag;
+	try {
+		let tag;
 
-    if (mongoose.Types.ObjectId.isValid(id)) {
-      tag = await Tag.findById(id);
-    } else {
-      tag = await Tag.findOne({ name: id });
-    }
+		if (mongoose.Types.ObjectId.isValid(id)) {
+			tag = await Tag.findById(id);
+		} else {
+			tag = await Tag.findOne({ name: id });
+		}
 
-    if (!tag) {
-      return res.status(404).json({ message: "Tag not found" });
-    }
-    res.status(200).json(tag);
-  } catch (error) {
-    return res.status(500).json({
-      message: "Error getting tag",
-      error: error.message,
-    });
-  }
+		if (!tag) {
+			return res.status(404).json({ message: "Tag not found" });
+		}
+		res.status(200).json(tag);
+	} catch (error) {
+		return res.status(500).json({
+			message: "Error getting tag",
+			error: error.message,
+		});
+	}
 };
 
 /**
@@ -69,20 +69,20 @@ const getTag = async (req, res) => {
  */
 
 const deleteTag = async (req, res) => {
-  try {
-    const deletedTag = await Tag.findByIdAndDelete(req.params.id);
+	try {
+		const deletedTag = await Tag.findByIdAndDelete(req.params.id);
 
-    if (!deletedTag) {
-      return res.status(404).json({ message: "Tag not found" });
-    }
+		if (!deletedTag) {
+			return res.status(404).json({ message: "Tag not found" });
+		}
 
-    res.status(200).json({ message: "Tag deleted successfully" });
-  } catch (error) {
-    res.status(500).json({
-      message: "Error deleting tag",
-      error: error.message,
-    });
-  }
+		res.status(200).json({ message: "Tag deleted successfully" });
+	} catch (error) {
+		res.status(500).json({
+			message: "Error deleting tag",
+			error: error.message,
+		});
+	}
 };
 
 /**
@@ -94,26 +94,26 @@ const deleteTag = async (req, res) => {
  */
 
 const updateTag = async (req, res) => {
-  try {
-    const { name } = req.body;
-    const { id } = req.params;
+	try {
+		const { name } = req.body;
+		const { id } = req.params;
 
-    const updatedTag = await Tag.findByIdAndUpdate(
-      id,
-      { name },
-      { new: true, runValidators: true }
-    );
+		const updatedTag = await Tag.findByIdAndUpdate(
+			id,
+			{ name },
+			{ new: true, runValidators: true }
+		);
 
-    if (!updatedTag) {
-      return res.status(404).json({ message: "Tag not found" });
-    }
+		if (!updatedTag) {
+			return res.status(404).json({ message: "Tag not found" });
+		}
 
-    res.status(200).json(updatedTag);
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error updating tag", error: error.message });
-  }
+		res.status(200).json(updatedTag);
+	} catch (error) {
+		res
+			.status(500)
+			.json({ message: "Error updating tag", error: error.message });
+	}
 };
 
 /**
@@ -124,21 +124,21 @@ const updateTag = async (req, res) => {
  * @returns {Object} - A JSON array of all tags or an error message
  */
 const getAllTags = async (req, res) => {
-  try {
-    const tags = await Tag.find(); // Retrieves all tags from the database
-    res.status(200).json(tags); // Responds with the tags
-  } catch (error) {
-    return res.status(500).json({
-      message: "Error getting tags",
-      error: error.message,
-    });
-  }
+	try {
+		const tags = await Tag.find(); // Retrieves all tags from the database
+		res.status(200).json(tags); // Responds with the tags
+	} catch (error) {
+		return res.status(500).json({
+			message: "Error getting tags",
+			error: error.message,
+		});
+	}
 };
 
 module.exports = {
-  createTag,
-  getTag,
-  getAllTags,
-  deleteTag,
-  updateTag,
+	createTag,
+	getTagById,
+	getAllTags,
+	deleteTag,
+	updateTag,
 };

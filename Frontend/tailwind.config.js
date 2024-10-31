@@ -24,11 +24,11 @@ export default {
     				foreground: 'hsl(var(--popover-foreground))'
     			},
     			primary: {
-    				'700': '#272563',
-    				'900': '#191737',
-					'950': '#16152B'
+    				'700': '#c7d2fe',
+    				'900': '#a5b4fc',
+					'950': '#818cf8'
     			},
-    			secondary: '#FCD34D',
+    			secondary: '#fbbf24',
     			muted: {
     				DEFAULT: 'hsl(var(--muted))',
     				foreground: 'hsl(var(--muted-foreground))'

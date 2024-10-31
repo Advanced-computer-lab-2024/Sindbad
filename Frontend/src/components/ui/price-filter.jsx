@@ -9,6 +9,7 @@ export function PriceFilter({
 	setMaxPrice,
 	priceRange,
 	step,
+	label,
 }) {
 	const handleMinPriceChange = (value) => {
 		setMinPrice(value);
@@ -20,7 +21,9 @@ export function PriceFilter({
 
 	return (
 		<div className="">
-			<h4 className="text-md font-medium mb-2">Price Filter</h4>
+			<h4 className="text-md font-medium mb-2">
+				{label || "Range Slider"}
+			</h4>
 			<div className="flex items-center gap-4 justify-between mb-4">
 				<div className="grid gap-2">
 					<label
@@ -32,8 +35,6 @@ export function PriceFilter({
 					<Input
 						id="min-price"
 						type="number"
-						min={priceRange.minProductsPrice}
-						max={priceRange.maxProductsPrice}
 						value={minPrice}
 						onChange={(e) =>
 							handleMinPriceChange(Number(e.target.value))
@@ -52,8 +53,6 @@ export function PriceFilter({
 					<Input
 						id="max-price"
 						type="number"
-						min={priceRange.minProductsPrice}
-						max={priceRange.maxProductsPrice}
 						value={maxPrice}
 						onChange={(e) =>
 							handleMaxPriceChange(Number(e.target.value))
@@ -63,8 +62,8 @@ export function PriceFilter({
 				</div>
 			</div>
 			<Slider
-				min={priceRange.minProductsPrice}
-				max={priceRange.maxProductsPrice}
+				min={priceRange.minPrice}
+				max={priceRange.maxPrice}
 				step={step}
 				value={[minPrice, maxPrice]}
 				onValueChange={(values) => {

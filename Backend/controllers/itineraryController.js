@@ -12,19 +12,21 @@ const mongoose = require("mongoose");
  * @returns {Object} 404 - Itinerary not found
  * @returns {Object} 500 - Error message if an error occurs
  */
-const getItinerary = async (req, res) => {
-  try {
-    const itinerary = await Itinerary.findById(req.params.id).populate("activities");
-    if (!itinerary) {
-      return res.status(404).json({ message: "Itinerary not found" });
-    }
-    res.status(200).json(itinerary);
-  } catch (error) {
-    return res.status(500).json({
-      message: "Error getting itinerary",
-      error: error.message,
-    });
-  }
+const getItineraryById = async (req, res) => {
+	try {
+		const itinerary = await Itinerary.findById(req.params.id).populate(
+			"activities"
+		);
+		if (!itinerary) {
+			return res.status(404).json({ message: "Itinerary not found" });
+		}
+		res.status(200).json(itinerary);
+	} catch (error) {
+		return res.status(500).json({
+			message: "Error getting itinerary",
+			error: error.message,
+		});
+	}
 };
 
 /**
@@ -120,13 +122,13 @@ const deleteItinerary = async (req, res) => {
 
 /**
  * @description Retrieves all itineraries created by a specific creator.
- * @route GET /myItineraries/:id
+ * @route GET /my-itineraries/:id
  * @param {string} id - The ID of the creator whose itineraries are to be fetched.
  * @returns {Array} - An array of itineraries created by the specified creator.
  * @throws {404} - No itineraries found for this creator.
  * @throws {500} - Error fetching itineraries if there is a server issue.
  */
-const getItinerariesByCreator = async (req, res) => {
+const getMyItineraries = async (req, res) => {
 	const { id } = req.params;
 
 	try {
@@ -155,7 +157,7 @@ const getItinerariesByCreator = async (req, res) => {
  * @throws {404} - If no itineraries are found matching the criteria.
  * @throws {500} - If there is an error during the retrieval process.
  */
-const getItineraries = async (req, res) => {
+const getAllItineraries = async (req, res) => {
 	try {
 		const {
 			searchTerm,
@@ -195,12 +197,12 @@ const getItineraries = async (req, res) => {
 		}
 
 		// Date filter
-		if (date.start || date.end) {
+		if (startDate || endDate) {
 			filter.availableDatesTimes = {
 				$elemMatch: {
-					...(date.start && { $gte: new Date(date.start) }),
-					...(date.end && {
-						$lte: new Date(new Date(date.end).setHours(23, 59, 59, 999)), // End of the day
+					...(startDate && { $gte: new Date(startDate) }),
+					...(endDate && {
+						$lte: new Date(new Date(endDate).setHours(23, 59, 59, 999)), // End of the day
 					}),
 				},
 			};
@@ -241,8 +243,8 @@ const getItineraries = async (req, res) => {
 		const sortOptions = { [sortBy]: sortOrder === "asc" ? 1 : -1 };
 		const skip = (page - 1) * limit;
 
-		console.log("filter:", filter);
-    console.log("sortOptions:", sortOptions);
+		// console.log("filter:", filter);
+		// console.log("sortOptions:", sortOptions);
 
 		// Fetch itineraries with aggregation
 		const itineraries = await Itinerary.aggregate([
@@ -282,7 +284,6 @@ const getItineraries = async (req, res) => {
 		});
 	}
 };
-
 
 
 /**
@@ -349,13 +350,13 @@ const calculateAverageRating = (ratings) => {
 
 
 module.exports = {
-	getItinerary,
+	getItineraryById,
 	createItinerary,
 	updateItinerary,
 	deleteItinerary,
-	getItineraries,
+	getAllItineraries,
 	// getAllItineraries,
-	getItinerariesByCreator,
+	getMyItineraries,
 	// searchItineraries,
 	// getSortedItineraries,
 	// filterItineraries,

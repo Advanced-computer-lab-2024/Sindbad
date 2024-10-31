@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 
+<<<<<<< itenirary-refactor
 const itinerarySchema = mongoose.Schema({
   name: {
     type: String,
@@ -88,6 +89,7 @@ const itinerarySchema = mongoose.Schema({
     type: Number,
     default: 0,
   },
-});
+	{ timestamps: true }
+);
 
 module.exports = mongoose.model("Itinerary", itinerarySchema);
