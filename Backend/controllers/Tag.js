@@ -1,4 +1,4 @@
-const Tag = require("../models/tagModel");
+const Tag = require("../models/Tag");
 const mongoose = require("mongoose");
 
 /**

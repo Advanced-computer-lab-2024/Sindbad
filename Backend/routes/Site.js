@@ -7,7 +7,7 @@ const {
 	getSiteById,
 	updateSite,
 	deleteSite,
-} = require("../controllers/siteController");
+} = require("../controllers/Site");
 
 router
 	.route("/")

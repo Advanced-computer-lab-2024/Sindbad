@@ -1,8 +1,8 @@
-const Tourist = require("../models/tourist");
+const Tourist = require("../models/Tourist");
 const TourGuide = require("../models/TourGuide");
 const Advertiser = require("../models/Advertiser");
 const Seller = require("../models/Seller");
-const Admin = require("../models/adminModel");
+const Admin = require("../models/Admin");
 const TourismGovernor = require("../models/TourismGovernor");
 
 const models = {
@@ -46,13 +46,12 @@ const defaultFields = {
 const UserController = {
 	signUp: async (req, res) => {
 		try {
-			const { email, username, passwordHash, role, ...userData } =
-				req.body;
+			const { email, username, passwordHash, role, ...userData } = req.body;
 
 			if (!role) {
 				throw new Error("Role is required");
 			}
-			
+
 			// Check for unique email and username
 			const isUnique = await UserController.isUniqueUsername(username);
 			if (!isUnique) {
@@ -108,9 +107,7 @@ const UserController = {
 					if (role === "tourguide") {
 						return res.status(200).json({ role: "tourGuide" });
 					} else if (role === "tourismgovernor") {
-						return res
-							.status(200)
-							.json({ role: "tourismGovernor" });
+						return res.status(200).json({ role: "tourismGovernor" });
 					} else {
 						return res.status(200).json({ role });
 					}
@@ -129,9 +126,7 @@ const UserController = {
 	isUniqueUsername: async (username) => {
 		// Check all models for unique username
 		for (let model in models) {
-			const existingUser = await models[model]
-				.findOne({ username })
-				.exec();
+			const existingUser = await models[model].findOne({ username }).exec();
 			if (existingUser) {
 				return false;
 			}
@@ -171,9 +166,7 @@ const UserController = {
 			}
 
 			await Model.findByIdAndDelete(id);
-			return res
-				.status(200)
-				.json({ message: "User deleted successfully" });
+			return res.status(200).json({ message: "User deleted successfully" });
 		} catch (error) {
 			return res.status(500).json({ message: error.message });
 		}

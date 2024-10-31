@@ -1,6 +1,5 @@
-const Product = require("../models/productModel");
+const Product = require("../models/Product");
 const Seller = require("../models/Seller");
-
 
 /**
  * Creates a new seller
@@ -22,9 +21,7 @@ const createSeller = async (req, res) => {
  */
 const getSellerById = async (req, res) => {
 	try {
-		const seller = await Seller.findById(req.params.id).populate(
-			"products"
-		); // Populates the products field
+		const seller = await Seller.findById(req.params.id).populate("products"); // Populates the products field
 		if (!seller) {
 			return res.status(404).json({ message: "Seller not found" });
 		}
@@ -43,14 +40,8 @@ const getSellerById = async (req, res) => {
 const updateSeller = async (req, res) => {
 	try {
 		const { id } = req.params;
-		const {
-			email,
-			username,
-			firstName,
-			lastName,
-			description,
-			isAccepted,
-		} = req.body;
+		const { email, username, firstName, lastName, description, isAccepted } =
+			req.body;
 
 		const updatedSeller = await Seller.findByIdAndUpdate(
 			id,
@@ -73,23 +64,24 @@ const updateSeller = async (req, res) => {
 
 const getProductsBySellerId = async (req, res) => {
 	try {
-	  const sellerId = req.params.id;
-  
-	  const products = await Product.find({ seller: sellerId });
-  
-	  if (!products.length) {
-		return res.status(404).json({ message: "No products found for this seller" });
-	  }
-  
-	  res.status(200).json(products); 
-	} catch (error) {
-	  return res.status(500).json({
-		message: "Error fetching products for seller",
-		error: error.message,
-	  });
-	}
-  };
+		const sellerId = req.params.id;
 
+		const products = await Product.find({ seller: sellerId });
+
+		if (!products.length) {
+			return res
+				.status(404)
+				.json({ message: "No products found for this seller" });
+		}
+
+		res.status(200).json(products);
+	} catch (error) {
+		return res.status(500).json({
+			message: "Error fetching products for seller",
+			error: error.message,
+		});
+	}
+};
 
 /**
  * Gets all sellers

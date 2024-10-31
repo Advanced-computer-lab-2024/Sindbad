@@ -1,5 +1,5 @@
-const Admin = require("../models/adminModel");
-const { isUniqueUsername } = require("./userController");
+const Admin = require("../models/Admin");
+const { isUniqueUsername } = require("./User");
 
 /**
  * Creates a new admin.

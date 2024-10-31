@@ -1,4 +1,4 @@
-const Tourist = require("../models/tourist");
+const Tourist = require("../models/Tourist");
 const mongoose = require("mongoose");
 
 /**

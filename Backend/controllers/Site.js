@@ -1,4 +1,4 @@
-const Site = require("../models/siteModel");
+const Site = require("../models/Site");
 
 /**
  * Creates a new site.

@@ -4,7 +4,7 @@ const { MongoMemoryServer } = require("mongodb-memory-server");
 const { startServer, stopServer, clearDatabase } = require("../jest.setup");
 const { app } = require("../app");
 
-const Tourist = require("../models/tourist");
+const Tourist = require("../models/Tourist");
 
 // Before all tests, start the in-memory MongoDB server
 beforeAll(async () => {

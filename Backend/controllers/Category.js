@@ -1,4 +1,4 @@
-const Category = require("../models/categoryModel");
+const Category = require("../models/Category");
 const mongoose = require("mongoose");
 
 /**

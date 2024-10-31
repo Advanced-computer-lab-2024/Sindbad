@@ -6,7 +6,7 @@ const {
 	getAdminById,
 	updateAdmin,
 	deleteAdmin,
-} = require("../controllers/adminController");
+} = require("../controllers/Admin");
 
 router
 	.route("/")
