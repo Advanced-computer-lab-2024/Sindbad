@@ -8,15 +8,17 @@ const {
 	getAllItineraries,
 	getMyItineraries,
 } = require("../controllers/itineraryController");
+const { addRating } = require("../controllers/itineraryController");
 
 router.route("/").post(createItinerary).get(getAllItineraries);
+
+router.route("/my-itineraries/:creatorId").get(getMyItineraries);
 
 router
 	.route("/:id")
 	.get(getItineraryById)
 	.put(updateItinerary)
-	.delete(deleteItinerary);
-
-router.route("/my-itineraries/:creator-id").get(getMyItineraries);
+	.delete(deleteItinerary)
+    .post(addRating);
 
 module.exports = router;

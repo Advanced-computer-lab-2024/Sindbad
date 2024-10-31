@@ -129,10 +129,10 @@ const deleteItinerary = async (req, res) => {
  * @throws {500} - Error fetching itineraries if there is a server issue.
  */
 const getMyItineraries = async (req, res) => {
-	const { id } = req.params;
-
 	try {
-		const itineraries = await Itinerary.find({ creatorId: id });
+		const itineraries = await Itinerary.find({
+			creatorId: req.params.creatorId,
+		});
 
 		if (itineraries.length === 0) {
 			return res
@@ -151,6 +151,7 @@ const getMyItineraries = async (req, res) => {
  * @route GET /itineraries
  * @param {Object} req - The request object containing search, sorting, and filtering parameters.
  * @param {Object} res - The response object containing matching itineraries or an error message.
+ * @param {number} [req.query.rating] 
  * @returns {Array} - An array of itineraries matching the criteria.
  * @throws {400} - If the search term is not provided (when search is used).
  * @throws {404} - If no itineraries are found matching the criteria.
@@ -160,9 +161,8 @@ const getAllItineraries = async (req, res) => {
 	try {
 		const {
 			searchTerm,
-			budget,
-			startDate,
-			endDate,
+			budget = {},
+			date = {},
 			tag,
 			rating = {},
 			language,
@@ -197,12 +197,12 @@ const getAllItineraries = async (req, res) => {
 		}
 
 		// Date filter
-		if (startDate || endDate) {
+		if (date.start || date.end) {
 			filter.availableDatesTimes = {
 				$elemMatch: {
-					...(startDate && { $gte: new Date(startDate) }),
-					...(endDate && {
-						$lte: new Date(new Date(endDate).setHours(23, 59, 59, 999)), // End of the day
+					...(date.start && { $gte: new Date(date.start) }),
+					...(date.end && {
+						$lte: new Date(new Date(date.end).setHours(23, 59, 59, 999)), // End of the day
 					}),
 				},
 			};
@@ -219,8 +219,8 @@ const getAllItineraries = async (req, res) => {
 		}
 
 		// Rating filter
-		if (rating && (rating.min || rating.max)) {
-			filter.rating = {
+		if (rating.min || rating.max) {
+			filter.averageRating = {
 				...(rating.min && { $gte: +rating.min }),
 				...(rating.max && { $lte: +rating.max }),
 			};
@@ -285,6 +285,70 @@ const getAllItineraries = async (req, res) => {
 	}
 };
 
+
+/**
+ * @route POST /itinerary/:id/rate
+ * @description Add a rating to an itinerary
+ * @param {string} req.params.id - The ID of the itinerary to rate
+ * @param {Object} req.body - Contains the rating value (1-5)
+ * @returns {Object} 200 - The updated itinerary object
+ * @returns {Object} 404 - Itinerary not found
+ * @returns {Object} 400 - Invalid rating value
+ * @returns {Object} 500 - Error message if an error occurs
+ */
+const addRating = async (req, res) => {
+	try {
+	  const itineraryId = req.params.id;
+	  const { rating } = req.body;
+  
+	  // Validate rating value
+	  if (!rating || rating < 1 || rating > 5) {
+		return res.status(400).json({ message: "Invalid rating value. Must be between 1 and 5." });
+	  }
+  
+	  const itinerary = await Itinerary.findById(itineraryId);
+	  if (!itinerary) {
+		return res.status(404).json({ message: "Itinerary not found" });
+	  }
+
+	  if (!(itinerary.rating instanceof Map)) {
+		itinerary.rating = new Map(Object.entries(itinerary.rating));
+	  }
+  
+	  // Add the rating and update average rating
+	  const currentCount = itinerary.rating.get(rating.toString()) || 0;
+    	itinerary.rating.set(rating.toString(), currentCount + 1);
+
+	  itinerary.averageRating = calculateAverageRating(itinerary.rating)
+	  await itinerary.save();
+  
+	  res.status(200).json(itinerary);
+	} catch (error) {
+	  return res.status(500).json({
+		message: "Error adding rating to itinerary",
+		error: error.message,
+	  });
+	}
+  };
+  
+
+  
+const calculateAverageRating = (ratings) => {
+	let totalRating = 0;
+	let totalVotes = 0;
+  
+	// Use the entries of the Map and a for...of loop
+	for (const [rating, count] of ratings.entries()) {
+	  totalRating += parseInt(rating) * count; // Multiply rating by the number of votes
+	  totalVotes += count; // Sum the number of votes
+	}
+  
+	return totalVotes > 0 ? totalRating / totalVotes : 0; // Return average or 0 if no votes
+  };
+
+
+
+
 module.exports = {
 	getItineraryById,
 	createItinerary,
@@ -296,4 +360,5 @@ module.exports = {
 	// searchItineraries,
 	// getSortedItineraries,
 	// filterItineraries,
+	addRating,
 };
