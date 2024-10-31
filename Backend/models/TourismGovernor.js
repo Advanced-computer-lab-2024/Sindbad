@@ -1,37 +1,41 @@
 const mongoose = require("mongoose");
 
 // Define the schema for the TourismGovernor model
-const TourismGovernorSchema = new mongoose.Schema({
-	username: {
-		type: String,
-		required: true,
-		unique: true,
-	},
-	email: {
-		//TODO: Make this required after sprint 1 lol
-		type: String,
-		validate: {
-			validator: (v) => /^\S+@\S+\.\S+$/.test(v),
-			message: (props) => `${props.value} is not a valid email!`,
+const TourismGovernorSchema = new mongoose.Schema(
+	{
+		username: {
+			type: String,
+			required: true,
+			unique: true,
+			validate: {
+				validator: function (v) {
+					return !/\s/.test(v); // Check if there are no spaces
+				},
+				message: (props) =>
+					`${props.value} contains spaces, which are not allowed!`,
+			},
+		},
+		email: {
+			type: String,
+			required: true,
+			validate: {
+				validator: (v) => /^\S+@\S+\.\S+$/.test(v),
+				message: (props) => `${props.value} is not a valid email!`,
+			},
+		},
+		passwordHash: {
+			type: String,
+			required: true,
+		},
+		profileImageUri: {
+			type: String,
+		},
+		bannerImageUri: {
+			type: String,
 		},
 	},
-	passwordHash: {
-		type: String,
-		required: true,
-	},
-	createdActivities: {
-		type: [String], // Array of activity IDs
-		default: [],
-	},
-	createdIterinaries: {
-		type: [String], // Array of itinerary IDs
-		default: [],
-	},
-	createdHistoricalPlaces: {
-		type: [String], // Array of historical place IDs
-		default: [],
-	},
-});
+	{ timestamps: true }
+);
 
 // Create the TourismGovernor model
 const TourismGovernor = mongoose.model(

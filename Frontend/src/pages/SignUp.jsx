@@ -1,29 +1,19 @@
 import { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form";
+import { Navigate, useNavigate } from "react-router-dom";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Navigate } from "react-router-dom";
-import { userSignUp } from "@/services/LoginSignupApiHandler";
+
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+
+import { userSignUp } from "@/services/UserApiHandler";
+
 import SpinnerSVG from '@/SVGs/Spinner.jsx';
 import { ArrowLeft } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 
 function SignUp() {
     const [registerType, setRegisterType] = useState("Tourist");
@@ -107,9 +97,8 @@ function SignUp() {
         setLoading(false);
 
         if (response.error) {
-            console.error('Sign-up error:', response.message);
             setCurrentStep(1);
-            setError(response.message);
+            setError(response.display);
         } else {
             setLogInRedirect(true);
         }

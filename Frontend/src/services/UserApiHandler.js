@@ -1,5 +1,4 @@
-import axios from 'axios';
-const baseURL = import.meta.env.VITE_BASE_URL;
+import axiosInstance from "./axiosInstance";
 
 export const userSignUp = async (finalValues, registerType) => {
     const { password, ...rest } = finalValues; // Exclude 'password' from finalValues
@@ -19,87 +18,29 @@ export const userSignUp = async (finalValues, registerType) => {
             role: registerType.toLowerCase(),
         };
     }
-    console.log(requestBody);
-    try {
-        const response = await axios.post(`${baseURL}/user/signup`, requestBody, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
 
-        if (response.status === 201) {
-            console.log('User created successfully:', response.data);
-            return response;
-        } else {
-            return {
-                error: true,
-                message: `Unexpected status code: ${response.status}`,
-            };
-        }
+    try {
+        const response = await axiosInstance.post(
+            `/user/signup`,
+            requestBody,
+        );
+
+        return response.data;
     } catch (error) {
-        // Handle any errors, such as network issues or validation errors
-        if (error.response) {
-            // Server responded with a status other than 2xx
-            return {
-                error: true,
-                message: error.response.data.error || 'Unknown error occurred',
-                status: error.response.status,
-            };
-        } else if (error.request) {
-            // Request was made but no response received
-            return {
-                error: true,
-                message: 'No response from server. Please try again later.',
-            };
-        } else {
-            // Something else happened while setting up the request
-            return {
-                error: true,
-                message: 'An error occurred during request setup. Please try again.',
-            };
-        }
+        return error;
     }
 }
 
 export const getUserRole = async (userId) => {
     try {
-        const response = await axios.get(`${baseURL}/user/get-user-role/${userId}`, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-
-        if (response.status === 200) {
-            return response.data;
-        } else if (response.status === 404) {
-            return {
-                error: true,
-                message: 'User not found.',
-                status: 404,
-            };
-        } else {
-            return {
-                error: true,
-                message: `Unexpected status code: ${response.status}`,
-            };
-        }
+        const response = await axiosInstance.get(
+            `/user/get-user-role/${userId}`,
+            {
+				resourceName: 'User',
+			}
+        );
+        return response.data;
     } catch (error) {
-        if (error.response) {
-            return {
-                error: true,
-                message: error.response.data.error || 'Unknown error occurred',
-                status: error.response.status,
-            };
-        } else if (error.request) {
-            return {
-                error: true,
-                message: 'No response from server. Please try again later.',
-            };
-        } else {
-            return {
-                error: true,
-                message: 'An error occurred during request setup. Please try again.',
-            };
-        }
+        return error;
     }
 };
