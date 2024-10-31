@@ -1,79 +1,277 @@
-import axiosInstance from "./axiosInstance";
+import axios from "axios";
+const baseURL = import.meta.env.VITE_BASE_URL;
 
 export const getAllSites = async (siteName, tagName) => {
 	try {
-		const response = await axiosInstance.get(
-			`/site`, {
+		const response = await axios.get(`${baseURL}/site`, {
+			headers: {
+				"Content-Type": "application/json",
+			},
 			params: {
 				siteName,
 				tagName,
 			},
 		});
 
-		return response.data;
+		if (response.status === 200) {
+			console.log("Success: ", response.data);
+			return response.data;
+		} else if (response.status === 404) {
+			console.log("Fail: ", response.data);
+			return {
+				error: true,
+				message: "No sites found.",
+				status: 404,
+			};
+		} else {
+			return {
+				error: true,
+				message: `Unexpected status code: ${response.status}`,
+			};
+		}
 	} catch (error) {
-		return error;
+		if (error.response) {
+			return {
+				error: true,
+				message:
+					error.response.data.message || "Unknown error occurred",
+				status: error.response.status,
+			};
+		} else if (error.request) {
+			return {
+				error: true,
+				message: "No response from server. Please try again later.",
+			};
+		} else {
+			return {
+				error: true,
+				message:
+					"An error occurred during request setup. Please try again.",
+			};
+		}
 	}
 };
 
 export const getMySites = async (tourismGovernorId) => {
 	try {
-		const response = await axiosInstance.get(`/site/my-sites/${tourismGovernorId}`);
+		const response = await axios.get(
+			`${baseURL}/site/my-sites/${tourismGovernorId}`,
+			{
+				headers: {
+					"Content-Type": "application/json",
+				},
+			}
+		);
 
-		return response.data;
+		if (response.status === 200) {
+			console.log("success: ", response.data);
+			return response.data;
+		} else if (response.status === 404) {
+			console.log("fail: ", response.data);
+			return {
+				error: true,
+				message: "No sites found.",
+				status: 404,
+			};
+		} else {
+			return {
+				error: true,
+				message: `Unexpected status code: ${response.status}`,
+			};
+		}
 	} catch (error) {
-		return error;
+		if (error.response) {
+			return {
+				error: true,
+				message: error.response.data.error || "Unknown error occurred",
+				status: error.response.status,
+			};
+		} else if (error.request) {
+			return {
+				error: true,
+				message: "No response from server. Please try again later.",
+			};
+		} else {
+			return {
+				error: true,
+				message:
+					"An error occurred during request setup. Please try again.",
+			};
+		}
 	}
 };
 
 export const createSite = async (siteData) => {
 	try {
-		const response = await axiosInstance.post(
-			`/site/`,
-			siteData
-		);
+		const response = await axios.post(`${baseURL}/site/`, siteData, {
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
 
-		return response.data;
+		if (response.status === 201) {
+			console.log("success: ", response.data);
+			return response.data;
+		} else {
+			return {
+				error: true,
+				message: `Unexpected status code: ${response.status}`,
+			};
+		}
 	} catch (error) {
-		return error;
+		if (error.response) {
+			return {
+				error: true,
+				message: error.response.data.error || "Unknown error occurred",
+				status: error.response.status,
+			};
+		} else if (error.request) {
+			return {
+				error: true,
+				message: "No response from server. Please try again later.",
+			};
+		} else {
+			return {
+				error: true,
+				message:
+					"An error occurred during request setup. Please try again.",
+			};
+		}
 	}
 };
 
 export const updateSite = async (siteId, updatedValues) => {
 	try {
-		const response = await axiosInstance.put(
-			`/site/${siteId}`,
+		const response = await axios.put(
+			`${baseURL}/site/${siteId}`,
 			updatedValues,
 			{
-				resourceName: "Site",
+				headers: {
+					"Content-Type": "application/json",
+				},
 			}
 		);
-		return response.data;
+		if (response.status === 200) {
+			return response.data;
+		} else if (response.status === 404) {
+			return {
+				error: true,
+				message: "Site not found.",
+				status: 404,
+			};
+		} else {
+			return {
+				error: true,
+				message: `Unexpected status code: ${response.status}`,
+			};
+		}
 	} catch (error) {
-		return error;
+		if (error.response) {
+			return {
+				error: true,
+				message: error.response.data.error || "Unknown error occurred",
+				status: error.response.status,
+			};
+		} else if (error.request) {
+			return {
+				error: true,
+				message: "No response from server. Please try again later.",
+			};
+		} else {
+			return {
+				error: true,
+				message:
+					"An error occurred during request setup. Please try again.",
+			};
+		}
 	}
 };
-
 export const deleteSite = async (siteId) => {
 	try {
-		const response = await axiosInstance.delete(`/site/${siteId}`);
-		return response.data;
+		const response = await axios.delete(`${baseURL}/site/${siteId}`, {
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
+		if (response.status === 200) {
+			return response.data;
+		} else if (response.status === 404) {
+			return {
+				error: true,
+				message: "Site not found.",
+				status: 404,
+			};
+		} else {
+			return {
+				error: true,
+				message: `Unexpected status code: ${response.status}`,
+			};
+		}
 	} catch (error) {
-		return error;
+		if (error.response) {
+			return {
+				error: true,
+				message: error.response.data.error || "Unknown error occurred",
+				status: error.response.status,
+			};
+		} else if (error.request) {
+			return {
+				error: true,
+				message: "No response from server. Please try again later.",
+			};
+		} else {
+			return {
+				error: true,
+				message:
+					"An error occurred during request setup. Please try again.",
+			};
+		}
 	}
 };
-
 export const getSiteById = async (siteId) => {
 	try {
-		const response = await axiosInstance.get(
-			`/site/${siteId}`,
-			{
-				resourceName: "Site",
-			}
-		);
+		console.log(`${baseURL}/site/${siteId}`);
+		const response = await axios.get(`${baseURL}/site/${siteId}`, {
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
+		console.log(response);
 
-		return response.data;
+		if (response.status === 200) {
+			console.log("success: ", response.data);
+			return response.data;
+		} else if (response.status === 404) {
+			return {
+				error: true,
+				message: "Site not found.",
+				status: 404,
+			};
+		} else {
+			console.error("fail: ", response.data);
+			return {
+				error: true,
+				message: `Unexpected status code: ${response.status}`,
+			};
+		}
 	} catch (error) {
-		return error;
+		if (error.response) {
+			return {
+				error: true,
+				message: error.response.data.error || "Unknown error occurred",
+				status: error.response.status,
+			};
+		} else if (error.request) {
+			return {
+				error: true,
+				message: "No response from server. Please try again later.",
+			};
+		} else {
+			return {
+				error: true,
+				message:
+					"An error occurred during request setup. Please try again.",
+			};
+		}
 	}
 };

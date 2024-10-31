@@ -1,33 +1,34 @@
-import { Navigate, Routes, Route } from "react-router-dom";
-
+import "./App.css";
+import Profile from "./pages/Profile";
+import { Routes, Route } from "react-router-dom";
 import MainPage from "./pages/MainPage";
 import LogIn from "./pages/LogIn";
 import SignUp from "./pages/SignUp";
-import Profile from "./pages/Profile";
-import ItinerariesPage from "./pages/Itineraries";
+import { Navigate } from "react-router-dom";
 import Itinerary from "./pages/ItineraryView";
-import ActivitiesPage from "./pages/Activities";
 import Activity from "./pages/ActivityView";
-import SitesPage from "./pages/Sites";
 import Site from "./pages/SiteView";
-import ShoppingPage from "./pages/Products";
 import ProductView from "./pages/ProductView";
 import AdminManagementView from "./pages/AdminManagementView";
 
 import { useUser } from "@/state management/userInfo";
+import ShoppingPage from "./pages/ShoppingPage";
+import ActivitiesPage from "./pages/Activities";
+import SitesPage from "./pages/Sites";
+import ItinerariesPage from "./pages/Itineraries";
 
 function App() {
 	const { id } = useUser();
 
 	return (
-		<main className="bg-light text-dark font-inter min-h-screen h-max">
+		<main className="bg-dark text-light font-inter min-h-screen h-max">
 			<Routes>
 				<Route path="/app" element={<MainPage />}>
 					<Route
 						path="profile"
 						element={<Navigate to={`/app/profile/${id}`} replace />}
 					/>
-					<Route path="profile/:profileId" element={<Profile />} />
+					<Route path="profile/:userId" element={<Profile />} />
 					<Route path="activities" element={<ActivitiesPage />} />
 					<Route path="sites" element={<SitesPage />} />
 					<Route path="itineraries" element={<ItinerariesPage />} />

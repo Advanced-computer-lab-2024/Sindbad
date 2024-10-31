@@ -1,31 +1,33 @@
 import { createSlice, configureStore } from "@reduxjs/toolkit";
-import { useSelector, shallowEqual } from "react-redux";
+import { useSelector } from "react-redux";
 
 const userSlice = createSlice({
 	name: "user",
 	initialState: {
-		// role: "admin",
+		// type: "admin",
 		// id: "66ffd995f2226d9aa3157374",
-		role: "tourist",
-		id: "66f97308f74fa1c054a9b15c"
-		// role: "tourGuide",
+		// type: "tourist",
+		// id: "66f97308f74fa1c054a9b15c"
+		// type: "tourGuide",
 		// id: "66f8630f55f21e927d7455cc"
-		// role: "seller",
+		// type: "seller",
 		// id: "66f99b77497c76922f03104e"
-		// role: "advertiser",
+		// type: "advertiser",
 		// id: "66f9741bf74fa1c054a9b166"
-		// role: "tourismGovernor",
-		// id: "66fff189a0a316baace5a99b",
-		// role: "guest",
-		// id: null
+		// type: "tourismGovernor",
+		// id: "66fff189a0a316baace5a99b"
+		// type: "admin",
+		// id: "66ffd995f2226d9aa3157374"
+		type: "guest",
+		id: null
 	},
 	reducers: {
 		login(state, action) {
-			state.role = action.payload.role;
+			state.type = action.payload.type;
 			state.id = action.payload.id;
 		},
 		logout(state) {
-			state.role = "guest";
+			state.type = "guest";
 			state.id = null;
 		},
 	},
@@ -38,14 +40,12 @@ export const store = configureStore({
 });
 
 export function useUser() {
-	return useSelector(
-	  (state) => ({
-		role: state.role,
+	return useSelector((state) => ({
+		type: state.type,
 		id: state.id,
-	  }),
-	  shallowEqual // prevents unnecessary rerenders
-	);
-  }
+		username: state.username,
+	}));
+}
 
 // Can still subscribe to the store
 store.subscribe(() => console.log(store.getState()));

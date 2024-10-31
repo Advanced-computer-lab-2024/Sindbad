@@ -1,32 +1,39 @@
-import { useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
-
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-
+import { useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+import { useState } from "react"
+import { Navigate } from "react-router-dom";
 import { useDispatch } from 'react-redux';
-import { useUser, login } from "@/state management/userInfo";
+import { login } from '@/state management/userInfo';
+import { useNavigate } from "react-router-dom";
+import { useUser } from "@/state management/userInfo";
 
 function LogIn() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const { role, id } = useUser();
+    const {type, id} = useUser();
 
-    // useEffect(() => {
-    //     const getUserData = async () => {
-    //         if (userData) {
-    //             dispatch(login({ role: role, id: id }));
-    //         }
-    //     };
+    useEffect(() => {
+        const getUserData = async () => {
+            if (userData) {
+                dispatch(login({ type: type, id: id }));
+            }
+        };
 
-    //     getUserData();
-    // }, [dispatch]);
+        getUserData();
+    }, [dispatch]);
 
     const [signUpRedirect, setSignUpRedirect] = useState(false);
 
@@ -53,31 +60,31 @@ function LogIn() {
 
     function onSubmit(values) {
         if (values.username === "tourist" && values.password === "tourist") {
-            dispatch(login({ role: "tourist", id: "66f97308f74fa1c054a9b15c" }));
+            dispatch(login({ type: "tourist", id: "66f97308f74fa1c054a9b15c" }));
             navigate(`/app/itineraries`, { replace: true });
         }
         else if (values.username === "tourGuide" && values.password === "tourGuide") {
-            dispatch(login({ role: "tourGuide", id: "66f8630f55f21e927d7455cc" }));
+            dispatch(login({ type: "tourGuide", id: "66f8630f55f21e927d7455cc" }));
             navigate(`/app/profile`, { replace: true });
         }
         else if (values.username === "seller" && values.password === "seller") {
-            dispatch(login({ role: "seller", id: "66f99b77497c76922f03104e" }));
+            dispatch(login({ type: "seller", id: "66f99b77497c76922f03104e" }));
             navigate(`/app/store`, { replace: true });
         }
         else if (values.username === "advertiser" && values.password === "advertiser") {
-            dispatch(login({ role: "advertiser", id: "66f9741bf74fa1c054a9b166" }));
+            dispatch(login({ type: "advertiser", id: "66f9741bf74fa1c054a9b166" }));
             navigate(`/app/profile`, { replace: true });
         }
         else if (values.username === "tourismGovernor" && values.password === "tourismGovernor") {
-            dispatch(login({ role: "tourismGovernor", id: "66fff189a0a316baace5a99b" }));
+            dispatch(login({ type: "tourismGovernor", id: "66fff189a0a316baace5a99b" }));
             navigate(`/app/profile`, { replace: true });
         }
         else if (values.username === "admin" && values.password === "admin") {
-            dispatch(login({ role: "admin", id: "66ffd995f2226d9aa3157374" }));
+            dispatch(login({ type: "admin", id: "66ffd995f2226d9aa3157374" }));
             navigate(`/app/management`, { replace: true });
         }
         else if (values.username === "guest" && values.password === "guest") {
-            dispatch(login({ role: "guest", id: null }));
+            dispatch(login({ type: "guest", id: null }));
             navigate(`/app/itineraries`, { replace: true });
         }
         else {

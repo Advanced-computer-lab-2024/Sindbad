@@ -124,9 +124,10 @@ const itinerarySchema = {
 const productSchema = {
 	name: z.string().min(1, { message: "Please add the product name" }),
 
-	imageUris: z
-		.array(z.string().url("Invalid image URL"))
-		.nonempty("Please add at least one image URL"),
+	picture: z
+		.string()
+		.url({ message: "Please add a valid product picture URL" })
+		.min(1, { message: "Please add a product picture URL" }),
 
 	price: z.number().min(0, { message: "Price must be a non-negative number" }),
 

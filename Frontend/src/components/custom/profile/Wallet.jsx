@@ -1,10 +1,9 @@
 import { Button } from "@/components/ui/button";
-
 import { ArrowRight } from 'lucide-react';
 
 function Wallet({ userData }) {
     return (
-        <section className="w-[280px] border border-neutral-300 rounded-md overflow-clip flex flex-col items-center shrink-0 p-6 bg-gradient-to-b from-neutral-200/60 to-light">
+        <section className="w-[280px] border border-neutral-600 rounded-md overflow-clip flex flex-col items-center shrink-0 p-6 bg-gradient-to-b from-light/[0.03] to-transparent">
             <div className="w-full flex flex-col gap-4">
                 <div className="flex flex-col w-full items-center gap-3">
                     <div>

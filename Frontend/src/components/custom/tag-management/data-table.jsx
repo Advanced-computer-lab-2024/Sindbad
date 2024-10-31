@@ -1,11 +1,26 @@
-import { useState } from "react";
-
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
+"use client";
+import {
+	flexRender,
+	getCoreRowModel,
+	getPaginationRowModel,
+	useReactTable,
+} from "@tanstack/react-table";
 
 import { ArrowRight, ArrowLeft } from "lucide-react";
+import { useState } from "react";
+
+
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from "@/components/ui/table";
+
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export function DataTable({ columns, data, handleCreateTag }) {
 	const table = useReactTable({
@@ -29,9 +44,9 @@ export function DataTable({ columns, data, handleCreateTag }) {
 										{header.isPlaceholder
 											? null
 											: flexRender(
-												header.column.columnDef.header,
-												header.getContext()
-											)}
+													header.column.columnDef.header,
+													header.getContext()
+											  )}
 									</TableHead>
 								);
 							})}
@@ -62,9 +77,9 @@ export function DataTable({ columns, data, handleCreateTag }) {
 					<TableRow>
 						<TableCell colSpan="1">
 							<Input placeholder="Tag name"
-								value={newTagName}
-								onChange={(e) => setNewTagName(e.target.value)}
-							></Input>
+                                    value={newTagName}
+                                    onChange={(e) => setNewTagName(e.target.value)}
+                            ></Input>
 						</TableCell>
 						<TableCell colSpan="1">
 							<Button

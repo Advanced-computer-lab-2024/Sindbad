@@ -1,10 +1,13 @@
-import { useState, useEffect } from "react";
-
-import TableSkeleton from "../TableSkeleton";
 import { DataTable } from "@/components/custom/tag-management/data-table";
+import { useState, useEffect } from "react";
 import { columns } from "@/components/custom/tag-management/columns";
-
-import { getAllTags, createTag, updateTag, deleteTag } from "@/services/AdminApiHandler";
+import {
+	getAllTags,
+	createTag,
+	updateTag,
+	deleteTag,
+} from "@/services/AdminApiHandler";
+import TableSkeleton from "../TableSkeleton";
 
 // TagManagement Component
 export default function TagManagement() {
@@ -69,18 +72,19 @@ export default function TagManagement() {
 	};
 
 	return (
-		<div className="flex flex-col gap-6">
+		<>
 			<div className="flex items-center gap-6">
 				<h1 className="text-3xl font-extrabold">Tags</h1>
-				<hr className="border-neutral-300 border w-full mt-1.5" />
+				<hr className="border-neutral-700 border w-full mt-1.5" />
 			</div>
 
 			{message && (
 				<div
-					className={`p-2 rounded-lg ${message.type === "error"
+					className={`p-2 rounded-lg ${
+						message.type === "error"
 							? "bg-destructive text-light"
 							: "bg-secondary text-dark"
-						}`}
+					}`}
 				>
 					{message.text}
 				</div>
@@ -98,6 +102,6 @@ export default function TagManagement() {
 			) : (
 				<div>Unable to get tags.</div> // Message when no data is available
 			)}
-		</div>
+		</>
 	);
 }

@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { Input } from "@/components/ui/input";
 import { PriceFilter } from "@/components/ui/price-filter";
 

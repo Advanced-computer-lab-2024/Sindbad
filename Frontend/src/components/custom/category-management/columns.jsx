@@ -1,7 +1,7 @@
-import { useState } from "react";
-
+"use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useState } from "react";
 
 export const columns = (handleDeleteCategory, handleUpdateCategory) => [
 	{

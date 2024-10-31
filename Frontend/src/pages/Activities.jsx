@@ -1,14 +1,12 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
-
 import GenericFilter from "@/components/custom/GenericFilter";
-import CardContainer from "@/components/custom/CardContainer";
-
+import CardContainer from "@/components/CardContainer";
 import { getAllActivities } from "@/services/ActivityApiHandler";
 import { getAllCategories } from "@/services/AdminApiHandler";
-
 function Activities() {
-	const [loading, setLoading] = useState(true);
-	const [activities, setActivities] = useState([]);
+	const [loading, setLoading] = useState(false);
+	const [products, setProducts] = useState([]);
 	const [categories, setCategories] = useState([]);
 	const [categoryNames, setCategoryNames] = useState([]);
 	const [activeFilters, setActiveFilters] = useState({
@@ -72,7 +70,7 @@ function Activities() {
 		},
 	};
 
-	// Function to fetch activities
+	// Function to fetch products
 	const fetchActivities = async () => {
 		setLoading(true);
 		let categoryToSend = "";
@@ -91,9 +89,9 @@ function Activities() {
 			activeFilters.sortOrder.selected
 		);
 		if (!response.error) {
-			setActivities(response);
+			setProducts(response);
 		} else {
-			setActivities([]);
+			setProducts([]);
 			console.error(response.message);
 		}
 		setLoading(false);
@@ -102,7 +100,7 @@ function Activities() {
 	// Debouncing logic for the API call
 	useEffect(() => {
 		const delayDebounceFn = setTimeout(() => {
-			// Only fetch activities after a 1-second delay
+			// Only fetch products after a 1-second delay
 			fetchActivities();
 		}, 500); // Adjust debounce time as needed (e.g., 500ms, 1000ms)
 
@@ -134,7 +132,7 @@ function Activities() {
 		<div className="py-8 px-24 max-w-[1200px] flex flex-col gap-4 mx-auto">
 			<div className="flex items-center gap-6 mb-6">
 				<h1 className="text-3xl font-extrabold">Activities</h1>
-				<hr className="border-neutral-300 border w-full mt-1.5" />
+				<hr className="border-neutral-700 border w-full mt-1.5" />
 			</div>
 			<div className="flex gap-10">
 				<GenericFilter
@@ -142,16 +140,8 @@ function Activities() {
 					activeFilters={activeFilters}
 					setActiveFilters={setActiveFilters}
 				/>
-				{!loading ? (
-					<CardContainer cardList={activities} cardType={"activity"} />
-				) : (
-					<div className="flex col-span-3 mx-auto">
-						<div className="flex justify-center w-full">
-							<p className="text-neutral-400 text-sm italic">
-								Loading...
-							</p>
-						</div>
-					</div>
+				{!loading && (
+					<CardContainer cardList={products} type={"activity"} />
 				)}
 			</div>
 		</div>

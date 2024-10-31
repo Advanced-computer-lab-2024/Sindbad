@@ -1,14 +1,13 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
-
 import GenericFilter from "@/components/custom/GenericFilter";
-import CardContainer from "@/components/custom/CardContainer";
-
+import CardContainer from "@/components/CardContainer";
 import { getAllItineraries } from "@/services/ItineraryApiHandler";
 import { getAllTags } from "@/services/AdminApiHandler";
 
 function Itineraries() {
-	const [loading, setLoading] = useState(true);
-	const [itineraries, setItineraries] = useState([]);
+	const [loading, setLoading] = useState(false);
+	const [products, setProducts] = useState([]);
 	const [tags, setTags] = useState([]);
 	const [tagNames, setTagNames] = useState([]);
 	const [activeFilters, setActiveFilters] = useState({
@@ -77,7 +76,7 @@ function Itineraries() {
 		},
 	};
 
-	// Function to fetch itineraries
+	// Function to fetch products
 	const fetchItineraries = async () => {
 		setLoading(true);
 		let tagToSend = "";
@@ -101,9 +100,9 @@ function Itineraries() {
 				...itinerary, // retain other properties of the itinerary
 				activities: itinerary.activities.map((activity) => activity._id), // map activities to _id
 			}));
-			setItineraries(updatedItineraries);
+			setProducts(updatedItineraries);
 		} else {
-			setItineraries([]);
+			setProducts([]);
 			console.error(response.message);
 		}
 		setLoading(false);
@@ -112,7 +111,7 @@ function Itineraries() {
 	// Debouncing logic for the API call
 	useEffect(() => {
 		const delayDebounceFn = setTimeout(() => {
-			// Only fetch itineraries after a 1-second delay
+			// Only fetch products after a 1-second delay
 			fetchItineraries();
 		}, 500); // Adjust debounce time as needed (e.g., 500ms, 1000ms)
 
@@ -140,7 +139,7 @@ function Itineraries() {
 		<div className="py-8 px-24 max-w-[1200px] flex flex-col gap-4 mx-auto">
 			<div className="flex items-center gap-6 mb-6">
 				<h1 className="text-3xl font-extrabold">Itineraries</h1>
-				<hr className="border-neutral-300 border w-full mt-1.5" />
+				<hr className="border-neutral-700 border w-full mt-1.5" />
 			</div>
 			<div className="flex gap-10">
 				<GenericFilter
@@ -148,16 +147,8 @@ function Itineraries() {
 					activeFilters={activeFilters}
 					setActiveFilters={setActiveFilters}
 				/>
-				{!loading ? (
-					<CardContainer cardList={itineraries} cardType={"itinerary"} />
-				) : (
-					<div className="flex col-span-3 mx-auto">
-						<div className="flex justify-center w-full">
-							<p className="text-neutral-400 text-sm italic">
-								Loading...
-							</p>
-						</div>
-					</div>
+				{!loading && (
+					<CardContainer cardList={products} type={"itinerary"} />
 				)}
 			</div>
 		</div>

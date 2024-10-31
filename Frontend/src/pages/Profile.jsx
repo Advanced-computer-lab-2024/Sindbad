@@ -1,201 +1,141 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import ProfileBanner from "@/components/custom/profile/ProfileBanner";
-import Wallet from "@/components/custom/profile/Wallet";
 import Experience from "@/components/custom/profile/Experience";
 import CompanyProfile from "@/components/custom/profile/CompanyProfile";
+import Wallet from "@/components/custom/profile/Wallet";
 import Timeline from "@/components/custom/profile/Timeline";
-import TagManagement from "@/components/custom/admin/TagManagement";
-import { getTouristById } from "@/services/TouristApiHandler";
+import { useUser } from '@/state management/userInfo';
+import { getTourist } from "@/services/TouristApiHandler";
 import { getTourGuide } from "@/services/TourGuideApiHandler";
 import { getSeller, getMyProducts } from "@/services/SellerApiHandler";
 import { getAdvertiser } from "@/services/AdvertiserApiHandler";
-import { getTourismGovernor } from "@/services/TourismGovernorApiHandler";
+import { getTourismGovernor } from "@/services/AdminApiHandler";
+import { getUserRole } from '@/services/UserApiHandler';
 import { getMyActivities } from "@/services/ActivityApiHandler";
 import { getMyItineraries } from "@/services/ItineraryApiHandler";
 import { getMySites } from "@/services/SiteApiHandler";
-import { getUserRole } from "@/services/UserApiHandler";
-
-import { useUser } from "@/state management/userInfo";
 
 function Profile() {
-	const { profileId } = useParams(); // id of the user whose profile is being viewed
-	const { role, id } = useUser(); // details of the logged in user
-	const [profileRole, setProfileRole] = useState("guest"); // role of the user whose profile is being viewed
-	const [userData, setUserData] = useState(null); // details of the user whose profile is being viewed
-	const [cardData, setCardData] = useState([]); // data to be displayed in the timeline (activities, products, itineraries, sites)
-	const [error, setError] = useState(false);
+    const [userData, setUserData] = useState({});
+    const [cardData, setCardData] = useState([]);
+    const { type, id } = useUser();
+    const { userId } = useParams();
+    const [userType, setUserType] = useState("guest");
+    const [error, setError] = useState(false);
 
-	const getUserInfo = async (profileId) => {
-		let response;
-		const r = await getRole(profileId); // get the role of the user whose profile is being viewed
+    const getUserInfo = async (userId) => {
+        let response;
+        const t = await getType(userId);
 
-		if (r === "tourist") {
-			if (profileId == id || role === "admin") {
-				// nobody can view the profile of a tourist except the tourist himself or an admin
-				response = await getTouristById(profileId);
-			}
-			else {
-				response = { error: true, message: "Unauthorized access" };
-			}
-		}
-		else if (r === "tourGuide") {
-			response = await getTourGuide(profileId);
-		}
-		else if (r === "seller") {
-			response = await getSeller(profileId);
-		}
-		else if (r === "advertiser") {
-			response = await getAdvertiser(profileId);
-		}
-		else if (r === "tourismGovernor") {
-			response = await getTourismGovernor(profileId);
-		}
+        if (t === "tourist") {
+            if (userId == id || type === "admin")
+                response = await getTourist(userId);
+            else
+                response = { error: true, message: "Unauthorized access" };
+        }
+        else if (t === "tourGuide")
+            response = await getTourGuide(userId);
+        else if (t === "seller")
+            response = await getSeller(userId);
+        else if (t === "advertiser")
+            response = await getAdvertiser(userId);
+        else if (t === "tourismGovernor")
+            response = await getTourismGovernor(userId);
 
-		if (response.error) {
-			setError(true);
-			console.error(response.message);
-		} else {
-			setError(false);
-			setUserData(response);
-			console.log(response);
-		}
-	};
+        if (response.error) {
+            setError(true);
+            console.error(response.message);
+        } else {
+            setError(false);
+            setUserData(response);
+        }
+    };
 
-	const getRole = async (profileId) => {
-		const response = await getUserRole(profileId);
-		if (response.error) {
-			setError(true);
-			console.error(response.message);
-		} else {
-			setProfileRole(response.role);
-			return response.role;
-		}
-	};
+    const getType = async (userId) => {
+        const response = await getUserRole(userId);
+        if (response.error) {
+            setError(true);
+            console.error(response.message);
+        } else {
+            setUserType(response.role);
+            // console.log("User type:", response.role);
+            return response.role;
+        }
+    }
 
-	const getCardData = async (profileId) => {
-		let response;
-		if (profileRole === "advertiser") {
-			response = await getMyActivities(profileId);
-			if (response.error) {
-				console.error(response.message);
-			} else {
-				setCardData(response);
-			}
-		} else if (profileRole === "tourGuide") {
-			response = await getMyItineraries(profileId);
-			if (response.error) {
-				console.error(response.message);
-			} else {
-				setCardData(response);
-			}
-		} else if (profileRole === "tourismGovernor") {
-			response = await getMySites(profileId);
-			if (response.error) {
-				console.error(response.message);
-			} else {
-				setCardData(response);
-			}
-		} else if (profileRole === "seller") {
-			response = await getMyProducts(profileId);
-			if (response.error) {
-				console.error(response.message);
-			} else {
-				setCardData(response);
-			}
-		}
-	};
+    const getCardData = async (userId) => {
+        console.log("userType:", userType, "userData:", userData);
+        let response;
+        if (userType === "advertiser") {
+            response = await getMyActivities(userId);
+            if (response.error) {
+                console.error(response.message);
+            } else {
+                setCardData(response);
+            }
+        }
+        else if (userType === "tourGuide") {
+            response = await getMyItineraries(userId);
+            if (response.error) {
+                console.error(response.message);
+            } else {
+                setCardData(response);
+            }
+        }
+        else if (userType === "tourismGovernor") {
+            response = await getMySites(userId);
+            if (response.error) {
+                console.error(response.message);
+            } else {
+                setCardData(response);
+            }
+        }
+        else if (userType === "seller") {
+            response = await getMyProducts(userId);
+            if (response.error) {
+                console.error(response.message);
+            } else {
+                setCardData(response);
+            }
+        }
+    };
 
-	// get the role of the user whose profile is being viewed
-	useEffect(() => {
-		if (profileId) {
-			getUserInfo(profileId);
-		}
-	}, [profileId]);
+    useEffect(() => {
+        if (userId) {
+            getUserInfo(userId);
+        }
+    }, [userId]);
 
-	// get the data to be displayed in the timeline (activities, products, itineraries, sites)
-	useEffect(() => {
-		if (
-			profileId && userData &&
-			profileRole !== "guest" &&
-			Object.keys(userData).length > 0
-		) {
-			getCardData(profileId);
-		}
-	}, [profileRole, userData]);
+    useEffect(() => {
+        if (userId && userType !== "guest" && Object.keys(userData).length > 0) {
+            getCardData(userId);
+        }
+    }, [userType, userData]);
 
-	if (!userData) {
-		return (
-			<div className="py-8 px-24 max-w-[1200px] flex gap-9 mx-auto">
-				<div className="flex justify-center w-full">
-					<p className="text-neutral-400 text-sm italic">
-						{error === true ?
-							"Profile does not exist or you are not authorised to view it."
-							:
-							"Loading..."
-						}
-					</p>
-				</div>
-			</div>
-		);
-	}
-
-	if (userData && userData.isAccepted === false && profileId !== id) {
-		return (
-			<div className="py-8 px-24 max-w-[1200px] flex gap-9 mx-auto">
-				<div className="flex justify-center w-full">
-					<p className="text-neutral-400 text-sm italic">
-						Profile does not exist or you are not authorised to view it.
-					</p>
-				</div>
-			</div>
-		);
-	}
-
-	return (
-		<div className="py-8 px-24 max-w-[1200px] mx-auto">
-			<div className="flex gap-9">
-				{profileRole !== "tourismGovernor" && (
-					<div className="flex flex-col w-max gap-9 self-start">
-						<ProfileBanner
-							userData={userData}
-							profileId={profileId}
-							id={id}
-							profileRole={profileRole}
-						/>
-						{profileRole === "tourist" && profileId === id && (
-							<Wallet userData={userData} />
-						)}
-					</div>
-				)}
-				<div className="w-full flex flex-col gap-12">
-					{profileRole === "advertiser" && (
-						<CompanyProfile
-							userData={userData}
-							profileId={profileId}
-							id={id}
-						/>
-					)}
-					{profileRole === "tourGuide" && (
-						<Experience userData={userData} profileId={profileId} id={id} />
-					)}
-					<Timeline
-						userData={userData}
-						profileId={profileId}
-						id={id}
-						profileRole={profileRole}
-						cardData={cardData}
-					/>
-				</div>
-			</div>
-			{profileRole === "tourismGovernor" && profileId === id && (
-				<div className="mt-12">
-					<TagManagement />
-				</div>
-			)}
-		</div>
-	);
+    return (
+        <div className="py-8 px-24 max-w-[1200px] flex gap-9 mx-auto">
+            {error === false ?
+                <>
+                    {userType !== "tourismGovernor" &&
+                        <div className="flex flex-col w-max gap-9 self-start">
+                            <ProfileBanner userData={userData} userId={userId} id={id} userType={userType} />
+                            {userType === "tourist" && userId === id && <Wallet userData={userData} />}
+                        </div>
+                    }
+                    <div className="w-full flex flex-col gap-12">
+                        {userType === "advertiser" && <CompanyProfile userData={userData} userId={userId} id={id} />}
+                        {userType === "tourGuide" && <Experience userData={userData} userId={userId} id={id} />}
+                        <Timeline userData={userData} userId={userId} id={id} userType={userType} cardData={cardData} />
+                    </div>
+                </>
+                :
+                <div className="flex justify-center w-full">
+                    <p className="text-neutral-400 text-sm italic">Profile does not exist or you are not authorised to view it.</p>
+                </div>
+            }
+        </div>
+    );
 }
 
 export default Profile;

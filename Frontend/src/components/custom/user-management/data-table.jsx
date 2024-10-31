@@ -1,8 +1,24 @@
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
+"use client";
+import {
+	flexRender,
+	getCoreRowModel,
+	getPaginationRowModel,
+	useReactTable,
+} from "@tanstack/react-table";
 
 import { ArrowRight, ArrowLeft } from "lucide-react";
+
+
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from "@/components/ui/table";
+
+import { Button } from "@/components/ui/button";
 
 export function DataTable({ columns, data }) {
 	const table = useReactTable({
@@ -24,9 +40,9 @@ export function DataTable({ columns, data }) {
 										{header.isPlaceholder
 											? null
 											: flexRender(
-												header.column.columnDef.header,
-												header.getContext()
-											)}
+													header.column.columnDef.header,
+													header.getContext()
+											  )}
 									</TableHead>
 								);
 							})}
@@ -63,7 +79,7 @@ export function DataTable({ columns, data }) {
 					onClick={() => table.previousPage()}
 					disabled={!table.getCanPreviousPage()}
 				>
-					<ArrowLeft />
+					<ArrowLeft/>
 				</Button>
 				<Button
 					variant="outline"
@@ -71,7 +87,7 @@ export function DataTable({ columns, data }) {
 					onClick={() => table.nextPage()}
 					disabled={!table.getCanNextPage()}
 				>
-					<ArrowRight />
+					<ArrowRight/>
 				</Button>
 			</div>
 		</div>

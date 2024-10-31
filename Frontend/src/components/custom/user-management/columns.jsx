@@ -1,5 +1,5 @@
+"use client";
 import { Button } from "@/components/ui/button";
-
 export const columns = (handleDeleteUser) => [
 	{
 		accessorKey: "username",
@@ -25,6 +25,7 @@ export const columns = (handleDeleteUser) => [
 					variant="ghostDestructive"
 					className="p-3"
 					onClick={() => {
+						console.log(userId, role);
 						handleDeleteUser(userId, role);
 					}}
 				>
