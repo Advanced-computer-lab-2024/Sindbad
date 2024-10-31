@@ -4,12 +4,12 @@ import ProductCard from "./ProductCard";
 const CardContainer = ({ cardList, cardType }) => {
 	// Provide a default value
 	return (
-		<div className="grid gap-6 grid-cols-3 w-full">
+		<div className="grid gap-6 grid-cols-3 w-full auto-rows-max">
 			{cardList.length > 0 ? ( // Check if the array has items
 				cardList.map((item, index) => (
-					<div key={index} className="card-container h-fit">
-						{cardType !== "product" && <Card data={item} cardType={cardType} />}
-						{cardType === "product" && <ProductCard data={item} profilelId={item.seller} />}
+					<div className="">
+						{cardType !== "product" && <Card key={index} data={item} cardType={cardType} />}
+						{cardType === "product" && <ProductCard key={index} data={item} profilelId={item.seller} />}
 					</div>
 				))
 			) : (

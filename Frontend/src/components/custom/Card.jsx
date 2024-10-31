@@ -23,7 +23,7 @@ function Card({ data, id, profileId, cardType }) {
 	const { role } = useUser();
 
 	return (
-		<article className="w-full flex flex-col border border-primary-700/80 rounded-md overflow-clip bg-gradient-to-br from-light to-primary-700/50 group">
+		<article className="w-full flex h-full flex-col border border-primary-700/80 rounded-md overflow-clip bg-gradient-to-br from-light to-primary-700/50 group">
 			<div className="h-[156px] relative shrink-0 bg-neutral-300">
 				{/* card photo is first image in the array */}
 				{data.imageUris && data.imageUris.length !== 0 ? (
@@ -55,10 +55,10 @@ function Card({ data, id, profileId, cardType }) {
 											role === "seller"
 												? "product"
 												: role === "advertiser"
-												? "activity"
-												: role === "tourGuide"
-												? "itinerary"
-												: "site"
+													? "activity"
+													: role === "tourGuide"
+														? "itinerary"
+														: "site"
 										}
 										id={id}
 										data={data}
@@ -76,8 +76,8 @@ function Card({ data, id, profileId, cardType }) {
 									{role === "advertiser"
 										? "activity"
 										: role === "tourGuide"
-										? "itinerary"
-										: "site"}
+											? "itinerary"
+											: "site"}
 									?
 								</DialogTitle>
 								<DialogHeader>
@@ -86,8 +86,8 @@ function Card({ data, id, profileId, cardType }) {
 											role === "advertiser"
 												? "activity"
 												: role === "tourGuide"
-												? "itinerary"
-												: "site"
+													? "itinerary"
+													: "site"
 										}
 										data={data}
 									/>
@@ -98,14 +98,16 @@ function Card({ data, id, profileId, cardType }) {
 				)}
 			</div>
 			{/* card details */}
-			<div className="flex flex-col p-3 gap-5 h-full justify-between">
-				<div>
-					<h4 className="text-base font-semibold line-clamp-2">{data.name}</h4>
+			<div className="flex flex-col p-3 gap-2 h-full justify-between">
+				<h4 className="text-base font-semibold line-clamp-2">
+					{data.name}
+				</h4>
+				<div className="flex flex-col gap-1">
 					<StarRating
 						rating={data.averageRating ? data.averageRating : 0}
 						size={16}
 					/>
-					<div className="text-neutral-500 flex gap-1 items-center mt-1">
+					<div className="text-neutral-500 flex gap-1 items-center">
 						<Wallet size={16} />
 						{data.price?.min ? (
 							<p className="text-xs leading-[11px] font-medium">
@@ -117,14 +119,14 @@ function Card({ data, id, profileId, cardType }) {
 							</p>
 						) : null}
 					</div>
+					{/* navigate to detailed view of itinerary/activity/site */}
+					<Button onClick={() => navigate(`/app/${cardType}/${data._id}`)} className="mt-2">
+						<p className="text-xs">Read more</p>
+						<div className="shrink-0">
+							<ArrowRight size={13} />
+						</div>
+					</Button>
 				</div>
-				{/* navigate to detailed view of itinerary/activity/site */}
-				<Button onClick={() => navigate(`/app/${cardType}/${data._id}`)}>
-					<p className="text-xs">Read more</p>
-					<div className="shrink-0">
-						<ArrowRight size={13} />
-					</div>
-				</Button>
 			</div>
 		</article>
 	);
