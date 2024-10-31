@@ -11,11 +11,16 @@ function Activities() {
 	const [activities, setActivities] = useState([]);
 	const [categories, setCategories] = useState([]);
 	const [categoryNames, setCategoryNames] = useState([]);
+	const [priceRange, setPriceRange] = useState({
+		minPrice: 0,
+		maxPrice: 1000,
+	});
+
 	const [activeFilters, setActiveFilters] = useState({
 		name: "",
-		budget: {
-			min: 0,
-			max: 1000,
+		price: {
+			min: priceRange.minPrice,
+			max: priceRange.maxPrice
 		},
 		date: {
 			start: "",
@@ -37,12 +42,14 @@ function Activities() {
 			type: "search",
 			label: "Search",
 		},
-		budget: {
+		price: {
 			type: "range",
-			label: "Budget",
-			min: 0,
-			max: 1000,
-			step: 10,
+			label: "Price",
+			range: {
+				min: priceRange.minPrice,
+				max: priceRange.maxPrice
+			},
+			step: 1,
 		},
 		date: {
 			type: "date",
@@ -56,8 +63,10 @@ function Activities() {
 		rating: {
 			type: "range",
 			label: "Rating",
-			min: 0,
-			max: 5,
+			range: {
+				min: 0,
+				max: 5
+			},
 			step: 1,
 		},
 		sortBy: {
@@ -83,7 +92,7 @@ function Activities() {
 		}
 		const response = await getAllActivities(
 			activeFilters.name,
-			activeFilters.budget,
+			activeFilters.price,
 			activeFilters.date, // Pass start and end separately
 			categoryToSend, // Send the category ID
 			activeFilters.rating,

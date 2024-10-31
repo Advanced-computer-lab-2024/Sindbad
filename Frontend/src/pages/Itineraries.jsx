@@ -11,11 +11,16 @@ function Itineraries() {
 	const [itineraries, setItineraries] = useState([]);
 	const [tags, setTags] = useState([]);
 	const [tagNames, setTagNames] = useState([]);
+	const [priceRange, setPriceRange] = useState({
+		minPrice: 0,
+		maxPrice: 1000,
+	});
+
 	const [activeFilters, setActiveFilters] = useState({
 		name: "",
-		budget: {
-			min: 0,
-			max: 1000,
+		price: {
+			min: priceRange.minPrice,
+			max: priceRange.maxPrice
 		},
 		date: {
 			start: "",
@@ -38,12 +43,14 @@ function Itineraries() {
 			type: "search",
 			label: "Search",
 		},
-		budget: {
+		price: {
 			type: "range",
-			label: "Budget",
-			min: 0,
-			max: 1000,
-			step: 10,
+			label: "Price",
+			range: {
+				min: priceRange.minPrice,
+				max: priceRange.maxPrice
+			},
+			step: 1,
 		},
 		date: {
 			type: "date",
@@ -57,8 +64,10 @@ function Itineraries() {
 		rating: {
 			type: "range",
 			label: "Rating",
-			min: 0,
-			max: 5,
+			range: {
+				min: 0,
+				max: 5
+			},
 			step: 1,
 		},
 		language: {
@@ -88,7 +97,7 @@ function Itineraries() {
 		}
 		const response = await getAllItineraries(
 			activeFilters.name,
-			activeFilters.budget,
+			activeFilters.price,
 			activeFilters.date,
 			tagToSend,
 			activeFilters.rating,

@@ -62,9 +62,9 @@ const getMinMaxPrices = async (req, res) => {
 	const maxProduct = await Product.findOne({}, {}, { sort: { price: -1 } });
 	const maxProductsPrice = maxProduct ? maxProduct.price : null;
 
-	res.json({
-		minProductsPrice,
-		maxProductsPrice,
+	return res.status(200).json({
+		minPrice: minProductsPrice,
+		maxPrice: maxProductsPrice,
 	});
 };
 
