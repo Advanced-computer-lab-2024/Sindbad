@@ -1,5 +1,6 @@
 import { Input } from "@/components/ui/input";
-import { PriceFilter } from "@/components/ui/price-filter";
+import { SliderFilter } from "@/components/ui/slider-filter";
+import { useEffect } from "react";
 
 const GenericFilter = ({ formFields, setActiveFilters, activeFilters }) => {
 	// Function to handle changes and update the filter object
@@ -20,6 +21,12 @@ const GenericFilter = ({ formFields, setActiveFilters, activeFilters }) => {
 			}));
 		}
 	};
+
+	useEffect(() => {
+		console.log(activeFilters);
+		console.log(formFields);
+	}
+	, [activeFilters]);
 
 	const Select = ({ options, value, onChange }) => {
 		return (
@@ -84,26 +91,23 @@ const GenericFilter = ({ formFields, setActiveFilters, activeFilters }) => {
 					);
 				}
 
-				// Render number range using PriceFilter component
+				// Render number range using SliderFilter component
 				if (field.type === "range") {
 					// const defaultFilterValues = activeFilters[key];
-					const priceRange = {
-						minPrice: field.min,
-						maxPrice: field.max,
-					};
+					const { range } = field;
 
 					return (
 						<div key={key}>
-							<PriceFilter
-								setMinPrice={
+							<SliderFilter
+								setMin={
 									(min) => handleChange(key, { min }) // Update only the min price here
 								}
-								setMaxPrice={
+								setMax={
 									(max) => handleChange(key, { max }) // Update only the max price here
 								}
-								minPrice={activeFilters[key].min} // Ensure it pulls from activeFilters
-								maxPrice={activeFilters[key].max} // Ensure it pulls from activeFilters
-								priceRange={priceRange}
+								min={activeFilters[key].min} // Ensure it pulls from activeFilters
+								max={activeFilters[key].max} // Ensure it pulls from activeFilters
+								range={range}
 								step={field.step}
 								label={field.label}
 							/>

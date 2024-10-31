@@ -7,9 +7,9 @@ const CardContainer = ({ cardList, cardType }) => {
 		<div className="grid gap-6 grid-cols-3 w-full auto-rows-max">
 			{cardList.length > 0 ? ( // Check if the array has items
 				cardList.map((item, index) => (
-					<div className="">
-						{cardType !== "product" && <Card key={index} data={item} cardType={cardType} />}
-						{cardType === "product" && <ProductCard key={index} data={item} profilelId={item.seller} />}
+					<div key={index}>
+						{cardType !== "product" && <Card data={item} cardType={cardType} />}
+						{cardType === "product" && <ProductCard data={item} profilelId={item.seller} />}
 					</div>
 				))
 			) : (

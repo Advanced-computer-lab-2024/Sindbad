@@ -12,6 +12,7 @@ const {
 const router = express.Router();
 
 router.route("/").post(createProduct).get(getAllProducts);
+router.route("/price-min-max").get(getMinMaxPrices);
 
 router
 	.route("/:id")
@@ -20,6 +21,5 @@ router
 	.delete(deleteProduct);
 
 router.route("/review/:id").post(addReview);
-router.route("/price-min-max").get(getMinMaxPrices);
 
 module.exports = router;

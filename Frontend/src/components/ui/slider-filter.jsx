@@ -2,42 +2,27 @@
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 
-export function PriceFilter({
-	minPrice,
-	maxPrice,
-	setMinPrice,
-	setMaxPrice,
-	priceRange,
-	step,
-	label,
-}) {
-	const handleMinPriceChange = (value) => {
-		setMinPrice(value);
-	};
-
-	const handleMaxPriceChange = (value) => {
-		setMaxPrice(value);
-	};
+export function SliderFilter({ min, max, range, step, label, setMin, setMax }) {
 
 	return (
 		<div className="">
 			<h4 className="text-md font-medium mb-2">
-				{label || "Range Slider"}
+				{label || "Range"}
 			</h4>
 			<div className="flex items-center gap-4 justify-between mb-4">
 				<div className="grid gap-2">
 					<label
-						htmlFor="min-price"
+						htmlFor="min"
 						className="text-sm text-neutral-400 font-medium"
 					>
 						Min
 					</label>
 					<Input
-						id="min-price"
+						id="min"
 						type="number"
-						value={minPrice}
+						value={min}
 						onChange={(e) =>
-							handleMinPriceChange(Number(e.target.value))
+							setMin(Number(e.target.value))
 						}
 						className="w-16 h-8 p-2"
 					/>
@@ -45,30 +30,30 @@ export function PriceFilter({
 				<hr className="border-neutral-700 border w-full mt-7" />
 				<div className="grid gap-2">
 					<label
-						htmlFor="max-price"
+						htmlFor="max"
 						className="text-sm text-neutral-400 font-medium"
 					>
 						Max
 					</label>
 					<Input
-						id="max-price"
+						id="max"
 						type="number"
-						value={maxPrice}
+						value={max}
 						onChange={(e) =>
-							handleMaxPriceChange(Number(e.target.value))
+							setMax(Number(e.target.value))
 						}
 						className="w-16 h-8 p-2"
 					/>
 				</div>
 			</div>
 			<Slider
-				min={priceRange.minPrice}
-				max={priceRange.maxPrice}
+				min={range.min}
+				max={range.max}
 				step={step}
-				value={[minPrice, maxPrice]}
+				value={[min, max]}
 				onValueChange={(values) => {
-					setMinPrice(values[0]);
-					setMaxPrice(values[1]);
+					setMin(values[0]);
+					setMax(values[1]);
 				}}
 				className="mb-4"
 			/>

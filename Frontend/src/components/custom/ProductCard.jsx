@@ -16,7 +16,7 @@ function ProductCard({ data, profileId }) {
 	const { role, id } = useUser();
 
 	return (
-		<article className="w-full flex flex-col border border-primary-700/80 rounded-md overflow-clip bg-gradient-to-br from-light to-primary-700/50 group">
+		<article className="w-full h-full flex flex-col border border-primary-700/80 rounded-md overflow-clip bg-gradient-to-br from-light to-primary-700/50 group">
 			<div className="h-[156px] relative shrink-0 bg-neutral-300">
 				{/* If picture is available, show it, otherwise show placeholder */}
 				{data.imageUris ? (
