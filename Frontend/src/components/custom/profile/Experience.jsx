@@ -1,10 +1,11 @@
 import GenericForm from "../genericForm";
-import DeleteForm from "../deleteForm";
 
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 
 import { Edit, CircleX, CirclePlus, MapPin, Calendar } from "lucide-react";
+
+import { removeTourGuideWork } from "@/services/TourGuideApiHandler";
 
 import { useUser } from "@/state management/userInfo";
 
@@ -102,14 +103,34 @@ function Experience({ userData, profileId, id }) {
 												</DialogTrigger>
 												<DialogContent className="overflow-y-scroll max-h-[50%]">
 													<DialogTitle>
-														Are you sure you want to delete this work?
+														Are you sure you want to delete
+														this work?
 													</DialogTitle>
-													<DialogHeader>
-														<DeleteForm
-															type="experience"
-															data={{id: id, experience_id: experience._id}}
-														/>
-													</DialogHeader>
+													<div className="flex justify-end space-x-4 mt-4">
+														<DialogClose asChild>
+															{/* Delete Button */}
+															<button
+																className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
+																onClick={() => {
+																	removeTourGuideWork(
+																		id,
+																		experience._id
+																	);
+																}}
+															>
+																Delete
+															</button>
+														</DialogClose>
+
+														<DialogClose asChild>
+															<span
+																type="button"
+																className="bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 px-4 rounded"
+															>
+																Close
+															</span>
+														</DialogClose>
+													</div>
 												</DialogContent>
 											</Dialog>
 										</div>

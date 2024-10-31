@@ -1,7 +1,6 @@
 import { deleteSite } from "../../services/SiteApiHandler";
 import { deleteActivity } from "../../services/ActivityApiHandler";
 import { deleteItinerary } from "../../services/ItineraryApiHandler";
-import { removeTourGuideWork } from "@/services/TourGuideApiHandler";
 
 import { Button } from "../ui/button";
 
@@ -18,9 +17,6 @@ function DeleteForm( {type, data} ) {
         }
         if (type === "itinerary") {
             deleteItinerary(data._id);
-        }
-        if (type === "experience") {
-            removeTourGuideWork(data.id, data.experience_id);
         }
     }
   return (
