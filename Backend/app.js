@@ -5,19 +5,19 @@ const passport = require("passport");
 const session = require("express-session");
 require("dotenv").config();
 
-const Admin = require("./models/adminModel");
-const adminRoutes = require("./routes/adminRoutes");
-const siteRoutes = require("./routes/siteRoutes");
-const activityRoutes = require("./routes/activityRoutes");
-const itineraryRoutes = require("./routes/itineraryRoutes");
-const categoryRoutes = require("./routes/categoryRoutes");
-const tagRoutes = require("./routes/tagRoutes");
-const userRoutes = require("./routes/user-routes");
-const advertiserRoutes = require("./routes/advertiserRoutes");
-const touristRoutes = require("./routes/tourist-routes");
-const tourGuideRoutes = require("./routes/tourGuide-routes");
-const productRoutes = require("./routes/productRoutes");
-const sellerRoutes = require("./routes/sellerRoutes");
+const adminRoutes = require("./routes/Admin");
+const siteRoutes = require("./routes/Site");
+const activityRoutes = require("./routes/Activity");
+const itineraryRoutes = require("./routes/Itinerary");
+const categoryRoutes = require("./routes/Category");
+const tagRoutes = require("./routes/Tag");
+const userRoutes = require("./routes/User");
+const advertiserRoutes = require("./routes/Advertiser");
+const touristRoutes = require("./routes/Tourist");
+const tourGuideRoutes = require("./routes/TourGuide");
+const tourismGovernorRoutes = require("./routes/TourismGovernor");
+const productRoutes = require("./routes/Product");
+const sellerRoutes = require("./routes/Seller");
 
 const app = express();
 
@@ -77,6 +77,9 @@ app.use("/tourist", touristRoutes);
 
 //TourGuide routes
 app.use("/tourGuide", tourGuideRoutes);
+
+// Tourism Governor routes
+app.use("/tourism-governor", tourismGovernorRoutes);
 
 // Fallback route for unknown endpoints
 app.use((req, res, next) => {

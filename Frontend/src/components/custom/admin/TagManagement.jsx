@@ -69,10 +69,10 @@ export default function TagManagement() {
 	};
 
 	return (
-		<>
+		<div className="flex flex-col gap-6">
 			<div className="flex items-center gap-6">
 				<h1 className="text-3xl font-extrabold">Tags</h1>
-				<hr className="border-neutral-700 border w-full mt-1.5" />
+				<hr className="border-neutral-300 border w-full mt-1.5" />
 			</div>
 
 			{message && (
@@ -98,6 +98,6 @@ export default function TagManagement() {
 			) : (
 				<div>Unable to get tags.</div> // Message when no data is available
 			)}
-		</>
+		</div>
 	);
 }

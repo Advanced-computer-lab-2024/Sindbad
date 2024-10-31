@@ -1,4 +1,5 @@
 import Card from "./Card";
+import ProductCard from "./ProductCard";
 
 const CardContainer = ({ cardList, cardType }) => {
 	// Provide a default value
@@ -7,11 +8,21 @@ const CardContainer = ({ cardList, cardType }) => {
 			{cardList.length > 0 ? ( // Check if the array has items
 				cardList.map((item, index) => (
 					<div key={index} className="card-container h-fit">
-						<Card data={item} cardType={cardType} />
+						{cardType !== "product" && <Card data={item} cardType={cardType} />}
+						{cardType === "product" && <ProductCard data={item} profilelId={item.seller} />}
 					</div>
 				))
 			) : (
-				<div>No items available.</div> // Fallback UI
+				<div className="flex col-span-3 mx-auto">
+					<div className="flex justify-center w-full">
+						<p className="text-neutral-400 text-sm italic">
+							No {cardType === "itinerary" ? "itineraries"
+								: cardType === "activity" ? "activities"
+									: cardType === "site" ? "sites"
+										: "products"} found.
+						</p>
+					</div>
+				</div>
 			)}
 		</div>
 	);

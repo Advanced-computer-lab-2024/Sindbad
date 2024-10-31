@@ -1,7 +1,6 @@
 import Card from "@/components/custom/Card";
 import ProductCard from "@/components/custom/ProductCard";
 import GenericForm from "../genericForm";
-import TagManagement from "../admin/TagManagement";
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
@@ -26,7 +25,7 @@ function Timeline({ userData, profileId, id, profileRole, cardData }) {
 									: "Itineraries"}
 				</h1>
 				<hr className="border-neutral-300 border w-full mt-1.5" />
-				{role !== "tourist" && profileId === id && (
+				{role !== "tourist" && profileId === id && (userData.isAccepted === true || role === "tourismGovernor") && (
 					<Dialog>
 						<DialogTrigger className="shrink-0 mt-1.5 text-neutral-400 hover:text-neutral-600 transition-all">
 							<CirclePlus size={24} />
@@ -129,7 +128,9 @@ function Timeline({ userData, profileId, id, profileRole, cardData }) {
 						<p className="text-neutral-400 text-sm italic">
 							{profileId !== id
 								? "No itineraries to show."
-								: "You have not created any itineraries yet. Click the + button to get started!"}
+								: userData.isAccepted !== true
+									? "Your account must be approved before you can add itineraries. It is currently being reviewed; please check back later."
+									: "You have not created any itineraries yet. Click the + button to get started!"}
 						</p>
 					)}
 
@@ -138,7 +139,9 @@ function Timeline({ userData, profileId, id, profileRole, cardData }) {
 							<p className="text-neutral-400 text-sm italic">
 								{profileId !== id
 									? "No products to show."
-									: "You have not added any products yet. Click the + button to get started!"}
+									: userData.isAccepted !== true
+										? "Your account must be approved before you can add products. It is currently being reviewed; please check back later."
+										: "You have not added any products yet. Click the + button to get started!"}
 							</p>
 						)}
 
@@ -146,7 +149,9 @@ function Timeline({ userData, profileId, id, profileRole, cardData }) {
 						<p className="text-neutral-400 text-sm italic">
 							{profileId !== id
 								? "No activities to show."
-								: "You have not created any activities yet. Click the + button to get started!"}
+								: userData.isAccepted !== true
+									? "Your account must be approved before you can add activities. It is currently being reviewed; please check back later."
+									: "You have not added any activities yet. Click the + button to get started!"}
 						</p>
 					)}
 
@@ -156,11 +161,6 @@ function Timeline({ userData, profileId, id, profileRole, cardData }) {
 								? "No historical places or museums to show."
 								: "You have not added any historical places or museums yet. Click the + button to get started!"}
 						</p>
-					)}
-				</div>
-				<div>
-					{profileRole === "tourismGovernor" && profileId === id && (
-						<TagManagement />
 					)}
 				</div>
 			</div>
