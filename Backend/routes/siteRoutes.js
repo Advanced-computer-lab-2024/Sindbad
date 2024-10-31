@@ -20,6 +20,6 @@ router
 	.put(updateSite) // Update a site by ID
 	.delete(deleteSite); // Delete a site by ID
 
-router.route("/my-sites/:creator-id").get(getMySites); // Get all sites created by the user
+router.route("/my-sites/:creatorId").get(getMySites); // Get all sites created by the user
 
 module.exports = router;

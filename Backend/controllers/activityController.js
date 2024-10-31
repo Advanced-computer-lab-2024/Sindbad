@@ -256,10 +256,10 @@ const getActivities = async (req, res) => {
     try {
         const {
             searchTerm,
-            budget,
+            budget = {},
             date = {},
             category,
-            minRating,
+            rating = {},
             sortBy = "dateTime", // Default sorting by activity date
             sortOrder = "asc",
             page = 1,
@@ -270,7 +270,7 @@ const getActivities = async (req, res) => {
         const filter = {};
 
         // Budget filter
-        if (budget && (budget.min || budget.max)) {
+        if (budget.min || budget.max) {
             filter.$or = [
                 {
                     price: {
@@ -303,8 +303,11 @@ const getActivities = async (req, res) => {
         }
 
         // Average rating filter
-        if (minRating) {
-            filter.averageRating = { $gte: +minRating };
+        if (rating.min || rating.max) {
+          filter.averageRating = {
+            ...(rating.min && { $gte: +rating.min }),
+            ...(rating.max && { $lte: +rating.max }),
+          };
         }
 
         // Search term filter (name, category, or tags)

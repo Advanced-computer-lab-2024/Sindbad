@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from "react-router-dom";
 
 import ImagePlaceholder from "@/components/custom/ImagePlaceholder";
 
@@ -21,7 +21,9 @@ function ProductView() {
 		} else {
 			setError(false);
 			setProductData(response);
-			setTotalRatings(Object.values(response.rating).reduce((acc, cur) => acc + cur, 0));
+			setTotalRatings(
+				Object.values(response.rating).reduce((acc, cur) => acc + cur, 0)
+			);
 		}
 	};
 
@@ -41,11 +43,7 @@ function ProductView() {
 			<div className="py-8 px-24 max-w-[1200px] flex gap-9 mx-auto">
 				<div className="flex justify-center w-full">
 					<p className="text-neutral-400 text-sm italic">
-						{error === true ?
-							"Product does not exist."
-							:
-							"Loading..."
-						}
+						{error === true ? "Product does not exist." : "Loading..."}
 					</p>
 				</div>
 			</div>
@@ -76,9 +74,7 @@ function ProductView() {
 					<div className="w-1/2 p-6 flex flex-col justify-between">
 						<div>
 							{/* Product Title */}
-							<h1 className="text-2xl font-bold mb-4">
-								{productData.name}
-							</h1>
+							<h1 className="text-2xl font-bold mb-4">{productData.name}</h1>
 
 							{/* Price */}
 							<p className="text-xl font-semibold mb-4">
@@ -142,13 +138,16 @@ function ProductView() {
 											className="bg-yellow-400 h-3 rounded-lg"
 											style={{
 												width: `${getRatingPercentage(
-													productData.rating?.[star] || 0
+													productdata.averageRating?.[star] || 0
 												)}%`,
 											}}
 										></div>
 									</div>
 									<span className="ml-2">
-										{getRatingPercentage(productData.rating?.[star] || 0)}%
+										{getRatingPercentage(
+											productdata.averageRating?.[star] || 0
+										)}
+										%
 									</span>
 								</div>
 							))}

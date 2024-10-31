@@ -129,10 +129,10 @@ const deleteItinerary = async (req, res) => {
  * @throws {500} - Error fetching itineraries if there is a server issue.
  */
 const getMyItineraries = async (req, res) => {
-	const { id } = req.params;
-
 	try {
-		const itineraries = await Itinerary.find({ creatorId: id });
+		const itineraries = await Itinerary.find({
+			creatorId: req.params.creatorId,
+		});
 
 		if (itineraries.length === 0) {
 			return res
@@ -197,12 +197,12 @@ const getAllItineraries = async (req, res) => {
 		}
 
 		// Date filter
-		if (startDate || endDate) {
+		if (date.start || date.end) {
 			filter.availableDatesTimes = {
 				$elemMatch: {
-					...(startDate && { $gte: new Date(startDate) }),
-					...(endDate && {
-						$lte: new Date(new Date(endDate).setHours(23, 59, 59, 999)), // End of the day
+					...(date.start && { $gte: new Date(date.start) }),
+					...(date.end && {
+						$lte: new Date(new Date(date.end).setHours(23, 59, 59, 999)), // End of the day
 					}),
 				},
 			};
@@ -219,7 +219,7 @@ const getAllItineraries = async (req, res) => {
 		}
 
 		// Rating filter
-		if (rating && (rating.min || rating.max)) {
+		if (rating.min || rating.max) {
 			filter.averageRating = {
 				...(rating.min && { $gte: +rating.min }),
 				...(rating.max && { $lte: +rating.max }),
