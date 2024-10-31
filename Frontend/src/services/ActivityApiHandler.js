@@ -1,15 +1,6 @@
-import axios from "axios";
-const baseURL = import.meta.env.VITE_BASE_URL;
+import axiosInstance from "./axiosInstance";
 
-export const getAllActivities = async (
-	searchTerm,
-	budget,
-	date,
-	category,
-	rating,
-	sortBy,
-	sortOrder
-) => {
+export const getAllActivities = async (searchTerm, budget, date, category, rating, sortBy, sortOrder) => {
 	try {
 		// Build the params object dynamically
 		const params = {};
@@ -18,7 +9,6 @@ export const getAllActivities = async (
 		if (searchTerm) params.searchTerm = searchTerm;
 
 		if (budget) {
-			console.log("budget:", budget);
 			params.budget = budget; // You can send both min and max or format it differently as needed
 		}
 
@@ -37,264 +27,86 @@ export const getAllActivities = async (
 		if (sortBy) params.sortBy = sortBy;
 		if (sortOrder) params.sortOrder = sortOrder;
 
-		console.log("params:", params);
-
 		// Make the request with the dynamic params
-		const response = await axios.get(`${baseURL}/activity/`, {
-			headers: {
-				"Content-Type": "application/json",
-			},
-			params, // Pass the dynamically built params object
-		});
-
-		console.log("response:", response);
-
-		// Handle the response as before
-		if (response.status === 200) {
-			return response.data;
-		} else if (response.status === 404) {
-			return {
-				error: true,
-				message: "No activities found.",
-				status: 404,
-			};
-		} else {
-			return {
-				error: true,
-				message: `Unexpected status code: ${response.status}`,
-			};
-		}
-	} catch (error) {
-		if (error.response) {
-			return {
-				error: true,
-				message: error.response.data.error || "Unknown error occurred",
-				status: error.response.status,
-			};
-		} else if (error.request) {
-			return {
-				error: true,
-				message: "No response from server. Please try again later.",
-			};
-		} else {
-			return {
-				error: true,
-				message:
-					"An error occurred during request setup. Please try again.",
-			};
-		}
-	}
-};
-export const getMyActivities = async (advertiserId) => {
-	try {
-		const response = await axios.get(
-			`${baseURL}/activity/my-activities/${advertiserId}`,
+		const response = await axiosInstance.get(
+			`/activity/`,
 			{
-				headers: {
-					"Content-Type": "application/json",
-				},
+				resourceName: "Activity",
+				params, // Pass the dynamically built params object
 			}
 		);
 
-		if (response.status === 200) {
-			return response.data;
-		} else if (response.status === 404) {
-			return {
-				error: true,
-				message: "No activities found.",
-				status: 404,
-			};
-		} else {
-			return {
-				error: true,
-				message: `Unexpected status code: ${response.status}`,
-			};
-		}
+		return response.data;
 	} catch (error) {
-		if (error.response) {
-			return {
-				error: true,
-				message: error.response.data.error || "Unknown error occurred",
-				status: error.response.status,
-			};
-		} else if (error.request) {
-			return {
-				error: true,
-				message: "No response from server. Please try again later.",
-			};
-		} else {
-			return {
-				error: true,
-				message:
-					"An error occurred during request setup. Please try again.",
-			};
-		}
+		return error;
 	}
 };
+
+export const getMyActivities = async (advertiserId) => {
+	try {
+		const response = await axiosInstance.get(
+			`/activity/my-activities/${advertiserId}`,
+			{
+				resourceName: "Activity",
+			}
+		);
+		return response.data;
+	} catch (error) {
+		return error;
+	}
+};
+
 export const createActivity = async (activity) => {
 	try {
-		const response = await axios.post(`${baseURL}/activity/`, activity, {
-			headers: {
-				"Content-Type": "application/json",
-			},
-		});
-
-		if (response.status === 201) {
-			console.log("success: ", response.data);
-			return response.data;
-		} else {
-			return {
-				error: true,
-				message: `Unexpected status code: ${response.status}`,
-			};
-		}
+		const response = await axiosInstance.post(
+			`/activity/`,
+			activity
+		);
+		return response.data;
 	} catch (error) {
-		if (error.response) {
-			return {
-				error: true,
-				message: error.response.data.error || "Unknown error occurred",
-				status: error.response.status,
-			};
-		} else if (error.request) {
-			return {
-				error: true,
-				message: "No response from server. Please try again later.",
-			};
-		} else {
-			return {
-				error: true,
-				message:
-					"An error occurred during request setup. Please try again.",
-			};
-		}
+		return error;
 	}
 };
 
 export const updateActivity = async (activityId, activity) => {
 	try {
-		const response = await axios.put(
-			`${baseURL}/activity/${activityId}`,
+		const response = await axiosInstance.put(
+			`/activity/${activityId}`,
 			activity,
 			{
-				headers: {
-					"Content-Type": "application/json",
-				},
+				resourceName: "Activity",
 			}
 		);
-
-		if (response.status === 200) {
-			console.log("success: ", response.data);
-			return response.data;
-		} else {
-			return {
-				error: true,
-				message: `Unexpected status code: ${response.status}`,
-			};
-		}
+		return response.data;
 	} catch (error) {
-		if (error.response) {
-			return {
-				error: true,
-				message: error.response.data.error || "Unknown error occurred",
-				status: error.response.status,
-			};
-		} else if (error.request) {
-			return {
-				error: true,
-				message: "No response from server. Please try again later.",
-			};
-		} else {
-			return {
-				error: true,
-				message:
-					"An error occurred during request setup. Please try again.",
-			};
-		}
+		return error;
 	}
 };
+
 export const deleteActivity = async (activityId) => {
 	try {
-		const response = await axios.delete(
-			`${baseURL}/activity/${activityId}`,
+		const response = await axiosInstance.delete(
+			`/activity/${activityId}`,
 			{
-				headers: {
-					"Content-Type": "application/json",
-				},
+				resourceName: "Activity",
 			}
 		);
-
-		if (response.status === 200) {
-			console.log("success: ", response.data);
-			return response.data;
-		} else {
-			return {
-				error: true,
-				message: `Unexpected status code: ${response.status}`,
-			};
-		}
+		return response.data;
 	} catch (error) {
-		if (error.response) {
-			return {
-				error: true,
-				message: error.response.data.error || "Unknown error occurred",
-				status: error.response.status,
-			};
-		} else if (error.request) {
-			return {
-				error: true,
-				message: "No response from server. Please try again later.",
-			};
-		} else {
-			return {
-				error: true,
-				message:
-					"An error occurred during request setup. Please try again.",
-			};
-		}
+		return error;
 	}
 };
+
 export const getActivityById = async (activityId) => {
 	try {
-		const response = await axios.get(`${baseURL}/activity/${activityId}`, {
-			headers: {
-				"Content-Type": "application/json",
-			},
-		});
-
-		if (response.status === 200) {
-			console.log("success: ", response.data);
-			return response.data;
-		} else if (response.status === 404) {
-			console.log("fail: ", response.data);
-			return {
-				error: true,
-				message: "Activity not found.",
-				status: 404,
-			};
-		} else {
-			return {
-				error: true,
-				message: `Unexpected status code: ${response.status}`,
-			};
-		}
+		const response = await axiosInstance.get(
+			`/activity/${activityId}`,
+			{
+				resourceName: "Activity",
+			}
+		);
+		return response.data;
 	} catch (error) {
-		if (error.response) {
-			return {
-				error: true,
-				message: error.response.data.error || "Unknown error occurred",
-				status: error.response.status,
-			};
-		} else if (error.request) {
-			return {
-				error: true,
-				message: "No response from server. Please try again later.",
-			};
-		} else {
-			return {
-				error: true,
-				message:
-					"An error occurred during request setup. Please try again.",
-			};
-		}
+		return error;
 	}
 };

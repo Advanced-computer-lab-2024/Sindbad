@@ -103,22 +103,26 @@ function Card({ data, id, profileId, cardType }) {
 					{data.name}
 				</h4>
 				<div className="flex flex-col gap-1">
-					<StarRating
-						rating={data.averageRating ? data.averageRating : 0}
-						size={16}
-					/>
-					<div className="text-neutral-500 flex gap-1 items-center">
-						<Wallet size={16} />
-						{data.price?.min ? (
-							<p className="text-xs leading-[11px] font-medium">
-								Starting {data.price.min ? `${data.price.min}EGP` : "N/A"}
-							</p>
-						) : data.price ? (
-							<p className="text-xs leading-[11px] font-medium">
-								{data.price ? `${data.price}EGP` : "N/A"}
-							</p>
-						) : null}
-					</div>
+					{cardType !== "site" &&
+						<StarRating
+							rating={data.averageRating ? data.averageRating : 0}
+							size={16}
+						/>
+					}
+					{data.price &&
+						<div className="text-neutral-500 flex gap-1 items-center">
+							<Wallet size={16} />
+							{data.price?.min ? (
+								<p className="text-xs leading-[11px] font-medium">
+									Starting {data.price.min ? `${data.price.min}EGP` : "N/A"}
+								</p>
+							) : data.price ? (
+								<p className="text-xs leading-[11px] font-medium">
+									{data.price ? `${data.price}EGP` : "N/A"}
+								</p>
+							) : null}
+						</div>
+					}
 					{/* navigate to detailed view of itinerary/activity/site */}
 					<Button onClick={() => navigate(`/app/${cardType}/${data._id}`)} className="mt-2">
 						<p className="text-xs">Read more</p>

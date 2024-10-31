@@ -154,7 +154,7 @@ const Itinerary = () => {
 
 						{/*Star Section */}
 						<div className="mt-1">
-							<StarRating rating={itinerary.rating} size={20} />
+							<StarRating rating={itinerary.averageRating} size={20} />
 						</div>
 					</div>
 

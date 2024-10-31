@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
 import GoogleMapRead from "@/components/custom/maps/GoogleMapRead";
-import StarRating from "@/components/custom/StarRating";
 import ImagePlaceholder from "@/components/custom/ImagePlaceholder";
 
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
@@ -88,15 +87,7 @@ function Site() {
 			</div>
 			<div className="flex justify-between gap-32 py-6">
 				<div className="flex flex-col gap-6 w-full">
-					<div>
-						{/*Star Section */}
-						<div className="mb-1">
-							<StarRating rating={site.rating} size={20} />
-						</div>
-
-						{/*description*/}
-						<p className="text-sm">{site.description}</p>
-					</div>
+					<p className="text-sm">{site.description}</p>
 
 					{/*Tags*/}
 					<div>
