@@ -15,7 +15,7 @@ export const updateTourist = async (touristId, updatedValues) => {
 			`/tourist/${touristId}`,
 			updatedValues,
 			{
-				resourceName: 'Tourist',
+				resourceName: "Tourist",
 			}
 		);
 		return response.data;

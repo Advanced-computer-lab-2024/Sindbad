@@ -70,7 +70,7 @@ const getAllSites = async (req, res) => {
  */
 const getMySites = async (req, res) => {
 	try {
-		const sites = await Site.find({ createdBy: req.params.userId });
+		const sites = await Site.find({ creatorId: req.params.creatorId });
 		res.status(200).json(sites);
 	} catch (error) {
 		return res.status(500).json({
