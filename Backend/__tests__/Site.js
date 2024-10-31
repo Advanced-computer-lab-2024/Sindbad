@@ -3,8 +3,8 @@ const mongoose = require("mongoose");
 const { MongoMemoryServer } = require("mongodb-memory-server");
 const { app } = require("../app");
 const { startServer, stopServer, clearDatabase } = require("../jest.setup");
-const Site = require("../models/siteModel");
-const Tag = require("../models/tagModel"); // Assuming you have a Tag model
+const Site = require("../models/Site");
+const Tag = require("../models/Tag"); // Assuming you have a Tag model
 
 let tagId;
 let creatorId;

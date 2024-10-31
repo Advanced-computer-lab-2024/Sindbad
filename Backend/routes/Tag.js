@@ -6,7 +6,7 @@ const {
 	deleteTag,
 	updateTag,
 	getAllTags,
-} = require("../controllers/tagController");
+} = require("../controllers/Tag");
 
 router
   .route("/")

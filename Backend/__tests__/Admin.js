@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const { MongoMemoryServer } = require("mongodb-memory-server");
 const { app } = require("../app");
 const { startServer, stopServer } = require("../jest.setup");
-const Admin = require("../models/adminModel");
+const Admin = require("../models/Admin");
 
 let adminId;
 

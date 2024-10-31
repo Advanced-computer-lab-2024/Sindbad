@@ -8,7 +8,7 @@ const {
 	getMyActivities,
 	getActivities,
 	addRating,
-} = require("../controllers/activityController");
+} = require("../controllers/Activity");
 
 router.route("/my-activities/:creatorId").get(getMyActivities);
 

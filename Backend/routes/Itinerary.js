@@ -7,8 +7,8 @@ const {
 	deleteItinerary,
 	getAllItineraries,
 	getMyItineraries,
-} = require("../controllers/itineraryController");
-const { addRating } = require("../controllers/itineraryController");
+} = require("../controllers/Itinerary");
+const { addRating } = require("../controllers/Itinerary");
 
 router.route("/").post(createItinerary).get(getAllItineraries);
 

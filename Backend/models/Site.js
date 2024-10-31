@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const Tag = require("./tagModel");
+const Tag = require("./Tag");
 
 const openingHoursSchema = new mongoose.Schema(
 	{

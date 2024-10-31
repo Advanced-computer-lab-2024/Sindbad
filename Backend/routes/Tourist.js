@@ -6,7 +6,7 @@ const {
 	getAllTourists,
 	updateTourist,
 	deleteTourist,
-} = require("../controllers/touristController");
+} = require("../controllers/Tourist");
 
 router.route("/").get(getAllTourists);
 

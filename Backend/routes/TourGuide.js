@@ -7,7 +7,7 @@ const {
 	updateTourGuide,
 	deleteTourGuide,
 	deletePreviousWork,
-} = require("../controllers/tourGuideController");
+} = require("../controllers/TourGuide");
 
 router
 	.route("/")

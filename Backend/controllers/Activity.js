@@ -1,6 +1,6 @@
-const Activity = require("../models/activityModel");
-const Tag = require("../models/tagModel");
-const Category = require("../models/categoryModel");
+const Activity = require("../models/Activity");
+const Tag = require("../models/Tag");
+const Category = require("../models/Category");
 
 /**
  * Gets an activity by ID
@@ -69,9 +69,7 @@ const setActivity = async (req, res) => {
 		// Check if all provided tag IDs exist (optional)
 		const existingTags = await Tag.find({ _id: { $in: tags } });
 		if (existingTags.length !== tags.length) {
-			return res
-				.status(404)
-				.json({ message: "One or more tags do not exist" });
+			return res.status(404).json({ message: "One or more tags do not exist" });
 		}
 
 		// Create the activity with valid category and tag IDs
@@ -99,57 +97,56 @@ const setActivity = async (req, res) => {
  * @returns {Object} - A JSON object with a confirmation message or an error message if not found
  */
 const addRating = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { rating } = req.body;
+	try {
+		const { id } = req.params;
+		const { rating } = req.body;
 
-    if (rating < 1 || rating > 5) {
-      return res.status(400).json({ message: "Rating must be between 1 and 5." });
-    }
+		if (rating < 1 || rating > 5) {
+			return res
+				.status(400)
+				.json({ message: "Rating must be between 1 and 5." });
+		}
 
-    const activity = await Activity.findById(id);
+		const activity = await Activity.findById(id);
 
-    if (!activity) {
-      return res.status(404).json({ message: "Activity not found" });
-    }
+		if (!activity) {
+			return res.status(404).json({ message: "Activity not found" });
+		}
 
-    // Ensure that activity.rating is a Map
-    if (!(activity.rating instanceof Map)) {
-      activity.rating = new Map(Object.entries(activity.rating));
-    }
+		// Ensure that activity.rating is a Map
+		if (!(activity.rating instanceof Map)) {
+			activity.rating = new Map(Object.entries(activity.rating));
+		}
 
-    // Increment the count of the given rating
-    const currentCount = activity.rating.get(rating.toString()) || 0;
-    activity.rating.set(rating.toString(), currentCount + 1);
+		// Increment the count of the given rating
+		const currentCount = activity.rating.get(rating.toString()) || 0;
+		activity.rating.set(rating.toString(), currentCount + 1);
 
-    // Recalculate the average rating
-    activity.averageRating = calculateAverageRating(activity.rating);
-    await activity.save();
+		// Recalculate the average rating
+		activity.averageRating = calculateAverageRating(activity.rating);
+		await activity.save();
 
-    res.status(200).json({ message: "Rating added successfully", activity });
-  } catch (error) {
-    res.status(500).json({
-      message: "Error adding rating",
-      error: error.message,
-    });
-  }
+		res.status(200).json({ message: "Rating added successfully", activity });
+	} catch (error) {
+		res.status(500).json({
+			message: "Error adding rating",
+			error: error.message,
+		});
+	}
 };
-
 
 const calculateAverageRating = (ratings) => {
-  let totalRating = 0;
-  let totalVotes = 0;
+	let totalRating = 0;
+	let totalVotes = 0;
 
-  // Use the entries of the Map and a for...of loop
-  for (const [rating, count] of ratings.entries()) {
-    totalRating += parseInt(rating) * count; // Multiply rating by the number of votes
-    totalVotes += count; // Sum the number of votes
-  }
+	// Use the entries of the Map and a for...of loop
+	for (const [rating, count] of ratings.entries()) {
+		totalRating += parseInt(rating) * count; // Multiply rating by the number of votes
+		totalVotes += count; // Sum the number of votes
+	}
 
-  return totalVotes > 0 ? totalRating / totalVotes : 0; // Return average or 0 if no votes
+	return totalVotes > 0 ? totalRating / totalVotes : 0; // Return average or 0 if no votes
 };
-
-
 
 /**
  * Updates an existing activity in the database
@@ -233,7 +230,6 @@ const deleteActivity = async (req, res) => {
 	}
 };
 
-
 /**
  * Searches, filters, and sorts activities based on search term, budget, date, category, average rating, and sorting options.
  *
@@ -253,111 +249,110 @@ const deleteActivity = async (req, res) => {
  * @returns {Object} - A JSON object containing an array of activities or an error message.
  */
 const getActivities = async (req, res) => {
-    try {
-        const {
-            searchTerm,
-            budget = {},
-            date = {},
-            category,
-            rating = {},
-            sortBy = "dateTime", // Default sorting by activity date
-            sortOrder = "asc",
-            page = 1,
-            limit = 10,
-        } = req.query;
+	try {
+		const {
+			searchTerm,
+			budget = {},
+			date = {},
+			category,
+			rating = {},
+			sortBy = "dateTime", // Default sorting by activity date
+			sortOrder = "asc",
+			page = 1,
+			limit = 10,
+		} = req.query;
 
-        // Create filter object based on provided criteria
-        const filter = {};
+		// Create filter object based on provided criteria
+		const filter = {};
 
-        // Budget filter
-        if (budget.min || budget.max) {
-            filter.$or = [
-                {
-                    price: {
-                        ...(budget.min && { $gte: +budget.min }),
-                        ...(budget.max && { $lte: +budget.max }),
-                    },
-                },
-                {
-                    "price.min": {
-                        ...(budget.min && { $gte: +budget.min }),
-                        ...(budget.max && { $lte: +budget.max }),
-                    },
-                },
-            ];
-        }
+		// Budget filter
+		if (budget.min || budget.max) {
+			filter.$or = [
+				{
+					price: {
+						...(budget.min && { $gte: +budget.min }),
+						...(budget.max && { $lte: +budget.max }),
+					},
+				},
+				{
+					"price.min": {
+						...(budget.min && { $gte: +budget.min }),
+						...(budget.max && { $lte: +budget.max }),
+					},
+				},
+			];
+		}
 
-        // Date filter
-        if (date.start || date.end) {
-            filter.dateTime = {
-                ...(date.start && { $gte: new Date(date.start) }),
-                ...(date.end && {
-                    $lte: new Date(new Date(date.end).setHours(23, 59, 59, 999)),
-                }), // End of the day
-            };
-        }
+		// Date filter
+		if (date.start || date.end) {
+			filter.dateTime = {
+				...(date.start && { $gte: new Date(date.start) }),
+				...(date.end && {
+					$lte: new Date(new Date(date.end).setHours(23, 59, 59, 999)),
+				}), // End of the day
+			};
+		}
 
-        // Category filter
-        if (category) {
-            filter.category = category;
-        }
+		// Category filter
+		if (category) {
+			filter.category = category;
+		}
 
-        // Average rating filter
-        if (rating.min || rating.max) {
-          filter.averageRating = {
-            ...(rating.min && { $gte: +rating.min }),
-            ...(rating.max && { $lte: +rating.max }),
-          };
-        }
+		// Average rating filter
+		if (rating.min || rating.max) {
+			filter.averageRating = {
+				...(rating.min && { $gte: +rating.min }),
+				...(rating.max && { $lte: +rating.max }),
+			};
+		}
 
-        // Search term filter (name, category, or tags)
-        if (searchTerm) {
-            const regex = new RegExp(searchTerm, "i"); // Case-insensitive
-            const categories = await Category.find({ name: regex }).select("_id");
-            const tags = await Tag.find({ name: regex }).select("_id");
+		// Search term filter (name, category, or tags)
+		if (searchTerm) {
+			const regex = new RegExp(searchTerm, "i"); // Case-insensitive
+			const categories = await Category.find({ name: regex }).select("_id");
+			const tags = await Tag.find({ name: regex }).select("_id");
 
-            filter.$or = [
-                { name: regex },
-                { category: { $in: categories.map((c) => c._id) } },
-                { tags: { $in: tags.map((t) => t._id) } },
-            ];
-        }
+			filter.$or = [
+				{ name: regex },
+				{ category: { $in: categories.map((c) => c._id) } },
+				{ tags: { $in: tags.map((t) => t._id) } },
+			];
+		}
 
-        // Sorting and pagination
-        const sortOptions = { [sortBy]: sortOrder === "asc" ? 1 : -1 };
-        const skip = (page - 1) * limit;
+		// Sorting and pagination
+		const sortOptions = { [sortBy]: sortOrder === "asc" ? 1 : -1 };
+		const skip = (page - 1) * limit;
 
-        console.log("filter:", filter);
-        console.log("sortOptions:", sortOptions);
+		console.log("filter:", filter);
+		console.log("sortOptions:", sortOptions);
 
-        // Fetch activities with filters, sorting, and pagination
-        const activities = await Activity.find(filter).sort(sortOptions)
-            .skip(skip)
-            .limit(+limit);
+		// Fetch activities with filters, sorting, and pagination
+		const activities = await Activity.find(filter)
+			.sort(sortOptions)
+			.skip(skip)
+			.limit(+limit);
 
-        if (activities.length === 0) {
-            return res.status(204).send(); // 204 No Content for no results
-        }
+		if (activities.length === 0) {
+			return res.status(204).send(); // 204 No Content for no results
+		}
 
-        // Respond with activities
-        res.status(200).json(activities);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({
-            message: "Error occurred while fetching activities.",
-            error: error.message,
-        });
-    }
+		// Respond with activities
+		res.status(200).json(activities);
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({
+			message: "Error occurred while fetching activities.",
+			error: error.message,
+		});
+	}
 };
 
-
-
 module.exports = {
-  setActivity,
-  getActivity,
-  updateActivity,
-  deleteActivity,
-  getMyActivities,
-  getActivities,
-  addRating,
+	setActivity,
+	getActivity,
+	updateActivity,
+	deleteActivity,
+	getMyActivities,
+	getActivities,
+	addRating,
 };

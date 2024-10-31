@@ -6,7 +6,7 @@ const {
     getAllSellers,
     deleteSeller,
     getProductsBySellerId, // Add the getAllSellers function
-} = require("../controllers/sellerController");
+} = require("../controllers/Seller");
 
 const router = express.Router();
 router.post("/", createSeller);
