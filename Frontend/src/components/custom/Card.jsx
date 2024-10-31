@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 
 import ImagePlaceholder from "@/components/custom/ImagePlaceholder";
-import GenericForm from "./genericForm";
+import GenericForm from "./genericForm/genericForm";
 import DeleteForm from "./deleteForm";
 import StarRating from "./StarRating";
 

@@ -1,4 +1,4 @@
-import GenericForm from "../genericForm";
+import GenericForm from "../genericForm/genericForm";
 
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";

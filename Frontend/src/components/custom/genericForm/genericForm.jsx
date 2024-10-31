@@ -5,7 +5,7 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
 import { format } from "date-fns";
 
-import GoogleMapWrite from "./maps/GoogleMapWrite";
+import GoogleMapWrite from "../maps/GoogleMapWrite";
 
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -24,20 +24,22 @@ import { createSite } from "@/services/SiteApiHandler";
 import { updateActivity } from "@/services/ActivityApiHandler";
 import { updateSite } from "@/services/SiteApiHandler";
 
-import { parseZodSchema } from "@/utilities/formMap";
-import formMap from "@/utilities/formMap";
+import { parseZodSchema } from "@/components/custom/genericForm/form-schemas/formMap";
+import formMap from "@/components/custom/genericForm/form-schemas/formMap";
 
 export function GenericForm({ type, data, id }) {
-	// To refresh the page after form submissions
-	const navigate = useNavigate();
 
-	// formSchemaObject is an object that will be used to create the form schema. It will contain the keys of the temporaryHardCodedValues object,
-	// and the values will be zod types based on the type of the value in the temporaryHardCodedValues object.
-
-	let formSchemaObject = formMap[type];
+	/*
+		To use generic form, you need to pass the type of form you want to use in formMap.js as shown below.
+		If you want to create a new form:
+		1. Create a new schema in form-schemas folder.
+		2. Import the schema in formMap.js.
+		3. Add the schema to the formMap object.
+		Form Schemas are defined using zod. You can reference other schemas or zod documentation for more information.
+	*/
 
 	// Define the form schema using zod.
-	const formSchema = z.object(formSchemaObject);
+	const formSchema = z.object(formMap[type]);
 
 	// Parse the form schema to get the fields.
 	const fields = parseZodSchema(formSchema);
@@ -164,7 +166,6 @@ export function GenericForm({ type, data, id }) {
 			};
 			updateAdvertiser(body, id);
 		}
-		// navigate(0);
 	}
 
 	function ArrayFieldRenderer({ name, control, initialValue }) {

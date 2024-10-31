@@ -1,5 +1,5 @@
 import ImagePlaceholder from "../ImagePlaceholder";
-import GenericForm from "../genericForm";
+import GenericForm from "../genericForm/genericForm";
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 import ProductCard from "@/components/custom/ProductCard";
-import GenericForm from "@/components/custom/genericForm";
+import GenericForm from "@/components/custom/genericForm/genericForm";
 
 import { Input } from "@/components/ui/input";
 import { PriceFilter } from "@/components/ui/price-filter";
