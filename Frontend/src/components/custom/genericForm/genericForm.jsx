@@ -27,6 +27,11 @@ import { updateSite } from "@/services/SiteApiHandler";
 import { parseZodSchema } from "@/components/custom/genericForm/form-schemas/formMap";
 import formMap from "@/components/custom/genericForm/form-schemas/formMap";
 
+import { ArrayField } from './input-fields/ArrayField';
+import { CheckboxField } from './input-fields/CheckboxField';
+import { CoordinatesField } from './input-fields/CoordinatesField';
+import { TextField } from './input-fields/TextField';
+
 export function GenericForm({ type, data, id }) {
 
 	/*
@@ -168,199 +173,84 @@ export function GenericForm({ type, data, id }) {
 		}
 	}
 
-	function ArrayFieldRenderer({ name, control, initialValue }) {
-		const {
-			fields: arrayFields,
-			append,
-			remove,
-		} = useFieldArray({
-			control,
-			name,
-		});
-
-		return (
-			<div className="space-y-4">
-				<FormLabel>{name}</FormLabel>
-
-				{arrayFields.map((field, index) => (
-					<div key={field.id} className="flex items-center space-x-4">
-						<FormField
-							control={control}
-							name={`${name}.${index}`}
-							render={({ field }) => (
-								<FormItem>
-									<FormControl>
-										<Input
-											{...field}
-											type={
-												initialValue === "number"
-													? "number"
-													: "text"
-											} // Set type based on initialValue
-											className="text-black"
-											placeholder={`Item ${index + 1}`}
-											onChange={(e) => {
-												const value =
-													initialValue === "number"
-														? Number(e.target.value)
-														: e.target.value;
-												field.onChange(value);
-											}}
-											value={field.value} // Make sure to bind the input value
-										/>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<Button
-							type="button"
-							onClick={() => remove(index)}
-							className="bg-red-500 text-white"
-						>
-							Remove
-						</Button>
-					</div>
-				))}
-				<Button
-					type="button"
-					onClick={() =>
-						append(initialValue === "number" ? 1 : "string")
-					} // Initialize with a number or string based on the type
-					className="bg-blue-500 text-white"
-				>
-					Add Item
-				</Button>
+	function renderField(key, value, path = '') {
+		const fullPath = path ? `${path}.${key}` : key;
+		
+		if (Array.isArray(value)) {
+		  return (
+			<ArrayField
+			  key={fullPath}
+			  name={fullPath}
+			  control={form.control}
+			  initialValue={typeof value[0]}
+			  label={key.toUpperCase()}
+			/>
+		  );
+		}
+	
+		if (key === 'coordinates') {
+		  return (
+			<CoordinatesField
+			  key={fullPath}
+			  name={fullPath}
+			  control={form.control}
+			  label={key.toUpperCase()}
+			/>
+		  );
+		}
+	
+		if (typeof value === 'object' && value !== null) {
+		  return (
+			<div key={fullPath}>
+			  <h3 className="text-lg font-semibold mb-2">{key.toUpperCase()}</h3>
+			  <div className="ml-4">
+				{Object.entries(value).map(([nestedKey, nestedValue]) =>
+				  renderField(nestedKey, nestedValue, fullPath)
+				)}
+			  </div>
 			</div>
+		  );
+		}
+	
+		if (typeof value === 'boolean') {
+		  return (
+			<CheckboxField
+			  key={fullPath}
+			  name={fullPath}
+			  control={form.control}
+			  label={key.toUpperCase()}
+			/>
+		  );
+		}
+	
+		return (
+		  <TextField
+			key={fullPath}
+			name={fullPath}
+			control={form.control}
+			type={
+			  typeof value === 'number'
+				? 'number'
+				: value === 'date'
+				? 'date'
+				: 'text'
+			}
+			label={key.toUpperCase()}
+		  />
 		);
-	}
+	  }
 
-	function renderFields(values, path = "") {
-		return Object.keys(values).map((key) => {
-			const fullPath = path ? `${path}.${key}` : key;
-			const isCoordinates = key === "coordinates";
-			const isArray = Array.isArray(values[key]);
-			const isObject =
-				typeof values[key] === "object" && values[key] !== null;
-
-			if (isArray) {
-				return (
-					<ArrayFieldRenderer
-						key={fullPath}
-						name={fullPath}
-						control={form.control}
-						initialValue={typeof values[key][0]}
-					/>
-				);
-			}
-
-			if (isCoordinates) {
-				return (
-					<FormField
-						key={`${fullPath}.coordinates`}
-						control={form.control}
-						name={fullPath}
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>{key.toUpperCase()}</FormLabel>
-								<FormControl>
-									<GoogleMapWrite
-										lat={field.value.lat}
-										lng={field.value.lng}
-										onChange={(newPosition) => field.onChange(newPosition)} // Pass onChange function
-									/>
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-				);
-			}
-
-			if (isObject) {
-				return (
-					<div key={fullPath}>
-						<FormLabel>{key}</FormLabel>
-						{renderFields(values[key], fullPath)}
-					</div>
-				);
-			}
-
-			const isNumberField = typeof values[key] === "number";
-			const isDateField = values[key] === "date";
-			const isBooleanField = typeof values[key] === "boolean";
-
-			return (
-				<FormField
-					key={fullPath}
-					control={form.control}
-					name={fullPath}
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>{key.toUpperCase()}</FormLabel>
-							<FormControl>
-								{isBooleanField ? (
-									<input
-										{...field}
-										type="checkbox"
-										className="form-checkbox h-4 w-4 text-blue-600 border-gray-300 rounded"
-										checked={field.value}
-										onChange={(e) =>
-											field.onChange(e.target.checked)
-										}
-									/>
-								) : (
-									<Input
-										{...field}
-										type={
-											isNumberField
-												? "number"
-												: isDateField
-													? "date"
-													: "text"
-										}
-										className="text-black"
-										onChange={(e) => {
-											if (isDateField) {
-												// Format the date to yyyy-MM-dd
-												const formattedDate = format(
-													new Date(e.target.value),
-													"yyyy-MM-dd"
-												);
-												field.onChange(formattedDate);
-											} else {
-												field.onChange(
-													isNumberField
-														? Number(e.target.value)
-														: e.target.value
-												);
-											}
-										}}
-									/>
-								)}
-							</FormControl>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-			);
-		});
-	}
-
-	return (
+	  return (
 		<div>
-			<Form {...form}>
-				<form
-					onSubmit={form.handleSubmit(onSubmit)}
-					className="space-y-8"
-				>
-					{renderFields(fields)}
-					<Button type="submit" className="bg-dark text-white">
-						Submit
-					</Button>
-				</form>
-			</Form>
+		  <Form {...form}>
+			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+			  {Object.entries(fields).map(([key, value]) => renderField(key, value))}
+			  <Button type="submit" className="bg-dark text-white">
+				Submit
+			  </Button>
+			</form>
+		  </Form>
 		</div>
-	);
+	  );
 }
 export default GenericForm;
