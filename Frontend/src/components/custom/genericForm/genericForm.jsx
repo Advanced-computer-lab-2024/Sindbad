@@ -33,16 +33,7 @@ import { CoordinatesField } from './input-fields/CoordinatesField';
 import { TextField } from './input-fields/TextField';
 
 export function GenericForm({ type, data, id }) {
-
-	/*
-		To use generic form, you need to pass the type of form you want to use in formMap.js as shown below.
-		If you want to create a new form:
-		1. Create a new schema in form-schemas folder.
-		2. Import the schema in formMap.js.
-		3. Add the schema to the formMap object.
-		Form Schemas are defined using zod. You can reference other schemas or zod documentation for more information.
-	*/
-
+	
 	// Define the form schema using zod.
 	const formSchema = z.object(formMap[type]);
 
@@ -91,7 +82,6 @@ export function GenericForm({ type, data, id }) {
 		if (type === "product") {
 			if (data) {
 				updateProduct(data._id, values);
-				console.log(values);
 			} else {
 				const productWithId = {
 					...values,

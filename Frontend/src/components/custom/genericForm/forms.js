@@ -1,3 +1,41 @@
+
+//import zod schemas here
+import { touristSchema } from "./form-schemas/touristSchema";
+import { tourGuideSchema } from "./form-schemas/tourGuideSchema";
+import { sellerSchema } from "./form-schemas/sellerSchema";
+import { itinerarySchema } from "./form-schemas/itinerarySchema";
+import { advertiserSchema } from "./form-schemas/advertiserSchema";
+import { activitySchema } from "./form-schemas/activitySchema";
+import { siteSchema } from "./form-schemas/siteSchema";
+import { productSchema } from "./form-schemas/productSchema";
+import { companyProfileSchema } from "./form-schemas/companyProfileSchema";
+import { previousWorkSchema } from "./form-schemas/previousWorkSchema";
+
+//import rendered fields here
+import { tourist } from "./rendered-fields/touristFields";
+import { activity } from "./rendered-fields/activityFields";
+import { site } from "./rendered-fields/siteFields";
+import { product } from "./rendered-fields/productFields";
+import { company } from "./rendered-fields/companyFields";
+import { previousWork } from "./rendered-fields/previousWorkFields";
+import { tourGuide } from "./rendered-fields/tourGuideFields";
+import { seller } from "./rendered-fields/sellerFields";
+import { advertiser } from "./rendered-fields/advertiserFields";
+import { itinerary } from "./rendered-fields/itineraryFields";
+
+//import submit handlers here
+import { touristSubmit } from "./submit-handlers/touristHandler";
+import { tourGuideSubmit } from "./submit-handlers/tourGuideHandler";
+import { sellerSubmit } from "./submit-handlers/sellerHandler";
+import { itinerarySubmit } from "./submit-handlers/itineraryHandler";
+import { advertiserSubmit } from "./submit-handlers/advertiserHandler";
+import { activitySubmit } from "./submit-handlers/activityHandler";
+import { siteSubmit } from "./submit-handlers/siteHandler";
+import { productSubmit } from "./submit-handlers/productHandler";
+import { companySubmit } from "./submit-handlers/companyHandler";
+import { experienceSubmit } from "./submit-handlers/experienceHandler";
+
+
 /*
     Forms for the generic form component should be generated based on this object:
 
@@ -14,93 +52,80 @@
     For zod schemas, define them in the form-schemas folder.
     For adding input fields, define them in the input-fields folder.
     For renderedFields, define them in the rendered-fields folder along with defaultValues (I don't think theres any need for that much separation of concerns).
+    For onSubmit, define them in the submit-handlers folder.
 
     In this file, we'll only define a map that has objects based on the above structure.
 */
 
-import { 
-    touristSchema, 
-    tourGuideSchema, 
-    sellerSchema, 
-    advertiserSchema,
-    itinerarySchema,
-    productSchema,
-    activitySchema,
-    siteSchema,
-    companyProfileSchema,
-    previousWorkSchema
-  } from './form-schemas';
-  
-  import {
-    createTourist,
-    updateTourist,
-    createTourGuide,
-    updateTourGuide,
-    createSeller,
-    updateSeller,
-    createAdvertiser,
-    updateAdvertiser,
-    createItinerary,
-    updateItinerary,
-    createProduct,
-    updateProduct,
-    createActivity,
-    updateActivity,
-    createSite,
-    updateSite
-  } from '@/services/ApiHandlers';
-  
-  import {tourist} from './rendered-fields/touristFields';
-  import {activity} from './rendered-fields/activityFields';
-  import {site} from './rendered-fields/siteFields';
-  import {product} from './rendered-fields/productFields';
+export const forms = {
 
-  export const forms = {
-    tourist: {
-      zodSchema: touristSchema,
-      renderedFields: tourist.fields,
-      defaultValues: tourist.defaultValues,
-      onSubmit: (values, id) => {
-        if (id) {
-          return updateTourist(id, values);
-        }
-        return createTourist(values);
-      }
-    },
-  
-    activity: {
-      zodSchema: activitySchema,
-      renderedFields: activity.fields,
-      defaultValues: activity.defaultValues,
-      onSubmit: (values, id) => {
-        if (id) {
-          return updateActivity(id, values);
-        }
-        return createActivity(values);
-      }
-    },
-  
-    site: {
-      zodSchema: siteSchema,
-      renderedFields: site.fields,
-      defaultValues: site.defaultValues,
-      onSubmit: (values, id) => {
-        if (id) {
-          return updateSite(id, values);
-        }
-        return createSite(values);
-      }
-    },
-  
-    product: {
-      zodSchema: productSchema,
-      renderedFields: product.fields,
-      defaultValues: product.defaultValues,
-      onSubmit: (values, id) => {
-        if (id) {
-          return updateProduct(id, values);
-        }
-        return createProduct(values);
-      }
-    }
-  };
+  tourist: {
+    zodSchema: touristSchema,
+    renderedFields: tourist.fields,
+    defaultValues: tourist.defaultValues,
+    onSubmit: touristSubmit,
+  },
+
+  tourGuide: {
+    zodSchema: tourGuideSchema,
+    renderedFields: tourGuide.fields,
+    defaultValues: tourGuide.defaultValues,
+    onSubmit: tourGuideSubmit,
+  },
+
+  seller: {
+    zodSchema: sellerSchema,
+    renderedFields: seller.fields,
+    defaultValues: seller.defaultValues,
+    onSubmit: sellerSubmit,
+  },
+
+  itinerary: {
+    zodSchema: itinerarySchema,
+    renderedFields: itinerary.fields,
+    defaultValues: itinerary.defaultValues,
+    onSubmit: itinerarySubmit,
+  },
+
+  advertiser: {
+    zodSchema: advertiserSchema,
+    renderedFields: advertiser.fields,
+    defaultValues: advertiser.defaultValues,
+    onSubmit: advertiserSubmit,
+  },
+
+  activity: {
+    zodSchema: activitySchema,
+    renderedFields: activity.fields,
+    defaultValues: activity.defaultValues,
+    onSubmit: activitySubmit,
+  },
+
+  site: {
+    zodSchema: siteSchema,
+    renderedFields: site.fields,
+    defaultValues: site.defaultValues,
+    onSubmit: siteSubmit,
+  },
+
+  product: {
+    zodSchema: productSchema,
+    renderedFields: product.fields,
+    defaultValues: product.defaultValues,
+    onSubmit: productSubmit,
+  },
+
+  company: {
+    zodSchema: companyProfileSchema,
+    renderedFields: company.fields,
+    defaultValues: company.defaultValues,
+    onSubmit: companySubmit,
+  },
+
+  experience: {
+    zodSchema: previousWorkSchema,
+    renderedFields: previousWork.fields,
+    defaultValues: previousWork.defaultValues,
+    onSubmit: experienceSubmit,
+  },
+};
