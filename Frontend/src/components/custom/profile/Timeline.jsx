@@ -1,6 +1,7 @@
 import Card from "@/components/custom/Card";
 import ProductCard from "@/components/custom/ProductCard";
-import GenericForm from "../genericForm";
+import GenericForm from "../genericForm/genericForm";
+import TagManagement from "../admin/TagManagement";
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
@@ -32,7 +33,6 @@ function Timeline({ userData, profileId, id, profileRole, cardData }) {
 						</DialogTrigger>
 						<DialogContent className="overflow-y-scroll max-h-[50%]">
 							<DialogHeader>
-								<DialogTitle>Edit Profile</DialogTitle>
 								<GenericForm
 									type={
 										role === "seller"

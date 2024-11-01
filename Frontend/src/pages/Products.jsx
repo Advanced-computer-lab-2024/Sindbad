@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-import GenericForm from "@/components/custom/genericForm";
+import GenericForm from "@/components/custom/genericForm/genericForm";
 import GenericFilter from "@/components/custom/GenericFilter";
 import CardContainer from "@/components/custom/CardContainer";
 

@@ -1,4 +1,4 @@
-import GenericForm from "../genericForm";
+import GenericForm from "../genericForm/genericForm";
 import DeleteForm from "../deleteForm";
 
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
