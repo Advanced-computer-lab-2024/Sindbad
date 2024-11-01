@@ -1,5 +1,5 @@
 import GenericForm from "../genericForm/genericForm";
-import DeleteForm from "../deleteForm/deleteForm";
+import DeleteForm from "../deleteForm";
 
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
