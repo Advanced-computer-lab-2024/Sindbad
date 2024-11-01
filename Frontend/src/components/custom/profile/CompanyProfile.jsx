@@ -17,9 +17,9 @@ function CompanyProfile({ userData, profileId, id }) {
                         Company
                     </h1>
                     <hr className="border-neutral-300 border w-full mt-1.5" />
-                    {profileId === id &&
+                    {profileId === id && userData.isAccepted === true &&
                         <Dialog>
-                            <DialogTrigger className="icon-button">
+                            <DialogTrigger className="shrink-0 mt-1.5 text-neutral-400 hover:text-neutral-600 transition-all">
                                 <Edit size={24} />
                             </DialogTrigger>
                             <DialogContent className="overflow-y-scroll max-h-[50%]">
