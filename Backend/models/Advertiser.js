@@ -72,7 +72,7 @@ const AdvertiserSchema = new mongoose.Schema(
 		},
 		isAccepted: {
 			type: Boolean,
-			default: false, // Indicates whether the advertiser has been accepted
+			default: null, // Indicates whether the advertiser has been accepted
 		},
 	},
 	{ timestamps: true }

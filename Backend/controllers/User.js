@@ -14,6 +14,12 @@ const models = {
 	admin: Admin,
 };
 
+const isAcceptedmodels = {
+	tourguide: TourGuide,
+	advertiser: Advertiser,
+	seller: Seller,
+};
+
 const defaultFields = {
 	tourist: {
 		wallet: 0,
@@ -151,6 +157,23 @@ const UserController = {
 		}
 	},
 
+	getAllPendingUsers: async (req, res) => {
+		try {
+			const results = await Promise.all(
+				Object.entries(isAcceptedmodels).map(async ([role, model]) => {
+					const users = await model.find({isAccepted : null});
+					return users.map((user) => ({ ...user._doc, role }));
+				})
+			);
+
+			const combinedUsers = results.flat();
+			return res.status(200).json(combinedUsers);
+		} catch (error) {
+			console.log(error);
+			return res.status(500).json({ message: error.message });
+		}
+	},
+	
 	deleteUser: async (req, res) => {
 		const { id } = req.params;
 		const { role } = req.body;
