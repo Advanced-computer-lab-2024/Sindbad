@@ -1,11 +1,10 @@
 import GenericForm from "../genericForm/genericForm";
+import DeleteForm from "../deleteForm/deleteForm";
 
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 import { Edit, CircleX, CirclePlus, MapPin, Calendar } from "lucide-react";
-
-import { removeTourGuideWork } from "@/services/TourGuideApiHandler";
 
 import { useUser } from "@/state management/userInfo";
 
@@ -19,7 +18,7 @@ function Experience({ userData, profileId, id }) {
 					<h1 className="text-3xl font-extrabold">Experience</h1>
 					<hr className="border-neutral-300 border w-full mt-1.5" />
 					{/* button to add experience if it's your profile */}
-					{profileId === id && (
+					{profileId === id && userData.isAccepted === true && (
 						<Dialog>
 							<DialogTrigger className="shrink-0 mt-1.5 text-neutral-400 hover:text-neutral-600 transition-all">
 								<CirclePlus size={24} />
@@ -65,7 +64,7 @@ function Experience({ userData, profileId, id }) {
 									<AccordionTrigger>
 										{experience.jobTitle}
 									</AccordionTrigger>
-									{profileId === id &&
+									{profileId === id && userData.isAccepted === true &&
 										<div className="shrink-0 flex gap-2 text-neutral-400">
 											<Dialog>
 												<DialogTrigger>
@@ -103,34 +102,14 @@ function Experience({ userData, profileId, id }) {
 												</DialogTrigger>
 												<DialogContent className="overflow-y-scroll max-h-[50%]">
 													<DialogTitle>
-														Are you sure you want to delete
-														this work?
+														Are you sure you want to delete this work?
 													</DialogTitle>
-													<div className="flex justify-end space-x-4 mt-4">
-														<DialogClose asChild>
-															{/* Delete Button */}
-															<button
-																className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
-																onClick={() => {
-																	removeTourGuideWork(
-																		id,
-																		experience._id
-																	);
-																}}
-															>
-																Delete
-															</button>
-														</DialogClose>
-
-														<DialogClose asChild>
-															<span
-																type="button"
-																className="bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 px-4 rounded"
-															>
-																Close
-															</span>
-														</DialogClose>
-													</div>
+													<DialogHeader>
+														<DeleteForm
+															type="experience"
+															data={{id: id, experience_id: experience._id}}
+														/>
+													</DialogHeader>
 												</DialogContent>
 											</Dialog>
 										</div>
@@ -139,7 +118,7 @@ function Experience({ userData, profileId, id }) {
 							</div>
 							<AccordionContent>
 								<div className="flex gap-5">
-									<div className="border-l-[2px] border-neutral-300"></div>
+									<div className="border-l-2 border-neutral-300"></div>
 									<div className="flex flex-col gap-2">
 										<div className="-ml-1 text-neutral-500">
 											<div className="flex items-start gap-1">

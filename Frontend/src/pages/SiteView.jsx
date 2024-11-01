@@ -1,9 +1,14 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
+import GoogleMapRead from "@/components/custom/maps/GoogleMapRead";
+import ImagePlaceholder from "@/components/custom/ImagePlaceholder";
+
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+
 import { getSiteById } from "@/services/SiteApiHandler";
 
-import { Star, MapPin, Frown } from "lucide-react";
+import { Star, MapPin, Frown, CalendarDays, AlarmClock, ArrowRight } from "lucide-react";
 
 function getRandomRating() {
 	return (Math.round(Math.random() * 10) / 2).toFixed(1);
@@ -36,16 +41,18 @@ function handleSiteValues(site) {
 function Site() {
 	const { siteId } = useParams();
 	const [site, setSite] = useState(null);
+	const [error, setError] = useState(false);
 
 	const getSite = async () => {
 		let response = await getSiteById(siteId);
-		console.log(response);
 
 		if (response.error) {
 			console.error(response.message);
+			setError(true);
 		} else {
 			handleSiteValues(response);
 			setSite(response);
+			setError(false);
 		}
 	};
 
@@ -54,133 +61,167 @@ function Site() {
 	}, []);
 
 	if (!site) {
-		return <p>Loading...</p>;
+		return (
+			<div className="py-8 px-24 max-w-[1200px] flex gap-9 mx-auto">
+				<div className="flex justify-center w-full">
+					<p className="text-neutral-400 text-sm italic">
+						{error === true ?
+							"Site does not exist."
+							:
+							"Loading..."
+						}
+					</p>
+				</div>
+			</div>
+		);
 	}
 
 	const fullStars = site.rating;
 	const emptyStar = 5 - fullStars;
 
 	return (
-		<div className="min-h-screen h-full flex justify-center items-center bg-primary-950">
-			<div className="w-full max-w-7xl px-8 py-8 bg-primary-900 shadow-lg rounded-md">
-				<div className="grid grid-cols-1 lg:grid-cols-3 gap-10 p-8">
+		<div className="py-8 px-24 max-w-[1200px] mx-auto">
+			<div className="flex items-center gap-6">
+				<h1 className="text-3xl font-extrabold shrink-0">{site.name}</h1>
+				<hr className="border-neutral-300 border w-full mt-1.5" />
+			</div>
+			<div className="flex justify-between gap-32 py-6">
+				<div className="flex flex-col gap-6 w-full">
+					<p className="text-sm">{site.description}</p>
+
+					{/*Tags*/}
 					<div>
-						{/*Title Section*/}
-						<div className="my-4">
-							<h1 className="text-4xl font-bol">{site.name}</h1>
-
-							{/*Star Section */}
-							<div className=" relative flex gap-4">
-								<div className=" flex">
-									{Array.from({ length: fullStars }, (_, index) => (
-										<Star
-											key={index}
-											className=" fill-secondary"
-											strokeWidth={0}
-										/>
-									))}
-
-
-									{Array.from({ length: emptyStar }, (_, index) => (
-										<Star
-											key={fullStars + index}
-											className="fill-dark"
-											strokeWidth={0}
-										/>
-									))}
+						<h2 className="text-lg font-semibold mb-1">
+							Tagged As
+						</h2>
+						<div className="flex flex-wrap gap-2 text-sm">
+							{site.tags.map((tag) => (
+								<div
+									key={tag._id}
+									className="flex gap-1 text-center text-xs items-center bg-gradient-to-br from-primary-700 to-primary-900 px-3 py-1.5 rounded-full"
+								>
+									{tag.name}
 								</div>
-								<p className="text-light">
-									{site.rating}/5 ({site.reviews})
-								</p>
-								<div className="border-2 h-0 w-0 rounded-full self-center"></div>
-								{/*CHANGE THIS WITH THE CATEGORY OF PLACE*/}
-								<p className="text-light text-lg">{site.category}</p>
-							</div>
-						</div>
-
-						<p className="text-light">{site.description}</p>
-
-						{/*preference tags*/}
-						<div className="my-6">
-							<div className="flex flex-wrap gap-2">
-								{site.tags.map((tag) => (
-									<div
-										key={tag._id}
-										className="px-3 py-1 bg-primary-950 rounded-full border cursor-default"
-									>
-										{tag.name}
-									</div>
-								))}
-							</div>
-						</div>
-					</div>
-
-					{/*Picture placeholders*/}
-					<div className="grid grid-cols-2 col-span-2 gap-1">
-						<div className="bg-light h-full rounded-lg "></div>
-						<div className="">
-							<div className="bg-light h-1/2 rounded-lg mb-px "></div>
-							<div className="bg-light h-1/2 rounded-lg "></div>
+							))}
 						</div>
 					</div>
 				</div>
-				<div className=" border-y mt-8 mx-8"></div>
+				<div className="h-[400px] w-[400px] shrink-0">
+					<Carousel>
+						<CarouselContent>
+							{site.imageUris.length !== 0 ? (
+								site.imageUris.map((image, index) => (
+									<CarouselItem key={index}>
+										<img
+											src={image}
+											alt={`Image ${index + 1}`}
+											className="h-full w-full object-cover rounded-md border border-neutral-300"
+										/>
+									</CarouselItem>
+								))
+							) : (
+								<CarouselItem className="h-[400px]">
+									<ImagePlaceholder />
+								</CarouselItem>
+							)}
+						</CarouselContent>
+						<CarouselPrevious />
+						<CarouselNext />
+					</Carousel>
+				</div>
+			</div>
 
-				<div className="grid grid-cols-3 grid-rows gap-8 p-8">
-					<div className=" col-span-1">
-						<div className="  bg-light h-64 w-full rounded-lg m-4"></div>
-						<div className="flex flex-rows">
-							<MapPin className="border-2 rounded-full p-1 w-10 h-10 m-1 mx-3 fill-secondary text-primary-900" />
-							<p className=" text-lg m-2">{site.location.address}</p>
-						</div>
-					</div>
-					<div className="col-span-1 h-full align-middle">
-						{Object.entries(site.openingHours).map(([day, hours]) => (
-							<div key={day} className="m-4 self-center">
-								<span className="w-0 h-10 border-2 border-secondary rounded-full m-2"></span>
-								<span className="text-xl p-2">{day}:</span>
-								<span className="">
+			<hr className="border-neutral-300 border w-full mt-1.5" />
+
+			<div className="flex justify-between gap-24 py-6">
+				<div className="flex flex-col gap-3 shrink-0">
+					<h2 className="text-lg font-semibold mb-1">
+						Opening Hours
+					</h2>
+					{Object.entries(site.openingHours).map(([day, hours]) => (
+						<div key={day} className="flex gap-1">
+							<span className="border-l-[3px] border-primary-950 m-1"></span>
+							<div>
+								<p className="text-sm font-semibold">{day}</p>
+								<p className="text-sm">
 									{`
                                 ${convertMinutesToTime(hours.start)} 
-                                to 
+                                to
                                 ${convertMinutesToTime(hours.end)}`}
-								</span>
-							</div>
-						))}
-					</div>
-					<div className=" bg-primary-700 rounded-lg col-span-1">
-						{Object.keys(site.ticketPrices).length === 0 ? (
-							<div className=" flex flex-col justify-center items-center h-full w-ful rounded-lg">
-								<Frown className="w-32 h-32 text-primary-900 m-4" />
-								<p className=" text-2xl font-semibold self-center text-primary-950">
-									No available bookings
 								</p>
 							</div>
-						) : (
-							<div className="w-full h-full justify-around">
-								{Object.entries(site.ticketPrices).map(([type, price]) => (
-									<div
-										key={type}
-										className="flex flex-col justify-between bg-primary-900 border rounded-lg p-4 m-4"
-									>
-										<p className="text-xl font-semibold">{type} ticket</p>
-										<div className="text-end">
-											{price === 0 ? (
-												<span className="text-xl px-1 font-semibold">Free</span>
-											) : (
-												<>
-													<span className="text-xl px-1 font-semibold">
-														{price}
-													</span>
-													<span className="text-sm">LE</span>
-												</>
-											)}
-										</div>
-									</div>
-								))}
-							</div>
-						)}
+						</div>
+					))}
+				</div>
+				<div className="w-full">
+					<h2 className="text-lg font-semibold mb-1">
+						Location
+					</h2>
+					<div className="flex flex-col gap-2">
+						<div className="bg-light h-[250px] rounded-md overflow-clip">
+							<GoogleMapRead
+								lat={site.location.coordinates.lat}
+								lng={site.location.coordinates.lng}
+							/>
+						</div>
+						<div className="flex items-start gap-1">
+							<MapPin size={16} className="shrink-0" />
+							<span className="text-sm">
+								{site.location.address}
+							</span>
+						</div>
 					</div>
+				</div>
+
+				<div className="shrink-0 w-1/3">
+					<h2 className="text-lg font-semibold mb-1">
+						Ticket Prices
+					</h2>
+					{Object.keys(site.ticketPrices).length === 0 ? (
+						<div className="flex flex-col justify-center items-center h-full w-ful rounded-lg">
+							<Frown className="w-32 h-32 text-primary-900 m-4" />
+							<p className=" text-2xl font-semibold self-center text-primary-950">
+								No available bookings
+							</p>
+						</div>
+					) : (
+						<div className="w-full h-full">
+							{Object.entries(site.ticketPrices).map(([type, price]) => (
+								<div
+									key={type}
+									className="relative p-6 bg-gradient-to-br from-neutral-200/60 to-light rounded-md mt-4 overflow-clip"
+								>
+									{/* border */}
+									<div className="absolute top-0 left-0 rounded-md border border-neutral-500 h-full w-full"></div>
+									{/* cutouts */}
+									<div className="z-10 absolute left-[200px] -top-5 -bottom-5 flex flex-col justify-between">
+										<div className="h-[32px] w-4 bg-light rounded-l-full border-l border-b border-neutral-500"></div>
+										<div className="h-[32px] w-4 bg-light rounded-l-full border-l border-t border-neutral-500"></div>
+									</div>
+									<div className="z-10 absolute left-[216px] -top-5 -bottom-5 flex flex-col justify-between">
+										<div className="h-[32px] w-2 bg-light rounded-r-full border-r border-b border-neutral-500"></div>
+										<div className="h-[32px] w-2 bg-light rounded-r-full border-r border-t border-neutral-500"></div>
+									</div>
+
+									<div className="h-[100%] absolute left-[216px] top-0 w-0 border border-neutral-400 border-dashed"></div>
+
+									<p className="text-base font-medium">{type} ticket</p>
+									<div className="text-end">
+										{price === 0 ? (
+											<span className="text-xl font-semibold">Free</span>
+										) : (
+											<>
+												<span className="text-xl font-semibold">
+													{price + " "}
+												</span>
+												<span className="text-sm">EGP</span>
+											</>
+										)}
+									</div>
+								</div>
+							))}
+						</div>
+					)}
 				</div>
 			</div>
 		</div>
