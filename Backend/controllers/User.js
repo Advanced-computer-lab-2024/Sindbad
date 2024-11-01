@@ -171,6 +171,36 @@ const UserController = {
 			return res.status(500).json({ message: error.message });
 		}
 	},
+	updateUserPassword: async (req, res) => {
+		const { id } = req.params;
+		const { role, passwordHash } = req.body;
+
+		if (!role) {
+			return res.status(400).json({ message: "Role is required" });
+		}
+		if (!passwordHash) {
+			return res.status(400).json({ message: "Password is required" });
+		}
+
+		try {
+			const Model = models[role.toLowerCase()];
+			if (!Model) {
+				throw new Error("Invalid role");
+			}
+
+			const user = await Model.findById(id);
+
+			if (!user) {
+				return res.status(404).json({ message: "User not found" });
+			}
+
+			user.passwordHash = passwordHash;
+			await user.save();
+			res.json(user);
+		} catch (error) {
+			return res.status(500).json({ message: error.message });
+		}
+	},
 };
 
 module.exports = UserController;
