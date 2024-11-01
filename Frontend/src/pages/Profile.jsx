@@ -59,7 +59,6 @@ function Profile() {
 		} else {
 			setError(false);
 			setUserData(response);
-			console.log(response);
 		}
 	};
 
