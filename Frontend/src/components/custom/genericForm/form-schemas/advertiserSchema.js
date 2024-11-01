@@ -6,7 +6,7 @@ export const advertiserSchema = {
 		.email({ message: "Invalid email address!" })
 		.min(1, { message: "Email is required!" }),
 
-  websiteLink: z.string(),
+  	websiteLink: z.string(),
 
 	hotline: z
 		.string()

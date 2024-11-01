@@ -20,6 +20,7 @@ export function GenericForm({ type, data, id }) {
 	// Clone defaultValues to avoid mutation issues
 	const defaultValues = structuredClone(formObject.defaultValues);
 
+
 	// If data is passed, overwrite default values with data values
 	if (data) {
 		for (const key in defaultValues) {

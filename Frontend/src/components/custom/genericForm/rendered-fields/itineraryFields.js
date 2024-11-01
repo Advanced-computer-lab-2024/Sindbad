@@ -7,6 +7,8 @@ export const itinerary = {
         { name: 'duration', type: 'number', label: 'Duration' },
         { name: 'languages', type: 'array', label: 'Supported Languages' },
         { name: 'price', type: 'number', label: 'Price' },
+        { name: 'availableDatesTimes', type: 'array', label: 'Available Dates and Times' },
+        { name: 'accessibility', type: 'array', label: 'Accessibility Options' },
         { name: 'pickUpLocation', type: 'text', label: 'Pick-up Location' },
         { name: 'dropOffLocation', type: 'text', label: 'Drop-off Location' }
     ],
@@ -18,6 +20,8 @@ export const itinerary = {
         duration: 0,
         languages: [],
         price: 0,
+        availableDatesTimes: [],
+        accessibility: [],
         pickUpLocation: '',
         dropOffLocation: ''
     }

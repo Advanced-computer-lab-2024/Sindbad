@@ -7,10 +7,9 @@ export const product = {
         required: true,
     },
     {
-        name: 'imageUris',
-        type: 'array',
+        name: 'picture',
+        type: 'text',
         label: 'Image URLs',
-        itemType: 'url',
         required: true,
     },
     {
@@ -41,7 +40,7 @@ export const product = {
     ],
     defaultValues: {
     name: '',
-    imageUris: [],
+    picture: '',
     price: 0,
     description: '',
     quantity: 0,

@@ -16,7 +16,6 @@ export const site = {
           name: 'imageUris',
           type: 'array',
           label: 'Image URLs',
-          itemType: 'url',
           required: true,
         },
         {
