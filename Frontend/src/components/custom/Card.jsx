@@ -14,7 +14,7 @@ import {
 	DialogTrigger,
 } from "@/components/ui/dialog";
 
-import { ArrowRight, Bookmark, Edit3, X, Wallet } from "lucide-react";
+import { ArrowRight, Bookmark, Edit3, X, Wallet, EllipsisVertical } from "lucide-react";
 
 import { useUser } from "@/state management/userInfo";
 

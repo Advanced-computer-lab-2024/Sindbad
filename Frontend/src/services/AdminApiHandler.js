@@ -101,7 +101,6 @@ export const deleteCategory = async (categoryId) => {
 
 export const deleteUser = async (id, role) => {
 	try {
-		console.log(id, role);
 		let user = await axiosInstance.delete(`/user/${id}`, { data: { role } });
 		return user;
 	} catch (error) {

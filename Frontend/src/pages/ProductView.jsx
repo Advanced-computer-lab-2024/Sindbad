@@ -138,14 +138,14 @@ function ProductView() {
 											className="bg-yellow-400 h-3 rounded-lg"
 											style={{
 												width: `${getRatingPercentage(
-													productdata.averageRating?.[star] || 0
+													productData?.averageRating?.[star] || 0
 												)}%`,
 											}}
 										></div>
 									</div>
 									<span className="ml-2">
 										{getRatingPercentage(
-											productdata.averageRating?.[star] || 0
+											productData?.averageRating?.[star] || 0
 										)}
 										%
 									</span>
