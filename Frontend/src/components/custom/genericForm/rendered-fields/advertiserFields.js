@@ -1,8 +1,8 @@
 export const advertiser = {
     fields: [
-        { name: 'email', type: 'email', label: 'Email' },
-        { name: 'websiteLink', type: 'url', label: 'Website Link' },
-        { name: 'hotline', type: 'tel', label: 'Hotline' }
+        { name: 'email', type: 'text', label: 'Email' },
+        { name: 'websiteLink', type: 'text', label: 'Website Link' },
+        { name: 'hotline', type: 'text', label: 'Hotline' }
     ],
     defaultValues: {
         email: '',

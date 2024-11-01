@@ -1,7 +1,7 @@
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import GoogleMapWrite from '@/components/custom/maps/GoogleMapWrite';
 
-export const CoordinatesField = ({ name, control, label }) => {
+export const CoordinatesField = ({ name, control, label, latitude, longitude }) => {
   return (
     <FormField
       control={control}
@@ -11,8 +11,8 @@ export const CoordinatesField = ({ name, control, label }) => {
           <FormLabel>{label || name.toUpperCase()}</FormLabel>
           <FormControl>
             <GoogleMapWrite
-              lat={field.value.lat}
-              lng={field.value.lng}
+              lat={latitude}
+              lng={longitude}
               onChange={field.onChange}
             />
           </FormControl>

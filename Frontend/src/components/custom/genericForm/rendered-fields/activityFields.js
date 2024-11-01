@@ -8,24 +8,24 @@ export const activity = {
         },
         {
           name: 'dateTime',
-          type: 'datetime-local',
+          type: 'date',
           label: 'Date and Time',
           required: true,
         },
         {
           name: 'location',
-          type: 'location',
+          type: 'object',
           label: 'Location',
           required: true,
           fields: [
             {
-              name: 'location.address',
+              name: 'address',
               type: 'text',
               label: 'Address',
               required: true,
             },
             {
-              name: 'location.coordinates',
+              name: 'coordinates',
               type: 'coordinates',
               label: 'Coordinates',
               required: true,
@@ -34,18 +34,18 @@ export const activity = {
         },
         {
           name: 'price',
-          type: 'price-range',
+          type: 'object',
           label: 'Price Range',
           required: true,
           fields: [
             {
-              name: 'price.min',
+              name: 'min',
               type: 'number',
               label: 'Minimum Price',
               required: true,
             },
             {
-              name: 'price.max',
+              name: 'max',
               type: 'number',
               label: 'Maximum Price',
               required: true,

@@ -21,7 +21,7 @@ export const site = {
         },
         {
           name: 'location',
-          type: 'location',
+          type: 'object',
           label: 'Location',
           required: true,
           fields: [
@@ -41,26 +41,78 @@ export const site = {
         },
         {
           name: 'openingHours',
-          type: 'opening-hours',
+          type: 'object',
           label: 'Opening Hours',
           required: true,
-          days: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'],
           fields: [
             {
-              name: 'start',
-              type: 'time',
-              label: 'Opening Time',
+              name: 'monday',
+              type: 'object',
+              label: 'Monday',
+              fields: [
+                { name: 'start', type: 'time', label: 'Opening Time' },
+                { name: 'end', type: 'time', label: 'Closing Time' },
+              ],
             },
             {
-              name: 'end',
-              type: 'time',
-              label: 'Closing Time',
-            }
-          ]
+              name: 'tuesday',
+              type: 'object',
+              label: 'Tuesday',
+              fields: [
+                { name: 'start', type: 'time', label: 'Opening Time' },
+                { name: 'end', type: 'time', label: 'Closing Time' },
+              ],
+            },
+            {
+              name: 'wednesday',
+              type: 'object',
+              label: 'Wednesday',
+              fields: [
+                { name: 'start', type: 'time', label: 'Opening Time' },
+                { name: 'end', type: 'time', label: 'Closing Time' },
+              ],
+            },
+            {
+              name: 'thursday',
+              type: 'object',
+              label: 'Thursday',
+              fields: [
+                { name: 'start', type: 'time', label: 'Opening Time' },
+                { name: 'end', type: 'time', label: 'Closing Time' },
+              ],
+            },
+            {
+              name: 'friday',
+              type: 'object',
+              label: 'Friday',
+              fields: [
+                { name: 'start', type: 'time', label: 'Opening Time' },
+                { name: 'end', type: 'time', label: 'Closing Time' },
+              ],
+            },
+            {
+              name: 'saturday',
+              type: 'object',
+              label: 'Saturday',
+              fields: [
+                { name: 'start', type: 'time', label: 'Opening Time' },
+                { name: 'end', type: 'time', label: 'Closing Time' },
+              ],
+            },
+            {
+              name: 'sunday',
+              type: 'object',
+              label: 'Sunday',
+              fields: [
+                { name: 'start', type: 'time', label: 'Opening Time' },
+                { name: 'end', type: 'time', label: 'Closing Time' },
+              ],
+            },
+          ],
         },
         {
           name: 'ticketPrices',
-          type: 'ticket-prices',
+          type: 'object',
           label: 'Ticket Prices',
           required: true,
           fields: [
@@ -109,7 +161,7 @@ export const site = {
           }
         },
         openingHours: {
-          monday: { start: 540, end: 1020 },    // 9:00 AM to 5:00 PM
+          monday: { start: 540, end: 1020 },
           tuesday: { start: 540, end: 1020 },
           wednesday: { start: 540, end: 1020 },
           thursday: { start: 540, end: 1020 },
