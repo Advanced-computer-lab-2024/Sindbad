@@ -4,7 +4,7 @@ export default function LogoSVG( { onClick, className } ) {
             <defs>
                 <style>{`
                     .cls-1 {
-                        fill: #fcd34d;
+                        fill: #fbbf24;
                         stroke-width: 0px;
                     }
 
