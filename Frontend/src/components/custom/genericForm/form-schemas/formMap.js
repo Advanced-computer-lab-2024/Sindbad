@@ -1,3 +1,6 @@
+//Note that this file is deprecated, don't use it anywhere in the project. It's only here for reference purposes.
+
+
 import { z } from "zod";
 import { touristSchema } from "@/components/custom/genericForm/form-schemas/touristSchema";
 import { tourGuideSchema } from "@/components/custom/genericForm/form-schemas/tourGuideSchema";

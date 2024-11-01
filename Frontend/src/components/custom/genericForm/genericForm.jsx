@@ -1,44 +1,24 @@
-import { useNavigate } from "react-router-dom";
-
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm} from "react-hook-form";
 import { z } from "zod";
-import { format } from "date-fns";
-
-import GoogleMapWrite from "../maps/GoogleMapWrite";
-
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-
-import { updateSeller } from "@/services/SellerApiHandler";
-import { updateTourGuide } from "@/services/TourGuideApiHandler";
-import { updateTourist } from "@/services/TouristApiHandler";
-import { updateAdvertiser } from "@/services/AdvertiserApiHandler";
-import { updateItinerary } from "@/services/ItineraryApiHandler";
-import { createItinerary } from "@/services/ItineraryApiHandler";
-import { updateProduct } from "@/services/ProductApiHandler";
-import { createProduct } from "@/services/ProductApiHandler";
-import { createActivity } from "@/services/ActivityApiHandler";
-import { createSite } from "@/services/SiteApiHandler";
-import { updateActivity } from "@/services/ActivityApiHandler";
-import { updateSite } from "@/services/SiteApiHandler";
-
-import { parseZodSchema } from "@/components/custom/genericForm/form-schemas/formMap";
+import { Form } from "@/components/ui/form";
 import formMap from "@/components/custom/genericForm/form-schemas/formMap";
-
 import { ArrayField } from './input-fields/ArrayField';
 import { CheckboxField } from './input-fields/CheckboxField';
 import { CoordinatesField } from './input-fields/CoordinatesField';
 import { TextField } from './input-fields/TextField';
+import { forms } from "./forms";
 
 export function GenericForm({ type, data, id }) {
 	
-	// Define the form schema using zod.
-	const formSchema = z.object(formMap[type]);
+	// If you need more information about how this component works, check out forms.js in the same folder.
+	const formObject = forms[type];
 
-	// Parse the form schema to get the fields.
-	const fields = parseZodSchema(formSchema);
+	const onSubmit = formObject.onSubmit;
+	const fields = formObject.defaultValues;
+	const formSchema = z.object(formObject.zodSchema);
+	const formFields = formObject.renderedFields;
 
 	if (data) {
 		for (const key in fields) {
@@ -54,114 +34,6 @@ export function GenericForm({ type, data, id }) {
 		defaultValues: fields,
 	});
 
-	function onSubmit(values) {
-		// Call the appropriate API function based on the type of the form.
-		if (type === "tourist") {
-			updateTourist(id, values);
-		}
-		if (type === "tourGuide") {
-			updateTourGuide(id, values);
-		}
-		if (type === "seller") {
-			updateSeller(id, values);
-		}
-		if (type === "advertiser") {
-			updateAdvertiser(values, id);
-		}
-		if (type === "itinerary") {
-			if (data) {
-				updateItinerary(data._id, values);
-			} else {
-				const itineraryWithId = {
-					...values,
-					creatorId: id,
-				};
-				createItinerary(itineraryWithId);
-			}
-		}
-		if (type === "product") {
-			if (data) {
-				updateProduct(data._id, values);
-			} else {
-				const productWithId = {
-					...values,
-					seller: id,
-				};
-				createProduct(productWithId);
-			}
-		}
-		if (type === "activity") {
-			if (data) {
-				const activityId = data._id;
-				updateActivity(activityId, values);
-			} else {
-				const activityWithId = {
-					...values,
-					creatorId: id,
-				};
-				createActivity(activityWithId);
-			}
-		}
-		if (type === "site") {
-			if (data) {
-				updateSite(data._id, values);
-			} else {
-				const siteWithId = {
-					...values,
-					creatorId: id,
-				};
-				createSite(siteWithId);
-			}
-		}
-		if (type === "experience") {
-			const previousWork = {};
-			for (const key in values) {
-				if (key === "jobTitle") {
-					previousWork.jobTitle = values[key];
-				}
-				if (key === "companyName") {
-					previousWork.companyName = values[key];
-				}
-				if (key === "duration") {
-					previousWork.duration = values[key];
-				}
-				if (key === "description") {
-					previousWork.description = values[key];
-				}
-			}
-
-			const body = {
-				previousWork: {
-					...previousWork,
-				},
-			};
-
-			if (data) {
-				body.previousWork._id = data._id;
-			}
-
-			updateTourGuide(id, body);
-		}
-		if (type === "company") {
-			let companyProfile = {};
-			for (const key in values) {
-				if (key === "name") {
-					companyProfile.name = values[key];
-				}
-				if (key === "description") {
-					companyProfile.description = values[key];
-				}
-				if (key === "location") {
-					companyProfile.location = values[key];
-				}
-			}
-			const body = {
-				id: id,
-				companyProfile: companyProfile,
-			};
-			updateAdvertiser(body, id);
-		}
-	}
 
 	function renderField(key, value, path = '') {
 		const fullPath = path ? `${path}.${key}` : key;

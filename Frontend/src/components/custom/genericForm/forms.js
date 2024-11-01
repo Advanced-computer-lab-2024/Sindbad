@@ -1,4 +1,3 @@
-
 //import zod schemas here
 import { touristSchema } from "./form-schemas/touristSchema";
 import { tourGuideSchema } from "./form-schemas/tourGuideSchema";
@@ -34,7 +33,6 @@ import { siteSubmit } from "./submit-handlers/siteHandler";
 import { productSubmit } from "./submit-handlers/productHandler";
 import { companySubmit } from "./submit-handlers/companyHandler";
 import { experienceSubmit } from "./submit-handlers/experienceHandler";
-
 
 /*
     Forms for the generic form component should be generated based on this object:

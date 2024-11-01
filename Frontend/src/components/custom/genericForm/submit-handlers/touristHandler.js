@@ -5,4 +5,4 @@ export const touristSubmit = (values, id) => {
       return updateTourist(id, values);
     }
     return createTourist(values);
-  }
+}
