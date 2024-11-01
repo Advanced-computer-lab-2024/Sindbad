@@ -7,14 +7,14 @@ import StarRating from "./StarRating";
 
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { DropdownMenu, DropdownMenuItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "@/components/ui/dialog"
+import { DropdownMenu, DropdownMenuItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog"
 
 import { ArrowRight, Wallet, EllipsisVertical } from 'lucide-react';
 
 import { useUser } from "@/state management/userInfo";
 
-function ProductCard({ data, profileId }) {
+function ProductCard({ data }) {
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const { toast } = useToast();
@@ -54,21 +54,6 @@ function ProductCard({ data, profileId }) {
 				) : (
 					<ImagePlaceholder />
 				)}
-				{/* can only edit product if it's yours or you're an admin */}
-				{/* {((role === "seller" && id === profileId) || role === "admin") && (
-					<div>
-						<Dialog>
-							<DialogTrigger className="icon-button">
-								<Edit3 fill="currentColor" size={16} />
-							</DialogTrigger>
-							<DialogContent className="overflow-y-scroll max-h-[50%]">
-								<DialogHeader>
-									<GenericForm type="product" id={id} data={data} />
-								</DialogHeader>
-							</DialogContent>
-						</Dialog>
-					</div>
-				)} */}
 				<DropdownMenu onOpenChange={(open) => setIsDropdownOpen(open)} modal={false}>
 					<DropdownMenuTrigger asChild>
 						<div className={`icon-button ${isDropdownOpen && 'opacity-100'}`}>
@@ -78,7 +63,7 @@ function ProductCard({ data, profileId }) {
 					<DropdownMenuContent align="start">
 						<DropdownMenuItem onClick={handleCopyLink}>Copy link</DropdownMenuItem>
 						<DropdownMenuItem onClick={handleShareEmail}>Share via email</DropdownMenuItem>
-						{((role === "seller" && id === profileId) || role === "admin") &&
+						{((role === "seller" && id === data.seller) || role === "admin") &&
 							<DropdownMenuItem onClick={() => setIsDialogOpen(true)}>Edit</DropdownMenuItem>
 						}
 					</DropdownMenuContent>
