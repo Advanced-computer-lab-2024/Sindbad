@@ -44,6 +44,7 @@ export function GenericForm({ type, data, id }) {
 			}
 		}
 	}
+
 	function renderField(field, path = '') {
 		const fullPath = path ? `${path}.${field.name}` : field.name;
 	  
@@ -114,16 +115,16 @@ export function GenericForm({ type, data, id }) {
 	  }
 
 	return (
-	<div>
-		<Form {...form}>
-		<form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
-			{formFields.map((field) => renderField(field))}
-			<Button type="submit" className="bg-dark text-white">
-			Submit
-			</Button>
-		</form>
-		</Form>
-	</div>
+		<div>
+			<Form {...form}>
+			<form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
+				{formFields.map((field) => renderField(field))}
+				<Button type="submit" className="bg-dark text-white">
+				Submit
+				</Button>
+			</form>
+			</Form>
+		</div>
 	);
 }
 export default GenericForm;
