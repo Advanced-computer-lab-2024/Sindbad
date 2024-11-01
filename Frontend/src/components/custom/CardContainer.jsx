@@ -9,7 +9,7 @@ const CardContainer = ({ cardList, cardType }) => {
 				cardList.map((item, index) => (
 					<div key={index}>
 						{cardType !== "product" && <Card data={item} cardType={cardType} />}
-						{cardType === "product" && <ProductCard data={item} profilelId={item.seller} />}
+						{cardType === "product" && <ProductCard data={item} />}
 					</div>
 				))
 			) : (

@@ -105,7 +105,7 @@ function ShoppingPage() {
 				<hr className="border-neutral-300 border w-full mt-1.5" />
 				{role === "admin" && (
 					<Dialog>
-						<DialogTrigger className="shrink-0 mt-1.5 text-neutral-600 hover:text-light transition-all">
+						<DialogTrigger className="shrink-0 mt-1.5 text-neutral-400 hover:text-neutral-600 transition-all">
 							<CirclePlus size={24} />
 						</DialogTrigger>
 						<DialogContent className="overflow-y-scroll max-h-[50%]">

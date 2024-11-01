@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 import ImagePlaceholder from "@/components/custom/ImagePlaceholder";
 import GenericForm from "./genericForm";
@@ -6,21 +7,40 @@ import DeleteForm from "./deleteForm";
 import StarRating from "./StarRating";
 
 import { Button } from "@/components/ui/button";
-import {
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from "@/components/ui/dialog";
+import { useToast } from "@/hooks/use-toast";
+import { DropdownMenu, DropdownMenuItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
-import { ArrowRight, Bookmark, Edit3, X, Wallet } from "lucide-react";
+import { ArrowRight, Wallet, EllipsisVertical } from "lucide-react";
 
 import { useUser } from "@/state management/userInfo";
 
-function Card({ data, id, profileId, cardType }) {
+function Card({ data, cardType }) {
+	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+	const [openDialog, setOpenDialog] = useState("");
+	const { toast } = useToast();
+
 	const navigate = useNavigate();
-	const { role } = useUser();
+	const { role, id } = useUser();
+
+	// Function to copy the link to clipboard
+	const handleCopyLink = () => {
+		const link = `http://localhost:5173/app/${cardType}/${data._id}`;
+		navigator.clipboard.writeText(link)
+			.then(() => {
+				toast({
+					description: "Link copied to clipboard",
+				});
+			})
+			.catch((err) => console.error('Failed to copy link: ', err));
+	};
+
+	// Function to share via email
+	const handleShareEmail = () => {
+		const subject = encodeURIComponent(`Check out this ${cardType}!`);
+		const body = encodeURIComponent(`Here's ${cardType === "itinerary" || cardType === "activity" ? "an " + cardType : "a " + cardType} I found on Sindbad:\nhttp://localhost:5173/app/${cardType}/${data._id}`);
+		window.location.href = `mailto:?subject=${subject}&body=${body}`;
+	};
 
 	return (
 		<article className="w-full flex h-full flex-col border border-primary-700/80 rounded-md overflow-clip bg-gradient-to-br from-light to-primary-700/50 group">
@@ -35,67 +55,53 @@ function Card({ data, id, profileId, cardType }) {
 				) : (
 					<ImagePlaceholder />
 				)}
-				{/* tourists can bookmark activities ("events") */}
-				{role === "tourist" && cardType === "activity" && (
-					<button className="icon-button">
-						<Bookmark fill="currentColor" size={16} />
-					</button>
-				)}
-				{/* if the card is yours, show edit and delete buttons */}
-				{role !== "tourist" && role !== "guest" && id === profileId && (
-					<div>
-						<Dialog>
-							<DialogTrigger className="icon-button">
-								<Edit3 fill="currentColor" size={16} />
-							</DialogTrigger>
-							<DialogContent className="overflow-y-scroll max-h-[50%]">
-								<DialogHeader>
-									<GenericForm
-										type={
-											role === "seller"
-												? "product"
-												: role === "advertiser"
-													? "activity"
-													: role === "tourGuide"
-														? "itinerary"
-														: "site"
-										}
-										id={id}
-										data={data}
-									/>
-								</DialogHeader>
-							</DialogContent>
-						</Dialog>
-						<Dialog>
-							<DialogTrigger className="icon-button top-12">
-								<X size={16} />
-							</DialogTrigger>
-							<DialogContent className="overflow-y-scroll max-h-[50%]">
-								<DialogTitle>
-									Are you sure you want to delete this{" "}
-									{role === "advertiser"
-										? "activity"
-										: role === "tourGuide"
-											? "itinerary"
-											: "site"}
-									?
-								</DialogTitle>
-								<DialogHeader>
-									<DeleteForm
-										type={
-											role === "advertiser"
-												? "activity"
-												: role === "tourGuide"
-													? "itinerary"
-													: "site"
-										}
-										data={data}
-									/>
-								</DialogHeader>
-							</DialogContent>
-						</Dialog>
-					</div>
-				)}
+				<DropdownMenu onOpenChange={(open) => setIsDropdownOpen(open)} modal={false}>
+					<DropdownMenuTrigger asChild>
+						<div className={`icon-button ${isDropdownOpen && 'opacity-100'}`}>
+							<EllipsisVertical fill="currentColor" size={16} />
+						</div>
+					</DropdownMenuTrigger>
+					<DropdownMenuContent align="start">
+						<DropdownMenuItem onClick={handleCopyLink}>Copy link</DropdownMenuItem>
+						<DropdownMenuItem onClick={handleShareEmail}>Share via email</DropdownMenuItem>
+						{role === "tourist" && cardType === "activity" &&
+							<DropdownMenuItem>Bookmark</DropdownMenuItem>
+						}
+						{role !== "tourist" && role !== "guest" && id === data.creatorId &&
+							<>
+								<DropdownMenuItem onClick={() => setOpenDialog("edit")}>Edit</DropdownMenuItem>
+								<DropdownMenuItem onClick={() => setOpenDialog("delete")}>Delete</DropdownMenuItem>
+							</>
+						}
+					</DropdownMenuContent>
+				</DropdownMenu>
+
+				<Dialog open={openDialog === "edit"} onOpenChange={() => setOpenDialog("")}>
+					<DialogContent className="overflow-y-scroll max-h-[50%]">
+						<DialogHeader>
+							<GenericForm
+								type={cardType}
+								id={id}
+								data={data}
+							/>
+						</DialogHeader>
+					</DialogContent>
+				</Dialog>
+				<Dialog open={openDialog === "delete"} onOpenChange={() => setOpenDialog("")}>
+					<DialogContent className="max-h-[50%]">
+						<DialogTitle>
+							Are you sure you want to delete this{" "}
+							{cardType}
+							?
+						</DialogTitle>
+						<DialogHeader>
+							<DeleteForm
+								type={cardType}
+								data={data}
+							/>
+						</DialogHeader>
+					</DialogContent>
+				</Dialog>
 			</div>
 			{/* card details */}
 			<div className="flex flex-col p-3 gap-2 h-full justify-between">
@@ -132,7 +138,7 @@ function Card({ data, id, profileId, cardType }) {
 					</Button>
 				</div>
 			</div>
-		</article>
+		</article >
 	);
 }
 
