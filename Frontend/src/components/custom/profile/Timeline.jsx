@@ -134,8 +134,7 @@ function Timeline({ userData, profileId, id, profileRole, cardData }) {
 						</p>
 					)}
 
-					{profileRole === "seller" &&
-						(userData?.products?.length === 0 || !userData?.products) && (
+					{profileRole === "seller" && cardData.length === 0 && (
 							<p className="text-neutral-400 text-sm italic">
 								{profileId !== id
 									? "No products to show."

@@ -244,19 +244,16 @@ function Activity() {
 										Book activity
 										<ArrowRight className="inline-block ml-1" size={12} />
 									</Button>
-									{activity.headCount && activity.headCount > 0 &&
+									{activity.headCount > 0 &&
 										<p className="text-sm text-neutral-400">
 											{activity.headCount} Sindbad users have already registerd!
 										</p>
 									}
 								</div>
 							) : (
-								<div className="text-center align-middle">
-									<p className="self-center text-2xl font-light relative top-16">
-										{" "}
-										No available bookings
-									</p>
-								</div>
+								<p className="text-neutral-400 text-center text-sm italic">
+									Bookings are closed
+								</p>
 							)}
 						</div>
 					</div>

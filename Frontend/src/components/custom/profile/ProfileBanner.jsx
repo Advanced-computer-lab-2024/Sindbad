@@ -53,7 +53,10 @@ function ProfileBanner({ userData, profileId, id, profileRole }) {
                         <div className="flex items-center justify-center gap-1.5">
                             {/* username (or name) */}
                             <h3 className="font-inter font-bold text-xl break-all text-center">
-                                {profileRole !== "seller" ? userData.username : userData.firstName + " " + userData.lastName}
+                                {
+                                    profileRole !== "seller" || (userData.firstName === undefined && userData.lastName === undefined) ? userData.username :
+                                        (userData.firstName !== undefined && userData.firstName) + " " + (userData.lastName !== undefined && userData.lastName)
+                                }
                             </h3>
                             {/* badge to appear if accepted onto system */}
                             {profileRole !== "tourist" && userData.isAccepted && userData.isAccepted === true &&
@@ -88,7 +91,7 @@ function ProfileBanner({ userData, profileId, id, profileRole }) {
                 </div>
 
                 <hr className="border-neutral-300 border" />
-                
+
                 <div className="flex flex-col gap-2">
                     <div className="flex gap-2">
                         <div className="shrink-0">

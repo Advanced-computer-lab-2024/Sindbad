@@ -34,7 +34,7 @@ function CompanyProfile({ userData, profileId, id }) {
             </div>
             <div className="flex flex-col gap-3">
                 {(userData?.companyProfile?.name === "" || !userData?.companyProfile?.name) ?
-                    <p className="text-neutral-500 text-sm italic">
+                    <p className="text-neutral-400 text-sm italic">
                         {profileId !== id ? "No company details to show." : "You have not added your company's details yet. Click the edit button to get started!"}
                     </p>
                     :

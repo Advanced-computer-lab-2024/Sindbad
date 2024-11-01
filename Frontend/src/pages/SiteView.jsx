@@ -111,7 +111,7 @@ function Site() {
 						<CarouselContent>
 							{site.imageUris.length !== 0 ? (
 								site.imageUris.map((image, index) => (
-									<CarouselItem key={index}>
+									<CarouselItem key={index} className="h-[400px] w-[400px]">
 										<img
 											src={image}
 											alt={`Image ${index + 1}`}

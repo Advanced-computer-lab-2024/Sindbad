@@ -44,7 +44,7 @@ function Experience({ userData, profileId, id }) {
 			</div>
 			<div className="flex flex-col gap-3">
 				{(userData?.previousWork?.length === 0 || !userData?.previousWork) &&
-					<p className="text-neutral-500 text-sm italic">
+					<p className="text-neutral-400 text-sm italic">
 						{profileId !== id
 							? "No experience to show."
 							: "You have not added any experience yet. Click the + button to get started!"
