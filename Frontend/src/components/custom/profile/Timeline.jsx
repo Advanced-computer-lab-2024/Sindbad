@@ -33,7 +33,6 @@ function Timeline({ userData, profileId, id, profileRole, cardData }) {
 						</DialogTrigger>
 						<DialogContent className="overflow-y-scroll max-h-[50%]">
 							<DialogHeader>
-								<DialogTitle>Edit Profile</DialogTitle>
 								<GenericForm
 									type={
 										role === "seller"

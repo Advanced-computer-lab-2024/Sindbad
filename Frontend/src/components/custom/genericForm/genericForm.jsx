@@ -10,15 +10,17 @@ import { TextField } from './input-fields/TextField';
 import { forms } from "./forms";
 
 export function GenericForm({ type, data, id }) {
-	
 	// If you need more information about how this component works, check out forms.js in the same folder.
 	const formObject = forms[type];
 
 	const onSubmit = formObject.onSubmit;
-	const defaultValues = formObject.defaultValues;
 	const formSchema = z.object(formObject.zodSchema);
 	const formFields = formObject.renderedFields;
 
+	// Clone defaultValues to avoid mutation issues
+	const defaultValues = structuredClone(formObject.defaultValues);
+
+	// If data is passed, overwrite default values with data values
 	if (data) {
 		for (const key in defaultValues) {
 			if (data[key]) {
@@ -26,8 +28,6 @@ export function GenericForm({ type, data, id }) {
 			}
 		}
 	}
-
-	console.log(defaultValues);
 
 	// Create the form using react-hook-form.
 	const form = useForm({
