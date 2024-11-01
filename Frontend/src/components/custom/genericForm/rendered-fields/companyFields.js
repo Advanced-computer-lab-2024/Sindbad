@@ -1,7 +1,7 @@
 export const company = {
     fields: [
         { name: 'name', type: 'text', label: 'Company Name' },
-        { name: 'description', type: 'textarea', label: 'Description' },
+        { name: 'description', type: 'text', label: 'Description' },
         { name: 'location', type: 'text', label: 'Location' }
     ],
     defaultValues: {

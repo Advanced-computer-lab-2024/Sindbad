@@ -1,11 +1,11 @@
 export const itinerary = {
     fields: [
         { name: 'name', type: 'text', label: 'Itinerary Name' },
-        { name: 'activities', type: 'multi-select', label: 'Activities' },
-        { name: 'locations', type: 'multi-select', label: 'Locations' },
-        { name: 'timeline', type: 'multi-select', label: 'Timeline' },
+        { name: 'activities', type: 'array', label: 'Activities' },
+        { name: 'locations', type: 'array', label: 'Locations' },
+        { name: 'timeline', type: 'array', label: 'Timeline' },
         { name: 'duration', type: 'number', label: 'Duration' },
-        { name: 'languages', type: 'multi-select', label: 'Supported Languages' },
+        { name: 'languages', type: 'array', label: 'Supported Languages' },
         { name: 'price', type: 'number', label: 'Price' },
         { name: 'pickUpLocation', type: 'text', label: 'Pick-up Location' },
         { name: 'dropOffLocation', type: 'text', label: 'Drop-off Location' }

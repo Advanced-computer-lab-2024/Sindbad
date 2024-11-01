@@ -2,13 +2,13 @@ export const tourist = {
     fields: [
     {
       name: 'email',
-      type: 'email',
+      type: 'text',
       label: 'Email Address',
       required: true,
     },
     {
       name: 'mobileNumber',
-      type: 'tel',
+      type: 'text',
       label: 'Mobile Number',
       required: true,
     },

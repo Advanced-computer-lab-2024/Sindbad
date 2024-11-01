@@ -50,8 +50,8 @@ export const site = {
               type: 'object',
               label: 'Monday',
               fields: [
-                { name: 'start', type: 'time', label: 'Opening Time' },
-                { name: 'end', type: 'time', label: 'Closing Time' },
+                { name: 'start', type: 'number', label: 'Opening Time' },
+                { name: 'end', type: 'number', label: 'Closing Time' },
               ],
             },
             {
@@ -59,8 +59,8 @@ export const site = {
               type: 'object',
               label: 'Tuesday',
               fields: [
-                { name: 'start', type: 'time', label: 'Opening Time' },
-                { name: 'end', type: 'time', label: 'Closing Time' },
+                { name: 'start', type: 'number', label: 'Opening Time' },
+                { name: 'end', type: 'number', label: 'Closing Time' },
               ],
             },
             {
@@ -68,8 +68,8 @@ export const site = {
               type: 'object',
               label: 'Wednesday',
               fields: [
-                { name: 'start', type: 'time', label: 'Opening Time' },
-                { name: 'end', type: 'time', label: 'Closing Time' },
+                { name: 'start', type: 'number', label: 'Opening Time' },
+                { name: 'end', type: 'number', label: 'Closing Time' },
               ],
             },
             {
@@ -77,8 +77,8 @@ export const site = {
               type: 'object',
               label: 'Thursday',
               fields: [
-                { name: 'start', type: 'time', label: 'Opening Time' },
-                { name: 'end', type: 'time', label: 'Closing Time' },
+                { name: 'start', type: 'number', label: 'Opening Time' },
+                { name: 'end', type: 'number', label: 'Closing Time' },
               ],
             },
             {
@@ -86,8 +86,8 @@ export const site = {
               type: 'object',
               label: 'Friday',
               fields: [
-                { name: 'start', type: 'time', label: 'Opening Time' },
-                { name: 'end', type: 'time', label: 'Closing Time' },
+                { name: 'start', type: 'number', label: 'Opening Time' },
+                { name: 'end', type: 'number', label: 'Closing Time' },
               ],
             },
             {
@@ -95,8 +95,8 @@ export const site = {
               type: 'object',
               label: 'Saturday',
               fields: [
-                { name: 'start', type: 'time', label: 'Opening Time' },
-                { name: 'end', type: 'time', label: 'Closing Time' },
+                { name: 'start', type: 'number', label: 'Opening Time' },
+                { name: 'end', type: 'number', label: 'Closing Time' },
               ],
             },
             {
@@ -104,8 +104,8 @@ export const site = {
               type: 'object',
               label: 'Sunday',
               fields: [
-                { name: 'start', type: 'time', label: 'Opening Time' },
-                { name: 'end', type: 'time', label: 'Closing Time' },
+                { name: 'start', type: 'number', label: 'Opening Time' },
+                { name: 'end', type: 'number', label: 'Closing Time' },
               ],
             },
           ],

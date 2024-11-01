@@ -3,7 +3,7 @@ export const previousWork = {
         { name: 'jobTitle', type: 'text', label: 'Job Title' },
         { name: 'companyName', type: 'text', label: 'Company Name' },
         { name: 'duration', type: 'text', label: 'Duration' },
-        { name: 'description', type: 'textarea', label: 'Description' }
+        { name: 'description', type: 'text', label: 'Description' }
     ],
     defaultValues: {
         jobTitle: '',

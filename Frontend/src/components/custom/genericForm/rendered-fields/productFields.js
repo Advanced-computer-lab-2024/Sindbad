@@ -22,7 +22,7 @@ export const product = {
     },
     {
         name: 'description',
-        type: 'textarea',
+        type: 'text',
         label: 'Description',
         required: true,
     },

@@ -12,10 +12,10 @@ const userSlice = createSlice({
 		// id: "66f8630f55f21e927d7455cc"
 		// role: "seller",
 		// id: "66f99b77497c76922f03104e"
-		role: "advertiser",
-		id: "66f9741bf74fa1c054a9b166"
-		// role: "tourismGovernor",
-		// id: "66fff189a0a316baace5a99b"
+		// role: "advertiser",
+		// id: "66f9741bf74fa1c054a9b166"
+		role: "tourismGovernor",
+		id: "66fff189a0a316baace5a99b"
 		// role: "admin",
 		// id: "66ffd995f2226d9aa3157374"
 		// role: "guest",
