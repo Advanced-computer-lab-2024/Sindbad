@@ -69,7 +69,7 @@
   }
 
   .icon-button {
-    @apply absolute cursor-pointer top-2 right-2 border border-dark opacity-0 group-hover:opacity-100 transition-all hover:border-secondary bg-light/70 backdrop-blur-md text-dark p-1.5 rounded-full;
+    @apply absolute cursor-pointer top-2 right-2 opacity-0 group-hover:opacity-100 transition-all bg-white drop-shadow-sm backdrop-blur-md text-dark p-1.5 rounded-full;
   }
 
   input[type="number"]::-webkit-inner-spin-button,
