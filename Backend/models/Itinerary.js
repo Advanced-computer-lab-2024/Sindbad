@@ -96,6 +96,10 @@ const itinerarySchema = mongoose.Schema(
 			type: Boolean,
 			default: false,
 		},
+		isActive: {
+			type: Boolean,
+			default: true,
+		},
 	},
 	{ timestamps: true }
 );

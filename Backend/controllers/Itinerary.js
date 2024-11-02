@@ -174,8 +174,9 @@ const getAllItineraries = async (req, res) => {
 		const filter = {
 			// Uncomment if needed to filter for upcoming available date times
 			// availableDateTimes: { $elemMatch: { $gte: new Date() } },
-			// Default filter for inappropriate itineraries
+			// Default filter for inappropriate itineraries and active itineraries
 			isInappropriate: false,
+			isActive: true,
 		};
 
 		// Budget filter
