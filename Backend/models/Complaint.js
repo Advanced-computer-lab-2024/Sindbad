@@ -10,10 +10,6 @@ const complaintSchema = new mongoose.Schema(
 			type: String,
 			required: [true, "Please add a complaint body"],
 		},
-		date: {
-			type: Date,
-			default: Date.now,
-		},
 		isResolved: {
 			type: Boolean,
 			default: false,

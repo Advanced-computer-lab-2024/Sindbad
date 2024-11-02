@@ -145,7 +145,7 @@ const getMyItineraries = async (req, res) => {
 
 /**
  * @description Searches, sorts, and filters itineraries based on various criteria using query parameters.
- * @route GET /itineraries
+ * @route GET /itinerary
  * @param {Object} req - The request object containing search, sorting, and filtering parameters.
  * @param {Object} res - The response object containing matching itineraries or an error message.
  * @param {number} [req.query.rating]

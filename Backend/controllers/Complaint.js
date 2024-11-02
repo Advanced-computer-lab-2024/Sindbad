@@ -22,7 +22,44 @@ const createComplaint = async (req, res) => {
 };
 
 /**
- * Retrieves a single complaint by its ID.
+ * @description Sorts, and filters complaints based on the query parameters.
+ * @route GET /complaint
+ *
+ * @param {Object} req - The request object containing the query parameters.
+ * @param {String} [req.query.isResolved] - The status of the complaint to filter by.
+ * @param {String} [req.query.order] - The order to sort the complaints by.
+ * @param {Object} res - The response object for sending the sorted and filtered complaints.
+ * @returns {Array} - JSON array of sorted and filtered complaints.
+ *
+ * @throws {500} - If there is an error retrieving the complaints.
+ * @throws {400} - If the query parameters are invalid.
+ */
+const getAllComplaints = async (req, res) => {
+	try {
+		const {
+			isResolved,
+			sortOrder = "asc",
+			page = 1,
+			limit = 10,
+		} = req.query;
+
+		const filter = {};
+		if (isResolved) {
+			filter.isResolved = isResolved;
+		}
+
+		const sortOptions = { createdAt: sortOrder === "asc" ? 1 : -1 };
+
+		const complaints = await Complaint.find(filter).sort(sortOptions);
+
+		res.status(200).json(complaints);
+	} catch (err) {
+		res.status(500).json({ message: err.message });
+	}
+};
+
+/**
+ * @description Retrieves a single complaint by its ID.
  *
  * @param {Object} req - The request object containing the complaint ID in the URL parameters.
  * @param {Object} req.params.id - The ID of the complaint to retrieve.
@@ -33,7 +70,7 @@ const createComplaint = async (req, res) => {
  * @throws {500} - If there is an error retrieving the complaint.
  */
 const getComplaintById = async (req, res) => {
-    console.log(req.params.id);
+	console.log(req.params.id);
 	try {
 		const complaint = await Complaint.findById(req.params.id);
 		if (!complaint) {
@@ -46,7 +83,7 @@ const getComplaintById = async (req, res) => {
 };
 
 /**
- * Set the status of a complaint and/or reply to it.
+ * @description Set the status of a complaint and/or reply to it.
  *
  * @param {Object} req - The request object containing the complaint ID in the URL parameters and the new status in the body.
  * @param {Object} req.params.id - The ID of the complaint to update.
@@ -60,11 +97,11 @@ const getComplaintById = async (req, res) => {
  */
 const updateComplaintStatus = async (req, res) => {
 	try {
-        const { isResolved, comment } = req.body;
-		const complaint = await Complaint.findByIdAndUpdate(
-			req.params.id,
-			{ isResolved, comment },
-		);
+		const { isResolved, comment } = req.body;
+		const complaint = await Complaint.findByIdAndUpdate(req.params.id, {
+			isResolved,
+			comment,
+		});
 		if (!complaint) {
 			return res.status(404).json({ message: "Complaint not found" });
 		}
@@ -77,7 +114,7 @@ const updateComplaintStatus = async (req, res) => {
 };
 
 /**
- * Retrieves complains created by a specific user.
+ * @description Retrieves complains created by a specific user.
  *
  * @param {Object} req - The request object containing the user ID in the URL parameters.
  * @param {Object} req.params.id - The ID of the user to retrieve complaints for.
@@ -104,6 +141,7 @@ const getMyComplaints = async (req, res) => {
 module.exports = {
 	createComplaint,
 	getComplaintById,
+    getAllComplaints,
 	updateComplaintStatus,
 	getMyComplaints,
 };
