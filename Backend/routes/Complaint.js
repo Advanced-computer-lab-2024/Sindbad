@@ -3,12 +3,14 @@ const router = express.Router();
 const {
 	createComplaint,
 	getComplaintById,
+    getAllComplaints,
 	updateComplaintStatus,
 	getMyComplaints,
 } = require("../controllers/Complaint");
 
 router
     .route("/")
+    .get(getAllComplaints)
     .post(createComplaint)
 
 router
