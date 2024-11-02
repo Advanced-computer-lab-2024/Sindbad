@@ -66,6 +66,7 @@ const TourGuideSchema = new mongoose.Schema(
 
 		isAccepted: {
 			type: Boolean,
+			default: null,
 		},
 	},
 	{ timestamps: true }

@@ -14,6 +14,12 @@ const models = {
 	admin: Admin,
 };
 
+const isAcceptedmodels = {
+	tourguide: TourGuide,
+	advertiser: Advertiser,
+	seller: Seller,
+};
+
 const defaultFields = {
 	tourist: {
 		wallet: 0,
@@ -151,6 +157,23 @@ const UserController = {
 		}
 	},
 
+	getAllPendingUsers: async (req, res) => {
+		try {
+			const results = await Promise.all(
+				Object.entries(isAcceptedmodels).map(async ([role, model]) => {
+					const users = await model.find({isAccepted : null});
+					return users.map((user) => ({ ...user._doc, role }));
+				})
+			);
+
+			const combinedUsers = results.flat();
+			return res.status(200).json(combinedUsers);
+		} catch (error) {
+			console.log(error);
+			return res.status(500).json({ message: error.message });
+		}
+	},
+	
 	deleteUser: async (req, res) => {
 		const { id } = req.params;
 		const { role } = req.body;
@@ -167,6 +190,36 @@ const UserController = {
 
 			await Model.findByIdAndDelete(id);
 			return res.status(200).json({ message: "User deleted successfully" });
+		} catch (error) {
+			return res.status(500).json({ message: error.message });
+		}
+	},
+	updateUserPassword: async (req, res) => {
+		const { id } = req.params;
+		const { role, passwordHash } = req.body;
+
+		if (!role) {
+			return res.status(400).json({ message: "Role is required" });
+		}
+		if (!passwordHash) {
+			return res.status(400).json({ message: "Password is required" });
+		}
+
+		try {
+			const Model = models[role.toLowerCase()];
+			if (!Model) {
+				throw new Error("Invalid role");
+			}
+
+			const user = await Model.findById(id);
+
+			if (!user) {
+				return res.status(404).json({ message: "User not found" });
+			}
+
+			user.passwordHash = passwordHash;
+			await user.save();
+			res.json(user);
 		} catch (error) {
 			return res.status(500).json({ message: error.message });
 		}

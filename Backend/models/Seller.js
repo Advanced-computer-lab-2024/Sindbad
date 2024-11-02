@@ -44,7 +44,7 @@ const SellerSchema = new mongoose.Schema(
 		},
 		isAccepted: {
 			type: Boolean,
-			default: false, // Default to false indicating the tour guide is not accepted yet
+			default: null, // Default to null indicating the tour guide is not accepted yet
 		},
 		products: [{}],
 	},

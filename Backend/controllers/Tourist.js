@@ -69,9 +69,6 @@ const updateTourist = async (req, res) => {
 	if (req.body.username != null) {
 		res.tourist.username = req.body.username;
 	}
-	if (req.body.passwordHash != null) {
-		res.tourist.passwordHash = req.body.passwordHash;
-	}
 	if (req.body.mobileNumber != null) {
 		res.tourist.mobileNumber = req.body.mobileNumber;
 	}
