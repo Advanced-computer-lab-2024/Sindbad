@@ -69,7 +69,9 @@ const setActivity = async (req, res) => {
 		// Check if all provided tag IDs exist (optional)
 		const existingTags = await Tag.find({ _id: { $in: tags } });
 		if (existingTags.length !== tags.length) {
-			return res.status(404).json({ message: "One or more tags do not exist" });
+			return res
+				.status(404)
+				.json({ message: "One or more tags do not exist" });
 		}
 
 		// Create the activity with valid category and tag IDs
@@ -126,7 +128,10 @@ const addRating = async (req, res) => {
 		activity.averageRating = calculateAverageRating(activity.rating);
 		await activity.save();
 
-		res.status(200).json({ message: "Rating added successfully", activity });
+		res.status(200).json({
+			message: "Rating added successfully",
+			activity,
+		});
 	} catch (error) {
 		res.status(500).json({
 			message: "Error adding rating",
@@ -263,7 +268,10 @@ const getActivities = async (req, res) => {
 		} = req.query;
 
 		// Create filter object based on provided criteria
-		const filter = {};
+		const filter = {
+			// Default filter to show only non-inappropriate activities
+			isInappropriate: false,
+		};
 
 		// Budget filter
 		if (budget.min || budget.max) {
@@ -288,7 +296,9 @@ const getActivities = async (req, res) => {
 			filter.dateTime = {
 				...(date.start && { $gte: new Date(date.start) }),
 				...(date.end && {
-					$lte: new Date(new Date(date.end).setHours(23, 59, 59, 999)),
+					$lte: new Date(
+						new Date(date.end).setHours(23, 59, 59, 999)
+					),
 				}), // End of the day
 			};
 		}
@@ -309,7 +319,9 @@ const getActivities = async (req, res) => {
 		// Search term filter (name, category, or tags)
 		if (searchTerm) {
 			const regex = new RegExp(searchTerm, "i"); // Case-insensitive
-			const categories = await Category.find({ name: regex }).select("_id");
+			const categories = await Category.find({ name: regex }).select(
+				"_id"
+			);
 			const tags = await Tag.find({ name: regex }).select("_id");
 
 			filter.$or = [
