@@ -1,7 +1,4 @@
 const Itinerary = require("../models/Itinerary");
-const Category = require("../models/Category");
-const Activity = require("../models/Activity");
-const Tag = require("../models/Tag");
 const mongoose = require("mongoose");
 
 /**

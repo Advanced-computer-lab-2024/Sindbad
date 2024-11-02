@@ -18,6 +18,7 @@ const tourGuideRoutes = require("./routes/TourGuide");
 const tourismGovernorRoutes = require("./routes/TourismGovernor");
 const productRoutes = require("./routes/Product");
 const sellerRoutes = require("./routes/Seller");
+const complaintRoutes = require("./routes/Complaint");
 
 const app = express();
 
@@ -80,6 +81,9 @@ app.use("/tourGuide", tourGuideRoutes);
 
 // Tourism Governor routes
 app.use("/tourism-governor", tourismGovernorRoutes);
+
+// Complaint routes
+app.use("/complaint", complaintRoutes);
 
 // Fallback route for unknown endpoints
 app.use((req, res, next) => {
