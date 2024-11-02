@@ -5,7 +5,9 @@ const Product = require("../models/Product");
  */
 const getProductById = async (req, res) => {
 	try {
-		const product = await Product.findById(req.params.id).populate("seller"); // Use req.params.id
+		const product = await Product.findById(req.params.id).populate(
+			"seller"
+		); // Use req.params.id
 		if (!product) {
 			return res.status(404).json({ message: "Product not found" });
 		}
@@ -24,7 +26,10 @@ const getProductById = async (req, res) => {
 const getAllProducts = async (req, res) => {
 	const { search, minprice, maxprice, sortrating } = req.query;
 
-	let query = {};
+	let query = {
+		// Filter out archived products
+		isArchived: false,
+	};
 
 	if (search) {
 		query.name = { $regex: search, $options: "i" };
@@ -41,7 +46,8 @@ const getAllProducts = async (req, res) => {
 
 	try {
 		const sortOptions = {};
-		if (sortrating) sortOptions.averageRating = sortrating === "asc" ? 1 : -1;
+		if (sortrating)
+			sortOptions.averageRating = sortrating === "asc" ? 1 : -1;
 
 		const products = await Product.find(query).sort(sortOptions);
 
@@ -112,11 +118,12 @@ const createProduct = async (req, res) => {
 const updateProduct = async (req, res) => {
 	try {
 		const { id } = req.params; // Extract the id from req.params
-		const { name, price, description, imageUris, quantity } = req.body;
+		const { name, price, description, imageUris, quantity, isArchived } =
+			req.body;
 
 		const updatedProduct = await Product.findByIdAndUpdate(
 			id,
-			{ name, price, description, imageUris, quantity },
+			{ name, price, description, imageUris, quantity, isArchived },
 			{ new: true, runValidators: true } // Return the updated document and run validators
 		);
 
