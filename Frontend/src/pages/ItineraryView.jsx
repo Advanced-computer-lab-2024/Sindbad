@@ -111,16 +111,18 @@ const Itinerary = () => {
 	const fullStars = itinerary.rating;
 	const emptyStar = 5 - fullStars;
 
-	const dates = itinerary.availableDatesTimes.map((date) => {
-		const d = new Date(date);
+	const dates = itinerary.availableDatesTimes.map((entry) => {
+		const d = new Date(entry.dateTime);
+		console.log(entry);
+		console.log(entry.dateTime);
 		const weekday = d.toLocaleString("en-US", { weekday: "short" });
 		const day = d.toLocaleString("en-US", { day: "numeric" });
 		const month = d.toLocaleString("en-US", { month: "short" });
 		return `${weekday} ${day} ${month}`;
 	});
 
-	const times = itinerary.availableDatesTimes.map((date) => {
-		const d = new Date(date);
+	const times = itinerary.availableDatesTimes.map((entry) => {
+		const d = new Date(entry.dateTime);
 		return d.toLocaleString("en-US", {
 			hour: "numeric",
 			minute: "numeric",
