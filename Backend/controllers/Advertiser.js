@@ -33,7 +33,7 @@ const getAllAdvertisers = async (req, res) => {
 const updateAdveriser = async (req, res) => {
 	try {
 		const { id } = req.params; // Get username from the params
-		const { websiteLink, hotline, companyProfile, email } = req.body; // Get username and other fields from the body
+		const { websiteLink, hotline, companyProfile, email , logoImageUri , bannerImageUri } = req.body; // Get username and other fields from the body
 
 		// Create an object to hold the fields that need to be updated
 		const updateData = {};
@@ -50,6 +50,12 @@ const updateAdveriser = async (req, res) => {
 		}
 		if (email !== undefined) {
 			updateData.email = email;
+		}
+		if (logoImageUri !== undefined) {
+			updateData.logoImageUri = logoImageUri;
+		}
+		if (bannerImageUri !== undefined) {
+			updateData.bannerImageUri = bannerImageUri;
 		}
 
 		const advertiser = await Advertiser.findByIdAndUpdate(

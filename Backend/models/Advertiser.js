@@ -27,11 +27,21 @@ const AdvertiserSchema = new mongoose.Schema(
 			type: String,
 			required: true,
 		},
-		profileImageUri: {
+		idCardImageUri: {
+			type: String,
+		},
+		taxationRegistryCardImageUri: {
+			type: String,
+		},
+		logoImageUri: {
 			type: String,
 		},
 		bannerImageUri: {
 			type: String,
+		},
+		preferredCurrency:{
+			type: String,
+			default: "EGP",
 		},
 		websiteLink: {
 			type: String,

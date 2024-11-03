@@ -1,6 +1,10 @@
 const Tourist = require("../models/Tourist");
 const TourGuide = require("../models/TourGuide");
 const Advertiser = require("../models/Advertiser");
+const Activities = require("../models/Activity");
+const Itinerary = require("../models/Itinerary");
+const Products = require("../models/Product");
+const Complaint = require("../models/Complaint");
 const Seller = require("../models/Seller");
 const Admin = require("../models/Admin");
 const TourismGovernor = require("../models/TourismGovernor");
@@ -33,17 +37,17 @@ const defaultFields = {
 		addresses: [],
 	},
 	advertiser: {
-		isAccepted: false,
+		isAccepted: null,
 		createdActivities: [],
 		createdIterinaries: [],
 		createdHistoricalPlaces: [],
 	},
 	seller: {
-		isAccepted: false,
+		isAccepted: null,
 		products: [],
 	},
 	tourguide: {
-		isAccepted: false,
+		isAccepted: null,
 	},
 	admin: {},
 	tourismgovernor: {},
@@ -173,7 +177,63 @@ const UserController = {
 			return res.status(500).json({ message: error.message });
 		}
 	},
-	
+	checkDeletion: async (req, res) => {
+		//cases are wrong
+		try {
+			const { id } = req.params;
+			const { role } = req.body;
+			
+
+			if (role.toLowerCase() == 'advertiser') {
+				const currentDate = new Date();
+
+				//get number of future actvities which head count ! = 0
+				const activityCount = await Activities.countDocuments({
+					creatorId: id,
+					headCount: { $ne: 0 }, // Only count activities where headCount is not equal to 0
+					dateTime: { $gt: currentDate } // Only future activities
+				});
+
+
+				if (activityCount != 0) {
+					return res.status(404).json({ canDelete: false, message: 'Activity has bookings.' });
+				}
+
+				// All activities are deletable
+				return res.status(200).json({ canDelete: true });
+
+			}
+			else if (role.toLowerCase() == 'tourguide') {
+				//check if itenirary is still running aka ana b3d el start date bas abl el end date, can i delete?
+				const currentDate = new Date();
+		
+				const itineraries = await Itinerary.find({
+					creatorId: id,
+				});
+				if(!itineraries){
+					return res.status(404).json({ canDelete: false, message: 'No deletable itineraries found for this TourGuide.' });
+				}
+				for (const itinerary of itineraries) {
+					const totalHeadCount = itinerary.availableDatesTimes.reduce((sum, date) => {
+						return date.dateTime >= currentDate ? sum + date.headCount : sum;
+					}, 0);
+						
+					if(totalHeadCount > 0){
+						// Activity found, return success response or perform the deletion if needed
+						return res.status(403).json({ canDelete: false, message: 'itinerary has bookings.' });
+					}
+				}
+				return res.status(200).json({ canDelete: true });
+			}
+			else{
+				return res.status(200).json({ canDelete: true });
+			}
+		} catch (error) {
+			console.error(error);
+			return res.status(500).json({ message: 'An error occurred while checking if an account can be deleted.' });
+		}
+	},
+
 	deleteUser: async (req, res) => {
 		const { id } = req.params;
 		const { role } = req.body;
@@ -188,12 +248,32 @@ const UserController = {
 				throw new Error("Invalid role");
 			}
 
-			await Model.findByIdAndDelete(id);
-			return res.status(200).json({ message: "User deleted successfully" });
+			let deletionResult;
+
+			if (role.toLowerCase() == 'advertiser'){
+				deletionResult = await Activities.deleteMany({ creatorId: id });
+			}
+			else if (role.toLowerCase() == 'tourguide'){
+				deletionResult = await Itinerary.deleteMany({ creatorId: id });
+			}
+			else if (role.toLowerCase() == 'seller'){
+				deletionResult = await Products.deleteMany({ seller: id });
+			}
+			else if (role.toLowerCase() == 'tourist'){
+				deletionResult = await Complaint.deleteMany({ creatorId: id });
+			}
+			const userDeletionResult = await Model.findByIdAndDelete(id);
+
+			return res.status(200).json({
+				message: "User deleted successfully",
+				deletedCount: deletionResult ? deletionResult.deletedCount : 0, // Include the count of deleted documents
+				userDeleted: userDeletionResult ? true : false, // Indicate if the user was deleted
+			});
 		} catch (error) {
 			return res.status(500).json({ message: error.message });
 		}
 	},
+
 	updateUserPassword: async (req, res) => {
 		const { id } = req.params;
 		const { role, passwordHash } = req.body;
@@ -224,6 +304,34 @@ const UserController = {
 			return res.status(500).json({ message: error.message });
 		}
 	},
+	updateUserAcceptance: async (req, res) => {
+		const { id } = req.params;
+		const { role , isAccepted} = req.body;
+
+		if (!role) {
+			return res.status(400).json({ message: "Role is required" });
+		}
+
+		try {
+			const Model = isAcceptedmodels[role.toLowerCase()];
+			if (!Model) {
+				throw new Error("Invalid role");
+			}
+
+			const user = await Model.findById(id);
+
+			if (!user) {
+				return res.status(404).json({ message: "User not found" });
+			}
+
+			user.isAccepted = isAccepted;
+			await user.save();
+			res.json(user);
+		} catch (error) {
+			return res.status(500).json({ message: error.message });
+		}
+	},
+	
 };
 
 module.exports = UserController;

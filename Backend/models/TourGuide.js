@@ -27,11 +27,21 @@ const TourGuideSchema = new mongoose.Schema(
 			type: String,
 			required: true,
 		},
+		idCardImageUri: {
+			type: String,
+		},
+		certificateImageUri: {
+			type: String,
+		},
 		profileImageUri: {
 			type: String,
 		},
 		bannerImageUri: {
 			type: String,
+		},
+		preferredCurrency:{
+			type: String,
+			default: "EGP",
 		},
 		mobileNumber: {
 			type: String,

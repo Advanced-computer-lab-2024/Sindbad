@@ -66,11 +66,10 @@ const updateTourGuide = async (req, res) => {
 
 	if (req.body.email != null) tourGuide.email = req.body.email;
 	if (req.body.username != null) tourGuide.username = req.body.username;
-	if (req.body.mobileNumber != null)
-		tourGuide.mobileNumber = req.body.mobileNumber;
-	if (req.body.yearsOfExperience != null)
-		tourGuide.yearsOfExperience = req.body.yearsOfExperience;
-
+	if (req.body.mobileNumber != null)tourGuide.mobileNumber = req.body.mobileNumber;
+	if (req.body.yearsOfExperience != null)tourGuide.yearsOfExperience = req.body.yearsOfExperience;
+	if (req.body.profileImageUri != null)tourGuide.profileImageUri = req.body.profileImageUri;
+	if (req.body.bannerImageUri != null)tourGuide.bannerImageUri = req.body.bannerImageUri;
 	// Update or concat previousWork based on wether or not the previous work exists
 	if (req.body.previousWork != null) {
 		if (tourGuide.previousWork.length === 0) {

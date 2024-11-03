@@ -84,6 +84,12 @@ const updateTourist = async (req, res) => {
 	if (req.body.wallet != null) {
 		res.tourist.wallet = req.body.wallet;
 	}
+	if (req.body.profileImageUri != null) {
+		res.tourist.profileImageUri = req.body.profileImageUri;
+	}
+	if (req.body.bannerImageUri != null) {
+		res.tourist.bannerImageUri = req.body.bannerImageUri;
+	}
 
 	try {
 		const updatedTourist = await res.tourist.save();
