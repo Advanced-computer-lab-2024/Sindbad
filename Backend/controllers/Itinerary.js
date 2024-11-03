@@ -100,10 +100,16 @@ const deleteItinerary = async (req, res) => {
 			return res.status(404).json({ message: "Itinerary not found" });
 		}
 
-		if (itinerary.headCount > 0) {
-			return res.status(400).json({
-				message: "Cannot delete itinerary because it has been booked already",
-			});
+		if (itinerary.availableDatesTimes) {
+			// Calculate the total headCount by summing up headCounts in availableDatesTimes
+			const totalHeadCount = itinerary.availableDatesTimes.reduce((sum, date) => sum + date.headCount, 0);
+		
+			// Check if the total headCount is greater than 0
+			if (totalHeadCount > 0) {
+				return res.status(400).json({
+					message: "Cannot delete itinerary because it has been booked already",
+				});
+			}
 		}
 
 		await Itinerary.findByIdAndDelete(itineraryId);

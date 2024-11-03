@@ -48,10 +48,18 @@ const itinerarySchema = mongoose.Schema({
         "Price must be either a non-negative number (fixed price) or a valid price range (object with min and max).",
     },
   },
-  availableDatesTimes: {
-    type: [Date],
-    required: [true, "Please add available dates and times for the itinerary"],
-  },
+  availableDatesTimes: [
+    {
+      dateTime:{
+        type: Date,
+        required: [true, "Please add available dates and times for the itinerary"],
+      },
+      headCount: {
+        type: Number,
+        default: 0,
+      },
+    },
+  ],
   accessibility: {
     type: [String],
     required: [true, "Please specify accessibility options."],
@@ -68,10 +76,6 @@ const itinerarySchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "TourGuide",
     required: [true, "Please add the creator of the itinerary"],
-  },
-  headCount: {
-    type: Number,
-    default: 0,
   },
   rating: {
     type: Map,
