@@ -44,3 +44,12 @@ export const getUserRole = async (userId) => {
         return error;
     }
 };
+
+export const getPendingUsers = async () => {
+    try {
+        const response = await axiosInstance.get(`/user/getPendingUsers`);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+}
