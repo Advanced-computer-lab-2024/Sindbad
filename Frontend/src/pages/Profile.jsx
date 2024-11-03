@@ -7,6 +7,8 @@ import Experience from "@/components/custom/profile/Experience";
 import CompanyProfile from "@/components/custom/profile/CompanyProfile";
 import Timeline from "@/components/custom/profile/Timeline";
 import TagManagement from "@/components/custom/admin/TagManagement";
+import Verify from "@/components/custom/profile/Verify";
+
 import { getTouristById } from "@/services/TouristApiHandler";
 import { getTourGuide } from "@/services/TourGuideApiHandler";
 import { getSeller, getMyProducts } from "@/services/SellerApiHandler";
@@ -140,7 +142,7 @@ function Profile() {
 		);
 	}
 
-	if (userData && userData.isAccepted === false && profileId !== id) {
+	if (userData && (userData.isAccepted !== true && role !== "admin") && profileId !== id) {
 		return (
 			<div className="py-8 px-24 max-w-[1200px] flex gap-9 mx-auto">
 				<div className="flex justify-center w-full">
@@ -166,6 +168,9 @@ function Profile() {
 						{profileRole === "tourist" && profileId === id && (
 							<Wallet userData={userData} />
 						)}
+						{role === "admin" && userData.isAccepted === null &&
+							<Verify profileId={profileId} profileRole={profileRole} getUserInfo={getUserInfo} />
+						}
 					</div>
 				)}
 				<div className="w-full flex flex-col gap-12">
@@ -179,13 +184,15 @@ function Profile() {
 					{profileRole === "tourGuide" && (
 						<Experience userData={userData} profileId={profileId} id={id} />
 					)}
-					<Timeline
-						userData={userData}
-						profileId={profileId}
-						id={id}
-						profileRole={profileRole}
-						cardData={cardData}
-					/>
+					{!(userData.isAccepted === null && role === "admin") &&
+						<Timeline
+							userData={userData}
+							profileId={profileId}
+							id={id}
+							profileRole={profileRole}
+							cardData={cardData}
+						/>
+					}
 				</div>
 			</div>
 			{profileRole === "tourismGovernor" && profileId === id && (

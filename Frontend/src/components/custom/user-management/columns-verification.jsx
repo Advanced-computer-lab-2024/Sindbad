@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowUpDown, Filter } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuCheckboxItem } from "@/components/ui/dropdown-menu";
 
-export const columns = (handleRoleFilterChange, selectedRoles) => [
+export const columns = (handleRoleFilterChange, selectedRoles, navigate) => [
     {
         accessorKey: "username",
         header: "Username",
@@ -17,7 +17,7 @@ export const columns = (handleRoleFilterChange, selectedRoles) => [
             return (
                 <DropdownMenu modal={false}>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="ghost">
+                        <Button variant="ghost" className="p-0">
                             Role
                             <Filter className="ml-2 h-4 w-4" />
                         </Button>
@@ -68,6 +68,7 @@ export const columns = (handleRoleFilterChange, selectedRoles) => [
             return (
                 <Button
                     variant="ghost"
+                    className="p-0"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
                     Created At
@@ -92,7 +93,7 @@ export const columns = (handleRoleFilterChange, selectedRoles) => [
                     variant="ghostDestructive"
                     className="p-3"
                     onClick={() => {
-                        console.log(row.original);
+                        navigate(`/app/profile/${row.original._id}`);
                     }}
                 >
                     View Profile

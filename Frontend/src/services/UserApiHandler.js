@@ -53,3 +53,15 @@ export const getPendingUsers = async () => {
         return error;
     }
 }
+
+export const updateUserAcceptance = async (id, role, isAccepted) => {
+    try {
+        const response = await axiosInstance.post(
+            `/user/changeAcceptance/${id}`,
+            { role, isAccepted },
+        );
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+}

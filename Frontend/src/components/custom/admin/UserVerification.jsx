@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import TableSkeleton from "../TableSkeleton";
 import { DataTable } from "@/components/custom/user-management/data-table";
 import { getPendingUsers } from "@/services/UserApiHandler";
@@ -10,6 +11,8 @@ function UserVerification() {
     const [loading, setLoading] = useState(true);
     const [columnFilters, setColumnFilters] = useState([]);
     const [selectedRoles, setSelectedRoles] = useState(["All"]);
+
+    const navigate = useNavigate();
 
     const getUsers = async () => {
         setLoading(true);
@@ -62,7 +65,7 @@ function UserVerification() {
                 <TableSkeleton rows={5} cols={3} />
             ) : users && users.length ? (
                 <DataTable
-                    columns={columns(handleRoleFilterChange, selectedRoles)}
+                    columns={columns(handleRoleFilterChange, selectedRoles, navigate)}
                     data={users}
                     columnFilters={columnFilters}
                     setColumnFilters={setColumnFilters}
