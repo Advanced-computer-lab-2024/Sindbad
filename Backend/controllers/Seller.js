@@ -116,6 +116,40 @@ const deleteSeller = async (req, res) => {
 	}
 };
 
+
+const addSellerDocuments = async (req, res) => {
+	const { id } = req.params; // Get advertiser ID from params
+	const files = req.files; // Multer file object
+
+	const updateData = {};
+
+	if (files.idCardImage) {
+		updateData.idCardImage = files.idCardImage[0].buffer; // Get binary data from the first file
+	  }
+	
+	  if (files.taxationRegistryCardImage) {
+		updateData.taxationRegistryCardImage = files.taxationRegistryCardImage[0].buffer;
+	}
+
+	
+	try {
+		// Update the seller document with the new image data
+		const seller = await Seller.findByIdAndUpdate(
+		  id,
+		  { $set: updateData }, // Use $set to only update specified fields
+		  { new: true } // Return the updated document
+		);
+	
+		if (!seller) {
+		  return res.status(404).json({ message: "seller not found!" });
+		}
+	
+		return res.status(200).json(seller);
+	  } catch (error) {
+		return res.status(500).json({ message: "Error updating seller", error });
+	  }
+};
+
 module.exports = {
 	createSeller,
 	getSellerById,
@@ -123,4 +157,5 @@ module.exports = {
 	getAllSellers,
 	deleteSeller,
 	getProductsBySellerId,
+	addSellerDocuments,
 };

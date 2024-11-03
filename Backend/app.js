@@ -1,9 +1,11 @@
+const multer = require('multer');
 const express = require("express");
 const cors = require('cors');
 const mongoose = require("mongoose");
 const passport = require("passport");
 const session = require("express-session");
 require("dotenv").config();
+
 
 const adminRoutes = require("./routes/Admin");
 const siteRoutes = require("./routes/Site");
@@ -19,6 +21,14 @@ const tourismGovernorRoutes = require("./routes/TourismGovernor");
 const productRoutes = require("./routes/Product");
 const sellerRoutes = require("./routes/Seller");
 const complaintRoutes = require("./routes/Complaint");
+const AdvertiserController = require("./controllers/Advertiser");
+const SellerController = require("./controllers/Seller");
+const TourGuideController = require("./controllers/TourGuide");
+
+
+//Set memory preference to be RAM
+const upload = multer({storage: multer.memoryStorage()});
+
 
 const app = express();
 
@@ -84,6 +94,37 @@ app.use("/tourism-governor", tourismGovernorRoutes);
 
 // Complaint routes
 app.use("/complaint", complaintRoutes);
+
+
+//To work with pictures
+app.use(
+  '/advertiser/upload/:id',
+  upload.fields([
+    { name: 'idCardImage', maxCount: 1 },
+    { name: 'taxationRegistryCardImage', maxCount: 1 },
+  ]),
+  AdvertiserController.addAdvertiserDocuments
+);
+
+app.use(
+  '/seller/upload/:id',
+  upload.fields([
+    { name: 'idCardImage', maxCount: 1 },
+    { name: 'taxationRegistryCardImage', maxCount: 1 },
+  ]),
+  SellerController.addSellerDocuments
+);
+
+
+app.use(
+  '/tourGuide/upload/:id',
+  upload.fields([
+    { name: 'idCardImage', maxCount: 1 },
+    { name: 'certificateImage', maxCount: 1 },
+  ]),
+  TourGuideController.addTourGuideDocuments
+);
+
 
 // Fallback route for unknown endpoints
 app.use((req, res, next) => {

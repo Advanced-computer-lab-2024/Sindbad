@@ -7,6 +7,7 @@ const {
 	updateTourGuide,
 	deleteTourGuide,
 	deletePreviousWork,
+	addTourGuideDocuments,
 } = require("../controllers/TourGuide");
 
 router
@@ -22,5 +23,7 @@ router
 router
 	.route("/:id/previous-work/:previousWorkId")
 	.delete(deletePreviousWork);
+
+router.route("/upload/:id").put(addTourGuideDocuments);
 
 module.exports = router;

@@ -27,11 +27,13 @@ const TourGuideSchema = new mongoose.Schema(
 			type: String,
 			required: true,
 		},
-		idCardImageUri: {
-			type: String,
+		idCardImage: {
+			type: Buffer,
+			default:null,
 		},
-		certificateImageUri: {
-			type: String,
+		certificateImage: {
+			type: Buffer,
+			default:null,
 		},
 		profileImageUri: {
 			type: String,
