@@ -8,6 +8,8 @@ function UserVerification() {
     const [users, setUsers] = useState([]);
     const [error, setError] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [columnFilters, setColumnFilters] = useState([]);
+    const [selectedRoles, setSelectedRoles] = useState(["All"]);
 
     const getUsers = async () => {
         setLoading(true);
@@ -26,8 +28,29 @@ function UserVerification() {
     }, []);
 
     useEffect(() => {
-        console.log(users);
-    }, [users]);
+        setColumnFilters(
+            selectedRoles.length
+                ? [{ id: "role", value: selectedRoles }]
+                : []
+        );
+    }, [selectedRoles]);
+
+    const handleRoleFilterChange = (role) => {
+        setSelectedRoles((prev) => {
+            if (role === "All") {
+                // Select only "All" and clear any other selected roles
+                return prev.includes("All") ? [] : ["All"];
+            } else {
+                // If a specific role is selected, deselect "All"
+                const updatedRoles = prev.includes(role)
+                    ? prev.filter((r) => r !== role) // Remove the role if it's already selected
+                    : [...prev.filter((r) => r !== "All"), role]; // Add role and ensure "All" is deselected
+
+                // If no specific roles remain selected, fall back to "All"
+                return updatedRoles.length ? updatedRoles : ["All"];
+            }
+        });
+    };
 
     return (
         <>
@@ -37,10 +60,15 @@ function UserVerification() {
             </div>
             {loading ? (
                 <TableSkeleton rows={5} cols={3} />
-            ) : users ? ( // Check if data
-                <DataTable columns={columns()} data={users} />
+            ) : users && users.length ? (
+                <DataTable
+                    columns={columns(handleRoleFilterChange, selectedRoles)}
+                    data={users}
+                    columnFilters={columnFilters}
+                    setColumnFilters={setColumnFilters}
+                />
             ) : (
-                <div>Unable to get users.</div>
+                <div>No users found.</div>
             )}
         </>
     );
