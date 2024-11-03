@@ -80,6 +80,10 @@ const activitySchema = mongoose.Schema(
 			type: String,
 			default: "",
 		},
+		isInappropriate: {
+			type: Boolean,
+			default: false,
+		},
 	},
 	{ timestamps: true }
 );
