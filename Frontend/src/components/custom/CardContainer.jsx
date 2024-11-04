@@ -1,15 +1,15 @@
 import Card from "./Card";
 import ProductCard from "./ProductCard";
 
-const CardContainer = ({ cardList, cardType, fetchProducts }) => {
+const CardContainer = ({ cardList, cardType, fetchCardData }) => {
 	// Provide a default value
 	return (
 		<div className="grid gap-6 grid-cols-3 w-full auto-rows-max">
 			{cardList.length > 0 ? ( // Check if the array has items
 				cardList.map((item, index) => (
 					<div key={index}>
-						{cardType !== "product" && <Card data={item} cardType={cardType} />}
-						{cardType === "product" && <ProductCard data={item} parent="cardContainer" fetchProducts={fetchProducts} />}
+						{cardType !== "product" && <Card data={item} cardType={cardType} fetchCardData={fetchCardData} />}
+						{cardType === "product" && <ProductCard data={item} fetchCardData={fetchCardData} />}
 					</div>
 				))
 			) : (

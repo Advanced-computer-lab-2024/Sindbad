@@ -9,7 +9,7 @@ import { CirclePlus } from "lucide-react";
 
 import { useUser } from '@/state management/userInfo';
 
-function Timeline({ userData, profileId, id, profileRole, cardData, setCardData }) {
+function Timeline({ userData, profileId, id, profileRole, cardData, fetchCardData }) {
 	const { role } = useUser();
 	return (
 		<div className="flex flex-col gap-6">
@@ -65,7 +65,7 @@ function Timeline({ userData, profileId, id, profileRole, cardData, setCardData 
 								profileId={profileId}
 								role={role}
 								cardType="activity"
-								setData={setCardData}
+								fetchCardData={fetchCardData}
 							/>
 						))}
 
@@ -79,7 +79,7 @@ function Timeline({ userData, profileId, id, profileRole, cardData, setCardData 
 								profileId={profileId}
 								role={role}
 								cardType="itinerary"
-								setData={setCardData}
+								fetchCardData={fetchCardData}
 							/>
 						))}
 
@@ -91,8 +91,7 @@ function Timeline({ userData, profileId, id, profileRole, cardData, setCardData 
 								id={id}
 								profileId={profileId}
 								role={role}
-								parent="profile"
-								setData={setCardData}
+								fetchCardData={fetchCardData}
 							/>
 						))}
 
@@ -105,7 +104,7 @@ function Timeline({ userData, profileId, id, profileRole, cardData, setCardData 
 								profileId={profileId}
 								role={role}
 								cardType="activity"
-								setData={setCardData}
+								fetchCardData={fetchCardData}
 							/>
 						))}
 
@@ -118,7 +117,7 @@ function Timeline({ userData, profileId, id, profileRole, cardData, setCardData 
 								profileId={profileId}
 								role={role}
 								cardType="site"
-								setData={setCardData}
+								fetchCardData={fetchCardData}
 							/>
 						))}
 				</div>

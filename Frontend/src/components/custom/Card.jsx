@@ -12,12 +12,13 @@ import { DropdownMenu, DropdownMenuItem, DropdownMenuContent, DropdownMenuTrigge
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 import { updateItinerary, getMyItineraries } from "@/services/ItineraryApiHandler";
+import { updateActivity, getMyActivities } from "@/services/ActivityApiHandler";
 
 import { ArrowRight, Wallet, EllipsisVertical } from "lucide-react";
 
 import { useUser } from "@/state management/userInfo";
 
-function Card({ data, setData, cardType }) {
+function Card({ data, cardType, fetchCardData }) {
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const [openDialog, setOpenDialog] = useState("");
 	const { toast } = useToast();
@@ -47,13 +48,22 @@ function Card({ data, setData, cardType }) {
 	const toggleItineraryActive = async () => {
 		const updatedItineraries = await updateItinerary(data._id, { isActive: !data.isActive });
 		if (updatedItineraries) {
-			const myItineraries = await getMyItineraries(id);
-			if (myItineraries) {
-				setData(myItineraries);
-				toast({
-					description: `Itinerary ${data.isActive ? "deactivated" : "activated"} successfully`,
-				});
-			}
+			fetchCardData();
+			toast({
+				description: `Itinerary ${data.isActive ? "deactivated" : "activated"} successfully`,
+			});
+		}
+	}
+
+	const toggleInappropriate = async () => {
+		const updatedData = cardType === "itinerary"
+			? await updateItinerary(data._id, { isInappropriate: !data.isInappropriate })
+			: await updateActivity(data._id, { isInappropriate: !data.isInappropriate });
+		if (updatedData) {
+			fetchCardData();
+			toast({
+				description: `This ${cardType} has been ${data.isInappropriate ? "unflagged" : "flagged"} as inappropriate`,
+			});
 		}
 	}
 
@@ -94,6 +104,11 @@ function Card({ data, setData, cardType }) {
 						{cardType === "itinerary" && id === data.creatorId &&
 							<DropdownMenuItem onClick={() => toggleItineraryActive()}>
 								{data.isActive === true ? "Deactivate" : "Activate"}
+							</DropdownMenuItem>
+						}
+						{(cardType === "itinerary" || cardType === "activity") && role === "admin" &&
+							<DropdownMenuItem onClick={() => toggleInappropriate()}>
+								{data.isInappropriate === true ? "Unflag as inappropriate" : "Flag as inappropriate"}
 							</DropdownMenuItem>
 						}
 					</DropdownMenuContent>

@@ -152,13 +152,15 @@ function Itineraries() {
 				<hr className="border-neutral-300 border w-full mt-1.5" />
 			</div>
 			<div className="flex gap-10">
-				<GenericFilter
-					formFields={formFields}
-					activeFilters={activeFilters}
-					setActiveFilters={setActiveFilters}
-				/>
+				<div className="w-[280px] shrink-0">
+					<GenericFilter
+						formFields={formFields}
+						activeFilters={activeFilters}
+						setActiveFilters={setActiveFilters}
+					/>
+				</div>
 				{!loading ? (
-					<CardContainer cardList={itineraries} cardType={"itinerary"} />
+					<CardContainer cardList={itineraries} cardType={"itinerary"} fetchCardData={fetchItineraries} />
 				) : (
 					<div className="flex col-span-3 mx-auto">
 						<div className="flex justify-center w-full">
