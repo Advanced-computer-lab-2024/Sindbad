@@ -118,7 +118,7 @@ function ShoppingPage() {
 				)}
 			</div>
 			<div className="flex gap-10">
-				<div className="flex flex-col gap-7">
+				<div className="flex flex-col gap-7 w-[280px] shrink-0">
 					<GenericFilter
 						formFields={formFields}
 						activeFilters={activeFilters}
@@ -127,7 +127,7 @@ function ShoppingPage() {
 				</div>
 
 				{!loading ? (
-					<CardContainer cardList={products} cardType={"product"} fetchProducts={fetchProducts} />
+					<CardContainer cardList={products} cardType={"product"} fetchCardData={fetchProducts} />
 				) : (
 					<div className="flex col-span-3 mx-auto">
 						<div className="flex justify-center w-full">

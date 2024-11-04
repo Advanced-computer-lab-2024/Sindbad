@@ -11,13 +11,14 @@ import { useToast } from "@/hooks/use-toast";
 import { DropdownMenu, DropdownMenuItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
-import { updateItinerary, getMyItineraries } from "@/services/ItineraryApiHandler";
+import { updateItinerary } from "@/services/ItineraryApiHandler";
+import { updateActivity } from "@/services/ActivityApiHandler";
 
 import { ArrowRight, Wallet, EllipsisVertical } from "lucide-react";
 
 import { useUser } from "@/state management/userInfo";
 
-function Card({ data, setData, cardType }) {
+function Card({ data, cardType, fetchCardData }) {
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const [openDialog, setOpenDialog] = useState("");
 	const { toast } = useToast();
@@ -47,20 +48,32 @@ function Card({ data, setData, cardType }) {
 	const toggleItineraryActive = async () => {
 		const updatedItineraries = await updateItinerary(data._id, { isActive: !data.isActive });
 		if (updatedItineraries) {
-			const myItineraries = await getMyItineraries(id);
-			if (myItineraries) {
-				setData(myItineraries);
-				toast({
-					description: `Itinerary ${data.isActive ? "deactivated" : "activated"} successfully`,
-				});
-			}
+			fetchCardData();
+			toast({
+				description: `Itinerary ${data.isActive ? "deactivated" : "activated"} successfully`,
+			});
+		}
+	}
+
+	const toggleInappropriate = async () => {
+		const updatedData = cardType === "itinerary"
+			? await updateItinerary(data._id, { isInappropriate: !data.isInappropriate })
+			: await updateActivity(data._id, { isInappropriate: !data.isInappropriate });
+		if (updatedData) {
+			fetchCardData();
+			toast({
+				description: `This ${cardType} has been ${data.isInappropriate ? "unflagged" : "flagged"} as inappropriate`,
+			});
 		}
 	}
 
 	return (
-		<article className={`w-full flex h-full flex-col border rounded-md overflow-clip group bg-gradient-to-br from-light 
-			${cardType === "itinerary" && data.isActive === false ?
-				"to-neutral-300/50 border-neutral-300/80" : "to-primary-700/50 border-primary-700/80"}`}
+		<article className={`w-full flex h-full flex-col border rounded-md overflow-clip group bg-gradient-to-br from-light
+			${(cardType === "itinerary" || cardType === "activity") && data.isInappropriate === true ?
+				"to-red-300/30 border-red-300/50"
+				: cardType === "itinerary" && data.isActive === false
+					? "to-neutral-300/50 border-neutral-300/80"
+					: "to-primary-700/50 border-primary-700/80"}`}
 		>
 			<div className="h-[156px] relative shrink-0 bg-neutral-300">
 				{/* card photo is first image in the array */}
@@ -94,6 +107,11 @@ function Card({ data, setData, cardType }) {
 						{cardType === "itinerary" && id === data.creatorId &&
 							<DropdownMenuItem onClick={() => toggleItineraryActive()}>
 								{data.isActive === true ? "Deactivate" : "Activate"}
+							</DropdownMenuItem>
+						}
+						{(cardType === "itinerary" || cardType === "activity") && role === "admin" &&
+							<DropdownMenuItem onClick={() => toggleInappropriate()}>
+								{data.isInappropriate === true ? "Unflag as inappropriate" : "Flag as inappropriate"}
 							</DropdownMenuItem>
 						}
 					</DropdownMenuContent>
@@ -154,7 +172,12 @@ function Card({ data, setData, cardType }) {
 					}
 					{/* navigate to detailed view of itinerary/activity/site */}
 					<Button onClick={() => navigate(`/app/${cardType}/${data._id}`)}
-						className={`mt-2 ${cardType === "itinerary" && data.isActive === false ? "bg-neutral-300" : "bg-primary-700"}`}
+						className={`mt-2
+							${(cardType === "itinerary" || cardType === "activity") && data.isInappropriate === true ?
+								"bg-red-300/70"
+								: cardType === "itinerary" && data.isActive === false
+									? "bg-neutral-300"
+									: "bg-primary-700"}`}
 					>
 						<p className="text-xs">Read more</p>
 						<div className="shrink-0">

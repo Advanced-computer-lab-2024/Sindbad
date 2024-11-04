@@ -136,9 +136,11 @@ function Activities() {
 			console.error("Error fetching categories: ", error);
 		}
 	};
+
 	useEffect(() => {
 		fetchCategories();
 	}, []);
+
 	return (
 		<div className="py-8 px-24 max-w-[1200px] flex flex-col gap-4 mx-auto">
 			<div className="flex items-center gap-6 mb-6">
@@ -146,13 +148,15 @@ function Activities() {
 				<hr className="border-neutral-300 border w-full mt-1.5" />
 			</div>
 			<div className="flex gap-10">
-				<GenericFilter
-					formFields={formFields}
-					activeFilters={activeFilters}
-					setActiveFilters={setActiveFilters}
-				/>
+				<div className="w-[280px] shrink-0">
+					<GenericFilter
+						formFields={formFields}
+						activeFilters={activeFilters}
+						setActiveFilters={setActiveFilters}
+					/>
+				</div>
 				{!loading ? (
-					<CardContainer cardList={activities} cardType={"activity"} />
+					<CardContainer cardList={activities} cardType={"activity"} fetchCardData={fetchActivities} />
 				) : (
 					<div className="flex col-span-3 mx-auto">
 						<div className="flex justify-center w-full">

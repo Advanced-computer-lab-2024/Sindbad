@@ -179,6 +179,7 @@ const updateActivity = async (req, res) => {
 			creatorId,
 			headCount,
 			description,
+			isInappropriate
 		} = req.body;
 
 		const updatedActivity = await Activity.findByIdAndUpdate(
@@ -195,6 +196,7 @@ const updateActivity = async (req, res) => {
 				creatorId,
 				headCount,
 				description,
+				isInappropriate
 			},
 			{ new: true, runValidators: true } // Return the updated document and run validators
 		);

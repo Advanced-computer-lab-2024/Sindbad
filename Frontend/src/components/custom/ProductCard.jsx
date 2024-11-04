@@ -1,5 +1,4 @@
 import { useNavigate } from "react-router-dom";
-import { useParams } from "react-router-dom";
 import { useState } from "react";
 
 import ImagePlaceholder from "@/components/custom/ImagePlaceholder";
@@ -12,19 +11,17 @@ import { DropdownMenu, DropdownMenuItem, DropdownMenuContent, DropdownMenuTrigge
 import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog"
 
 import { updateProduct } from "@/services/ProductApiHandler";
-import { getMyProducts } from "@/services/SellerApiHandler";
 
 import { ArrowRight, Wallet, EllipsisVertical } from 'lucide-react';
 
 import { useUser } from "@/state management/userInfo";
 
-function ProductCard({ data, setData, parent, fetchProducts }) {
+function ProductCard({ data, fetchCardData }) {
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const { toast } = useToast();
 
 	const navigate = useNavigate();
-	const { profileId } = parent === "profile" ? useParams() : { undefined };
 	const { role, id } = useUser();
 
 	// Function to copy the link to clipboard
@@ -49,15 +46,7 @@ function ProductCard({ data, setData, parent, fetchProducts }) {
 	const toggleArchive = async () => {
 		const updatedProducts = await updateProduct(data._id, { isArchived: !data.isArchived });
 		if (updatedProducts) {
-			if (parent === "profile") {
-				const myProducts = await getMyProducts(profileId);
-				if (myProducts) {
-					setData(myProducts);
-				}
-			}
-			else {
-				fetchProducts();
-			}
+			fetchCardData();
 			toast({
 				description: `Product ${data.isArchived ? "unarchived" : "archived"} successfully`,
 			});
