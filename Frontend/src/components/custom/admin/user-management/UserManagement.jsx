@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 
-import TableSkeleton from "../TableSkeleton";
-import { DataTable } from "@/components/custom/user-management/data-table";
-import { columns } from "@/components/custom/user-management/columns";
+import TableSkeleton from "@/components/custom/TableSkeleton";
+import { DataTable } from "./data-table";
+import { columns } from "./columns";
 
 import { getAllUsers, deleteUser } from "@/services/AdminApiHandler";
 
@@ -67,7 +67,7 @@ export default function UserManagement() {
 			)}
 
 			{loading ? (
-				<TableSkeleton rows={5} cols={3} />
+				<TableSkeleton rows={5} cols={4} />
 			) : data ? ( // Check if data
 				<DataTable columns={columns(handleDeleteUser)} data={data} />
 			) : (

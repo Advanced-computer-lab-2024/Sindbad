@@ -6,10 +6,9 @@ import Wallet from "@/components/custom/profile/Wallet";
 import Experience from "@/components/custom/profile/Experience";
 import CompanyProfile from "@/components/custom/profile/CompanyProfile";
 import Timeline from "@/components/custom/profile/Timeline";
-import TagManagement from "@/components/custom/admin/TagManagement";
+import TagManagement from "@/components/custom/admin/tag-management/TagManagement";
 import Verify from "@/components/custom/profile/Verify";
 import Documents from "@/components/custom/profile/Documents";
-
 import { getTouristById } from "@/services/TouristApiHandler";
 import { getTourGuide } from "@/services/TourGuideApiHandler";
 import { getSeller, getMyProducts } from "@/services/SellerApiHandler";

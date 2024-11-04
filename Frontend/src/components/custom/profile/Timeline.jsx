@@ -1,7 +1,7 @@
 import Card from "@/components/custom/Card";
 import ProductCard from "@/components/custom/ProductCard";
 import GenericForm from "../genericForm/genericForm";
-import TagManagement from "../admin/TagManagement";
+import TagManagement from "../admin/tag-management/TagManagement";
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 

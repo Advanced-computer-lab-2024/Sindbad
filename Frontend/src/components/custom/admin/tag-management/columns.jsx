@@ -1,25 +1,30 @@
 import { useState } from "react";
+import { Trash } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-export const columns = (handleDeleteCategory, handleUpdateCategory) => [
+import { useUser } from "@/state management/userInfo";
+
+
+export const columns = (handleDeleteTag, handleUpdateTag) => [
 	{
 		accessorKey: "name",
-		header: "Category",
+		header: "Tag",
 		cell: ({ row }) => {
 			const originalName = row.original.name;
 			const [name, setName] = useState(row.original.name);
 			const isDirty = name !== originalName;
 			const id = row.original._id;
+			const { role } = useUser();
 
 			const handleKeyDown = async (e) => {
 				if (e.key === "Enter") {
 					try {
-						// PUT request to update the category name
-						await handleUpdateCategory(id, name);
+						// PUT request to update the tag name
+						await handleUpdateTag(id, name);
 					} catch (error) {
-						console.error("Error updating category:", error);
+						console.error("Error updating tag:", error);
 					}
 				}
 			};
@@ -31,6 +36,7 @@ export const columns = (handleDeleteCategory, handleUpdateCategory) => [
 					onChange={(e) => setName(e.target.value)}
 					onKeyDown={handleKeyDown}
 					className={isDirty ? "bg-secondary-900 text-dark" : ""}
+					disabled={role !== "admin"}
 				/>
 			);
 		},
@@ -40,18 +46,20 @@ export const columns = (handleDeleteCategory, handleUpdateCategory) => [
 		header: "Actions",
 		cell: ({ row }) => {
 			const id = row.original._id;
-
-			return (
-				<Button
+			const { role } = useUser();
+			return role === "admin" ? (
+				<Button Button
 					variant="ghostDestructive"
 					className="p-3"
 					onClick={() => {
-						handleDeleteCategory(id);
+						handleDeleteTag(id);
 					}}
 				>
-					Delete
-				</Button>
-			);
+					<Trash />
+				</Button >
+			)
+				:
+				null;
 		},
 	},
 ];
