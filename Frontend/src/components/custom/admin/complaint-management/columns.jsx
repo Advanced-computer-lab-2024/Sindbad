@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Trash } from "lucide-react";
 
-export const columns = () => [
+export const columns = (handleStatusFilterChange, selectedFilters) => [
 	{
 		accessorKey: "title",
 		header: "Title",
@@ -26,10 +26,18 @@ export const columns = () => [
 						</Button>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent align="start" className="ml-12">
-						<DropdownMenuCheckboxItem value="true">
+						<DropdownMenuCheckboxItem
+							value="true"
+							checked={selectedFilters.includes("true")}
+							onCheckedChange={() => handleStatusFilterChange("true")}
+						>
 							Resolved
 						</DropdownMenuCheckboxItem>
-						<DropdownMenuCheckboxItem value="false">
+						<DropdownMenuCheckboxItem
+							value="false"
+							checked={selectedFilters.includes("false")}
+							onCheckedChange={() => handleStatusFilterChange("false")}
+						>
 							Pending
 						</DropdownMenuCheckboxItem>
 					</DropdownMenuContent>
@@ -47,16 +55,16 @@ export const columns = () => [
 	{
 		accessorKey: "createdAt",
 		header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Date
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            )
-        },
+			return (
+				<Button
+					variant="ghost"
+					onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+				>
+					Date
+					<ArrowUpDown className="ml-2 h-4 w-4" />
+				</Button>
+			);
+		},
 		cell: ({ row }) => {
 			const date = new Date(row.original.createdAt);
 			const formattedDate = date.toLocaleDateString("en-US", {
