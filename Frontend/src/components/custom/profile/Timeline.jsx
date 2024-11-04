@@ -1,7 +1,7 @@
 import Card from "@/components/custom/Card";
 import ProductCard from "@/components/custom/ProductCard";
 import GenericForm from "../genericForm/genericForm";
-import TagManagement from "../admin/TagManagement";
+import TagManagement from "../admin/tag-management/TagManagement";
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
@@ -9,7 +9,7 @@ import { CirclePlus } from "lucide-react";
 
 import { useUser } from '@/state management/userInfo';
 
-function Timeline({ userData, profileId, id, profileRole, cardData }) {
+function Timeline({ userData, profileId, id, profileRole, cardData, setCardData }) {
 	const { role } = useUser();
 	return (
 		<div className="flex flex-col gap-6">
@@ -65,6 +65,7 @@ function Timeline({ userData, profileId, id, profileRole, cardData }) {
 								profileId={profileId}
 								role={role}
 								cardType="activity"
+								setData={setCardData}
 							/>
 						))}
 
@@ -78,6 +79,7 @@ function Timeline({ userData, profileId, id, profileRole, cardData }) {
 								profileId={profileId}
 								role={role}
 								cardType="itinerary"
+								setData={setCardData}
 							/>
 						))}
 
@@ -89,6 +91,8 @@ function Timeline({ userData, profileId, id, profileRole, cardData }) {
 								id={id}
 								profileId={profileId}
 								role={role}
+								parent="profile"
+								setData={setCardData}
 							/>
 						))}
 
@@ -101,6 +105,7 @@ function Timeline({ userData, profileId, id, profileRole, cardData }) {
 								profileId={profileId}
 								role={role}
 								cardType="activity"
+								setData={setCardData}
 							/>
 						))}
 
@@ -113,6 +118,7 @@ function Timeline({ userData, profileId, id, profileRole, cardData }) {
 								profileId={profileId}
 								role={role}
 								cardType="site"
+								setData={setCardData}
 							/>
 						))}
 				</div>
@@ -128,29 +134,35 @@ function Timeline({ userData, profileId, id, profileRole, cardData }) {
 						<p className="text-neutral-400 text-sm italic">
 							{profileId !== id
 								? "No itineraries to show."
-								: userData.isAccepted !== true
+								: userData.isAccepted === null
 									? "Your account must be approved before you can add itineraries. It is currently being reviewed; please check back later."
-									: "You have not created any itineraries yet. Click the + button to get started!"}
+									: userData.isAccepted === false
+										? "Your account has been rejected. Please contact the administrator for more information."
+										: "You have not created any itineraries yet. Click the + button to get started!"}
 						</p>
 					)}
 
 					{profileRole === "seller" && cardData.length === 0 && (
-							<p className="text-neutral-400 text-sm italic">
-								{profileId !== id
-									? "No products to show."
-									: userData.isAccepted !== true
-										? "Your account must be approved before you can add products. It is currently being reviewed; please check back later."
+						<p className="text-neutral-400 text-sm italic">
+							{profileId !== id
+								? "No products to show."
+								: userData.isAccepted === null
+									? "Your account must be approved before you can add products. It is currently being reviewed; please check back later."
+									: userData.isAccepted === false
+										? "Your account has been rejected. Please contact the administrator for more information."
 										: "You have not added any products yet. Click the + button to get started!"}
-							</p>
-						)}
+						</p>
+					)}
 
 					{profileRole === "advertiser" && cardData.length === 0 && (
 						<p className="text-neutral-400 text-sm italic">
 							{profileId !== id
 								? "No activities to show."
-								: userData.isAccepted !== true
+								: userData.isAccepted === null
 									? "Your account must be approved before you can add activities. It is currently being reviewed; please check back later."
-									: "You have not added any activities yet. Click the + button to get started!"}
+									: userData.isAccepted === false
+										? "Your account has been rejected. Please contact the administrator for more information."
+										: "You have not added any activities yet. Click the + button to get started!"}
 						</p>
 					)}
 

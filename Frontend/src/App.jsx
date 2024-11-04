@@ -14,6 +14,7 @@ import ShoppingPage from "./pages/Products";
 import ProductView from "./pages/ProductView";
 import ComplaintView from "./pages/ComplaintView";
 import AdminManagementView from "./pages/AdminManagementView";
+import AdminVerificationView from "./pages/AdminVerificationView";
 
 import { useUser } from "@/state management/userInfo";
 
@@ -35,6 +36,7 @@ function App() {
 					<Route path="store" element={<ShoppingPage />} />
 					<Route path="product/:productId" element={<ProductView />} />
 					<Route path="management" element={<AdminManagementView />} />
+					<Route path="verification" element={<AdminVerificationView />} />
 					<Route path="itinerary/:itineraryId" element={<Itinerary />} />
 					<Route path="activity/:activityId" element={<Activity />} />
 					<Route path="site/:siteId" element={<Site />} />

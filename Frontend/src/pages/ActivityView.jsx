@@ -22,8 +22,8 @@ function getRandomReviews() {
 }
 
 function handleActivityValues(activity) {
-	if (!activity.rating) {
-		activity.rating = getRandomRating();
+	if (!activity.averageRating) {
+		activity.averageRating = getRandomRating();
 	}
 	if (!activity.reviews) {
 		activity.reviews = getRandomReviews();
@@ -105,7 +105,7 @@ function Activity() {
 		);
 	}
 
-	const fullStars = activity.rating;
+	const fullStars = activity.averageRating;
 	const emptyStar = 5 - fullStars;
 
 	console.log(activity);
@@ -131,7 +131,7 @@ function Activity() {
 
 						{/*Star Section */}
 						<div className="mt-1">
-							<StarRating rating={activity.rating} size={20} />
+							<StarRating rating={activity.averageRating} size={20} />
 						</div>
 					</div>
 

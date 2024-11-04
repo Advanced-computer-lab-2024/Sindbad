@@ -8,7 +8,9 @@ import Wallet from "@/components/custom/profile/Wallet";
 import Experience from "@/components/custom/profile/Experience";
 import CompanyProfile from "@/components/custom/profile/CompanyProfile";
 import Timeline from "@/components/custom/profile/Timeline";
-import TagManagement from "@/components/custom/admin/TagManagement";
+import TagManagement from "@/components/custom/admin/tag-management/TagManagement";
+import Verify from "@/components/custom/profile/Verify";
+import Documents from "@/components/custom/profile/Documents";
 import { getTouristById } from "@/services/TouristApiHandler";
 import { getTourGuide } from "@/services/TourGuideApiHandler";
 import { getSeller, getMyProducts } from "@/services/SellerApiHandler";
@@ -63,6 +65,7 @@ function Profile() {
 		} else {
 			setError(false);
 			setUserData(response);
+			console.log(response);
 		}
 	};
 
@@ -144,7 +147,7 @@ function Profile() {
 		);
 	}
 
-	if (userData && userData.isAccepted === false && profileId !== id) {
+	if (userData && (userData.isAccepted !== true && role !== "admin") && profileId !== id) {
 		return (
 			<div className="py-8 px-24 max-w-[1200px] flex gap-9 mx-auto">
 				<div className="flex justify-center w-full">
@@ -180,6 +183,9 @@ function Profile() {
 										<ArrowRight className="inline-block ml-1" size={12} />
 								</Link>
 						)}
+						{role === "admin" && userData.isAccepted === null &&
+							<Verify profileId={profileId} profileRole={profileRole} getUserInfo={getUserInfo} />
+						}
 					</div>
 				)}
 				<div className="w-full flex flex-col gap-12">
@@ -193,13 +199,19 @@ function Profile() {
 					{profileRole === "tourGuide" && (
 						<Experience userData={userData} profileId={profileId} id={id} />
 					)}
-					<Timeline
-						userData={userData}
-						profileId={profileId}
-						id={id}
-						profileRole={profileRole}
-						cardData={cardData}
-					/>
+					{(role === "admin" || (id === profileId && userData.isAccepted !== true && userData.isAccepted !== undefined)) &&
+						<Documents userData={userData} />
+					}
+					{!(userData.isAccepted === null && role === "admin") &&
+						<Timeline
+							userData={userData}
+							profileId={profileId}
+							id={id}
+							profileRole={profileRole}
+							cardData={cardData}
+							setCardData={setCardData}
+						/>
+					}
 				</div>
 			</div>
 			{profileRole === "tourismGovernor" && profileId === id && (

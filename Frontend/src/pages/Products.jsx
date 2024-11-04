@@ -127,7 +127,7 @@ function ShoppingPage() {
 				</div>
 
 				{!loading ? (
-					<CardContainer cardList={products} cardType={"product"} />
+					<CardContainer cardList={products} cardType={"product"} fetchProducts={fetchProducts} />
 				) : (
 					<div className="flex col-span-3 mx-auto">
 						<div className="flex justify-center w-full">

@@ -179,6 +179,9 @@ const getAllItineraries = async (req, res) => {
 		const filter = {
 			// Uncomment if needed to filter for upcoming available date times
 			// availableDateTimes: { $elemMatch: { $gte: new Date() } },
+			// Default filter for inappropriate itineraries and active itineraries
+			isInappropriate: false,
+			isActive: true,
 		};
 
 		// Budget filter
@@ -205,7 +208,9 @@ const getAllItineraries = async (req, res) => {
 				$elemMatch: {
 					...(date.start && { $gte: new Date(date.start) }),
 					...(date.end && {
-						$lte: new Date(new Date(date.end).setHours(23, 59, 59, 999)), // End of the day
+						$lte: new Date(
+							new Date(date.end).setHours(23, 59, 59, 999)
+						), // End of the day
 					}),
 				},
 			};
@@ -305,9 +310,9 @@ const addRating = async (req, res) => {
 
 		// Validate rating value
 		if (!rating || rating < 1 || rating > 5) {
-			return res
-				.status(400)
-				.json({ message: "Invalid rating value. Must be between 1 and 5." });
+			return res.status(400).json({
+				message: "Invalid rating value. Must be between 1 and 5.",
+			});
 		}
 
 		const itinerary = await Itinerary.findById(itineraryId);

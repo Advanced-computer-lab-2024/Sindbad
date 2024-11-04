@@ -1,19 +1,44 @@
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useState } from "react";
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
+import {
+	flexRender,
+	getCoreRowModel,
+	getPaginationRowModel,
+	useReactTable,
+	getSortedRowModel,
+	getFilteredRowModel,
+} from "@tanstack/react-table";
 
 import { ArrowRight, ArrowLeft } from "lucide-react";
 
 export function DataTable({ columns, data }) {
+	const [sorting, setSorting] = useState([]);
+	const [columnFilters, setColumnFilters] = useState({});
 	const table = useReactTable({
 		data,
 		columns,
 		getCoreRowModel: getCoreRowModel(),
 		getPaginationRowModel: getPaginationRowModel(),
+		onSortingChange: setSorting,
+		getSortedRowModel: getSortedRowModel(),
+		onColumnFiltersChange: setColumnFilters,
+		getFilteredRowModel: getFilteredRowModel(),
+		state: {
+			sorting,
+			columnFilters,
+		},
 	});
 
 	return (
-		<div className="rounded-md border">
+		<div className="rounded-l-md border h-full">
 			<Table>
 				<TableHeader>
 					{table.getHeaderGroups().map((headerGroup) => (
@@ -24,9 +49,9 @@ export function DataTable({ columns, data }) {
 										{header.isPlaceholder
 											? null
 											: flexRender(
-												header.column.columnDef.header,
-												header.getContext()
-											)}
+													header.column.columnDef.header,
+													header.getContext()
+											  )}
 									</TableHead>
 								);
 							})}
@@ -39,6 +64,7 @@ export function DataTable({ columns, data }) {
 							<TableRow
 								key={row.id}
 								data-state={row.getIsSelected() && "selected"}
+								className="group/row"
 							>
 								{row.getVisibleCells().map((cell) => (
 									<TableCell key={cell.id}>
