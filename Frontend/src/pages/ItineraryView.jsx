@@ -111,16 +111,18 @@ const Itinerary = () => {
 	const fullStars = itinerary.rating;
 	const emptyStar = 5 - fullStars;
 
-	const dates = itinerary.availableDatesTimes.map((date) => {
-		const d = new Date(date);
+	const dates = itinerary.availableDatesTimes.map((entry) => {
+		const d = new Date(entry.dateTime);
+		console.log(entry);
+		console.log(entry.dateTime);
 		const weekday = d.toLocaleString("en-US", { weekday: "short" });
 		const day = d.toLocaleString("en-US", { day: "numeric" });
 		const month = d.toLocaleString("en-US", { month: "short" });
 		return `${weekday} ${day} ${month}`;
 	});
 
-	const times = itinerary.availableDatesTimes.map((date) => {
-		const d = new Date(date);
+	const times = itinerary.availableDatesTimes.map((entry) => {
+		const d = new Date(entry.dateTime);
 		return d.toLocaleString("en-US", {
 			hour: "numeric",
 			minute: "numeric",
@@ -268,152 +270,160 @@ const Itinerary = () => {
 						))}
 					</ul>
 				</div>
-
 				<div className="col-span-3">
 					<h2 className="text-2xl font-semibold mb-4">Search Availability</h2>
-					<Carousel>
-						<CarouselContent className="px-0.5 -ml-4 mr-3">
-							{dates.map((date, idx) => (
-								<CarouselItem className="basis-1/3 py-0.5 pl-4">
-									<button
-										key={idx}
-										onClick={() => { setSelectedDate(idx); setSelectedTime(idx) }}
-										className={`border py-2 px-3 min-h-20 w-24 rounded-md bg-gradient-to-br from-primary-700/80 to-primary-900/80 text-center ${selectedDate === idx
-											? "ring-secondary ring-2"
-											: "ring-transparent"
-											}`}
-									>
-										<div className="flex flex-col">
-											{/* Weekday */}
-											<span className="text-sm">
-												{date.split(" ")[0]}
-											</span>
-											{/* Day */}
-											<span className="text-lg font-bold">
-												{date.split(" ")[1]}
-											</span>
-											{/* Month */}
-											<span className="text-sm">
-												{date.split(" ")[2]}
-											</span>{" "}
+					{itinerary.isActive === true &&
+						<>
+							<Carousel>
+								<CarouselContent className="px-0.5 -ml-4 mr-3">
+									{dates.map((date, idx) => (
+										<CarouselItem className="basis-1/3 py-0.5 pl-4">
+											<button
+												key={idx}
+												onClick={() => { setSelectedDate(idx); setSelectedTime(idx) }}
+												className={`border py-2 px-3 min-h-20 w-24 rounded-md bg-gradient-to-br from-primary-700/80 to-primary-900/80 text-center ${selectedDate === idx
+													? "ring-secondary ring-2"
+													: "ring-transparent"
+													}`}
+											>
+												<div className="flex flex-col">
+													{/* Weekday */}
+													<span className="text-sm">
+														{date.split(" ")[0]}
+													</span>
+													{/* Day */}
+													<span className="text-lg font-bold">
+														{date.split(" ")[1]}
+													</span>
+													{/* Month */}
+													<span className="text-sm">
+														{date.split(" ")[2]}
+													</span>{" "}
+												</div>
+												<hr className="border-primary-900 border-1 w-full my-1.5" />
+												<p className="text-xs">{times[idx]}</p>
+											</button>
+										</CarouselItem>
+									))}
+								</CarouselContent>
+								<CarouselPrevious className="-left-5" />
+								<CarouselNext />
+							</Carousel>
+
+							<div className="relative p-6 bg-gradient-to-b from-neutral-200/60 to-light rounded-md mt-4 overflow-clip">
+								{/* border */}
+								<div className="absolute top-0 left-0 rounded-md border border-neutral-500 h-full w-full"></div>
+								{/* Top cutout */}
+								<div className="absolute top-[248px] -left-5 -right-5 flex justify-between">
+									<div className="w-[36px] h-6 bg-light rounded-t-full border-t border-r border-neutral-500"></div>
+									<div className="w-[36px] h-6 bg-light rounded-t-full border-t border-l border-neutral-500"></div>
+								</div>
+								<div className="absolute top-[270px] -left-5 -right-5 flex justify-between">
+									<div className="w-[36px] h-3 bg-light rounded-b-full border-b border-r border-neutral-500"></div>
+									<div className="w-[36px] h-3 bg-light rounded-b-full border-b border-l border-neutral-500"></div>
+								</div>
+
+								<div className="space-y-4 my-5">
+									<div className="flex items-center justify-around">
+										<div className="flex gap-2 items-center">
+											<p className="text-base font-semibold">Adult</p>
+											<span className="text-neutral-500 text-xs mt-1 font-medium">(18+)</span>
 										</div>
-										<hr className="border-primary-900 border-1 w-full my-1.5" />
-										<p className="text-xs">{times[idx]}</p>
-									</button>
-								</CarouselItem>
-							))}
-						</CarouselContent>
-						<CarouselPrevious className="-left-5" />
-						<CarouselNext />
-					</Carousel>
+										<div className="flex items-center justify-center gap-4 ">
+											{/* Decrement Button */}
+											<Button
+												onClick={handleAdultDecrement}
+												className="z-10 flex items-center justify-center text-xl bg-transparent border border-neutral-300 hover:border-secondary w-5"
+												disabled={adult === 0}
+											>
+												-
+											</Button>
 
-					<div className="relative p-6 bg-gradient-to-b from-neutral-200/60 to-light rounded-md mt-4 overflow-clip">
-						{/* border */}
-						<div className="absolute top-0 left-0 rounded-md border border-neutral-500 h-full w-full"></div>
-						{/* Top cutout */}
-						<div className="absolute top-[248px] -left-5 -right-5 flex justify-between">
-							<div className="w-[36px] h-6 bg-light rounded-t-full border-t border-r border-neutral-500"></div>
-							<div className="w-[36px] h-6 bg-light rounded-t-full border-t border-l border-neutral-500"></div>
-						</div>
-						<div className="absolute top-[270px] -left-5 -right-5 flex justify-between">
-							<div className="w-[36px] h-3 bg-light rounded-b-full border-b border-r border-neutral-500"></div>
-							<div className="w-[36px] h-3 bg-light rounded-b-full border-b border-l border-neutral-500"></div>
-						</div>
+											{/* Count Display */}
+											<div className="w-10 flex items-center justify-center text-base">
+												{adult}
+											</div>
 
-						<div className="space-y-4 my-5">
-							<div className="flex items-center justify-around">
-								<div className="flex gap-2 items-center">
-									<p className="text-base font-semibold">Adult</p>
-									<span className="text-neutral-500 text-xs mt-1 font-medium">(18+)</span>
-								</div>
-								<div className="flex items-center justify-center gap-4 ">
-									{/* Decrement Button */}
-									<Button
-										onClick={handleAdultDecrement}
-										className="z-10 flex items-center justify-center text-xl bg-transparent border border-neutral-300 hover:border-secondary w-5"
-										disabled={adult === 0}
-									>
-										-
-									</Button>
-
-									{/* Count Display */}
-									<div className="w-10 flex items-center justify-center text-base">
-										{adult}
+											{/* Increment Button */}
+											<Button
+												onClick={handleAdultIncrement}
+												className="z-10 flex items-center justify-center text-xl bg-transparent border border-neutral-300 hover:border-secondary w-5"
+											>
+												+
+											</Button>
+										</div>
 									</div>
+									<div className="flex items-center justify-around">
+										<div className="flex gap-2 items-center">
+											<p className="text-base font-semibold">Child</p>
+											<span className="text-neutral-500 text-xs mt-1 font-medium">(5-17)</span>
+										</div>
+										<div className="flex items-center justify-center gap-4">
+											{/* Decrement Button */}
+											<Button
+												onClick={handleChildDecrement}
+												className="z-10 flex items-center justify-center text-xl bg-transparent border border-neutral-300 hover:border-secondary w-5"
+												disabled={child === 0}
+											>
+												-
+											</Button>
 
-									{/* Increment Button */}
-									<Button
-										onClick={handleAdultIncrement}
-										className="z-10 flex items-center justify-center text-xl bg-transparent border border-neutral-300 hover:border-secondary w-5"
-									>
-										+
-									</Button>
-								</div>
-							</div>
-							<div className="flex items-center justify-around">
-								<div className="flex gap-2 items-center">
-									<p className="text-base font-semibold">Child</p>
-									<span className="text-neutral-500 text-xs mt-1 font-medium">(5-17)</span>
-								</div>
-								<div className="flex items-center justify-center gap-4">
-									{/* Decrement Button */}
-									<Button
-										onClick={handleChildDecrement}
-										className="z-10 flex items-center justify-center text-xl bg-transparent border border-neutral-300 hover:border-secondary w-5"
-										disabled={child === 0}
-									>
-										-
-									</Button>
+											{/* Count Display */}
+											<div className="w-10 flex items-center justify-center text-base">
+												{child}
+											</div>
 
-									{/* Count Display */}
-									<div className="w-10 flex items-center justify-center text-base">
-										{child}
+											{/* Increment Button */}
+											<Button
+												onClick={handleChildIncrement}
+												className="z-10 flex items-center justify-center text-xl bg-transparent border border-neutral-300 hover:border-secondary w-5"
+											>
+												+
+											</Button>
+										</div>
 									</div>
-
-									{/* Increment Button */}
-									<Button
-										onClick={handleChildIncrement}
-										className="z-10 flex items-center justify-center text-xl bg-transparent border border-neutral-300 hover:border-secondary w-5"
-									>
-										+
-									</Button>
 								</div>
-							</div>
-						</div>
 
-						{/* Total Cost Section */}
-						<div className="bg-primary-700/40 -mx-6 px-8 py-4 text-sm flex flex-col gap-2">
-							<div className="flex justify-between">
-								<p>
-									Item count:{" "}
-								</p>
-								<p className="font-medium">
-									{adult + child}
-								</p>
-							</div>
-							<div>
-								<div className="flex justify-between">
-									<p>
-										Total:
-									</p>
-									<p className="font-medium">
-										{adult * itinerary.price + child * itinerary.price}{" "}EGP
-									</p>
+								{/* Total Cost Section */}
+								<div className="bg-primary-700/40 -mx-6 px-8 py-4 text-sm flex flex-col gap-2">
+									<div className="flex justify-between">
+										<p>
+											Item count:{" "}
+										</p>
+										<p className="font-medium">
+											{adult + child}
+										</p>
+									</div>
+									<div>
+										<div className="flex justify-between">
+											<p>
+												Total:
+											</p>
+											<p className="font-medium">
+												{adult * itinerary.price + child * itinerary.price}{" "}EGP
+											</p>
+										</div>
+										<p className="text-xs text-neutral-500 italic mt-0.5">
+											*Includes taxes and charges
+										</p>
+									</div>
 								</div>
-								<p className="text-xs text-neutral-500 italic mt-0.5">
-									*Includes taxes and charges
-								</p>
+
+								<div className="border border-neutral-400 border-dashed -mx-6 mt-4 mb-6"></div>
+
+								{/* Book Now Button */}
+								<Button className="text-center w-full py-3 relative">
+									<p>Book itinerary</p>
+									<ArrowRight />
+								</Button>
 							</div>
-						</div>
-
-						<div className="border border-neutral-400 border-dashed -mx-6 mt-4 mb-6"></div>
-
-						{/* Book Now Button */}
-						<Button className="text-center w-full py-3 relative">
-							<p>Book itinerary</p>
-							<ArrowRight />
-						</Button>
-					</div>
+						</>
+					}
+					{itinerary.isActive === false &&
+						<p className="text-neutral-400 text-sm italic">
+							This itinerary has been deactivated. Users with existing bookings may still view it and attend, but new bookings are not allowed.
+						</p>
+					}
 				</div>
 			</div>
 		</div>

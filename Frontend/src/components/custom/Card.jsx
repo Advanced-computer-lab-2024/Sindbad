@@ -11,11 +11,13 @@ import { useToast } from "@/hooks/use-toast";
 import { DropdownMenu, DropdownMenuItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
+import { updateItinerary, getMyItineraries } from "@/services/ItineraryApiHandler";
+
 import { ArrowRight, Wallet, EllipsisVertical } from "lucide-react";
 
 import { useUser } from "@/state management/userInfo";
 
-function Card({ data, cardType }) {
+function Card({ data, setData, cardType }) {
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const [openDialog, setOpenDialog] = useState("");
 	const { toast } = useToast();
@@ -42,8 +44,24 @@ function Card({ data, cardType }) {
 		window.location.href = `mailto:?subject=${subject}&body=${body}`;
 	};
 
+	const toggleItineraryActive = async () => {
+		const updatedItineraries = await updateItinerary(data._id, { isActive: !data.isActive });
+		if (updatedItineraries) {
+			const myItineraries = await getMyItineraries(id);
+			if (myItineraries) {
+				setData(myItineraries);
+				toast({
+					description: `Itinerary ${data.isActive ? "deactivated" : "activated"} successfully`,
+				});
+			}
+		}
+	}
+
 	return (
-		<article className="w-full flex h-full flex-col border border-primary-700/80 rounded-md overflow-clip bg-gradient-to-br from-light to-primary-700/50 group">
+		<article className={`w-full flex h-full flex-col border rounded-md overflow-clip group bg-gradient-to-br from-light 
+			${cardType === "itinerary" && data.isActive === false ?
+				"to-neutral-300/50 border-neutral-300/80" : "to-primary-700/50 border-primary-700/80"}`}
+		>
 			<div className="h-[156px] relative shrink-0 bg-neutral-300">
 				{/* card photo is first image in the array */}
 				{data.imageUris && data.imageUris.length !== 0 ? (
@@ -72,6 +90,11 @@ function Card({ data, cardType }) {
 								<DropdownMenuItem onClick={() => setOpenDialog("edit")}>Edit</DropdownMenuItem>
 								<DropdownMenuItem onClick={() => setOpenDialog("delete")}>Delete</DropdownMenuItem>
 							</>
+						}
+						{cardType === "itinerary" && id === data.creatorId &&
+							<DropdownMenuItem onClick={() => toggleItineraryActive()}>
+								{data.isActive === true ? "Deactivate" : "Activate"}
+							</DropdownMenuItem>
 						}
 					</DropdownMenuContent>
 				</DropdownMenu>
@@ -130,7 +153,9 @@ function Card({ data, cardType }) {
 						</div>
 					}
 					{/* navigate to detailed view of itinerary/activity/site */}
-					<Button onClick={() => navigate(`/app/${cardType}/${data._id}`)} className="mt-2">
+					<Button onClick={() => navigate(`/app/${cardType}/${data._id}`)}
+						className={`mt-2 ${cardType === "itinerary" && data.isActive === false ? "bg-neutral-300" : "bg-primary-700"}`}
+					>
 						<p className="text-xs">Read more</p>
 						<div className="shrink-0">
 							<ArrowRight size={13} />

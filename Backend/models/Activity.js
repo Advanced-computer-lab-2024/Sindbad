@@ -36,6 +36,10 @@ const activitySchema = mongoose.Schema({
 			message:
 				"Price must be either a non-negative number (fixed price) or a valid price range (object with min and max).",
 		},
+		isInappropriate: {
+			type: Boolean,
+			default: false,
+		},
 	},
 	category: {
 		type: mongoose.Schema.Types.ObjectId,

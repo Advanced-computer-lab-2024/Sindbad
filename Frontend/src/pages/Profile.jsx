@@ -191,6 +191,7 @@ function Profile() {
 							id={id}
 							profileRole={profileRole}
 							cardData={cardData}
+							setCardData={setCardData}
 						/>
 					}
 				</div>

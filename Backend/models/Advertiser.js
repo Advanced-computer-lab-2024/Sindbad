@@ -27,11 +27,13 @@ const AdvertiserSchema = new mongoose.Schema(
 			type: String,
 			required: true,
 		},
-		idCardImageUri: {
-			type: String,
+		idCardImage: {
+			type: Buffer,
+			default:null,
 		},
-		taxationRegistryCardImageUri: {
-			type: String,
+		taxationRegistryCardImage: {
+			type: Buffer,
+			default:null,
 		},
 		logoImageUri: {
 			type: String,

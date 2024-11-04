@@ -184,10 +184,46 @@ const deletePreviousWork = async (req, res) => {
 	}
 };
 
+
+const addTourGuideDocuments = async (req, res) => {
+	const { id } = req.params; // Get tourguide ID from params
+	const files = req.files; // Multer file object
+
+	const updateData = {};
+
+	if (files.idCardImage) {
+		updateData.idCardImage = files.idCardImage[0].buffer; // Get binary data from the first file
+	  }
+	
+	  if (files.certificateImage) {
+		updateData.certificateImage = files.certificateImage[0].buffer;
+	}
+
+	
+	try {
+		// Update the tourguide document with the new image data
+		const tourguide = await TourGuide.findByIdAndUpdate(
+		  id,
+		  { $set: updateData }, // Use $set to only update specified fields
+		  { new: true } // Return the updated document
+		);
+	
+		if (!tourguide) {
+		  return res.status(404).json({ message: "tourguide not found!" });
+		}
+	
+		return res.status(200).json(tourguide);
+	  } catch (error) {
+		return res.status(500).json({ message: "Error updating tourguide", error });
+	  }
+};
+
+
 module.exports = {
 	getAllTourGuides,
 	getTourGuide,
 	updateTourGuide,
 	deleteTourGuide,
 	deletePreviousWork,
+	addTourGuideDocuments,
 };
