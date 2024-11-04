@@ -1,9 +1,8 @@
 import Card from "@/components/custom/Card";
 import ProductCard from "@/components/custom/ProductCard";
 import GenericForm from "../genericForm/genericForm";
-import TagManagement from "../admin/tag-management/TagManagement";
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "@/components/ui/dialog";
 
 import { CirclePlus } from "lucide-react";
 

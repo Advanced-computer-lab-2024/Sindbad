@@ -9,14 +9,14 @@ const activitySchema = mongoose.Schema({
 		type: Date,
 		required: [true, "Please add the date of the activity"],
 	},
-	location: 
-		{
-			address: { type: String, required: true },
-			coordinates: {
-				lat: { type: Number, required: true },
-				lng: { type: Number, required: true },
-			},
+	location:
+	{
+		address: { type: String, required: true },
+		coordinates: {
+			lat: { type: Number, required: true },
+			lng: { type: Number, required: true },
 		},
+	},
 	price: {
 		type: mongoose.Schema.Types.Mixed,
 		required: [true, "Please add the price of the activity"],
@@ -36,10 +36,10 @@ const activitySchema = mongoose.Schema({
 			message:
 				"Price must be either a non-negative number (fixed price) or a valid price range (object with min and max).",
 		},
-		isInappropriate: {
-			type: Boolean,
-			default: false,
-		},
+	},
+	isInappropriate: {
+		type: Boolean,
+		default: false,
 	},
 	category: {
 		type: mongoose.Schema.Types.ObjectId,
@@ -77,17 +77,17 @@ const activitySchema = mongoose.Schema({
 		type: Map,
 		of: Number,
 		default: {
-		  "1": 0,
-		  "2": 0,
-		  "3": 0,
-		  "4": 0,
-		  "5": 0
+			"1": 0,
+			"2": 0,
+			"3": 0,
+			"4": 0,
+			"5": 0
 		}
-	  },
+	},
 	averageRating: {
 		type: Number,
 		default: 0,
-	},  
+	},
 	description: {
 		type: String,
 		default: "",

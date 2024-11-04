@@ -11,8 +11,8 @@ import { useToast } from "@/hooks/use-toast";
 import { DropdownMenu, DropdownMenuItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
-import { updateItinerary, getMyItineraries } from "@/services/ItineraryApiHandler";
-import { updateActivity, getMyActivities } from "@/services/ActivityApiHandler";
+import { updateItinerary } from "@/services/ItineraryApiHandler";
+import { updateActivity } from "@/services/ActivityApiHandler";
 
 import { ArrowRight, Wallet, EllipsisVertical } from "lucide-react";
 
@@ -68,9 +68,12 @@ function Card({ data, cardType, fetchCardData }) {
 	}
 
 	return (
-		<article className={`w-full flex h-full flex-col border rounded-md overflow-clip group bg-gradient-to-br from-light 
-			${cardType === "itinerary" && data.isActive === false ?
-				"to-neutral-300/50 border-neutral-300/80" : "to-primary-700/50 border-primary-700/80"}`}
+		<article className={`w-full flex h-full flex-col border rounded-md overflow-clip group bg-gradient-to-br from-light
+			${(cardType === "itinerary" || cardType === "activity") && data.isInappropriate === true ?
+				"to-red-300/30 border-red-300/50"
+				: cardType === "itinerary" && data.isActive === false
+					? "to-neutral-300/50 border-neutral-300/80"
+					: "to-primary-700/50 border-primary-700/80"}`}
 		>
 			<div className="h-[156px] relative shrink-0 bg-neutral-300">
 				{/* card photo is first image in the array */}
@@ -169,7 +172,12 @@ function Card({ data, cardType, fetchCardData }) {
 					}
 					{/* navigate to detailed view of itinerary/activity/site */}
 					<Button onClick={() => navigate(`/app/${cardType}/${data._id}`)}
-						className={`mt-2 ${cardType === "itinerary" && data.isActive === false ? "bg-neutral-300" : "bg-primary-700"}`}
+						className={`mt-2
+							${(cardType === "itinerary" || cardType === "activity") && data.isInappropriate === true ?
+								"bg-red-300/70"
+								: cardType === "itinerary" && data.isActive === false
+									? "bg-neutral-300"
+									: "bg-primary-700"}`}
 					>
 						<p className="text-xs">Read more</p>
 						<div className="shrink-0">
