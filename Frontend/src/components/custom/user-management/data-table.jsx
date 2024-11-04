@@ -1,15 +1,25 @@
+import { useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
-
+import { flexRender, getCoreRowModel, getPaginationRowModel, useReactTable, getSortedRowModel, getFilteredRowModel } from "@tanstack/react-table";
 import { ArrowRight, ArrowLeft } from "lucide-react";
 
-export function DataTable({ columns, data }) {
+export function DataTable({ columns, data, columnFilters, setColumnFilters }) {
+	const [sorting, setSorting] = useState([]);
+
 	const table = useReactTable({
 		data,
 		columns,
 		getCoreRowModel: getCoreRowModel(),
 		getPaginationRowModel: getPaginationRowModel(),
+		onSortingChange: setSorting,
+		getSortedRowModel: getSortedRowModel(),
+		onColumnFiltersChange: setColumnFilters,
+		getFilteredRowModel: getFilteredRowModel(),
+		state: {
+			sorting,
+			columnFilters,
+		},
 	});
 
 	return (
