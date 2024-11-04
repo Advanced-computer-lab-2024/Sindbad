@@ -91,6 +91,8 @@ function Timeline({ userData, profileId, id, profileRole, cardData, setCardData 
 								id={id}
 								profileId={profileId}
 								role={role}
+								parent="profile"
+								setData={setCardData}
 							/>
 						))}
 
