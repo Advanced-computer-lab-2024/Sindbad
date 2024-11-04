@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
 	Table,
 	TableBody,
@@ -12,18 +13,28 @@ import {
 	getCoreRowModel,
 	getPaginationRowModel,
 	useReactTable,
+	getSortedRowModel,
+	getFilteredRowModel,
 } from "@tanstack/react-table";
 
 import { ArrowRight, ArrowLeft } from "lucide-react";
 
 export function DataTable({ columns, data }) {
-	console.log("columns", columns);
-	console.log("data", data);	
+	const [sorting, setSorting] = useState([]);
+	const [columnFilters, setColumnFilters] = useState({});
 	const table = useReactTable({
 		data,
 		columns,
 		getCoreRowModel: getCoreRowModel(),
 		getPaginationRowModel: getPaginationRowModel(),
+		onSortingChange: setSorting,
+		getSortedRowModel: getSortedRowModel(),
+		onColumnFiltersChange: setColumnFilters,
+		getFilteredRowModel: getFilteredRowModel(),
+		state: {
+			sorting,
+			columnFilters,
+		},
 	});
 
 	return (
