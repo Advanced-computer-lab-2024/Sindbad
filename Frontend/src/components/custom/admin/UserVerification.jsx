@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import TableSkeleton from "../TableSkeleton";
-import { DataTable } from "@/components/custom/user-management/data-table";
+import { DataTable } from "./user-management/data-table";
 import { getPendingUsers } from "@/services/UserApiHandler";
-import { columns } from "@/components/custom/user-management/columns-verification";
+import { columns } from "./user-management/columns-verification";
 
 function UserVerification() {
     const [users, setUsers] = useState([]);
