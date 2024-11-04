@@ -21,7 +21,7 @@ export const getAllActivities = async (searchTerm, budget, date, category, ratin
 		}
 
 		if (rating) {
-			params.averageRating = rating; // Again, you can send both min and max or customize as needed
+			params.rating = rating; // Again, you can send both min and max or customize as needed
 		}
 
 		if (sortBy) params.sortBy = sortBy;
