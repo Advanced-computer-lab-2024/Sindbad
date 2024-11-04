@@ -8,6 +8,7 @@ import CompanyProfile from "@/components/custom/profile/CompanyProfile";
 import Timeline from "@/components/custom/profile/Timeline";
 import TagManagement from "@/components/custom/admin/TagManagement";
 import Verify from "@/components/custom/profile/Verify";
+import Documents from "@/components/custom/profile/Documents";
 
 import { getTouristById } from "@/services/TouristApiHandler";
 import { getTourGuide } from "@/services/TourGuideApiHandler";
@@ -61,6 +62,7 @@ function Profile() {
 		} else {
 			setError(false);
 			setUserData(response);
+			console.log(response);
 		}
 	};
 
@@ -184,6 +186,9 @@ function Profile() {
 					{profileRole === "tourGuide" && (
 						<Experience userData={userData} profileId={profileId} id={id} />
 					)}
+					{(role === "admin" || (id === profileId && userData.isAccepted !== true && userData.isAccepted !== undefined)) &&
+						<Documents userData={userData} />
+					}
 					{!(userData.isAccepted === null && role === "admin") &&
 						<Timeline
 							userData={userData}

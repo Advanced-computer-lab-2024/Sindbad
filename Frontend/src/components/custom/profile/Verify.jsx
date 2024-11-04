@@ -42,7 +42,7 @@ function Verify({ profileId, profileRole, getUserInfo }) {
             <div className="w-full flex flex-col gap-4">
                 <div className="flex flex-col w-full items-center gap-3">
                     <div>
-                        <h4 className="text-center font-medium text-base text-dark mb-1.5">
+                        <h4 className="text-center font-medium text-sm text-dark mb-1.5">
                             Verify this user as {profileRole === "advertiser" ? "an advertiser" : "a " + camelCaseToEnglish(profileRole)}?
                         </h4>
                     </div>
