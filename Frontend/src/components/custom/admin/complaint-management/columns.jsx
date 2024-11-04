@@ -18,4 +18,19 @@ export const columns = () => [
 			);
 		},
 	},
+	{
+		accessorKey: "createdAt",
+		header: "Date",
+		cell: ({ row }) => {
+			const date = new Date(row.original.createdAt);
+			const formattedDate = date.toLocaleDateString("en-US", {
+				year: "numeric",
+				month: "numeric",
+				day: "numeric",
+				hour: "2-digit",
+				minute: "2-digit",
+			});
+			return <span>{formattedDate}</span>;
+		},
+	},
 ];

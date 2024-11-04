@@ -1,10 +1,29 @@
 import { useState, useEffect } from "react";
 
 import TableSkeleton from "@/components/custom/TableSkeleton";
+import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { DataTable } from "./data-table";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { columns } from "./columns";
 
 import { getAllComplaints } from "@/services/ComplaintApiHandler";
+
+function IsResolvedCheckbox(){
+    return (
+			<div className="flex items-center space-x-2">
+				<Checkbox id="isResolved" />
+				<label
+					htmlFor="isResolved"
+					className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+				>
+					Resolved
+				</label>
+			</div>
+		);
+}
 
 export default function UserManagement() {
 	// State management for data, loading, and message
@@ -45,8 +64,8 @@ export default function UserManagement() {
 				<hr className="border-neutral-300 border w-full mt-1.5" />
 			</div>
 
-			<div className="flex items-center">
-				<div className="basis-1/2">
+			<div className="flex h-3/4 items-stretch">
+				<div className="basis-1/2 h-full">
 					{loading ? (
 						<TableSkeleton rows={5} cols={4} />
 					) : data ? ( // Check if data
@@ -55,11 +74,29 @@ export default function UserManagement() {
 						<div>Unable to get users.</div>
 					)}
 				</div>
-				<div className="flex flex-col h-full bg-zinc-300 p-3 justify-center basis-1/2">
-                    <h1>Title</h1>
-                    <h3>User</h3>
-                    <p>Body</p>
-                </div>
+				<ScrollArea className="max-h-full basis-1/2">
+					<div className="flex flex-col bg-background rounded-r-md gap-2 p-3 justify-center">
+							<h1 className="text-xl font-bold">Title</h1>
+							<h3 className="text-muted-foreground italic">User</h3>
+							<Separator />
+							<p>
+								Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+								eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+								enim ad minim veniam, quis nostrud exercitation ullamco laboris
+								nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
+								in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+								nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+								sunt in culpa qui officia deserunt mollit anim id est laborum.
+							</p>
+                            <Separator />
+                            <h3 className="font-bold">Response</h3>
+							<Textarea />
+                            <div className="flex gap-32 justify-center">
+							<IsResolvedCheckbox/>
+							<Button>Submit</Button>
+                            </div>
+					</div>
+				</ScrollArea>
 			</div>
 		</>
 	);
