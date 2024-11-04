@@ -10,6 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
 
+
+
 function ComplaintView(){
     
     const [formValues, setFormValues] = useState({});
@@ -45,15 +47,15 @@ function ComplaintView(){
     };
 
     const submitForm = async (values) => {
-        setLoading(true);
-        const response = await userSignUp(values, registerType);
-        setLoading(false);
+        // setLoading(true);
+        // const response = submit the form
+        // setLoading(false);
 
-        if (response.error) {
-            setError(response.display);
-        } else {
-            setLogInRedirect(true);
-        }
+        // if (response.error) {
+        //     setError(response.display);
+        // } else {
+        //     // add toast!!!!!!!!!!!!!!!!, thank will be reviewed
+        // }
     }
 
     const renderComplaintforms = () => (
@@ -93,9 +95,6 @@ function ComplaintView(){
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel htmlFor="Body">Description of issue experinced</FormLabel>
-                        <FormControl>
-                            <Input id="Body" {...field} />
-                        </FormControl>
                         <FormMessage />
                     </FormItem>
                 )}
@@ -106,7 +105,7 @@ function ComplaintView(){
     return(
         <div className="w-full min-h-screen flex flex-col">
             <div className="flex flex-col justify-center items-center p-12">
-                    <h1 className="font-semibold text-2xl mb-4">
+                    <h1 className="font-semibold text-3xl mb-8">
                         Thank you for reaching out, What's the issue?
                     </h1>
                     <div className="w-2/5 flex flex-col gap-4">
