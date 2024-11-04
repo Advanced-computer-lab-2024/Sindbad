@@ -19,9 +19,9 @@ import {
 
 import { ArrowRight, ArrowLeft } from "lucide-react";
 
-export function DataTable({ columns, data }) {
+export function DataTable({ columns, data, columnFilters, setColumnFilters }) {
 	const [sorting, setSorting] = useState([]);
-	const [columnFilters, setColumnFilters] = useState({});
+
 	const table = useReactTable({
 		data,
 		columns,
