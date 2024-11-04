@@ -7,6 +7,7 @@ const {
 	addReview,
 	deleteProduct,
 	getMinMaxPrices,
+	addRating,
 } = require("../controllers/Product");
 
 const router = express.Router();
@@ -18,7 +19,8 @@ router
 	.route("/:id")
 	.get(getProductById)
 	.put(updateProduct)
-	.delete(deleteProduct);
+	.delete(deleteProduct)
+	.post(addRating);
 
 router.route("/review/:id").post(addReview);
 

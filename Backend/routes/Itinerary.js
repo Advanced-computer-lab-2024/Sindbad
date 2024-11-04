@@ -7,12 +7,15 @@ const {
 	deleteItinerary,
 	getAllItineraries,
 	getMyItineraries,
+	addComment,
+	addRating,
 } = require("../controllers/Itinerary");
-const { addRating } = require("../controllers/Itinerary");
 
 router.route("/").post(createItinerary).get(getAllItineraries);
 
 router.route("/my-itineraries/:creatorId").get(getMyItineraries);
+
+router.route("/:id/comment").post(addComment);
 
 router
 	.route("/:id")

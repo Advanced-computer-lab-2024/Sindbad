@@ -288,6 +288,41 @@ const getAllItineraries = async (req, res) => {
 	}
 };
 
+
+
+const addComment = async (req, res) => {
+	try {
+		const { id } = req.params;
+		const { userId, comment } = req.body;
+
+		// Validate input
+		if (!userId || !comment) {
+			return res.status(400).json({ message: "User ID and comment are required." });
+		}
+
+		//TODO implement checking if user has booked the itinerary
+
+		// Find the itinerary by ID
+		const itinerary = await Itinerary.findById(id);
+
+		if (!itinerary) {
+			return res.status(405).json({ message: "Itinerary not found" });
+		}
+
+		// Add the comment to the itinerary's comments array
+		itinerary.comments.push({ userId, comment });
+		await itinerary.save();
+
+		res.status(200).json({ message: "Comment added successfully", itinerary });
+	} catch (error) {
+		res.status(500).json({
+			message: "Error adding comment",
+			error: error.message,
+		});
+	}
+};
+
+
 /**
  * @route POST /itinerary/:id/rate
  * @description Add a rating to an itinerary
@@ -301,8 +336,16 @@ const getAllItineraries = async (req, res) => {
 const addRating = async (req, res) => {
 	try {
 		const itineraryId = req.params.id;
-		const { rating } = req.body;
+		const { userId, rating } = req.body;
+		
+		if(!userId || !rating){
+				return res.status(401)
+				.json({message: "userId and rating must be included "})
+		}
 
+		//TODO check if user purchsed/Booked
+
+		
 		// Validate rating value
 		if (!rating || rating < 1 || rating > 5) {
 			return res
@@ -360,4 +403,5 @@ module.exports = {
 	// getSortedItineraries,
 	// filterItineraries,
 	addRating,
+	addComment,
 };

@@ -7,7 +7,11 @@ const {
 	updateTourGuide,
 	deleteTourGuide,
 	deletePreviousWork,
+	addComment,
+	addRating,
 } = require("../controllers/TourGuide");
+
+router.route("/:id/comment").post(addComment);
 
 router
 	.route("/")
@@ -17,7 +21,8 @@ router
 	.route("/:id")
 	.get(getTourGuide)
 	.put(updateTourGuide)
-	.delete(deleteTourGuide);
+	.delete(deleteTourGuide)
+	.post(addRating);
 
 router
 	.route("/:id/previous-work/:previousWorkId")

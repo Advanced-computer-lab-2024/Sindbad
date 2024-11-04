@@ -137,7 +137,12 @@ const addComment = async (req, res) => {
 const addRating = async (req, res) => {
 	try {
 		const { id } = req.params;
-		const { rating } = req.body;
+		const { userId, rating } = req.body;
+		
+		if(!userId || !rating){
+				return res.status(401)
+				.json({message: "userId and rating must be included "})
+		}
 
 		if (rating < 1 || rating > 5) {
 			return res
