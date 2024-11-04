@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 
+
+import { Button } from "@/components/ui/button";
 import ProfileBanner from "@/components/custom/profile/ProfileBanner";
 import Wallet from "@/components/custom/profile/Wallet";
 import Experience from "@/components/custom/profile/Experience";
@@ -16,6 +18,8 @@ import { getMyActivities } from "@/services/ActivityApiHandler";
 import { getMyItineraries } from "@/services/ItineraryApiHandler";
 import { getMySites } from "@/services/SiteApiHandler";
 import { getUserRole } from "@/services/UserApiHandler";
+
+import { ArrowRight } from "lucide-react";
 
 import { useUser } from "@/state management/userInfo";
 
@@ -165,6 +169,16 @@ function Profile() {
 						/>
 						{profileRole === "tourist" && profileId === id && (
 							<Wallet userData={userData} />
+						)}
+						{profileRole === "tourist" && profileId === id && (
+								<Link
+										to={`/app/complaints`}
+										className="text-sm text-center text-neutral-500 hover:text-amber-500 hover:underline p-2"
+									>
+										<span className="text-neutral-400 no-underline">Having any trouble? </span>
+										Let us know.
+										<ArrowRight className="inline-block ml-1" size={12} />
+								</Link>
 						)}
 					</div>
 				)}
