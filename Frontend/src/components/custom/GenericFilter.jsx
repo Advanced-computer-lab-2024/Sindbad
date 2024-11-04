@@ -22,11 +22,11 @@ const GenericFilter = ({ formFields, setActiveFilters, activeFilters }) => {
 		}
 	};
 
-	useEffect(() => {
-		console.log(activeFilters);
-		console.log(formFields);
-	}
-	, [activeFilters]);
+	// useEffect(() => {
+	// 	console.log(activeFilters);
+	// 	console.log(formFields);
+	// }
+	// , [activeFilters]);
 
 	const Select = ({ options, value, onChange }) => {
 		return (

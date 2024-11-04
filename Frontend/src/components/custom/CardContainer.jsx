@@ -1,7 +1,7 @@
 import Card from "./Card";
 import ProductCard from "./ProductCard";
 
-const CardContainer = ({ cardList, cardType }) => {
+const CardContainer = ({ cardList, cardType, fetchProducts }) => {
 	// Provide a default value
 	return (
 		<div className="grid gap-6 grid-cols-3 w-full auto-rows-max">
@@ -9,7 +9,7 @@ const CardContainer = ({ cardList, cardType }) => {
 				cardList.map((item, index) => (
 					<div key={index}>
 						{cardType !== "product" && <Card data={item} cardType={cardType} />}
-						{cardType === "product" && <ProductCard data={item} />}
+						{cardType === "product" && <ProductCard data={item} parent="cardContainer" fetchProducts={fetchProducts} />}
 					</div>
 				))
 			) : (

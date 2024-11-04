@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useState } from "react";
 
 import ImagePlaceholder from "@/components/custom/ImagePlaceholder";
@@ -11,17 +12,19 @@ import { DropdownMenu, DropdownMenuItem, DropdownMenuContent, DropdownMenuTrigge
 import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog"
 
 import { updateProduct } from "@/services/ProductApiHandler";
+import { getMyProducts } from "@/services/SellerApiHandler";
 
 import { ArrowRight, Wallet, EllipsisVertical } from 'lucide-react';
 
 import { useUser } from "@/state management/userInfo";
 
-function ProductCard({ data }) {
+function ProductCard({ data, setData, parent, fetchProducts }) {
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const { toast } = useToast();
 
 	const navigate = useNavigate();
+	const { profileId } = parent === "profile" ? useParams() : { undefined };
 	const { role, id } = useUser();
 
 	// Function to copy the link to clipboard
@@ -46,6 +49,15 @@ function ProductCard({ data }) {
 	const toggleArchive = async () => {
 		const updatedProducts = await updateProduct(data._id, { isArchived: !data.isArchived });
 		if (updatedProducts) {
+			if (parent === "profile") {
+				const myProducts = await getMyProducts(profileId);
+				if (myProducts) {
+					setData(myProducts);
+				}
+			}
+			else {
+				fetchProducts();
+			}
 			toast({
 				description: `Product ${data.isArchived ? "unarchived" : "archived"} successfully`,
 			});
@@ -53,7 +65,9 @@ function ProductCard({ data }) {
 	}
 
 	return (
-		<article className="w-full h-full flex flex-col border border-primary-700/80 rounded-md overflow-clip bg-gradient-to-br from-light to-primary-700/50 group">
+		<article className={`w-full h-full flex flex-col border rounded-md overflow-clip group bg-gradient-to-br from-light
+		${data.isArchived === true ?
+				"to-neutral-300/50 border-neutral-300/80" : "to-primary-700/50 border-primary-700/80"}`}>
 			<div className="h-[156px] relative shrink-0 bg-neutral-300">
 				{/* If picture is available, show it, otherwise show placeholder */}
 				{data.imageUris ? (
@@ -103,7 +117,9 @@ function ProductCard({ data }) {
 							{data.price ? `${data.price}EGP` : "N/A"}
 						</p>
 					</div>
-					<Button onClick={() => navigate(`/app/product/${data._id}`)} className="mt-1">
+					<Button onClick={() => navigate(`/app/product/${data._id}`)}
+						className={`mt-2 ${data.isArchived === true ? "bg-neutral-300" : "bg-primary-700"}`}
+					>
 						<p className="text-xs">Read more</p>
 						<div className="shrink-0">
 							<ArrowRight size={13} />
