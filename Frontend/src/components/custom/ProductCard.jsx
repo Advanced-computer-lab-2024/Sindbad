@@ -10,6 +10,8 @@ import { useToast } from "@/hooks/use-toast";
 import { DropdownMenu, DropdownMenuItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog"
 
+import { updateProduct } from "@/services/ProductApiHandler";
+
 import { ArrowRight, Wallet, EllipsisVertical } from 'lucide-react';
 
 import { useUser } from "@/state management/userInfo";
@@ -41,6 +43,15 @@ function ProductCard({ data }) {
 		window.location.href = `mailto:?subject=${subject}&body=${body}`;
 	};
 
+	const toggleArchive = async () => {
+		const updatedProducts = await updateProduct(data._id, { isArchived: !data.isArchived });
+		if (updatedProducts) {
+			toast({
+				description: `Product ${data.isArchived ? "unarchived" : "archived"} successfully`,
+			});
+		}
+	}
+
 	return (
 		<article className="w-full h-full flex flex-col border border-primary-700/80 rounded-md overflow-clip bg-gradient-to-br from-light to-primary-700/50 group">
 			<div className="h-[156px] relative shrink-0 bg-neutral-300">
@@ -64,7 +75,10 @@ function ProductCard({ data }) {
 						<DropdownMenuItem onClick={handleCopyLink}>Copy link</DropdownMenuItem>
 						<DropdownMenuItem onClick={handleShareEmail}>Share via email</DropdownMenuItem>
 						{((role === "seller" && id === data.seller) || role === "admin") &&
-							<DropdownMenuItem onClick={() => setIsDialogOpen(true)}>Edit</DropdownMenuItem>
+							<>
+								<DropdownMenuItem onClick={() => setIsDialogOpen(true)}>Edit</DropdownMenuItem>
+								<DropdownMenuItem onClick={() => toggleArchive()}>{data.isArchived === true ? "Unarchive" : "Archive"}</DropdownMenuItem>
+							</>
 						}
 					</DropdownMenuContent>
 				</DropdownMenu>
