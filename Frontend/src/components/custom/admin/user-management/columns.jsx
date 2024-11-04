@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Trash } from "lucide-react";
 
 export const columns = (handleDeleteUser) => [
 	{
@@ -15,7 +16,7 @@ export const columns = (handleDeleteUser) => [
 	},
 	{
 		accessorKey: "actions",
-		header: "Actions",
+		header: "",
 		cell: ({ row }) => {
 			const userId = row.original._id;
 			const role = row.original.role;
@@ -23,12 +24,12 @@ export const columns = (handleDeleteUser) => [
 			return (
 				<Button
 					variant="ghostDestructive"
-					className="p-3"
+					className="invisible group-hover/row:visible p-3"
 					onClick={() => {
 						handleDeleteUser(userId, role);
 					}}
 				>
-					Delete
+					<Trash/>
 				</Button>
 			);
 		},

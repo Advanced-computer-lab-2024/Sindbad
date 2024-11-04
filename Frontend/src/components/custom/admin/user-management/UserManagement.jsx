@@ -67,7 +67,7 @@ export default function UserManagement() {
 			)}
 
 			{loading ? (
-				<TableSkeleton rows={5} cols={3} />
+				<TableSkeleton rows={5} cols={4} />
 			) : data ? ( // Check if data
 				<DataTable columns={columns(handleDeleteUser)} data={data} />
 			) : (
