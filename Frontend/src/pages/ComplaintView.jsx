@@ -124,7 +124,7 @@ function ComplaintView(){
             <hr className="border-neutral-300 border w-1/2 mt-1.5 self-center" />
             
             <div className="flex flex-col  justify-center items-center">
-                <h1 className="font-semibold text-2xl mb-4 p-8">
+                <h1 className="font-semibold text-2xl mb-4 p-8 text-s">
                     Past reports
                 </h1>
                 
