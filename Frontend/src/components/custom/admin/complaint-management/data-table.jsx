@@ -19,7 +19,13 @@ import {
 
 import { ArrowRight, ArrowLeft } from "lucide-react";
 
-export function DataTable({ columns, data, columnFilters, setColumnFilters }) {
+export function DataTable({
+	columns,
+	data,
+	columnFilters,
+	setColumnFilters,
+	setSelectedComplaint,
+}) {
 	const [sorting, setSorting] = useState([]);
 
 	const table = useReactTable({
@@ -64,7 +70,8 @@ export function DataTable({ columns, data, columnFilters, setColumnFilters }) {
 							<TableRow
 								key={row.id}
 								data-state={row.getIsSelected() && "selected"}
-								className="group/row"
+								className="group/row cursor-pointer"
+								onClick={() => setSelectedComplaint(row.original)}
 							>
 								{row.getVisibleCells().map((cell) => (
 									<TableCell key={cell.id}>
