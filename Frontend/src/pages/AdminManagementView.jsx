@@ -1,7 +1,7 @@
-import CategoryManagement from "@/components/custom/admin/CategoryManagement";
-import PrivelegeManagement from "@/components/custom/admin/PrivelegeManagement";
-import TagManagement from "@/components/custom/admin/TagManagement";
-import UserManagement from "@/components/custom/admin/UserManagement";
+import CategoryManagement from "@/components/custom/admin/category-management/CategoryManagement";
+import PrivelegeManagement from "@/components/custom/admin/privelege-management/PrivelegeManagement";
+import TagManagement from "@/components/custom/admin/tag-management/TagManagement";
+import UserManagement from "@/components/custom/admin/user-management/UserManagement";
 
 function AdminManagementView() {
 	return (

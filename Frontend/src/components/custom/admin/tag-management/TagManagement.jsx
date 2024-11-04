@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 
-import TableSkeleton from "../TableSkeleton";
-import { DataTable } from "@/components/custom/tag-management/data-table";
-import { columns } from "@/components/custom/tag-management/columns";
+import TableSkeleton from "@/components/custom/TableSkeleton";
+import { DataTable } from "./data-table";
+import { columns } from "./columns";
 
 import { getAllTags, createTag, updateTag, deleteTag } from "@/services/AdminApiHandler";
 

@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 
-import { DataTable } from "@/components/custom/category-management/data-table";
-import { columns } from "@/components/custom/category-management/columns";
-import TableSkeleton from "../TableSkeleton";
+import TableSkeleton from "@/components/custom/TableSkeleton";
+import { DataTable } from "./data-table";
+import { columns } from "./columns";
 
 import { getAllCategories, createCategory, updateCategory, deleteCategory } from "@/services/AdminApiHandler";
 
