@@ -91,12 +91,12 @@ function ProductView() {
 					</div>
 
 					{/* Price */}
-					<p className="text-xl font-semibold mb-4">
+					<p className="text-lg font-semibold mb-1">
 						{product.price} EGP
 					</p>
 
 					{/* Description */}
-					<p className="mb-6">{product.description}</p>
+					<p className="text-sm">{product.description}</p>
 
 					<Button>
 						<p>
