@@ -29,6 +29,8 @@ function SignUp() {
         console.log(value)
     };
 
+    
+
     const commonFormSchema = z.object({
         username: z.string().min(2, {
             message: "Username must be at least 2 characters",
@@ -57,13 +59,25 @@ function SignUp() {
     });
 
     const tourGuideFormSchema = z.object({
-        certificateImage: z.string(),
-        idCardImage: z.string()
+        certificateImage: z
+              .instanceof(FileList)
+              .refine((file) => file?.length == 1, 'File is required.')
+            ,
+        idCardImage: z
+            .instanceof(FileList)
+            .refine((file) => file?.length == 1, 'File is required.')
+        ,
     })
 
     const sellerFormSchema = z.object({
-        idCardImage: z.string(),
-        taxationRegistryCardImage: z.string(),
+        idCardImage: z
+        .instanceof(FileList)
+        .refine((file) => file?.length == 1, 'File is required.')
+    ,
+        taxationRegistryCardImage: z
+        .instanceof(FileList)
+        .refine((file) => file?.length == 1, 'File is required.')
+    ,
     })
 
     const commonDefaultValues = {
@@ -110,6 +124,12 @@ function SignUp() {
         defaultValues: sellerDefaultValues,
     })
 
+    const idCardImageRef = tourGuideForm.register('idCardImage');
+    const certificateImageRef = tourGuideForm.register('certificateImage');
+
+    const taxationRegistryCardImageRef = sellerForm.register('taxationRegistryCardImage');
+    const idCardImageRefSeller = sellerForm.register('idCardImage');
+    
     const handleCommonFormSubmit = (data) => {
         setFormValues((prev) => ({ ...prev, ...data }));  // Store Step 1 data
         setCurrentStep(2);
@@ -120,17 +140,16 @@ function SignUp() {
     };
 
     const submitForm = async (values) => {
-        console.log(values);
-        // setLoading(true);
-        // const response = await userSignUp(values, registerType);
-        // setLoading(false);
+        setLoading(true);
+        const response = await userSignUp(values, registerType);
+        setLoading(false);
 
-        // if (response.error) {
-        //     setCurrentStep(1);
-        //     setError(response.display);
-        // } else {
-        //     setLogInRedirect(true);
-        // }
+        if (response.error) {
+            setCurrentStep(1);
+            setError(response.display);
+        } else {
+            setLogInRedirect(true);
+        }
     }
 
     const renderCommonFields = () => (
@@ -251,7 +270,12 @@ function SignUp() {
                     <FormItem>
                         <FormLabel htmlFor="certificateImage">Certificate Image</FormLabel>
                         <FormControl>
-                            <Input id="certificateImage" type="file" name="certificateImage" {...field} />
+                            <Input id="certificateImage" type="file" name="certificateImage" 
+                            {...certificateImageRef} 
+                            onChange={(event) => {
+                                field.onChange(event.target?.files?.[0] ?? undefined);
+                              }}
+                            />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -265,7 +289,12 @@ function SignUp() {
                     <FormItem>
                         <FormLabel htmlFor="idCardImage">ID Card Image</FormLabel>
                         <FormControl>
-                            <Input id="idCardImage" type="file" name="idCardImage" {...field} />
+                            <Input id="idCardImage" type="file" name="idCardImage"
+                            {...idCardImageRef} 
+                            onChange={(event) => {
+                                field.onChange(event.target?.files?.[0] ?? undefined);
+                              }}
+                            />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -284,7 +313,12 @@ function SignUp() {
                     <FormItem>
                         <FormLabel htmlFor="idCardImage">ID Card Image</FormLabel>
                         <FormControl>
-                            <Input id="idCardImage" type="file" name="idCardImage" {...field} />
+                            <Input id="idCardImage" type="file" name="idCardImage"
+                            {...idCardImageRefSeller}
+                            onChange={(event) => {
+                                field.onChange(event.target?.files?.[0] ?? undefined);
+                              }}
+                            />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -298,7 +332,12 @@ function SignUp() {
                     <FormItem>
                         <FormLabel htmlFor="taxationRegistryCardImage">Taxation Registry Card Image</FormLabel>
                         <FormControl>
-                            <Input id="taxationRegistryCardImage" type="file" name="taxationRegistryCardImage" {...field} />
+                            <Input id="taxationRegistryCardImage" type="file" name="taxationRegistryCardImage"
+                            {...taxationRegistryCardImageRef} 
+                            onChange={(event) => {
+                                field.onChange(event.target?.files?.[0] ?? undefined);
+                              }}
+                            />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
