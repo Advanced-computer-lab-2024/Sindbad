@@ -44,8 +44,10 @@ function ProductCard({ data, fetchCardData }) {
 	};
 
 	const toggleArchive = async () => {
-		const updatedProducts = await updateProduct(data._id, { isArchived: !data.isArchived });
-		if (updatedProducts) {
+		const response = await updateProduct(data._id, { isArchived: !data.isArchived });
+		if (response.error) {
+			console.error(response.message);
+		} else {
 			fetchCardData();
 			toast({
 				description: `Product ${data.isArchived ? "unarchived" : "archived"} successfully`,
