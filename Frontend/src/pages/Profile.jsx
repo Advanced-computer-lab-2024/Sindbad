@@ -175,7 +175,7 @@ function Profile() {
 						)}
 						{profileRole === "tourist" && profileId === id && (
 								<Link
-										to={`/app/complaints`}
+										to={`/app/complaints/${profileId}`}
 										className="text-sm text-center text-neutral-500 hover:text-amber-500 hover:underline p-2"
 									>
 										<span className="text-neutral-400 no-underline">Having any trouble? </span>

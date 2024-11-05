@@ -40,7 +40,7 @@ function App() {
 					<Route path="itinerary/:itineraryId" element={<Itinerary />} />
 					<Route path="activity/:activityId" element={<Activity />} />
 					<Route path="site/:siteId" element={<Site />} />
-					<Route path="complaints" element={<ComplaintView />} />
+					<Route path="complaints/:creatorId" element={<ComplaintView />} />
 				</Route>
 				<Route path="/login" element={<LogIn />} />
 				<Route path="/signup" element={<SignUp />} />

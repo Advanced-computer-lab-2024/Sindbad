@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -8,15 +9,40 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-
+import ComplaintManagement from "@/components/custom/admin/complaint-management/ComplaintManagement";
+import { DataTable } from "@/components/custom/admin/complaint-management/data-table";
+import { columns } from "@/components/custom/admin/complaint-management/columns";
+import { getMyComplaints } from "@/services/ComplaintApiHandler";
+import { useUser } from "@/state management/userInfo";
 
 
 
 function ComplaintView(){
     
+    const { creatorId } = useParams();
     const [formValues, setFormValues] = useState({});
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+
+    const [data, setData] = useState(null);
+
+
+    useEffect(() => {
+		if (creatorId) {
+			getUserInfo(creatorId);
+		}
+	}, [creatorId]);
+
+    useEffect(() => {
+		getTableData(creatorId);
+	}, []);
+
+    const getTableData = async (creatorId)=>{
+        
+        let myComplaints = await getMyComplaints(creatorId);
+
+    }
+    
 
     const complaintFormSchema = z.object({
         title: z.string().min(1, {
@@ -127,7 +153,6 @@ function ComplaintView(){
                 <h1 className="font-semibold text-2xl mb-4 p-8 text-s">
                     Past reports
                 </h1>
-                
             </div>
         </div>
     )
