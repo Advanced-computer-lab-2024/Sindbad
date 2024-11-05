@@ -12,7 +12,7 @@ export const getMyItineraries = async (tourGuideId) => {
 	} catch (error) {
 		return error;
 	}
-};
+}
 
 export const updateItinerary = async (itineraryId, itineraryData) => {
 	try {
@@ -27,7 +27,7 @@ export const updateItinerary = async (itineraryId, itineraryData) => {
 	} catch (error) {
 		return error;
 	}
-};
+}
 
 export const createItinerary = async (itineraryData) => {
 	try {
@@ -39,7 +39,7 @@ export const createItinerary = async (itineraryData) => {
 	} catch (error) {
 		return error;
 	}
-};
+}
 
 export const deleteItinerary = async (itineraryId) => {
 	try {
@@ -53,7 +53,7 @@ export const deleteItinerary = async (itineraryId) => {
 	} catch (error) {
 		return error;
 	}
-};
+}
 
 export const getAllItineraries = async (searchTerm, budget, date, tag, rating, language, sortBy, sortOrder) => {
 	try {
@@ -112,7 +112,7 @@ export const getAllItineraries = async (searchTerm, budget, date, tag, rating, l
 	} catch (error) {
 		return error;
 	}
-};
+}
 
 export const getItineraryById = async (itineraryId) => {
 	try {
@@ -126,4 +126,19 @@ export const getItineraryById = async (itineraryId) => {
 	} catch (error) {
 		return error;
 	}
-};
+}
+
+export const setItineraryInappropriate = async (itineraryId, isInappropriate) => {
+	try {
+		const response = await axiosInstance.patch(
+			`/itinerary/set-inappropriate/${itineraryId}`,
+			isInappropriate,
+			{
+				resourceName: "Itinerary",
+			}
+		)
+		return response.data;
+	} catch (error) {
+		return error;
+	}
+}
