@@ -10,6 +10,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { ShoppingCart } from "lucide-react";
 
 import { getProductById } from "@/services/ProductApiHandler";
+import RatingReview from "@/components/custom/RatingReview";
 
 function ProductView() {
 	const { productId } = useParams();
@@ -30,11 +31,6 @@ function ProductView() {
 				Object.values(response.rating).reduce((acc, cur) => acc + cur, 0)
 			);
 		}
-	};
-
-	// Helper function to calculate the percentage of each rating
-	const getRatingPercentage = (count) => {
-		return ((count / totalRatings) * 100).toFixed(1); // Rounded to 1 decimal place
 	};
 
 	useEffect(() => {
@@ -63,47 +59,51 @@ function ProductView() {
 			</div>
 			{/* Product Info */}
 			<div className="flex justify-between gap-32 py-6">
-				<div className="flex flex-col gap-6 w-full">
-					<div>
-						<div className="flex items-center text-base font-medium">
-							{product.seller && product.seller !== null ? (
-								<>
-									<span>Sold by{" "}
-										<a
-											className="hover:underline cursor-pointer"
-											href={`/app/profile/${product.seller?._id}`}
-											rel="noreferrer"
-										>
-											{product.seller?.firstName}{" "}
-											{product.seller?.lastName}
-										</a>
-									</span>
-								</>
-							) : (
-								<span>Sold by Sindbad</span>
-							)}
+				<div className="flex flex-col w-full justify-between">
+					<div className="flex flex-col gap-6 w-full">
+						<div>
+							<div className="flex items-center text-base font-medium">
+								{product.seller && product.seller !== null ? (
+									<>
+										<span>Sold by{" "}
+											<a
+												className="hover:underline cursor-pointer"
+												href={`/app/profile/${product.seller?._id}`}
+												rel="noreferrer"
+											>
+												{product.seller?.firstName}{" "}
+												{product.seller?.lastName}
+											</a>
+										</span>
+									</>
+								) : (
+									<span>Sold by Sindbad</span>
+								)}
+							</div>
+
+							{/*Star Section */}
+							<div className="mt-1">
+								<StarRating rating={product.averageRating} size={20} />
+							</div>
 						</div>
 
-						{/*Star Section */}
-						<div className="mt-1">
-							<StarRating rating={product.averageRating} size={20} />
-						</div>
+						{/* Price */}
+						<p className="text-lg font-semibold mb-1">
+							{product.price} EGP
+						</p>
+
+						{/* Description */}
+						<p className="text-sm">{product.description}</p>
 					</div>
 
-					{/* Price */}
-					<p className="text-lg font-semibold mb-1">
-						{product.price} EGP
-					</p>
-
-					{/* Description */}
-					<p className="text-sm">{product.description}</p>
-
-					<Button>
-						<p>
-							Add to Cart
-						</p>
-						<ShoppingCart size={24} className="shrink-0" />
-					</Button>
+					<div>
+						<Button>
+							<p>
+								Add to cart
+							</p>
+							<ShoppingCart size={24} className="shrink-0" />
+						</Button>
+					</div>
 				</div>
 				{/* Product Image */}
 				<div className="h-[400px] w-[400px] shrink-0">
@@ -130,60 +130,8 @@ function ProductView() {
 					</Carousel>
 				</div>
 			</div>
-
-			{/* Ratings and Reviews */}
-			<div className="mt-8 flex flex-col md:flex-row">
-				{/* Ratings Breakdown */}
-				<div className="w-1/3 pr-8">
-					<h2 className="text-2xl font-bold mb-4">Ratings</h2>
-
-					{/* Ratings Summary */}
-					<div className="space-y-2">
-						{[5, 4, 3, 2, 1, 0].map((star) => (
-							<div key={star} className="flex items-center">
-								<span className="w-12">{star} star</span>
-								<div className="flex-grow bg-neutral-200 rounded-lg h-3 mx-2">
-									<div
-										className="bg-yellow-400 h-3 rounded-lg"
-										style={{
-											width: `${getRatingPercentage(
-												product?.averageRating?.[star] || 0
-											)}%`,
-										}}
-									></div>
-								</div>
-								<span className="ml-2">
-									{getRatingPercentage(
-										product?.averageRating?.[star] || 0
-									)}
-									%
-								</span>
-							</div>
-						))}
-					</div>
-				</div>
-
-				{/* Reviews Section */}
-				<div className="w-2/3 mt-0">
-					<h2 className="text-2xl font-bold mb-4">Customer Reviews</h2>
-					<div className="space-y-6">
-						{product.reviews?.map((review) => (
-							<div key={review._id} className="p-4 rounded-md shadow">
-								<div className="flex items-center mb-2">
-									<p className="font-semibold">{review.username}</p>
-									<div className="flex items-center ml-2 text-yellow-400">
-										<span>
-											{"★".repeat(review.rating)}
-											{"☆".repeat(5 - review.rating)}
-										</span>
-									</div>
-								</div>
-								<p className="">{review.comment}</p>
-							</div>
-						))}
-					</div>
-				</div>
-			</div>
+			<hr className="border-neutral-300 border w-full mt-1.5" />
+			<RatingReview data={product} totalRatings={totalRatings} />
 		</div>
 	);
 }
