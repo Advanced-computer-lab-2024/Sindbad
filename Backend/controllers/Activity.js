@@ -178,8 +178,7 @@ const updateActivity = async (req, res) => {
 			isBookingOpen,
 			creatorId,
 			headCount,
-			description,
-			isInappropriate
+			description
 		} = req.body;
 
 		const updatedActivity = await Activity.findByIdAndUpdate(
@@ -195,8 +194,7 @@ const updateActivity = async (req, res) => {
 				isBookingOpen,
 				creatorId,
 				headCount,
-				description,
-				isInappropriate
+				description
 			},
 			{ new: true, runValidators: true } // Return the updated document and run validators
 		);
@@ -378,6 +376,7 @@ const setIsInappropriate = async (req, res) => {
 		activity.isInappropriate = isInappropriate;
 
 		await activity.save();
+		res.status(200).json(activity);
 	} catch (error) {
 		return res.status(500).json({
 			message: "Error flagging activity as inappropriate",

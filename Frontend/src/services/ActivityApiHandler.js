@@ -110,3 +110,18 @@ export const getActivityById = async (activityId) => {
 		return error;
 	}
 };
+
+export const setActivityInappropriate = async (activityId, isInappropriate) => {
+	try {
+		const response = await axiosInstance.patch(
+			`/activity/set-inappropriate/${activityId}`,
+			isInappropriate,
+			{
+				resourceName: "Activity",
+			}
+		)
+		return response.data;
+	} catch (error) {
+		return error;
+	}
+}

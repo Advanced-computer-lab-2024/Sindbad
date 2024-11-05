@@ -11,8 +11,8 @@ import { useToast } from "@/hooks/use-toast";
 import { DropdownMenu, DropdownMenuItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
-import { updateItinerary } from "@/services/ItineraryApiHandler";
-import { updateActivity } from "@/services/ActivityApiHandler";
+import { updateItinerary, setItineraryInappropriate } from "@/services/ItineraryApiHandler";
+import { setActivityInappropriate } from "@/services/ActivityApiHandler";
 
 import { ArrowRight, Wallet, EllipsisVertical } from "lucide-react";
 
@@ -46,8 +46,10 @@ function Card({ data, cardType, fetchCardData }) {
 	};
 
 	const toggleItineraryActive = async () => {
-		const updatedItineraries = await updateItinerary(data._id, { isActive: !data.isActive });
-		if (updatedItineraries) {
+		const response = await updateItinerary(data._id, { isActive: !data.isActive });
+		if (response.error) {
+			console.error(response.message);
+		} else {
 			fetchCardData();
 			toast({
 				description: `Itinerary ${data.isActive ? "deactivated" : "activated"} successfully`,
@@ -56,10 +58,12 @@ function Card({ data, cardType, fetchCardData }) {
 	}
 
 	const toggleInappropriate = async () => {
-		const updatedData = cardType === "itinerary"
-			? await updateItinerary(data._id, { isInappropriate: !data.isInappropriate })
-			: await updateActivity(data._id, { isInappropriate: !data.isInappropriate });
-		if (updatedData) {
+		const response = cardType === "itinerary"
+			? await setItineraryInappropriate(data._id, {isInappropriate: !data.isInappropriate})
+			: await setActivityInappropriate(data._id, {isInappropriate: !data.isInappropriate});
+		if (response.error) {
+			console.error(response.message);
+		} else {
 			fetchCardData();
 			toast({
 				description: `This ${cardType} has been ${data.isInappropriate ? "unflagged" : "flagged"} as inappropriate`,

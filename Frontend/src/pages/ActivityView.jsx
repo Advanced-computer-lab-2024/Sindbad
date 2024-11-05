@@ -124,6 +124,7 @@ function Activity() {
 							<a
 								className="hover:underline cursor-pointer"
 								href={`/app/profile/${creator?._id}`}
+								rel="noreferrer"
 							>
 								{creator?.username}
 							</a>

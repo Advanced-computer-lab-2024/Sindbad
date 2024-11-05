@@ -370,6 +370,7 @@ const setIsInappropriate = async (req, res) => {
 		itinerary.isInappropriate = isInappropriate;
 
 		await itinerary.save();
+		return res.status(200).json(itinerary);
 	} catch (error) {
 		return res.status(500).json({
 			message: "Error flagging itinerary as inappropriate",

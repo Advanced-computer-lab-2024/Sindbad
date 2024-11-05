@@ -6,7 +6,6 @@ const passport = require("passport");
 const session = require("express-session");
 require("dotenv").config();
 
-
 const adminRoutes = require("./routes/Admin");
 const siteRoutes = require("./routes/Site");
 const activityRoutes = require("./routes/Activity");
@@ -25,22 +24,20 @@ const AdvertiserController = require("./controllers/Advertiser");
 const SellerController = require("./controllers/Seller");
 const TourGuideController = require("./controllers/TourGuide");
 
-
 //Set memory preference to be RAM
-const upload = multer({storage: multer.memoryStorage()});
-
+const upload = multer({ storage: multer.memoryStorage() });
 
 const app = express();
+
+app.use(cors({
+  origin: 'http://localhost:5173',
+  methods: 'GET,POST,PUT,DELETE,PATCH',
+  credentials: true,
+}));
 
 // Middleware to parse JSON and URL-encoded data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-app.use(cors({
-	origin: 'http://localhost:5173',
-	methods: 'GET,POST,PUT,DELETE',
-	credentials: true,
-}));
 
 // Connect to MongoDB, and prevent connecting to the database during testing
 if (process.env.NODE_ENV !== "test") {
