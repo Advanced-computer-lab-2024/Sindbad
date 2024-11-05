@@ -8,6 +8,7 @@ const {
 	getMyActivities,
 	getActivities,
 	addRating,
+	setIsInappropriate,
 } = require("../controllers/Activity");
 
 router.route("/my-activities/:creatorId").get(getMyActivities);
@@ -20,5 +21,7 @@ router
 	.put(updateActivity)
 	.delete(deleteActivity)
 	.post(addRating);
+
+router.route("/set-inappropriate/:id").patch(setIsInappropriate);
 
 module.exports = router;

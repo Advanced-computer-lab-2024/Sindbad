@@ -359,6 +359,31 @@ const getActivities = async (req, res) => {
 	}
 };
 
+const setIsInappropriate = async (req, res) => {
+	try {
+		const activityId = req.params.id;
+		const { isInappropriate } = req.body;
+
+		const activity = await Activity.findById(activityId);
+
+		// console.log("Activity:", activity);
+		// console.log("Available dates:", activity.availableDatesTimes);
+
+		if (!activity) {
+			return res.status(404).json({ message: "Activity not found" });
+		}
+
+		activity.isInappropriate = isInappropriate;
+
+		await activity.save();
+	} catch (error) {
+		return res.status(500).json({
+			message: "Error flagging activity as inappropriate",
+			error: error.message,
+		});
+	}
+};
+
 module.exports = {
 	setActivity,
 	getActivity,
@@ -367,4 +392,5 @@ module.exports = {
 	getMyActivities,
 	getActivities,
 	addRating,
+	setIsInappropriate,
 };
