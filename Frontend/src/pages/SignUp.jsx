@@ -26,6 +26,7 @@ function SignUp() {
 
     const handleRegisterTypeChange = (value) => {
         setRegisterType(value);
+        console.log(value)
     };
 
     const commonFormSchema = z.object({
@@ -55,6 +56,16 @@ function SignUp() {
         }),
     });
 
+    const tourGuideFormSchema = z.object({
+        certificateImage: z.string(),
+        idCardImage: z.string()
+    })
+
+    const sellerFormSchema = z.object({
+        idCardImage: z.string(),
+        taxationRegistryCardImage: z.string(),
+    })
+
     const commonDefaultValues = {
         username: "",
         email: "",
@@ -68,6 +79,17 @@ function SignUp() {
         mobileNumber: "",
     };
 
+    const tourGuideDefaultValues = {
+        certificateImage: "",
+        idCardImage: "",
+    }
+
+    const sellerDefaultValues = {
+        idCardImage: "",
+        taxationRegistryCardImage: "",
+    }
+
+
     const commonForm = useForm({
         resolver: zodResolver(commonFormSchema),
         defaultValues: commonDefaultValues,
@@ -78,13 +100,19 @@ function SignUp() {
         defaultValues: touristDefaultValues,
     });
 
+    const tourGuideForm = useForm({
+        resolver: zodResolver(tourGuideFormSchema),
+        defaultValues: tourGuideDefaultValues,
+    })
+
+    const sellerForm = useForm({
+        resolver: zodResolver(sellerFormSchema),
+        defaultValues: sellerDefaultValues,
+    })
+
     const handleCommonFormSubmit = (data) => {
         setFormValues((prev) => ({ ...prev, ...data }));  // Store Step 1 data
-        if (registerType === "Tourist") {
-            setCurrentStep(2);
-        } else {
-            submitForm({ ...formValues, ...data });
-        }
+        setCurrentStep(2);
     };
 
     const handleTouristFormSubmit = (data) => {
@@ -212,6 +240,71 @@ function SignUp() {
         </div>
     );
 
+    const renderTourGuideFields = () => (
+        <div className="flex flex-col gap-2">
+            <FormField
+                key="certificateImage"
+                control={tourGuideForm.control}
+                name="certificateImage"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel htmlFor="certificateImage">Certificate Image</FormLabel>
+                        <FormControl>
+                            <Input id="certificateImage" type="file" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                key="idCardImage"
+                control={tourGuideForm.control}
+                name="idCardImage"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel htmlFor="idCardImage">ID Card Image</FormLabel>
+                        <FormControl>
+                            <Input id="idCardImage" type="file" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+        </div>
+    )
+
+    const renderSellerFields = () => (
+        <div className="flex flex-col gap-2">
+            <FormField
+                key="idCardImage"
+                control={sellerForm.control}
+                name="idCardImage"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel htmlFor="idCardImage">ID Card Image</FormLabel>
+                        <FormControl>
+                            <Input id="idCardImage" type="file" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                key="taxationRegistryCardImage"
+                control={sellerForm.control}
+                name="taxationRegistryCardImage"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel htmlFor="taxationRegistryCardImage">Taxation Registry Card Image</FormLabel>
+                        <FormControl>
+                            <Input id="taxationRegistryCardImage" type="file" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+        </div>
+    )
     return (
         <div className="w-full min-h-screen grid grid-cols-2">
             <div className="bg-primary-700">
@@ -274,10 +367,42 @@ function SignUp() {
                         }
 
                         {/* form step 2 */}
-                        {currentStep === 2 &&
+                        {currentStep === 2 && registerType === "Tourist" &&
                             <Form {...touristForm}>
                                 <form onSubmit={touristForm.handleSubmit(handleTouristFormSubmit)} className="gap-2 flex flex-col">
                                     {renderTouristFields()}
+                                    {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+                                    <Button type="submit" disabled={loading} className="bg-primary-700 justify-center w-full mt-4">
+                                        {loading ? <SpinnerSVG /> : "Sign Up"}
+                                    </Button>
+                                    <Button onClick={() => setCurrentStep(1)} variant="link" className="text-center -mt-1 flex gap-2 self-center">
+                                        <ArrowLeft size={12} />
+                                        Back
+                                    </Button>
+                                </form>
+                            </Form>
+                        }
+
+                        {currentStep === 2 && registerType === "TourGuide" &&
+                            <Form {...tourGuideForm}>
+                                <form onSubmit={tourGuideForm.handleSubmit(handleTouristFormSubmit)} className="gap-2 flex flex-col">
+                                    {renderTourGuideFields()}
+                                    {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+                                    <Button type="submit" disabled={loading} className="bg-primary-700 justify-center w-full mt-4">
+                                        {loading ? <SpinnerSVG /> : "Sign Up"}
+                                    </Button>
+                                    <Button onClick={() => setCurrentStep(1)} variant="link" className="text-center -mt-1 flex gap-2 self-center">
+                                        <ArrowLeft size={12} />
+                                        Back
+                                    </Button>
+                                </form>
+                            </Form>
+                        }
+
+                        {currentStep === 2 && (registerType === "Seller" || registerType === "Advertiser") &&
+                            <Form {...sellerForm}>
+                                <form onSubmit={sellerForm.handleSubmit(handleTouristFormSubmit)} className="gap-2 flex flex-col">
+                                    {renderSellerFields()}
                                     {error && <p className="text-red-500 text-sm text-center">{error}</p>}
                                     <Button type="submit" disabled={loading} className="bg-primary-700 justify-center w-full mt-4">
                                         {loading ? <SpinnerSVG /> : "Sign Up"}
