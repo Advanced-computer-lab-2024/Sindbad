@@ -120,16 +120,17 @@ function SignUp() {
     };
 
     const submitForm = async (values) => {
-        setLoading(true);
-        const response = await userSignUp(values, registerType);
-        setLoading(false);
+        console.log(values);
+        // setLoading(true);
+        // const response = await userSignUp(values, registerType);
+        // setLoading(false);
 
-        if (response.error) {
-            setCurrentStep(1);
-            setError(response.display);
-        } else {
-            setLogInRedirect(true);
-        }
+        // if (response.error) {
+        //     setCurrentStep(1);
+        //     setError(response.display);
+        // } else {
+        //     setLogInRedirect(true);
+        // }
     }
 
     const renderCommonFields = () => (
@@ -250,7 +251,7 @@ function SignUp() {
                     <FormItem>
                         <FormLabel htmlFor="certificateImage">Certificate Image</FormLabel>
                         <FormControl>
-                            <Input id="certificateImage" type="file" {...field} />
+                            <Input id="certificateImage" type="file" name="certificateImage" {...field} />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -264,7 +265,7 @@ function SignUp() {
                     <FormItem>
                         <FormLabel htmlFor="idCardImage">ID Card Image</FormLabel>
                         <FormControl>
-                            <Input id="idCardImage" type="file" {...field} />
+                            <Input id="idCardImage" type="file" name="idCardImage" {...field} />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -283,7 +284,7 @@ function SignUp() {
                     <FormItem>
                         <FormLabel htmlFor="idCardImage">ID Card Image</FormLabel>
                         <FormControl>
-                            <Input id="idCardImage" type="file" {...field} />
+                            <Input id="idCardImage" type="file" name="idCardImage" {...field} />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -297,7 +298,7 @@ function SignUp() {
                     <FormItem>
                         <FormLabel htmlFor="taxationRegistryCardImage">Taxation Registry Card Image</FormLabel>
                         <FormControl>
-                            <Input id="taxationRegistryCardImage" type="file" {...field} />
+                            <Input id="taxationRegistryCardImage" type="file" name="taxationRegistryCardImage" {...field} />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -384,7 +385,7 @@ function SignUp() {
                         }
 
                         {currentStep === 2 && registerType === "TourGuide" &&
-                            <Form {...tourGuideForm}>
+                            <Form {...tourGuideForm} enctype="multipart/form-data">
                                 <form onSubmit={tourGuideForm.handleSubmit(handleTouristFormSubmit)} className="gap-2 flex flex-col">
                                     {renderTourGuideFields()}
                                     {error && <p className="text-red-500 text-sm text-center">{error}</p>}
@@ -400,7 +401,7 @@ function SignUp() {
                         }
 
                         {currentStep === 2 && (registerType === "Seller" || registerType === "Advertiser") &&
-                            <Form {...sellerForm}>
+                            <Form {...sellerForm} enctype="multipart/form-data">
                                 <form onSubmit={sellerForm.handleSubmit(handleTouristFormSubmit)} className="gap-2 flex flex-col">
                                     {renderSellerFields()}
                                     {error && <p className="text-red-500 text-sm text-center">{error}</p>}
