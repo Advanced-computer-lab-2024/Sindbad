@@ -7,6 +7,7 @@ const {
 	deleteItinerary,
 	getAllItineraries,
 	getMyItineraries,
+	setIsInappropriate,
 } = require("../controllers/Itinerary");
 const { addRating } = require("../controllers/Itinerary");
 
@@ -19,6 +20,8 @@ router
 	.get(getItineraryById)
 	.put(updateItinerary)
 	.delete(deleteItinerary)
-    .post(addRating);
+	.post(addRating);
+
+router.route("/set-inappropriate/:id").patch(setIsInappropriate);
 
 module.exports = router;

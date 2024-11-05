@@ -1,4 +1,5 @@
 const Product = require("../models/Product");
+const ProductSales = require("../models/ProductSales");
 
 /**
  * Gets a product by ID
@@ -206,6 +207,28 @@ const calculateAverageRating = (ratings) => {
 	return totalVotes > 0 ? totalRating / totalVotes : 0; // Return average or 0 if no votes
 };
 
+const getProductSalesDetails = async (req, res) => {
+	try {
+		const productId = req.params.id;
+		const myProduct = await Product.findById(productId);
+
+		// console.log(availableQuantity);
+		// console.log(availableQuantity.quantity);
+
+		const productSales = await ProductSales.find({ productId: productId });
+
+		res.status(200).json({
+			availableQuantity: myProduct.quantity,
+			productSales,
+		});
+	} catch (error) {
+		return res.status(500).json({
+			message: "Error getting products sales",
+			error: error.message,
+		});
+	}
+};
+
 module.exports = {
 	createProduct,
 	updateProduct,
@@ -214,4 +237,5 @@ module.exports = {
 	getProductById,
 	addReview,
 	getMinMaxPrices,
+	getProductSalesDetails,
 };

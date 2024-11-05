@@ -353,6 +353,31 @@ const calculateAverageRating = (ratings) => {
 	return totalVotes > 0 ? totalRating / totalVotes : 0; // Return average or 0 if no votes
 };
 
+const setIsInappropriate = async (req, res) => {
+	try {
+		const itineraryId = req.params.id;
+		const { isInappropriate } = req.body;
+
+		const itinerary = await Itinerary.findById(itineraryId);
+
+		// console.log("Itinerary:", itinerary);
+		// console.log("Available dates:", itinerary.availableDatesTimes);
+
+		if (!itinerary) {
+			return res.status(404).json({ message: "Itinerary not found" });
+		}
+
+		itinerary.isInappropriate = isInappropriate;
+
+		await itinerary.save();
+	} catch (error) {
+		return res.status(500).json({
+			message: "Error flagging itinerary as inappropriate",
+			error: error.message,
+		});
+	}
+};
+
 module.exports = {
 	getItineraryById,
 	createItinerary,
@@ -365,4 +390,5 @@ module.exports = {
 	// getSortedItineraries,
 	// filterItineraries,
 	addRating,
+	setIsInappropriate,
 };
