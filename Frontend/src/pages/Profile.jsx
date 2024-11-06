@@ -198,13 +198,13 @@ function Profile() {
 							fetchCardData={() => getCardData(profileId)}
 						/>
 					)}
+					{profileRole === "tourismGovernor" && profileId === id && (
+						<div className="mt-12">
+							<TagManagement />
+						</div>
+					)}
 				</div>
 			</div>
-			{profileRole === "tourismGovernor" && profileId === id && (
-				<div className="mt-12">
-					<TagManagement />
-				</div>
-			)}
 		</div>
 	);
 }

@@ -50,10 +50,7 @@ function Timeline({ userData, profileId, id, profileRole, cardData, fetchCardDat
 				)}
 			</div>
 			<div>
-				<div
-					className={`grid gap-6 ${profileRole === "tourismGovernor" ? "grid-cols-5" : "grid-cols-3"
-						}`}
-				>
+				<div className={"grid gap-6 grid-cols-3"}>
 					{/* hook up to API in later sprint*/}
 					{profileRole === "tourist" &&
 						userData?.bookmarks?.map((bookmark, index) => (
