@@ -4,6 +4,7 @@ const cors = require('cors');
 const mongoose = require("mongoose");
 const passport = require("passport");
 const session = require("express-session");
+const Amadeus = require('amadeus');
 require("dotenv").config();
 
 const adminRoutes = require("./routes/Admin");
@@ -20,9 +21,11 @@ const tourismGovernorRoutes = require("./routes/TourismGovernor");
 const productRoutes = require("./routes/Product");
 const sellerRoutes = require("./routes/Seller");
 const complaintRoutes = require("./routes/Complaint");
+const flightRoutes = require("./routes/flight");
 const AdvertiserController = require("./controllers/Advertiser");
 const SellerController = require("./controllers/Seller");
 const TourGuideController = require("./controllers/TourGuide");
+
 
 //Set memory preference to be RAM
 const upload = multer({ storage: multer.memoryStorage() });
@@ -52,8 +55,11 @@ if (process.env.NODE_ENV !== "test") {
 }
 
 
+
+//User routes
 app.use("/user", userRoutes);
 
+//Advertiser routes
 app.use("/advertiser", advertiserRoutes);
 
 // Admin routes
@@ -92,6 +98,8 @@ app.use("/tourism-governor", tourismGovernorRoutes);
 // Complaint routes
 app.use("/complaint", complaintRoutes);
 
+// flight routes
+app.use("/flight", flightRoutes);
 
 //To work with pictures
 app.use(
