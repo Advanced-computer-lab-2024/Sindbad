@@ -1,9 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm} from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { ArrayField } from './input-fields/ArrayField';
+import { ObjectArrayField } from './input-fields/ObjectArrayField';
 import { CheckboxField } from './input-fields/CheckboxField';
 import { CoordinatesField } from './input-fields/CoordinatesField';
 import { TextField } from './input-fields/TextField';
@@ -87,6 +88,18 @@ export function GenericForm({ type, data, id }) {
 				</div>
 			  </div>
 			);
+
+			case 'objectArray':
+			return (
+			  <ObjectArrayField
+				key={fullPath}
+				name={fullPath}
+				control={form.control}
+				initialValue={field.fields.reduce((acc, curr) => ({ ...acc, [curr.name]: curr.type === 'number' ? 0 : '' }), {})}
+				label={field.label || field.name.toUpperCase()}
+				fieldsSchema={field.fields}
+			  />
+			);
 	  
 		  case 'checkbox':
 			return (
@@ -98,6 +111,7 @@ export function GenericForm({ type, data, id }) {
 			  />
 			);
 	  
+			//FIXME: Date default value is not working
 		  case 'text':
 		  case 'number':
 		  case 'date':
@@ -118,14 +132,14 @@ export function GenericForm({ type, data, id }) {
 
 	return (
 		<div>
-			<Form {...form}>
-			<form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
-				{formFields.map((field) => renderField(field))}
-				<Button type="submit" className="bg-dark text-white">
-				Submit
-				</Button>
-			</form>
-			</Form>
+				<Form {...form}>
+					<form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
+						{formFields.map((field) => renderField(field))}
+						<Button type="submit" className="bg-dark text-white">
+						Submit
+						</Button>
+					</form>
+				</Form>
 		</div>
 	);
 }
