@@ -82,8 +82,9 @@ function ProductView() {
 							</div>
 
 							{/*Star Section */}
-							<div className="mt-1">
+							<div className="mt-1 flex gap-1 items-end">
 								<StarRating rating={product.averageRating} size={20} />
+								<p className="text-xs text-neutral-400">{"(" + totalRatings + " ratings)"}</p>
 							</div>
 						</div>
 
