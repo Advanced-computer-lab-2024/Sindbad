@@ -1,5 +1,6 @@
 const Itinerary = require("../models/Itinerary");
 const mongoose = require("mongoose");
+const Tourist = require("../models/Tourist");
 
 /**
  * @route GET /itinerary/:id
@@ -10,20 +11,20 @@ const mongoose = require("mongoose");
  * @returns {Object} 500 - Error message if an error occurs
  */
 const getItineraryById = async (req, res) => {
-	try {
-		const itinerary = await Itinerary.findById(req.params.id).populate(
-			"activities"
-		);
-		if (!itinerary) {
-			return res.status(404).json({ message: "Itinerary not found" });
-		}
-		res.status(200).json(itinerary);
-	} catch (error) {
-		return res.status(500).json({
-			message: "Error getting itinerary",
-			error: error.message,
-		});
-	}
+  try {
+    const itinerary = await Itinerary.findById(req.params.id).populate(
+      "activities"
+    );
+    if (!itinerary) {
+      return res.status(404).json({ message: "Itinerary not found" });
+    }
+    res.status(200).json(itinerary);
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error getting itinerary",
+      error: error.message,
+    });
+  }
 };
 
 /**
@@ -34,15 +35,15 @@ const getItineraryById = async (req, res) => {
  * @returns {Object} 500 - Error message if an error occurs
  */
 const createItinerary = async (req, res) => {
-	try {
-		const newItinerary = await Itinerary.create(req.body);
-		res.status(201).json(newItinerary);
-	} catch (error) {
-		return res.status(500).json({
-			message: "Error creating itinerary",
-			error: error.message,
-		});
-	}
+  try {
+    const newItinerary = await Itinerary.create(req.body);
+    res.status(201).json(newItinerary);
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error creating itinerary",
+      error: error.message,
+    });
+  }
 };
 
 /**
@@ -55,30 +56,30 @@ const createItinerary = async (req, res) => {
  * @returns {Object} 500 - Error message if an error occurs
  */
 const updateItinerary = async (req, res) => {
-	try {
-		const itineraryId = req.params.id;
-		const updatedData = req.body;
+  try {
+    const itineraryId = req.params.id;
+    const updatedData = req.body;
 
-		const updatedItinerary = await Itinerary.findByIdAndUpdate(
-			itineraryId,
-			updatedData,
-			{
-				new: true,
-				runValidators: true,
-			}
-		);
+    const updatedItinerary = await Itinerary.findByIdAndUpdate(
+      itineraryId,
+      updatedData,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
 
-		if (!updatedItinerary) {
-			return res.status(404).json({ message: "Itinerary not found" });
-		}
+    if (!updatedItinerary) {
+      return res.status(404).json({ message: "Itinerary not found" });
+    }
 
-		res.status(200).json(updatedItinerary);
-	} catch (error) {
-		return res.status(500).json({
-			message: "Error updating itinerary",
-			error: error.message,
-		});
-	}
+    res.status(200).json(updatedItinerary);
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error updating itinerary",
+      error: error.message,
+    });
+  }
 };
 
 /**
@@ -91,36 +92,39 @@ const updateItinerary = async (req, res) => {
  * @throws {500} - Error deleting itinerary if there is a server issue.
  */
 const deleteItinerary = async (req, res) => {
-	try {
-		const itineraryId = req.params.id;
+  try {
+    const itineraryId = req.params.id;
 
-		const itinerary = await Itinerary.findById(itineraryId);
+    const itinerary = await Itinerary.findById(itineraryId);
 
-		if (!itinerary) {
-			return res.status(404).json({ message: "Itinerary not found" });
-		}
+    if (!itinerary) {
+      return res.status(404).json({ message: "Itinerary not found" });
+    }
 
-		if (itinerary.availableDatesTimes) {
-			// Calculate the total headCount by summing up headCounts in availableDatesTimes
-			const totalHeadCount = itinerary.availableDatesTimes.reduce((sum, date) => sum + date.headCount, 0);
-		
-			// Check if the total headCount is greater than 0
-			if (totalHeadCount > 0) {
-				return res.status(400).json({
-					message: "Cannot delete itinerary because it has been booked already",
-				});
-			}
-		}
+    if (itinerary.availableDatesTimes) {
+      // Calculate the total headCount by summing up headCounts in availableDatesTimes
+      const totalHeadCount = itinerary.availableDatesTimes.reduce(
+        (sum, date) => sum + date.headCount,
+        0
+      );
 
-		await Itinerary.findByIdAndDelete(itineraryId);
+      // Check if the total headCount is greater than 0
+      if (totalHeadCount > 0) {
+        return res.status(400).json({
+          message: "Cannot delete itinerary because it has been booked already",
+        });
+      }
+    }
 
-		res.status(200).json({ message: "Itinerary deleted successfully" });
-	} catch (error) {
-		return res.status(500).json({
-			message: "Error deleting itinerary",
-			error: error.message,
-		});
-	}
+    await Itinerary.findByIdAndDelete(itineraryId);
+
+    res.status(200).json({ message: "Itinerary deleted successfully" });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error deleting itinerary",
+      error: error.message,
+    });
+  }
 };
 
 /**
@@ -132,21 +136,21 @@ const deleteItinerary = async (req, res) => {
  * @throws {500} - Error fetching itineraries if there is a server issue.
  */
 const getMyItineraries = async (req, res) => {
-	try {
-		const itineraries = await Itinerary.find({
-			creatorId: req.params.creatorId,
-		});
+  try {
+    const itineraries = await Itinerary.find({
+      creatorId: req.params.creatorId,
+    });
 
-		if (itineraries.length === 0) {
-			return res
-				.status(404)
-				.json({ message: "No itineraries found for this creator." });
-		}
+    if (itineraries.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No itineraries found for this creator." });
+    }
 
-		res.status(200).json(itineraries);
-	} catch (error) {
-		res.status(500).json({ message: "Error fetching itineraries" });
-	}
+    res.status(200).json(itineraries);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching itineraries" });
+  }
 };
 
 /**
@@ -161,136 +165,134 @@ const getMyItineraries = async (req, res) => {
  * @throws {500} - If there is an error during the retrieval process.
  */
 const getAllItineraries = async (req, res) => {
-	try {
-		const {
-			searchTerm,
-			budget = {},
-			date = {},
-			tag,
-			rating = {},
-			language,
-			sortBy = "availableDatesTimes", // Default sorting by available dates times
-			sortOrder = "asc",
-			page = 1,
-			limit = 10,
-		} = req.query;
+  try {
+    const {
+      searchTerm,
+      budget = {},
+      date = {},
+      tag,
+      rating = {},
+      language,
+      sortBy = "availableDatesTimes", // Default sorting by available dates times
+      sortOrder = "asc",
+      page = 1,
+      limit = 10,
+    } = req.query;
 
-		// Create filter object based on provided criteria
-		const filter = {
-			// Uncomment if needed to filter for upcoming available date times
-			// availableDateTimes: { $elemMatch: { $gte: new Date() } },
-			// Default filter for inappropriate itineraries and active itineraries
-			isInappropriate: false,
-			isActive: true,
-		};
+    // Create filter object based on provided criteria
+    const filter = {
+      // Uncomment if needed to filter for upcoming available date times
+      // availableDateTimes: { $elemMatch: { $gte: new Date() } },
+      // Default filter for inappropriate itineraries and active itineraries
+      isInappropriate: false,
+      isActive: true,
+    };
 
-		// Budget filter
-		if (budget.min || budget.max) {
-			filter.$or = [
-				{
-					price: {
-						...(budget.min && { $gte: +budget.min }),
-						...(budget.max && { $lte: +budget.max }),
-					},
-				},
-				{
-					"price.min": {
-						...(budget.min && { $gte: +budget.min }),
-						...(budget.max && { $lte: +budget.max }),
-					},
-				},
-			];
-		}
+    // Budget filter
+    if (budget.min || budget.max) {
+      filter.$or = [
+        {
+          price: {
+            ...(budget.min && { $gte: +budget.min }),
+            ...(budget.max && { $lte: +budget.max }),
+          },
+        },
+        {
+          "price.min": {
+            ...(budget.min && { $gte: +budget.min }),
+            ...(budget.max && { $lte: +budget.max }),
+          },
+        },
+      ];
+    }
 
-		// Date filter
-		if (date.start || date.end) {
-			filter.availableDatesTimes = {
-				$elemMatch: {
-					...(date.start && { $gte: new Date(date.start) }),
-					...(date.end && {
-						$lte: new Date(
-							new Date(date.end).setHours(23, 59, 59, 999)
-						), // End of the day
-					}),
-				},
-			};
-		}
+    // Date filter
+    if (date.start || date.end) {
+      filter.availableDatesTimes = {
+        $elemMatch: {
+          ...(date.start && { $gte: new Date(date.start) }),
+          ...(date.end && {
+            $lte: new Date(new Date(date.end).setHours(23, 59, 59, 999)), // End of the day
+          }),
+        },
+      };
+    }
 
-		// Tag filter
-		if (tag) {
-			// Ensure that the tag is in ObjectId format
-			const tagObjectId = new mongoose.Types.ObjectId(tag._id); // Convert to ObjectId if tag is a string
+    // Tag filter
+    if (tag) {
+      // Ensure that the tag is in ObjectId format
+      const tagObjectId = new mongoose.Types.ObjectId(tag._id); // Convert to ObjectId if tag is a string
 
-			filter.activities = {
-				$elemMatch: { tags: tagObjectId },
-			}; // Use $elemMatch to find itineraries with activities containing the tag
-		}
+      filter.activities = {
+        $elemMatch: { tags: tagObjectId },
+      }; // Use $elemMatch to find itineraries with activities containing the tag
+    }
 
-		// Rating filter
-		if (rating.min || rating.max) {
-			filter.averageRating = {
-				...(rating.min && { $gte: +rating.min }),
-				...(rating.max && { $lte: +rating.max }),
-			};
-		}
+    // Rating filter
+    if (rating.min || rating.max) {
+      filter.averageRating = {
+        ...(rating.min && { $gte: +rating.min }),
+        ...(rating.max && { $lte: +rating.max }),
+      };
+    }
 
-		// Language filter
-		if (language) {
-			filter.languages = {
-				$regex: new RegExp(language, "i"), // 'i' for case insensitive
-			}; // Check if the itinerary supports this language with a case-insensitive regex
-		}
+    // Language filter
+    if (language) {
+      filter.languages = {
+        $regex: new RegExp(language, "i"), // 'i' for case insensitive
+      }; // Check if the itinerary supports this language with a case-insensitive regex
+    }
 
-		// Search term filter
-		if (searchTerm) {
-			const regex = new RegExp(searchTerm, "i"); // Case-insensitive
-			filter.$or = [{ name: regex }, { description: regex }];
-		}
+    // Search term filter
+    if (searchTerm) {
+      const regex = new RegExp(searchTerm, "i"); // Case-insensitive
+      filter.$or = [{ name: regex }, { description: regex }];
+    }
 
-		// Sorting and pagination
-		const sortOptions = { [sortBy]: sortOrder === "asc" ? 1 : -1 };
-		const skip = (page - 1) * limit;
+    // Sorting and pagination
+    const sortOptions = { [sortBy]: sortOrder === "asc" ? 1 : -1 };
+    const skip = (page - 1) * limit;
 
-		// console.log("filter:", filter);
-		// console.log("sortOptions:", sortOptions);
+    // console.log("filter:", filter);
+    // console.log("sortOptions:", sortOptions);
 
-		// Fetch itineraries with aggregation
-		const itineraries = await Itinerary.aggregate([
-			{
-				$lookup: {
-					from: "activities", // The name of the collection to join
-					localField: "activities", // The field from the itineraries collection
-					foreignField: "_id", // The field from the activities collection
-					as: "activities", // The name of the new array field to add to the itineraries documents
-				},
-			},
-			{
-				$match: filter, // Apply your filtering here
-			},
-			{
-				$sort: sortOptions, // Sort the results
-			},
-			// {
-			// 	$skip: skip, // Pagination
-			// },
-			// {
-			// 	$limit: +limit, // Limit the number of results
-			// },
-		]);
+    // Fetch itineraries with aggregation
+    const itineraries = await Itinerary.aggregate([
+      {
+        $lookup: {
+          from: "activities", // The name of the collection to join
+          localField: "activities", // The field from the itineraries collection
+          foreignField: "_id", // The field from the activities collection
+          as: "activities", // The name of the new array field to add to the itineraries documents
+        },
+      },
+      {
+        $match: filter, // Apply your filtering here
+      },
+      {
+        $sort: sortOptions, // Sort the results
+      },
+      // {
+      // 	$skip: skip, // Pagination
+      // },
+      // {
+      // 	$limit: +limit, // Limit the number of results
+      // },
+    ]);
 
-		if (itineraries.length === 0) {
-			return res.status(204).send(); // 204 No Content for no results
-		}
+    if (itineraries.length === 0) {
+      return res.status(204).send(); // 204 No Content for no results
+    }
 
-		// Respond with itineraries
-		res.status(200).json(itineraries);
-	} catch (error) {
-		console.error(error);
-		res.status(500).json({
-			message: "Error occurred while fetching itineraries.",
-			error: error.message,
-		});
-	}
+    // Respond with itineraries
+    res.status(200).json(itineraries);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Error occurred while fetching itineraries.",
+      error: error.message,
+    });
+  }
 };
 
 /**
@@ -304,92 +306,219 @@ const getAllItineraries = async (req, res) => {
  * @returns {Object} 500 - Error message if an error occurs
  */
 const addRating = async (req, res) => {
-	try {
-		const itineraryId = req.params.id;
-		const { rating } = req.body;
+  try {
+    const itineraryId = req.params.id;
+    const { rating } = req.body;
 
-		// Validate rating value
-		if (!rating || rating < 1 || rating > 5) {
-			return res.status(400).json({
-				message: "Invalid rating value. Must be between 1 and 5.",
-			});
-		}
+    // Validate rating value
+    if (!rating || rating < 1 || rating > 5) {
+      return res.status(400).json({
+        message: "Invalid rating value. Must be between 1 and 5.",
+      });
+    }
 
-		const itinerary = await Itinerary.findById(itineraryId);
-		if (!itinerary) {
-			return res.status(404).json({ message: "Itinerary not found" });
-		}
+    const itinerary = await Itinerary.findById(itineraryId);
+    if (!itinerary) {
+      return res.status(404).json({ message: "Itinerary not found" });
+    }
 
-		if (!(itinerary.rating instanceof Map)) {
-			itinerary.rating = new Map(Object.entries(itinerary.rating));
-		}
+    if (!(itinerary.rating instanceof Map)) {
+      itinerary.rating = new Map(Object.entries(itinerary.rating));
+    }
 
-		// Add the rating and update average rating
-		const currentCount = itinerary.rating.get(rating.toString()) || 0;
-		itinerary.rating.set(rating.toString(), currentCount + 1);
+    // Add the rating and update average rating
+    const currentCount = itinerary.rating.get(rating.toString()) || 0;
+    itinerary.rating.set(rating.toString(), currentCount + 1);
 
-		itinerary.averageRating = calculateAverageRating(itinerary.rating);
-		await itinerary.save();
+    itinerary.averageRating = calculateAverageRating(itinerary.rating);
+    await itinerary.save();
 
-		res.status(200).json(itinerary);
-	} catch (error) {
-		return res.status(500).json({
-			message: "Error adding rating to itinerary",
-			error: error.message,
-		});
-	}
+    res.status(200).json(itinerary);
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error adding rating to itinerary",
+      error: error.message,
+    });
+  }
 };
 
 const calculateAverageRating = (ratings) => {
-	let totalRating = 0;
-	let totalVotes = 0;
+  let totalRating = 0;
+  let totalVotes = 0;
 
-	// Use the entries of the Map and a for...of loop
-	for (const [rating, count] of ratings.entries()) {
-		totalRating += parseInt(rating) * count; // Multiply rating by the number of votes
-		totalVotes += count; // Sum the number of votes
-	}
+  // Use the entries of the Map and a for...of loop
+  for (const [rating, count] of ratings.entries()) {
+    totalRating += parseInt(rating) * count; // Multiply rating by the number of votes
+    totalVotes += count; // Sum the number of votes
+  }
 
-	return totalVotes > 0 ? totalRating / totalVotes : 0; // Return average or 0 if no votes
+  return totalVotes > 0 ? totalRating / totalVotes : 0; // Return average or 0 if no votes
+};
+
+function getHeadCountForDate(itinerary, targetDate) {
+  // Convert targetDate to a Date object if it isn't one already
+  const targetDateObj = new Date(targetDate);
+
+  // Find the object in availableDatesTimes that matches the target date
+  const dateEntry = itinerary.availableDatesTimes.find(
+    (entry) => entry.dateTime.getTime() === targetDateObj.getTime()
+  );
+
+  // Check if a matching date was found and return the headCount
+  if (dateEntry) {
+    return dateEntry.headCount;
+  } else {
+    console.log("Date not found in available dates");
+    return null; // Or handle the case where the date isn't found
+  }
+}
+
+function setHeadCountForDate(itinerary, targetDate, newHeadCount) {
+  const targetDateObj = new Date(targetDate);
+
+  // Find the index of the object in availableDatesTimes that matches the target date
+  const dateIndex = itinerary.availableDatesTimes.findIndex(
+    (entry) => entry.dateTime.getTime() === targetDateObj.getTime()
+  );
+
+  // Check if a matching date was found
+  if (dateIndex !== -1) {
+    // Update the headCount for the matching date
+    itinerary.availableDatesTimes[dateIndex].headCount = newHeadCount;
+    console.log("Head count updated successfully");
+    return itinerary;
+  } else {
+    console.log("Date not found in available dates");
+    return null;
+  }
+}
+
+/**
+ * Books an itinerary for a tourist.
+ *
+ * @async
+ * @function bookItinerary
+ * @param {Object} req - Request object containing booking details.
+ * @param {Object} res - Response object for sending results or errors.
+ *
+ * @throws {Error} If a server error occurs.
+ */
+
+const bookItinerary = async (req, res) => {
+  try {
+    const { date, adultTicketCount, childTicketCount, itineraryId, userId } =
+      req.body;
+    let itinerary = await Itinerary.findById(itineraryId);
+    if (!itinerary) {
+      return res.status(404).json({ message: "Itinerary not found" });
+    }
+
+    const tourist = await Tourist.findById(userId);
+    if (!tourist) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (!itinerary.isBookingOpen) {
+      return res.status(400).json({ message: "Bookings are currently closed" });
+    }
+
+    let priceCharged;
+    if (typeof itinerary.price === "number") {
+      priceCharged = itinerary.price * (adultTicketCount + childTicketCount);
+    } else {
+      const { min, max } = itinerary.price;
+      priceCharged = min * (adultTicketCount + childTicketCount);
+    }
+
+    if (tourist.wallet < priceCharged) {
+      return res.status(400).json({ message: "Insufficient funds" });
+    }
+
+    headcount = getHeadCountForDate(itinerary, date);
+    itinerary = setHeadCountForDate(
+      itinerary,
+      date,
+      headcount + adultTicketCount + childTicketCount
+    );
+
+    await itinerary.save();
+
+    tourist.wallet -= priceCharged;
+
+    tourist.bookedEvents.itineraries.push({
+      itineraryId: itineraryId,
+      ticketsBooked: childTicketCount + adultTicketCount,
+    });
+    await tourist.save();
+
+    let loyaltyPoints = tourist.loyaltyPoints;
+    switch (tourist.level) {
+      case 1:
+        loyaltyPoints += priceCharged * 0.5;
+        break;
+      case 2:
+        loyaltyPoints += priceCharged;
+        break;
+      case 3:
+        loyaltyPoints += priceCharged * 1.5;
+        break;
+    }
+    tourist.loyaltyPoints = loyaltyPoints;
+    await tourist.save();
+
+    let level = tourist.level;
+    if (loyaltyPoints > 100000 && loyaltyPoints <= 500000) level = 2;
+    if (loyaltyPoints > 500000) level = 3;
+    tourist.level = level;
+    await tourist.save();
+
+    res.status(200).json({
+      message: "Itinerary booked successfully",
+      itinerary,
+      priceCharged,
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: "Error booking itinerary",
+      error: err.message,
+    });
+  }
 };
 
 const setIsInappropriate = async (req, res) => {
-	try {
-		const itineraryId = req.params.id;
-		const { isInappropriate } = req.body;
+  try {
+    const itineraryId = req.params.id;
+    const { isInappropriate } = req.body;
 
-		const itinerary = await Itinerary.findById(itineraryId);
+    const itinerary = await Itinerary.findById(itineraryId);
 
-		// console.log("Itinerary:", itinerary);
-		// console.log("Available dates:", itinerary.availableDatesTimes);
+    // console.log("Itinerary:", itinerary);
+    // console.log("Available dates:", itinerary.availableDatesTimes);
 
-		if (!itinerary) {
-			return res.status(404).json({ message: "Itinerary not found" });
-		}
+    if (!itinerary) {
+      return res.status(404).json({ message: "Itinerary not found" });
+    }
 
-		itinerary.isInappropriate = isInappropriate;
+    itinerary.isInappropriate = isInappropriate;
 
-		await itinerary.save();
-		return res.status(200).json(itinerary);
-	} catch (error) {
-		return res.status(500).json({
-			message: "Error flagging itinerary as inappropriate",
-			error: error.message,
-		});
-	}
+    await itinerary.save();
+    return res.status(200).json(itinerary);
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error flagging itinerary as inappropriate",
+      error: error.message,
+    });
+  }
 };
 
 module.exports = {
-	getItineraryById,
-	createItinerary,
-	updateItinerary,
-	deleteItinerary,
-	getAllItineraries,
-	// getAllItineraries,
-	getMyItineraries,
-	// searchItineraries,
-	// getSortedItineraries,
-	// filterItineraries,
-	addRating,
-	setIsInappropriate,
+  getItineraryById,
+  createItinerary,
+  updateItinerary,
+  deleteItinerary,
+  getAllItineraries,
+  getMyItineraries,
+  bookItinerary,
+  addRating,
+  setIsInappropriate,
 };

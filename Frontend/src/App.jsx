@@ -13,7 +13,10 @@ import Site from "./pages/SiteView";
 import ShoppingPage from "./pages/Products";
 import ProductView from "./pages/ProductView";
 import AdminManagementView from "./pages/AdminManagementView";
-import AdminVerificationView from "./pages/AdminVerificationView";
+import ComplaintManagement from "./components/custom/admin/complaint-management/ComplaintManagement";
+import TagCategoryManagement from "./components/custom/admin/TagCategoryManagement";
+import UserVerification from "./components/custom/admin/UserVerification";
+import UserManagement from "./components/custom/admin/user-management/UserManagement";
 
 import { useUser } from "@/state management/userInfo";
 
@@ -34,8 +37,13 @@ function App() {
 					<Route path="itineraries" element={<ItinerariesPage />} />
 					<Route path="store" element={<ShoppingPage />} />
 					<Route path="product/:productId" element={<ProductView />} />
-					<Route path="management" element={<AdminManagementView />} />
-					<Route path="verification" element={<AdminVerificationView />} />
+					<Route path="management" element={<AdminManagementView />}>
+						<Route path="" element={<Navigate to="users" replace />} />
+						<Route path="users" element={<UserManagement />} />
+						<Route path="verification" element={<UserVerification />} />
+						<Route path="complaints" element={<ComplaintManagement />} />
+						<Route path="tagcategories" element={<TagCategoryManagement />} />
+					</Route>
 					<Route path="itinerary/:itineraryId" element={<Itinerary />} />
 					<Route path="activity/:activityId" element={<Activity />} />
 					<Route path="site/:siteId" element={<Site />} />

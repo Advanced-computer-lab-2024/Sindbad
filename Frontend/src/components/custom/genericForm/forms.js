@@ -9,6 +9,7 @@ import { siteSchema } from "./form-schemas/siteSchema";
 import { productSchema } from "./form-schemas/productSchema";
 import { companyProfileSchema } from "./form-schemas/companyProfileSchema";
 import { previousWorkSchema } from "./form-schemas/previousWorkSchema";
+import { tourismGovernorSchema } from "./form-schemas/tourismGovernorSchema";
 
 //import rendered fields here
 import { tourist } from "./rendered-fields/touristFields";
@@ -21,6 +22,7 @@ import { tourGuide } from "./rendered-fields/tourGuideFields";
 import { seller } from "./rendered-fields/sellerFields";
 import { advertiser } from "./rendered-fields/advertiserFields";
 import { itinerary } from "./rendered-fields/itineraryFields";
+import { tourismGovernor } from "./rendered-fields/tourismGovernorFields";
 
 //import submit handlers here
 import { touristSubmit } from "./submit-handlers/touristHandler";
@@ -33,6 +35,7 @@ import { siteSubmit } from "./submit-handlers/siteHandler";
 import { productSubmit } from "./submit-handlers/productHandler";
 import { companySubmit } from "./submit-handlers/companyHandler";
 import { experienceSubmit } from "./submit-handlers/experienceHandler";
+import { tourismGovernorSubmit } from "./submit-handlers/tourismGovernorHandler";
 
 /*
     Forms for the generic form component should be generated based on this object:
@@ -125,5 +128,12 @@ export const forms = {
     renderedFields: previousWork.fields,
     defaultValues: previousWork.defaultValues,
     onSubmit: experienceSubmit,
+  },
+
+  tourismGovernor: {
+    zodSchema: tourismGovernorSchema,
+    renderedFields: tourismGovernor.fields,
+    defaultValues: tourismGovernor.defaultValues,
+    onSubmit: tourismGovernorSubmit,
   },
 };

@@ -13,4 +13,20 @@ export const getTourismGovernor = async (tourismGovernorId) => {
 	} catch (error) {
 		return error;
 	}
-};
+}
+
+export const updateTourismGovernor = async (tourismGovernorId, data) => {
+	try {
+		const response = await axiosInstance.put(
+			`/tourism-governor/${tourismGovernorId}`,
+			data,
+			{
+				resourceName: "Tourism governor",
+			}
+		);
+
+		return response.data;
+	} catch (error) {
+		return error;
+	}
+}

@@ -4,6 +4,7 @@ const cors = require('cors');
 const mongoose = require("mongoose");
 const passport = require("passport");
 const session = require("express-session");
+const Amadeus = require('amadeus');
 require("dotenv").config();
 
 const adminRoutes = require("./routes/Admin");
@@ -20,9 +21,11 @@ const tourismGovernorRoutes = require("./routes/TourismGovernor");
 const productRoutes = require("./routes/Product");
 const sellerRoutes = require("./routes/Seller");
 const complaintRoutes = require("./routes/Complaint");
+const flightRoutes = require("./routes/flight");
 const AdvertiserController = require("./controllers/Advertiser");
 const SellerController = require("./controllers/Seller");
 const TourGuideController = require("./controllers/TourGuide");
+
 
 //Set memory preference to be RAM
 const upload = multer({ storage: multer.memoryStorage() });
@@ -51,9 +54,38 @@ if (process.env.NODE_ENV !== "test") {
     });
 }
 
+app.post(
+  '/advertiser/upload/:id',
+  upload.fields([
+    { name: 'idCardImage', maxCount: 1 },
+    { name: 'taxationRegistryCardImage', maxCount: 1 },
+  ]),
+  AdvertiserController.addAdvertiserDocuments
+);
 
+app.post(
+  '/seller/upload/:id',
+  upload.fields([
+    { name: 'idCardImage', maxCount: 1 },
+    { name: 'taxationRegistryCardImage', maxCount: 1 },
+  ]),
+  SellerController.addSellerDocuments
+);
+
+app.post(
+  '/tourGuide/upload/:id',
+  upload.fields([
+    { name: 'idCardImage', maxCount: 1 },
+    { name: 'certificateImage', maxCount: 1 },
+  ]),
+  TourGuideController.addTourGuideDocuments
+);
+
+
+//User routes
 app.use("/user", userRoutes);
 
+//Advertiser routes
 app.use("/advertiser", advertiserRoutes);
 
 // Admin routes
@@ -92,35 +124,11 @@ app.use("/tourism-governor", tourismGovernorRoutes);
 // Complaint routes
 app.use("/complaint", complaintRoutes);
 
+// flight routes
+app.use("/flight", flightRoutes);
 
 //To work with pictures
-app.use(
-  '/advertiser/upload/:id',
-  upload.fields([
-    { name: 'idCardImage', maxCount: 1 },
-    { name: 'taxationRegistryCardImage', maxCount: 1 },
-  ]),
-  AdvertiserController.addAdvertiserDocuments
-);
 
-app.use(
-  '/seller/upload/:id',
-  upload.fields([
-    { name: 'idCardImage', maxCount: 1 },
-    { name: 'taxationRegistryCardImage', maxCount: 1 },
-  ]),
-  SellerController.addSellerDocuments
-);
-
-
-app.use(
-  '/tourGuide/upload/:id',
-  upload.fields([
-    { name: 'idCardImage', maxCount: 1 },
-    { name: 'certificateImage', maxCount: 1 },
-  ]),
-  TourGuideController.addTourGuideDocuments
-);
 
 
 // Fallback route for unknown endpoints

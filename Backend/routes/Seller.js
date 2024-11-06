@@ -13,7 +13,7 @@ const {
 const router = express.Router();
 router.post("/", createSeller);
 router.get("/:id", getSellerById);
-router.put("/upload/:id",addSellerDocuments);
+// router.put("/upload/:id",addSellerDocuments);
 router.put("/:id", updateSeller);
 router.get("/", getAllSellers); 
 router.get("/:id/products", getProductsBySellerId);

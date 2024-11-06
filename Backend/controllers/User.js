@@ -88,8 +88,6 @@ const UserController = {
 				...roleSpecificData,
 			});
 
-			console.log(user);
-
 			await user.save();
 
 			return res
@@ -179,7 +177,6 @@ const UserController = {
 		}
 	},
 	checkDeletion: async (req, res) => {
-		//cases are wrong
 		try {
 			const { id } = req.params;
 			const { role } = req.body;
@@ -212,7 +209,7 @@ const UserController = {
 					creatorId: id,
 				});
 				if(!itineraries){
-					return res.status(404).json({ canDelete: false, message: 'No deletable itineraries found for this TourGuide.' });
+					return res.status(200).json({ canDelete: true});
 				}
 				for (const itinerary of itineraries) {
 					const totalHeadCount = itinerary.availableDatesTimes.reduce((sum, date) => {

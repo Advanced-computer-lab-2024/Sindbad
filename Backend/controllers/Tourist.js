@@ -10,19 +10,19 @@ const mongoose = require("mongoose");
  */
 
 const getTouristById = async (req, res) => {
-	let tourist;
-	try {
-		tourist = await Tourist.findById(req.params.id);
-		if (tourist == null) {
-			return res.status(404).json({ message: "Tourist not found" });
-		}
-	} catch (err) {
-		return res.status(500).json({
-			message: "Error finding tourist",
-			error: err.message,
-		});
-	}
-	return res.json(tourist);
+  let tourist;
+  try {
+    tourist = await Tourist.findById(req.params.id);
+    if (tourist == null) {
+      return res.status(404).json({ message: "Tourist not found" });
+    }
+  } catch (err) {
+    return res.status(500).json({
+      message: "Error finding tourist",
+      error: err.message,
+    });
+  }
+  return res.json(tourist);
 };
 
 /**
@@ -32,12 +32,12 @@ const getTouristById = async (req, res) => {
  * @returns {Object} - A JSON object of the retrieved tourists or an error message
  */
 const getAllTourists = async (req, res) => {
-	try {
-		const tourists = await Tourist.find();
-		res.json(tourists);
-	} catch {
-		res.status(500).json({ message: err.message });
-	}
+  try {
+    const tourists = await Tourist.find();
+    res.json(tourists);
+  } catch {
+    res.status(500).json({ message: err.message });
+  }
 };
 
 /**
@@ -49,57 +49,57 @@ const getAllTourists = async (req, res) => {
  */
 
 const updateTourist = async (req, res) => {
-	let tourist;
-	try {
-		tourist = await Tourist.findById(req.params.id);
-		if (tourist == null) {
-			return res.status(404).json({ message: "Tourist not found" });
-		}
-	} catch (err) {
-		return res.status(500).json({
-			message: "Error finding tourist",
-			error: err.message,
-		});
-	}
-	res.tourist = tourist;
+  let tourist;
+  try {
+    tourist = await Tourist.findById(req.params.id);
+    if (tourist == null) {
+      return res.status(404).json({ message: "Tourist not found" });
+    }
+  } catch (err) {
+    return res.status(500).json({
+      message: "Error finding tourist",
+      error: err.message,
+    });
+  }
+  res.tourist = tourist;
 
-	if (req.body.email != null) {
-		res.tourist.email = req.body.email;
-	}
-	if (req.body.username != null) {
-		res.tourist.username = req.body.username;
-	}
-	if (req.body.mobileNumber != null) {
-		res.tourist.mobileNumber = req.body.mobileNumber;
-	}
-	if (req.body.nationality != null) {
-		res.tourist.nationality = req.body.nationality;
-	}
-	if (req.body.DOB != null) {
-		res.tourist.DOB = req.body.DOB;
-	}
-	if (req.body.job != null) {
-		res.tourist.job = req.body.job;
-	}
-	if (req.body.wallet != null) {
-		res.tourist.wallet = req.body.wallet;
-	}
-	if (req.body.profileImageUri != null) {
-		res.tourist.profileImageUri = req.body.profileImageUri;
-	}
-	if (req.body.bannerImageUri != null) {
-		res.tourist.bannerImageUri = req.body.bannerImageUri;
-	}
+  if (req.body.email != null) {
+    res.tourist.email = req.body.email;
+  }
+  if (req.body.username != null) {
+    res.tourist.username = req.body.username;
+  }
+  if (req.body.mobileNumber != null) {
+    res.tourist.mobileNumber = req.body.mobileNumber;
+  }
+  if (req.body.nationality != null) {
+    res.tourist.nationality = req.body.nationality;
+  }
+  if (req.body.DOB != null) {
+    res.tourist.DOB = req.body.DOB;
+  }
+  if (req.body.job != null) {
+    res.tourist.job = req.body.job;
+  }
+  if (req.body.wallet != null) {
+    res.tourist.wallet = req.body.wallet;
+  }
+  if (req.body.profileImageUri != null) {
+    res.tourist.profileImageUri = req.body.profileImageUri;
+  }
+  if (req.body.bannerImageUri != null) {
+    res.tourist.bannerImageUri = req.body.bannerImageUri;
+  }
 
-	try {
-		const updatedTourist = await res.tourist.save();
-		res.json(updatedTourist);
-	} catch (err) {
-		return res.status(400).json({
-			message: "Error updating tourist",
-			error: err.message,
-		});
-	}
+  try {
+    const updatedTourist = await res.tourist.save();
+    res.json(updatedTourist);
+  } catch (err) {
+    return res.status(400).json({
+      message: "Error updating tourist",
+      error: err.message,
+    });
+  }
 };
 
 /**
@@ -109,27 +109,55 @@ const updateTourist = async (req, res) => {
  * @returns {Object} - Deleted tourist profile or error message
  */
 const deleteTourist = async (req, res) => {
-	try {
-		const deletedTourist = await Tourist.findByIdAndDelete(req.params.id);
-		if (deletedTourist == null) {
-			return res.status(404).json({ message: "Tourist not found" });
-		} else {
-			res.json(deletedTourist);
-		}
-	} catch (err) {
-		return res.status(500).json({
-			message: "Error deleting Tourist",
-			error: err.message,
-		});
-	}
+  try {
+    const deletedTourist = await Tourist.findByIdAndDelete(req.params.id);
+    if (deletedTourist == null) {
+      return res.status(404).json({ message: "Tourist not found" });
+    } else {
+      res.json(deletedTourist);
+    }
+  } catch (err) {
+    return res.status(500).json({
+      message: "Error deleting Tourist",
+      error: err.message,
+    });
+  }
+};
+
+const redeemPoints = async (req, res) => {
+  try {
+    const touristId = req.params.id;
+    const tourist = await Tourist.findById(touristId);
+
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found" });
+    }
+
+    tourist.wallet += tourist.loyaltyPoints / 100;
+    tourist.loyaltyPoints = 0;
+
+    await tourist.save();
+
+    res.status(200).json({
+      message: "Points redeemed successfully",
+      wallet: tourist.wallet,
+      loyaltyPoints: tourist.loyaltyPoints,
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: "Error redeeming points",
+      error: err.message,
+    });
+  }
 };
 
 module.exports = {
-	getAllTourists,
-	getTouristById,
-	getAllTourists,
-	updateTourist,
-	deleteTourist,
+  getAllTourists,
+  getTouristById,
+  getAllTourists,
+  updateTourist,
+  deleteTourist,
+  redeemPoints,
 };
 
 /*

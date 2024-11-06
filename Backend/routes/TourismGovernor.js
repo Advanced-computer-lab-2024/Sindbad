@@ -3,12 +3,14 @@ const router = express.Router();
 const {
 	createTourismGovernor,
 	getTourismGovernorById,
+    updateTourismGovernor
 } = require("../controllers/TourismGovernor");
 
 router.route("/")
     .post(createTourismGovernor);
 
 router.route("/:id")
-    .get(getTourismGovernorById);
+    .get(getTourismGovernorById)
+    .put(updateTourismGovernor);
 
 module.exports = router;

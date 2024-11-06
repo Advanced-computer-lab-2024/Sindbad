@@ -37,21 +37,16 @@ function Profile() {
 			if (profileId == id || role === "admin") {
 				// nobody can view the profile of a tourist except the tourist himself or an admin
 				response = await getTouristById(profileId);
-			}
-			else {
+			} else {
 				response = { error: true, message: "Unauthorized access" };
 			}
-		}
-		else if (r === "tourGuide") {
+		} else if (r === "tourGuide") {
 			response = await getTourGuide(profileId);
-		}
-		else if (r === "seller") {
+		} else if (r === "seller") {
 			response = await getSeller(profileId);
-		}
-		else if (r === "advertiser") {
+		} else if (r === "advertiser") {
 			response = await getAdvertiser(profileId);
-		}
-		else if (r === "tourismGovernor") {
+		} else if (r === "tourismGovernor") {
 			response = await getTourismGovernor(profileId);
 		}
 
@@ -119,7 +114,8 @@ function Profile() {
 	// get the data to be displayed in the timeline (activities, products, itineraries, sites)
 	useEffect(() => {
 		if (
-			profileId && userData &&
+			profileId &&
+			userData &&
 			profileRole !== "guest" &&
 			Object.keys(userData).length > 0
 		) {
@@ -132,18 +128,21 @@ function Profile() {
 			<div className="py-8 px-24 max-w-[1200px] flex gap-9 mx-auto">
 				<div className="flex justify-center w-full">
 					<p className="text-neutral-400 text-sm italic">
-						{error === true ?
-							"Profile does not exist or you are not authorised to view it."
-							:
-							"Loading..."
-						}
+						{error === true
+							? "Profile does not exist or you are not authorised to view it."
+							: "Loading..."}
 					</p>
 				</div>
 			</div>
 		);
 	}
 
-	if (userData && (userData.isAccepted !== true && role !== "admin") && profileId !== id) {
+	if (
+		userData &&
+		userData.isAccepted !== true &&
+		role !== "admin" &&
+		profileId !== id
+	) {
 		return (
 			<div className="py-8 px-24 max-w-[1200px] flex gap-9 mx-auto">
 				<div className="flex justify-center w-full">
@@ -158,37 +157,38 @@ function Profile() {
 	return (
 		<div className="py-8 px-24 max-w-[1200px] mx-auto">
 			<div className="flex gap-9">
-				{profileRole !== "tourismGovernor" && (
-					<div className="flex flex-col w-max gap-9 self-start">
-						<ProfileBanner
-							userData={userData}
+				<div className="flex flex-col w-max gap-9 self-start">
+					<ProfileBanner
+						userData={userData}
+						profileId={profileId}
+						id={id}
+						profileRole={profileRole}
+					/>
+					{profileRole === "tourist" && profileId === id && (
+						<Wallet userData={userData} />
+					)}
+					{role === "admin" && userData.isAccepted === null && (
+						<Verify
 							profileId={profileId}
-							id={id}
 							profileRole={profileRole}
+							getUserInfo={getUserInfo}
 						/>
-						{profileRole === "tourist" && profileId === id && (
-							<Wallet userData={userData} />
-						)}
-						{role === "admin" && userData.isAccepted === null &&
-							<Verify profileId={profileId} profileRole={profileRole} getUserInfo={getUserInfo} />
-						}
-					</div>
-				)}
+					)}
+				</div>
 				<div className="w-full flex flex-col gap-12">
 					{profileRole === "advertiser" && (
-						<CompanyProfile
-							userData={userData}
-							profileId={profileId}
-							id={id}
-						/>
+						<CompanyProfile userData={userData} profileId={profileId} id={id} />
 					)}
 					{profileRole === "tourGuide" && (
 						<Experience userData={userData} profileId={profileId} id={id} />
 					)}
-					{(role === "admin" || (id === profileId && userData.isAccepted !== true && userData.isAccepted !== undefined)) &&
-						<Documents userData={userData} />
-					}
-					{!(userData.isAccepted === null && role === "admin") &&
+					{(role === "admin" ||
+						(id === profileId &&
+							userData.isAccepted !== true &&
+							userData.isAccepted !== undefined)) && (
+							<Documents userData={userData} />
+						)}
+					{!(userData.isAccepted === null && role === "admin") && (
 						<Timeline
 							userData={userData}
 							profileId={profileId}
@@ -197,14 +197,14 @@ function Profile() {
 							cardData={cardData}
 							fetchCardData={() => getCardData(profileId)}
 						/>
-					}
+					)}
+					{profileRole === "tourismGovernor" && profileId === id && (
+						<div className="mt-12">
+							<TagManagement />
+						</div>
+					)}
 				</div>
 			</div>
-			{profileRole === "tourismGovernor" && profileId === id && (
-				<div className="mt-12">
-					<TagManagement />
-				</div>
-			)}
 		</div>
 	);
 }
