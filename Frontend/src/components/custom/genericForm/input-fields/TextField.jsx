@@ -17,10 +17,14 @@ export const TextField = ({ name, control, type = 'text', label }) => {
               className="text-black"
               onChange={(e) => {
                 if (type === 'date') {
+                  console.log("Date input detected");
+                  const rawValue = e.target.value;
+                  console.log("Raw Date Value:", rawValue);
                   const formattedDate = format(
-                    new Date(e.target.value),
+                    new Date(rawValue),
                     'yyyy-MM-dd'
                   );
+                  console.log("Formatted Date:", formattedDate);
                   field.onChange(formattedDate);
                 } else if (type === 'number') {
                   field.onChange(Number(e.target.value));

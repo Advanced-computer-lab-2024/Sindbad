@@ -4,8 +4,8 @@ export const itinerarySubmit = (values, id, data) => {
     const formattedValues = {
         ...values,
         availableDatesTimes: values.availableDatesTimes.map(dateTime => ({
-            dateTime: new Date(dateTime),
-            headCount: 0,
+            ...dateTime,
+            dateTime: new Date(dateTime.dateTime),
         })),
     };
 
