@@ -24,6 +24,12 @@ router
 	.route("/:id/previous-work/:previousWorkId")
 	.delete(deletePreviousWork);
 
-router.route("/upload/:id").put(addTourGuideDocuments);
+// router.route("/upload/:id").put(
+// 	upload.fields([
+// 		{ name: 'idCardImage', maxCount: 1 },
+// 		{ name: 'certificateImage', maxCount: 1 },
+// 	]),
+// 	addTourGuideDocuments
+// );
 
 module.exports = router;

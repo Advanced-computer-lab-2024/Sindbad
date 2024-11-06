@@ -14,11 +14,12 @@ import { userSignUp } from "@/services/UserApiHandler";
 
 import SpinnerSVG from '@/SVGs/Spinner.jsx';
 import { ArrowLeft } from "lucide-react";
+import { updateTourGuideFiles } from "@/services/TourGuideApiHandler";
 
 function SignUp() {
-    const [registerType, setRegisterType] = useState("Tourist");
+    const [registerType, setRegisterType] = useState("TourGuide");
     const [logInRedirect, setLogInRedirect] = useState(false);
-    const [currentStep, setCurrentStep] = useState(1);
+    const [currentStep, setCurrentStep] = useState(2);
     const [formValues, setFormValues] = useState({});
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -140,16 +141,20 @@ function SignUp() {
     };
 
     const submitForm = async (values) => {
-        setLoading(true);
-        const response = await userSignUp(values, registerType);
-        setLoading(false);
+        // console.log(values);
+        // setLoading(true);
+        // const response = await userSignUp(values, registerType);
+        // console.log(response);
+        // setLoading(false);
+        const tourguideAddedDocs = await updateTourGuideFiles('6729d5e3e0016284d8a6132f', values);
+        console.log(tourguideAddedDocs);
 
-        if (response.error) {
-            setCurrentStep(1);
-            setError(response.display);
-        } else {
-            setLogInRedirect(true);
-        }
+        // if (response.error) {
+        //     setCurrentStep(1);
+        //     setError(response.display);
+        // } else {
+        //     setLogInRedirect(true);
+        // }
     }
 
     const renderCommonFields = () => (

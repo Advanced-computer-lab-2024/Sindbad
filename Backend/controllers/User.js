@@ -88,8 +88,6 @@ const UserController = {
 				...roleSpecificData,
 			});
 
-			console.log(user);
-
 			await user.save();
 
 			return res

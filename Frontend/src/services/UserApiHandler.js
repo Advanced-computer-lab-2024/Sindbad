@@ -4,16 +4,17 @@ export const userSignUp = async (finalValues, registerType) => {
     const { password, ...rest } = finalValues; // Exclude 'password' from finalValues
 
     // Adjust the data format based on the role
+    const { idCardImage, certificateImage, taxationRegistryCardImage, ...remaining } = finalValues; // Exclude 'idCardImage' and 'certificateImage' from finalValues
     let requestBody = {};
     if (registerType === "Tourist") {
         requestBody = {
-            ...rest,
+            ...remaining,
             passwordHash: password, // hash the password if required
             role: "tourist",
         };
     } else {
         requestBody = {
-            ...rest,
+            ...remaining,
             passwordHash: finalValues.password, // hash the password if required
             role: registerType.toLowerCase(),
         };
