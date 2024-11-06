@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, FormProvider } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
@@ -111,6 +111,7 @@ export function GenericForm({ type, data, id }) {
 			  />
 			);
 	  
+			//FIXME: Date default value is not working
 		  case 'text':
 		  case 'number':
 		  case 'date':
@@ -131,7 +132,6 @@ export function GenericForm({ type, data, id }) {
 
 	return (
 		<div>
-			 <FormProvider {...form}>
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
 						{formFields.map((field) => renderField(field))}
@@ -140,7 +140,6 @@ export function GenericForm({ type, data, id }) {
 						</Button>
 					</form>
 				</Form>
-			</FormProvider>
 		</div>
 	);
 }
