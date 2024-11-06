@@ -25,6 +25,7 @@ function SignUp() {
     const [formValues, setFormValues] = useState({});
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [accepted, setAccepted] = useState(false);
     const navigate = useNavigate();
 
     const handleRegisterTypeChange = (value) => {
@@ -134,6 +135,10 @@ function SignUp() {
     const idCardImageRefSeller = sellerForm.register('idCardImage');
     
     const handleCommonFormSubmit = (data) => {
+        if (!accepted) {
+            setError("Please accept the terms of service and privacy policy");
+            return;
+        }
         setFormValues((prev) => ({ ...prev, ...data }));  // Store Step 1 data
         setCurrentStep(2);
     };
@@ -419,6 +424,8 @@ function SignUp() {
                                     <Button type="submit" disabled={loading} className="bg-primary-700 justify-center w-full mt-4">
                                         {loading ? <SpinnerSVG /> : registerType == "Tourist" ? "Continue" : "Sign Up"}
                                     </Button>
+
+                                    <Input type="checkbox" id="accept" name="accept" onChange={() => setAccepted(!accepted)} />
                                     <p className="text-center text-light/70 text-sm mt-5">
                                         By creating an account you agree to our{" "}
                                         <a href="#" className="text-secondary/90 hover:text-secondary hover:decoration-light/80 decoration-light/70 underline underline-offset-2">
