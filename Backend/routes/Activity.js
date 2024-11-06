@@ -8,6 +8,7 @@ const {
   getMyActivities,
   getActivities,
   addRating,
+	addComment,
   bookActivity,
   setIsInappropriate,
 } = require("../controllers/Activity");
@@ -15,6 +16,8 @@ const {
 router.route("/my-activities/:creatorId").get(getMyActivities);
 
 router.route("/").post(setActivity).get(getActivities);
+
+router.route("/:id/comment").post(addComment);
 
 router.route("/book").post(bookActivity);
 

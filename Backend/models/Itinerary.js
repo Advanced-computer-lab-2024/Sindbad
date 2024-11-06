@@ -96,6 +96,16 @@ const itinerarySchema = mongoose.Schema(
         5: 0,
       },
     },
+    comments: [
+      {
+        userId: {
+           type: mongoose.Schema.Types.ObjectId, ref: "User", required: true 
+          },
+        comment: { 
+          type: String, required: true 
+        },
+      },
+    ],
     averageRating: {
       type: Number,
       default: 0,
