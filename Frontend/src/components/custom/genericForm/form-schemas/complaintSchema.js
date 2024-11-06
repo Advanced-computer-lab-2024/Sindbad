@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const complaintSchema = z.object({
+export const complaintSchema = {
     title: z.string().min(1, {
         message: "Title is required",
     }),
@@ -8,4 +8,4 @@ export const complaintSchema = z.object({
         message: "Body is required",
     }),
     
-})
+}

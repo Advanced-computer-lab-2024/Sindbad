@@ -5,8 +5,6 @@ export const complaint = {
     ],
     defaultValues: {
         title: "",
-        isResolved: false,
-        createdAt: new Date().toISOString(),
         body: "",
     }
 };

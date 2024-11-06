@@ -49,6 +49,7 @@ export const getMyComplaints = async (creatorId) => {
 export const createComplaint = async (complaintData) => {
     try {
         const response = await axiosInstance.post(`/complaint`, complaintData);
+        console.log(response.data);
         return response.data;
     } catch (error){
         return error;

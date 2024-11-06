@@ -13,7 +13,6 @@ import { forms } from "./forms";
 export function GenericForm({ type, data, id }) {
 	// If you need more information about how this component works, check out forms.js in the same folder.
 	const formObject = forms[type];
-
 	const onSubmit = formObject.onSubmit;
 	const formSchema = z.object(formObject.zodSchema);
 	const formFields = formObject.renderedFields;
