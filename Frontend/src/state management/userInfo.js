@@ -8,8 +8,8 @@ const userSlice = createSlice({
     id: "672537b565d46abdbd520858",
     // role: "tourist",
     // id: "672501d2d5a2d7588e2ce414"
-    // role: "tourGuide",
-    // id: "6725031bd5a2d7588e2ce42a"
+    role: "tourGuide",
+    id: "6725031bd5a2d7588e2ce42a"
     // role: "seller",
     // id: "67252de1d5a2d7588e2ce7fe"
     // role: "advertiser",

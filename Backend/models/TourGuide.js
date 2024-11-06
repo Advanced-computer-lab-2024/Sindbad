@@ -80,6 +80,31 @@ const TourGuideSchema = new mongoose.Schema(
 			type: Boolean,
 			default: null,
 		},
+		rating: {
+			type: Map,
+			of: Number,
+			default: {
+			  "1": 0,
+			  "2": 0,
+			  "3": 0,
+			  "4": 0,
+			  "5": 0
+			}
+		  },
+		averageRating: {
+			type: Number,
+			default: 0,
+		},
+		comments: [
+			{
+				userId: {
+					 type: mongoose.Schema.Types.ObjectId, ref: "User", required: true 
+					},
+				comment: { 
+					type: String, required: true 
+				},
+			},
+		],
 	},
 	{ timestamps: true }
 );

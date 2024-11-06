@@ -87,7 +87,16 @@ const activitySchema = mongoose.Schema(
       type: Number,
       default: 0,
     },
-
+    comments: [
+      {
+        userId: {
+           type: mongoose.Schema.Types.ObjectId, ref: "User", required: true 
+          },
+        comment: { 
+          type: String, required: true 
+        },
+      },
+    ],
     description: {
       type: String,
       default: "",
