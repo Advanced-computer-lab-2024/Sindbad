@@ -12,7 +12,10 @@ export const TextArea = ({ name, control, type ='textArea', label}) => {
                         {label || name.toUpperCase()}
                     </FormLabel>
                     <FormControl>
-                    <Textarea/>
+                    <Textarea
+                    {...field}
+                    
+                    />
                     </FormControl>
                 </FormItem>
             )}

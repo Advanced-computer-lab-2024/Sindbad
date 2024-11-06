@@ -134,6 +134,6 @@ export const forms = {
     zodSchema:complaintSchema,
     renderedFields: complaint.fields,
     defaultValues: complaint.defaultValues,
-    onsubmit: complaintSubmit,
+    onSubmit: complaintSubmit,
   }
 };

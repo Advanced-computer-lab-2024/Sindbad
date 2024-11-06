@@ -17,15 +17,11 @@ function ComplaintView(){
     
 
     const getTableData = async (creatorId)=>{
-        
         setLoading(true);
         let Complaints = await getMyComplaints(creatorId);
         const myComplaints = Complaints.data
         setLoading(false);
-        
-        console.log(myComplaints);
         setTableData(myComplaints);
-        console.log(tableData);
     }
 
     useEffect(() => {
@@ -37,7 +33,7 @@ function ComplaintView(){
         <div className="w-full min-h-screen flex flex-col">
             <div className="flex flex-col justify-center items-center p-12">
                     <h1 className="font-semibold text-3xl mb-8">
-                        Thank you for reaching out, What's the issue?
+                        Thank you for reaching out, What&apos;s the issue?
                     </h1>
                     <div className="w-2/5 flex flex-col gap-4">
                         <GenericForm type="complaint" id={creatorId} />
