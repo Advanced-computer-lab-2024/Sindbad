@@ -2,11 +2,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm} from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import { Form } from "@/components/ui/form";
+import { Form, FormLabel } from "@/components/ui/form";
 import { ArrayField } from './input-fields/ArrayField';
 import { CheckboxField } from './input-fields/CheckboxField';
 import { CoordinatesField } from './input-fields/CoordinatesField';
 import { TextField } from './input-fields/TextField';
+import { TextArea } from './input-fields/TextArea';
 import { forms } from "./forms";
 
 export function GenericForm({ type, data, id }) {
@@ -110,7 +111,16 @@ export function GenericForm({ type, data, id }) {
 				label={field.label || field.name.toUpperCase()}
 			  />
 			);
-	  
+			case 'textArea':
+				return(
+					<TextArea
+						key={fullPath}
+						name={fullPath}
+						control={form.control}
+						type={field.type}
+						label={field.label || field.name.toUpperCase()}
+					/>
+			 	)	  
 		  default:
 			return null;
 		}

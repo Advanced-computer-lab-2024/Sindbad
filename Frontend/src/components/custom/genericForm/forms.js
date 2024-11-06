@@ -9,6 +9,7 @@ import { siteSchema } from "./form-schemas/siteSchema";
 import { productSchema } from "./form-schemas/productSchema";
 import { companyProfileSchema } from "./form-schemas/companyProfileSchema";
 import { previousWorkSchema } from "./form-schemas/previousWorkSchema";
+import { complaintSchema } from "./form-schemas/complaintSchema";
 
 //import rendered fields here
 import { tourist } from "./rendered-fields/touristFields";
@@ -21,6 +22,7 @@ import { tourGuide } from "./rendered-fields/tourGuideFields";
 import { seller } from "./rendered-fields/sellerFields";
 import { advertiser } from "./rendered-fields/advertiserFields";
 import { itinerary } from "./rendered-fields/itineraryFields";
+import { complaint } from "./rendered-fields/complaintFields";
 
 //import submit handlers here
 import { touristSubmit } from "./submit-handlers/touristHandler";
@@ -33,6 +35,7 @@ import { siteSubmit } from "./submit-handlers/siteHandler";
 import { productSubmit } from "./submit-handlers/productHandler";
 import { companySubmit } from "./submit-handlers/companyHandler";
 import { experienceSubmit } from "./submit-handlers/experienceHandler";
+import { complaintSubmit } from "./submit-handlers/complaintHandler";
 
 /*
     Forms for the generic form component should be generated based on this object:
@@ -126,4 +129,11 @@ export const forms = {
     defaultValues: previousWork.defaultValues,
     onSubmit: experienceSubmit,
   },
+
+  complaint: {
+    zodSchema:complaintSchema,
+    renderedFields: complaint.fields,
+    defaultValues: complaint.defaultValues,
+    onsubmit: complaintSubmit,
+  }
 };

@@ -9,30 +9,22 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import ComplaintManagement from "@/components/custom/admin/complaint-management/ComplaintManagement";
 import { DataTable } from "@/components/custom/admin/complaint-management/data-table";
 import {columns} from "@/pages/TouristComplaints/columns";
 import { createComplaint, getAllComplaints, getMyComplaints } from "@/services/ComplaintApiHandler";
-import { useUser } from "@/state management/userInfo";
 import { getTouristById } from "@/services/TouristApiHandler";
 import TableSkeleton from "@/components/custom/TableSkeleton";
 import { set } from "date-fns";
 import { Textarea } from "@/components/ui/textarea";
-
+import GenericForm from "@/components/custom/genericForm/genericForm";
 
 
 function ComplaintView(){
     
     const { creatorId } = useParams();
-    const [formValues, setFormValues] = useState({});
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-
     const [tableData, setTableData] = useState(null);
     
-    const [formData, setFormData] = useState(null);
-
-
     useEffect(() => {
 		if (creatorId) {
 			getTouristById(creatorId);
@@ -55,96 +47,9 @@ function ComplaintView(){
 		getTableData(creatorId);
 	}, []);
 
+
+
     
-    
-
-    const complaintFormSchema = z.object({
-        title: z.string().min(1, {
-            message: "Title is required",
-        }),
-        createdAt: z.string().refine((val) => !isNaN(Date.parse(val)), {
-            message: "Invalid date",
-        }),
-        body: z.string().min(1, {
-            message: "Body is required",
-        }),
-        
-    });
-
-    const complaintDefaultValues = {
-        title: "",
-        isResolved: false,
-        createdAt: "",
-        body: "",
-    };
-
-    const complaintForm = useForm({
-        resolver: zodResolver(complaintFormSchema),
-        defaultValues: complaintDefaultValues,
-    });
-
-    const handleComplaintFormSubmit = (formData) => {
-        submitForm({ ...formValues, ...formData });
-    };
-
-    const submitForm = async (values) => {
-         setLoading(true);
-         const response = createComplaint(values);
-         setLoading(false);
-
-         if (response.error) {
-             setError(response.display);
-         } else {
-        //     // add toast!!!!!!!!!!!!!!!!, thank will be reviewed
-         }
-    }
-
-    const renderComplaintforms = () => (
-        <>
-            <FormField
-                key="Title"
-                control={complaintForm.control}
-                name="Title"
-                render={({ field }) => (
-                    <FormItem>
-                        <FormLabel htmlFor="Title">Issue experinced</FormLabel>
-                        <FormControl>
-                            <Input id="Title" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-                )}
-            />
-            <FormField
-                key="Date"
-                control={complaintForm.control}
-                name="Date"
-                render={({ field }) => (
-                    <FormItem>
-                        <FormLabel htmlFor="Date">Date of complaint</FormLabel>
-                        <FormControl>
-                            <Input id="Date" {...field} type="date"/>
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-                )}
-            />
-            <FormField
-                key="Body"
-                control={complaintForm.control}
-                name="Body"
-                render={({ field }) => (
-                    <FormItem>
-                        <FormLabel htmlFor="Body">Description of issue experinced</FormLabel>
-                        <FormControl>
-                            <Textarea/>
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-                )}
-            />
-        </>
-    );
 
     return(
         <div className="w-full min-h-screen flex flex-col">
@@ -153,7 +58,7 @@ function ComplaintView(){
                         Thank you for reaching out, What's the issue?
                     </h1>
                     <div className="w-2/5 flex flex-col gap-4">
-                        <Form {...complaintForm}>
+                        {/* <Form {...complaintForm}>
                             <form onSubmit={complaintForm.handleSubmit(handleComplaintFormSubmit)} className="gap-2 flex flex-col">
                                 {renderComplaintforms()}
                                 {error && <p className="text-red-500 text-sm text-center">{error}</p>}
@@ -161,7 +66,8 @@ function ComplaintView(){
                                     Submit report
                                 </Button>
                             </form>
-                        </Form>
+                        </Form> */}
+                        <GenericForm type="complaint" id={creatorId} />
                     </div>
             </div>
 
