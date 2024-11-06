@@ -50,3 +50,28 @@ export const removeTourGuideWork = async (userId, experienceId) => {
 		return error;
 	}
 };
+export const updateTourGuideFiles = async (tourGuideId, files) => {
+	const formData = new FormData();
+
+	if (files.idCardImage) {
+		formData.append("idCardImage", files.idCardImage[0]);
+	}
+	if (files.certificateImage) {
+		formData.append("certificateImage", files.certificateImage[0]);
+	}
+
+	try {
+		const response = await axiosInstance.post(`/tourGuide/upload/${tourGuideId}/`, 
+			formData
+		  , {
+			headers: {
+				"Content-Type": "multipart/form-data",
+			},
+		  }
+		)
+
+		return response.data;
+	} catch (error) {
+		return error;
+	}
+}

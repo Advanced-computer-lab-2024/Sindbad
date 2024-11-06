@@ -14,6 +14,9 @@ import { userSignUp } from "@/services/UserApiHandler";
 
 import SpinnerSVG from '@/SVGs/Spinner.jsx';
 import { ArrowLeft } from "lucide-react";
+import { updateTourGuideFiles } from "@/services/TourGuideApiHandler";
+import { updateSellerFiles } from "@/services/SellerApiHandler";
+import { updateAdvertiserFiles } from "@/services/AdvertiserApiHandler";
 
 function SignUp() {
     const [registerType, setRegisterType] = useState("Tourist");
@@ -22,11 +25,15 @@ function SignUp() {
     const [formValues, setFormValues] = useState({});
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [accepted, setAccepted] = useState(false);
     const navigate = useNavigate();
 
     const handleRegisterTypeChange = (value) => {
         setRegisterType(value);
+        console.log(value)
     };
+
+    
 
     const commonFormSchema = z.object({
         username: z.string().min(2, {
@@ -55,6 +62,28 @@ function SignUp() {
         }),
     });
 
+    const tourGuideFormSchema = z.object({
+        certificateImage: z
+              .instanceof(FileList)
+              .refine((file) => file?.length == 1, 'File is required.')
+            ,
+        idCardImage: z
+            .instanceof(FileList)
+            .refine((file) => file?.length == 1, 'File is required.')
+        ,
+    })
+
+    const sellerFormSchema = z.object({
+        idCardImage: z
+        .instanceof(FileList)
+        .refine((file) => file?.length == 1, 'File is required.')
+    ,
+        taxationRegistryCardImage: z
+        .instanceof(FileList)
+        .refine((file) => file?.length == 1, 'File is required.')
+    ,
+    })
+
     const commonDefaultValues = {
         username: "",
         email: "",
@@ -68,6 +97,17 @@ function SignUp() {
         mobileNumber: "",
     };
 
+    const tourGuideDefaultValues = {
+        certificateImage: "",
+        idCardImage: "",
+    }
+
+    const sellerDefaultValues = {
+        idCardImage: "",
+        taxationRegistryCardImage: "",
+    }
+
+
     const commonForm = useForm({
         resolver: zodResolver(commonFormSchema),
         defaultValues: commonDefaultValues,
@@ -78,13 +118,29 @@ function SignUp() {
         defaultValues: touristDefaultValues,
     });
 
+    const tourGuideForm = useForm({
+        resolver: zodResolver(tourGuideFormSchema),
+        defaultValues: tourGuideDefaultValues,
+    })
+
+    const sellerForm = useForm({
+        resolver: zodResolver(sellerFormSchema),
+        defaultValues: sellerDefaultValues,
+    })
+
+    const idCardImageRef = tourGuideForm.register('idCardImage');
+    const certificateImageRef = tourGuideForm.register('certificateImage');
+
+    const taxationRegistryCardImageRef = sellerForm.register('taxationRegistryCardImage');
+    const idCardImageRefSeller = sellerForm.register('idCardImage');
+    
     const handleCommonFormSubmit = (data) => {
-        setFormValues((prev) => ({ ...prev, ...data }));  // Store Step 1 data
-        if (registerType === "Tourist") {
-            setCurrentStep(2);
-        } else {
-            submitForm({ ...formValues, ...data });
+        if (!accepted) {
+            setError("Please accept the terms of service and privacy policy");
+            return;
         }
+        setFormValues((prev) => ({ ...prev, ...data }));  // Store Step 1 data
+        setCurrentStep(2);
     };
 
     const handleTouristFormSubmit = (data) => {
@@ -94,12 +150,36 @@ function SignUp() {
     const submitForm = async (values) => {
         setLoading(true);
         const response = await userSignUp(values, registerType);
-        setLoading(false);
-
+        if (registerType === "TourGuide") {
+            if (response.error) {
+                setCurrentStep(1);
+                setError(response.display);
+            } else {
+                const tourguideAddedDocs = await updateTourGuideFiles(response.user._id, values);
+            }
+        }
+        if (registerType === "Seller") { 
+            if (response.error) {
+                setCurrentStep(1);
+                setError(response.display);
+            } else {
+                const sellerAddedDocs = await updateSellerFiles(response.user._id, values);
+            }
+        }
+        if (registerType === "Advertiser") {
+            if (response.error) {
+                setCurrentStep(1);
+                setError(response.display);
+            }
+            else {
+                const advertiserAddedDocs = await updateAdvertiserFiles(response.user._id, values);
+            }
+        }
         if (response.error) {
             setCurrentStep(1);
             setError(response.display);
         } else {
+            setLoading(false);
             setLogInRedirect(true);
         }
     }
@@ -212,6 +292,91 @@ function SignUp() {
         </div>
     );
 
+    const renderTourGuideFields = () => (
+        <div className="flex flex-col gap-2">
+            <FormField
+                key="certificateImage"
+                control={tourGuideForm.control}
+                name="certificateImage"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel htmlFor="certificateImage">Certificate Image</FormLabel>
+                        <FormControl>
+                            <Input id="certificateImage" type="file" name="certificateImage" 
+                            {...certificateImageRef} 
+                            onChange={(event) => {
+                                field.onChange(event.target?.files?.[0] ?? undefined);
+                              }}
+                            />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                key="idCardImage"
+                control={tourGuideForm.control}
+                name="idCardImage"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel htmlFor="idCardImage">ID Card Image</FormLabel>
+                        <FormControl>
+                            <Input id="idCardImage" type="file" name="idCardImage"
+                            {...idCardImageRef} 
+                            onChange={(event) => {
+                                field.onChange(event.target?.files?.[0] ?? undefined);
+                              }}
+                            />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+        </div>
+    )
+
+    const renderSellerFields = () => (
+        <div className="flex flex-col gap-2">
+            <FormField
+                key="idCardImage"
+                control={sellerForm.control}
+                name="idCardImage"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel htmlFor="idCardImage">ID Card Image</FormLabel>
+                        <FormControl>
+                            <Input id="idCardImage" type="file" name="idCardImage"
+                            {...idCardImageRefSeller}
+                            onChange={(event) => {
+                                field.onChange(event.target?.files?.[0] ?? undefined);
+                              }}
+                            />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                key="taxationRegistryCardImage"
+                control={sellerForm.control}
+                name="taxationRegistryCardImage"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel htmlFor="taxationRegistryCardImage">Taxation Registry Card Image</FormLabel>
+                        <FormControl>
+                            <Input id="taxationRegistryCardImage" type="file" name="taxationRegistryCardImage"
+                            {...taxationRegistryCardImageRef} 
+                            onChange={(event) => {
+                                field.onChange(event.target?.files?.[0] ?? undefined);
+                              }}
+                            />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+        </div>
+    )
     return (
         <div className="w-full min-h-screen grid grid-cols-2">
             <div className="bg-primary-700">
@@ -259,6 +424,8 @@ function SignUp() {
                                     <Button type="submit" disabled={loading} className="bg-primary-700 justify-center w-full mt-4">
                                         {loading ? <SpinnerSVG /> : registerType == "Tourist" ? "Continue" : "Sign Up"}
                                     </Button>
+
+                                    <Input type="checkbox" id="accept" name="accept" onChange={() => setAccepted(!accepted)} />
                                     <p className="text-center text-light/70 text-sm mt-5">
                                         By creating an account you agree to our{" "}
                                         <a href="#" className="text-secondary/90 hover:text-secondary hover:decoration-light/80 decoration-light/70 underline underline-offset-2">
@@ -274,10 +441,42 @@ function SignUp() {
                         }
 
                         {/* form step 2 */}
-                        {currentStep === 2 &&
+                        {currentStep === 2 && registerType === "Tourist" &&
                             <Form {...touristForm}>
                                 <form onSubmit={touristForm.handleSubmit(handleTouristFormSubmit)} className="gap-2 flex flex-col">
                                     {renderTouristFields()}
+                                    {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+                                    <Button type="submit" disabled={loading} className="bg-primary-700 justify-center w-full mt-4">
+                                        {loading ? <SpinnerSVG /> : "Sign Up"}
+                                    </Button>
+                                    <Button onClick={() => setCurrentStep(1)} variant="link" className="text-center -mt-1 flex gap-2 self-center">
+                                        <ArrowLeft size={12} />
+                                        Back
+                                    </Button>
+                                </form>
+                            </Form>
+                        }
+
+                        {currentStep === 2 && registerType === "TourGuide" &&
+                            <Form {...tourGuideForm} enctype="multipart/form-data">
+                                <form onSubmit={tourGuideForm.handleSubmit(handleTouristFormSubmit)} className="gap-2 flex flex-col">
+                                    {renderTourGuideFields()}
+                                    {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+                                    <Button type="submit" disabled={loading} className="bg-primary-700 justify-center w-full mt-4">
+                                        {loading ? <SpinnerSVG /> : "Sign Up"}
+                                    </Button>
+                                    <Button onClick={() => setCurrentStep(1)} variant="link" className="text-center -mt-1 flex gap-2 self-center">
+                                        <ArrowLeft size={12} />
+                                        Back
+                                    </Button>
+                                </form>
+                            </Form>
+                        }
+
+                        {currentStep === 2 && (registerType === "Seller" || registerType === "Advertiser") &&
+                            <Form {...sellerForm} enctype="multipart/form-data">
+                                <form onSubmit={sellerForm.handleSubmit(handleTouristFormSubmit)} className="gap-2 flex flex-col">
+                                    {renderSellerFields()}
                                     {error && <p className="text-red-500 text-sm text-center">{error}</p>}
                                     <Button type="submit" disabled={loading} className="bg-primary-700 justify-center w-full mt-4">
                                         {loading ? <SpinnerSVG /> : "Sign Up"}
