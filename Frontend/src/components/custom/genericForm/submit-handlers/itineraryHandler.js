@@ -10,8 +10,6 @@ export const itinerarySubmit = (values, id, data) => {
     };
 
     if (data) {
-        console.log(data);
-        console.log(formattedValues);
         updateItinerary(data._id, formattedValues);
     } else {
         const itineraryWithId = {
