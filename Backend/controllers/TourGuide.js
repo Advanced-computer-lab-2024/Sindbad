@@ -193,13 +193,13 @@ const addTourGuideDocuments = async (req, res) => {
 	const updateData = {};
 	console.log(req);
 
-	// if (files.idCardImage) {
-	// 	updateData.idCardImage = files.idCardImage[0].buffer; // Get binary data from the first file
-	//   }
+	if (files.idCardImage) {
+		updateData.idCardImage = files.idCardImage[0].buffer; // Get binary data from the first file
+	  }
 	
-	//   if (files.certificateImage) {
-	// 	updateData.certificateImage = files.certificateImage[0].buffer;
-	// }
+	  if (files.certificateImage) {
+		updateData.certificateImage = files.certificateImage[0].buffer;
+	}
 
 	
 	try {

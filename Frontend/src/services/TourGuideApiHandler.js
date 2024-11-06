@@ -54,10 +54,10 @@ export const updateTourGuideFiles = async (tourGuideId, files) => {
 	const formData = new FormData();
 
 	if (files.idCardImage) {
-		formData.append("idCardImage", files.idCardImage);
+		formData.append("idCardImage", files.idCardImage[0]);
 	}
 	if (files.certificateImage) {
-		formData.append("certificateImage", files.certificateImage);
+		formData.append("certificateImage", files.certificateImage[0]);
 	}
 
 	try {

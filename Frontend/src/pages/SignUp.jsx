@@ -15,11 +15,13 @@ import { userSignUp } from "@/services/UserApiHandler";
 import SpinnerSVG from '@/SVGs/Spinner.jsx';
 import { ArrowLeft } from "lucide-react";
 import { updateTourGuideFiles } from "@/services/TourGuideApiHandler";
+import { updateSellerFiles } from "@/services/SellerApiHandler";
+import { updateAdvertiserFiles } from "@/services/AdvertiserApiHandler";
 
 function SignUp() {
-    const [registerType, setRegisterType] = useState("TourGuide");
+    const [registerType, setRegisterType] = useState("Tourist");
     const [logInRedirect, setLogInRedirect] = useState(false);
-    const [currentStep, setCurrentStep] = useState(2);
+    const [currentStep, setCurrentStep] = useState(1);
     const [formValues, setFormValues] = useState({});
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -141,20 +143,40 @@ function SignUp() {
     };
 
     const submitForm = async (values) => {
-        // console.log(values);
-        // setLoading(true);
-        // const response = await userSignUp(values, registerType);
-        // console.log(response);
-        // setLoading(false);
-        const tourguideAddedDocs = await updateTourGuideFiles('6729d5e3e0016284d8a6132f', values);
-        console.log(tourguideAddedDocs);
-
-        // if (response.error) {
-        //     setCurrentStep(1);
-        //     setError(response.display);
-        // } else {
-        //     setLogInRedirect(true);
-        // }
+        setLoading(true);
+        const response = await userSignUp(values, registerType);
+        if (registerType === "TourGuide") {
+            if (response.error) {
+                setCurrentStep(1);
+                setError(response.display);
+            } else {
+                const tourguideAddedDocs = await updateTourGuideFiles(response.user._id, values);
+            }
+        }
+        if (registerType === "Seller") { 
+            if (response.error) {
+                setCurrentStep(1);
+                setError(response.display);
+            } else {
+                const sellerAddedDocs = await updateSellerFiles(response.user._id, values);
+            }
+        }
+        if (registerType === "Advertiser") {
+            if (response.error) {
+                setCurrentStep(1);
+                setError(response.display);
+            }
+            else {
+                const advertiserAddedDocs = await updateAdvertiserFiles(response.user._id, values);
+            }
+        }
+        if (response.error) {
+            setCurrentStep(1);
+            setError(response.display);
+        } else {
+            setLoading(false);
+            setLogInRedirect(true);
+        }
     }
 
     const renderCommonFields = () => (
