@@ -1,7 +1,7 @@
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+import { FormLabel } from '@/components/ui/form';
+import { TextField } from './TextField';
 
 export const ObjectArrayField = ({ name, control, initialValue, label, fieldsSchema }) => {
   const { fields, append, remove } = useFieldArray({
@@ -17,30 +17,12 @@ export const ObjectArrayField = ({ name, control, initialValue, label, fieldsSch
       {fields.map((field, index) => (
         <div key={field.id} className="space-y-2">
           {fieldsSchema.map((schema) => (
-            <FormField
+            <TextField
               key={`${name}.${index}.${schema.name}`}
-              control={control}
               name={`${name}.${index}.${schema.name}`}
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      type={schema.type === 'number' ? 'number' : schema.type === 'date' ? 'date' : 'text'}
-                      className="text-black"
-                      placeholder={schema.label || schema.name}
-                      onChange={(e) => {
-                        const value = schema.type === 'number' 
-                          ? Number(e.target.value) 
-                          : e.target.value;
-                        field.onChange(value);
-                      }}
-                      value={field.value}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              control={control}
+              type={schema.type}
+              label={schema.label || schema.name}
             />
           ))}
           <Button

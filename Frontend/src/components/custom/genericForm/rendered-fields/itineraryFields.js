@@ -12,7 +12,7 @@ export const itinerary = {
 			type: "objectArray",
 			label: "Available Dates and Headcounts",
 			fields: [
-				{ name: "date", type: "date", label: "Date" },
+				{ name: "dateTime", type: "date", label: "Date" },
 				{ name: "headCount", type: "number", label: "Head Count" },
 			],
 		},
@@ -28,7 +28,7 @@ export const itinerary = {
 		duration: 0,
 		languages: [],
 		price: 0,
-		availableDatesTimes: [{ date: "", time: "", headCount: 0 }],
+		availableDatesTimes: [{ date: "", headCount: 0 }],
 		accessibility: [],
 		pickUpLocation: "",
 		dropOffLocation: "",
