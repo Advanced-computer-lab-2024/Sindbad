@@ -15,10 +15,11 @@ export const getTourismGovernor = async (tourismGovernorId) => {
 	}
 }
 
-export const updateTourismGovernor = async (tourismGovernorId) => {
+export const updateTourismGovernor = async (tourismGovernorId, data) => {
 	try {
 		const response = await axiosInstance.put(
 			`/tourism-governor/${tourismGovernorId}`,
+			data,
 			{
 				resourceName: "Tourism governor",
 			}
