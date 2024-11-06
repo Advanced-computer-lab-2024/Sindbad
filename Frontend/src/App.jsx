@@ -12,7 +12,7 @@ import SitesPage from "./pages/Sites";
 import Site from "./pages/SiteView";
 import ShoppingPage from "./pages/Products";
 import ProductView from "./pages/ProductView";
-import ComplaintView from "./pages/ComplaintView";
+import ComplaintView from "./pages/TouristComplaints/ComplaintView";
 import AdminManagementView from "./pages/AdminManagementView";
 import AdminVerificationView from "./pages/AdminVerificationView";
 

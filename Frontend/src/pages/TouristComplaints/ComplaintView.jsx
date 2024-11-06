@@ -11,9 +11,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import ComplaintManagement from "@/components/custom/admin/complaint-management/ComplaintManagement";
 import { DataTable } from "@/components/custom/admin/complaint-management/data-table";
-import { columns } from "@/components/custom/admin/complaint-management/columns";
-import { getMyComplaints } from "@/services/ComplaintApiHandler";
+import {columns} from "@/pages/TouristComplaints/columns";
+import { createComplaint, getAllComplaints, getMyComplaints } from "@/services/ComplaintApiHandler";
 import { useUser } from "@/state management/userInfo";
+import { getTouristById } from "@/services/TouristApiHandler";
+import TableSkeleton from "@/components/custom/TableSkeleton";
+import { set } from "date-fns";
+import { Textarea } from "@/components/ui/textarea";
 
 
 
@@ -24,31 +28,41 @@ function ComplaintView(){
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const [data, setData] = useState(null);
+    const [tableData, setTableData] = useState(null);
+    
+    const [formData, setFormData] = useState(null);
 
 
     useEffect(() => {
 		if (creatorId) {
-			getUserInfo(creatorId);
+			getTouristById(creatorId);
 		}
 	}, [creatorId]);
+
+    const getTableData = async (creatorId)=>{
+        
+        setLoading(true);
+        let Complaints = await getMyComplaints(creatorId);
+        const myComplaints = Complaints.data
+        setLoading(false);
+        
+        console.log(myComplaints);
+        setTableData(myComplaints);
+        console.log(tableData);
+    }
 
     useEffect(() => {
 		getTableData(creatorId);
 	}, []);
 
-    const getTableData = async (creatorId)=>{
-        
-        let myComplaints = await getMyComplaints(creatorId);
-
-    }
+    
     
 
     const complaintFormSchema = z.object({
         title: z.string().min(1, {
             message: "Title is required",
         }),
-        date: z.string().refine((val) => !isNaN(Date.parse(val)), {
+        createdAt: z.string().refine((val) => !isNaN(Date.parse(val)), {
             message: "Invalid date",
         }),
         body: z.string().min(1, {
@@ -59,7 +73,8 @@ function ComplaintView(){
 
     const complaintDefaultValues = {
         title: "",
-        date: "",
+        isResolved: false,
+        createdAt: "",
         body: "",
     };
 
@@ -68,20 +83,20 @@ function ComplaintView(){
         defaultValues: complaintDefaultValues,
     });
 
-    const handleComplaintFormSubmit = (data) => {
-        submitForm({ ...formValues, ...data });
+    const handleComplaintFormSubmit = (formData) => {
+        submitForm({ ...formValues, ...formData });
     };
 
     const submitForm = async (values) => {
-        // setLoading(true);
-        // const response = submit the form
-        // setLoading(false);
+         setLoading(true);
+         const response = createComplaint(values);
+         setLoading(false);
 
-        // if (response.error) {
-        //     setError(response.display);
-        // } else {
+         if (response.error) {
+             setError(response.display);
+         } else {
         //     // add toast!!!!!!!!!!!!!!!!, thank will be reviewed
-        // }
+         }
     }
 
     const renderComplaintforms = () => (
@@ -106,7 +121,7 @@ function ComplaintView(){
                 name="Date"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel htmlFor="Date">Date issue encountered</FormLabel>
+                        <FormLabel htmlFor="Date">Date of complaint</FormLabel>
                         <FormControl>
                             <Input id="Date" {...field} type="date"/>
                         </FormControl>
@@ -121,6 +136,9 @@ function ComplaintView(){
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel htmlFor="Body">Description of issue experinced</FormLabel>
+                        <FormControl>
+                            <Textarea/>
+                        </FormControl>
                         <FormMessage />
                     </FormItem>
                 )}
@@ -149,10 +167,19 @@ function ComplaintView(){
 
             <hr className="border-neutral-300 border w-1/2 mt-1.5 self-center" />
             
-            <div className="flex flex-col  justify-center items-center">
+            <div className="flex flex-col w-full justify-center items-center">
                 <h1 className="font-semibold text-2xl mb-4 p-8 text-s">
                     Past reports
                 </h1>
+               
+                {loading?
+                     <TableSkeleton rows={5} columns={4}/>
+                : tableData?
+                <DataTable className="w-full" columns={columns()} data={tableData} />
+                :
+                    "No prior reports"
+                }
+                
             </div>
         </div>
     )
