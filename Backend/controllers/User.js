@@ -36,19 +36,23 @@ const defaultFields = {
 		cart: [],
 		addresses: [],
 		preferences: [],
+		isRequestedAccountDeletion: false,
 	},
 	advertiser: {
 		isAccepted: null,
 		createdActivities: [],
 		createdIterinaries: [],
 		createdHistoricalPlaces: [],
+		isRequestedAccountDeletion: false,
 	},
 	seller: {
 		isAccepted: null,
 		products: [],
+		isRequestedAccountDeletion: false,
 	},
 	tourguide: {
 		isAccepted: null,
+		isRequestedAccountDeletion: false,
 	},
 	admin: {},
 	tourismgovernor: {},
@@ -203,12 +207,10 @@ const UserController = {
 				});
 
 				if (activityCount != 0) {
-					return res
-						.status(404)
-						.json({
-							canDelete: false,
-							message: "Activity has bookings.",
-						});
+					return res.status(404).json({
+						canDelete: false,
+						message: "Activity has bookings.",
+					});
 				}
 
 				// All activities are deletable
@@ -235,12 +237,10 @@ const UserController = {
 
 					if (totalHeadCount > 0) {
 						// Activity found, return success response or perform the deletion if needed
-						return res
-							.status(403)
-							.json({
-								canDelete: false,
-								message: "itinerary has bookings.",
-							});
+						return res.status(403).json({
+							canDelete: false,
+							message: "itinerary has bookings.",
+						});
 					}
 				}
 				return res.status(200).json({ canDelete: true });
@@ -249,12 +249,10 @@ const UserController = {
 			}
 		} catch (error) {
 			console.error(error);
-			return res
-				.status(500)
-				.json({
-					message:
-						"An error occurred while checking if an account can be deleted.",
-				});
+			return res.status(500).json({
+				message:
+					"An error occurred while checking if an account can be deleted.",
+			});
 		}
 	},
 
@@ -346,6 +344,34 @@ const UserController = {
 			}
 
 			user.isAccepted = isAccepted;
+			await user.save();
+			res.json(user);
+		} catch (error) {
+			return res.status(500).json({ message: error.message });
+		}
+	},
+
+	requestAccountDeletion: async (req, res) => {
+		const { id } = req.params;
+		const { role, isRequestedAccountDeletion = true } = req.body; // Make the default value true
+
+		if (!role) {
+			return res.status(400).json({ message: "Role is required" });
+		}
+
+		try {
+			const Model = models[role.toLowerCase()];
+			if (!Model) {
+				throw new Error("Invalid role");
+			}
+
+			const user = await Model.findById(id);
+
+			if (!user) {
+				return res.status(404).json({ message: "User not found" });
+			}
+
+			user.isRequestedAccountDeletion = isRequestedAccountDeletion;
 			await user.save();
 			res.json(user);
 		} catch (error) {

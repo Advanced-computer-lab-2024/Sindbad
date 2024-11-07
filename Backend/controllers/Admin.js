@@ -1,4 +1,8 @@
 const Admin = require("../models/Admin");
+const Tourist = require("../models/Tourist");
+const TourGuide = require("../models/TourGuide");
+const Advertiser = require("../models/Advertiser");
+const Seller = require("../models/Seller");
 const { isUniqueUsername } = require("./User");
 
 /**
@@ -129,10 +133,39 @@ const deleteAdmin = async (req, res) => {
 	}
 };
 
+const getAllRequestedAccountDeletionUsers = async (req, res) => {
+	try {
+		const tourists = await Tourist.find({
+			isRequestedAccountDeletion: true,
+		});
+		const tourGuides = await TourGuide.find({
+			isRequestedAccountDeletion: true,
+		});
+		const advertisers = await Advertiser.find({
+			isRequestedAccountDeletion: true,
+		});
+		const sellers = await Seller.find({ isRequestedAccountDeletion: true });
+
+		const allRequestedAccountDeletionUsers = [
+			...tourists,
+			...tourGuides,
+			...advertisers,
+			...sellers,
+		];
+
+		res.status(200).json(allRequestedAccountDeletionUsers);
+	} catch (error) {
+		res.status(500).json({
+			error: "Failed to fetch requested account deletion users.",
+		});
+	}
+};
+
 module.exports = {
 	createAdmin,
 	getAllAdmins,
 	getAdminById,
 	updateAdmin,
 	deleteAdmin,
+	getAllRequestedAccountDeletionUsers,
 };

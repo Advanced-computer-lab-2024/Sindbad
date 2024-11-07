@@ -146,6 +146,10 @@ const TouristSchema = new mongoose.Schema(
 		preferences: {
 			type: [String],
 		},
+		isRequestedAccountDeletion: {
+			type: Boolean,
+			default: false,
+		},
 	},
 	{ timestamps: true }
 );
