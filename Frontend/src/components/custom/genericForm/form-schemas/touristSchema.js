@@ -17,7 +17,11 @@ export const touristSchema = {
     // }),
   
     job: z.string()
-      .min(1, { message: "Job is required!" }),
+    .min(1, { message: "Job is required!" }),
+    
+    profileImageUri: z.string(),
+
+    bannerImageUri: z.string(),
   
     // addresses: z.array(
     //   z.object({

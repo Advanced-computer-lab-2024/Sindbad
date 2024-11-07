@@ -12,4 +12,6 @@ export const advertiserSchema = {
 		.string()
 		.regex(/^\+?[1-9]\d{1,14}$/, { message: "Invalid mobile number!" })
 		.min(1, { message: "Mobile number is required!" }),
+	bannerImageUri: z.string(),
+	logoImageUri: z.string(),
 };
