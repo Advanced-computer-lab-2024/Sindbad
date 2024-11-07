@@ -3,6 +3,7 @@ const router = express.Router();
 
 const {
   getTouristById,
+  getTouristByUsername,
   getAllTourists,
   updateTourist,
   deleteTourist,
@@ -10,6 +11,8 @@ const {
 } = require("../controllers/Tourist");
 
 router.route("/").get(getAllTourists);
+
+router.route("/:username").get(getTouristByUsername);
 
 router
   .route("/:id")

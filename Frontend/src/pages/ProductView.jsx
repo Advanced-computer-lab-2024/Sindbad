@@ -145,7 +145,7 @@ function ProductView() {
 				</div>
 			</div>
 			<hr className="border-neutral-300 border w-full mt-1.5" />
-			<RatingReview data={product} totalRatings={totalRatings} />
+			<RatingReview data={product} totalRatings={totalRatings} type="review" />
 		</div>
 	);
 }
