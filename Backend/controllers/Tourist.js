@@ -90,6 +90,9 @@ const updateTourist = async (req, res) => {
   if (req.body.bannerImageUri != null) {
     res.tourist.bannerImageUri = req.body.bannerImageUri;
   }
+  if (req.body.preferredCurrency != undefined) {
+    res.tourist.preferredCurrency = req.body.preferredCurrency;
+  }
 
   try {
     const updatedTourist = await res.tourist.save();

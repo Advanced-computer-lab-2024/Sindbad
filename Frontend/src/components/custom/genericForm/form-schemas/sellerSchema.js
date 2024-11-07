@@ -12,4 +12,10 @@ export const sellerSchema = {
 	lastName: z.string().optional(),
 
 	description: z.string().optional(),
+
+	profileImageUri: z.string(),
+
+    bannerImageUri: z.string(),
+
+	preferredCurrency: z.string(),
 };
