@@ -9,12 +9,15 @@ const {
 	getMinMaxPrices,
 	addRating,
 	getProductSalesDetails,
+	getProductsByCreatorId,
 } = require("../controllers/Product");
 
 const router = express.Router();
 
 router.route("/").post(createProduct).get(getAllProducts);
 router.route("/price-min-max").get(getMinMaxPrices);
+
+router.route("/my-products/:creatorId").get(getProductsByCreatorId);
 
 router
 	.route("/:id")

@@ -30,14 +30,16 @@ export const updateSeller = async (sellerId, updatedValues) => {
     }
 }
 
-export const getMyProducts = async (sellerId) => {
-    try {
-        const response = await axiosInstance.get(`/seller/${sellerId}/products`);
-        return response.data;
-    } catch (error) {
-        return error;
-    }
-};
+// Remove getMyProducts function
+// export const getMyProducts = async (sellerId) => {
+//     try {
+//         const response = await axiosInstance.get(`/seller/${sellerId}/products`);
+//         return response.data;
+//     } catch (error) {
+//         return error;
+//     }
+// };
+
 export const updateSellerFiles = async (sellerId, files) => {
 	const formData = new FormData();
 

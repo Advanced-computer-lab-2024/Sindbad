@@ -58,3 +58,13 @@ export const getPriceMinMax = async () => {
 		return error;
 	}
 };
+
+// Add getMyProducts function
+export const getMyProducts = async (creatorId) => {
+    try {
+        const response = await axiosInstance.get(`/product/my-products/${creatorId}`);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
