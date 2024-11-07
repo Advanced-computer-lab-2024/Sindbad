@@ -1,11 +1,11 @@
 const Amadeus = require('amadeus');
+require('dotenv').config();
 
 // Initialize the Amadeus client
 const amadeus = new Amadeus({
-    clientId: '2bLRz6HydYL38wFK5zLvp87oKL9wXFd4',
-    clientSecret: 'RS6NV3AdNBplILej'
-  });
-
+    clientId: process.env.AMADEUS_CLIENT_ID,
+    clientSecret: process.env.AMADEUS_CLIENT_SECRET
+});
 
 //searches for a certain flight
 //test: originLocationCode: 'JFK', destinationLocationCode: 'LAX', departureDate: '2024-12-01',adults: '1'
