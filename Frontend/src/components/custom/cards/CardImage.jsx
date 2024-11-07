@@ -1,7 +1,7 @@
 import ImagePlaceholder from "@/components/custom/ImagePlaceholder";
 
 const CardImage = ({ imageUris, altText }) => {
-    console.log(imageUris);
+    // console.log(imageUris);
 	return (
 		<div className="h-[156px] relative shrink-0 bg-neutral-300">
 			{imageUris && imageUris.length !== 0 ? (

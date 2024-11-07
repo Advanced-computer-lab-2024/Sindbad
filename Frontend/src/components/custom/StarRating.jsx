@@ -1,6 +1,7 @@
 import { Star } from 'lucide-react';
 
-function StarRating({ rating, size, totalStars = 5 }) {
+function StarRating({ rating, size }) {
+    const totalStars = 5;
     const fullStars = Math.floor(rating); // Number of full stars
     const hasHalfStar = rating % 1 !== 0; // Check if there is a half star
     const emptyStars = totalStars - fullStars - (hasHalfStar ? 1 : 0); // Remaining empty stars
@@ -31,11 +32,6 @@ function StarRating({ rating, size, totalStars = 5 }) {
                 .map((_, i) => (
                     <Star key={`empty-${i}`} fill="transparent" size={size} />
                 ))}
-
-            {/* Show the number of reviews */}
-            {/* <p className="text-xs leading-[11px] font-medium text-neutral-500">
-                ({rating ? Math.round(rating * 2) / 2 : 'N/A'})
-            </p> */}
 
             {/* Define the gradient for half-star */}
             <svg width="0" height="0">
