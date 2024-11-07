@@ -1,5 +1,3 @@
-import ImagePlaceholder from "./ImagePlaceholder";
-import StarRating from "./StarRating";
 import StarRatingForm from "./StarRatingForm";
 
 import { Textarea } from "../ui/textarea";
@@ -9,6 +7,7 @@ import Comment from "./Comment";
 
 import { getTouristById, getTouristByUsername } from "@/services/TouristApiHandler";
 import Review from "./Review";
+import { addProductRating, addProductReview } from "@/services/ProductApiHandler";
 
 function RatingReview({ data, totalRatings, type }) {
     // Helper function to calculate the percentage of each rating
