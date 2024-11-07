@@ -9,6 +9,15 @@ export const getTouristById = async (touristId) => {
   }
 };
 
+export const getTouristByUsername = async (username) => {
+  try {
+    const response = await axiosInstance.get(`/tourist/user/${username}`);
+    return response.data;
+  } catch (error) {
+    return error;
+  }
+}
+
 export const updateTourist = async (touristId, updatedValues) => {
   try {
     const response = axiosInstance.put(`/tourist/${touristId}`, updatedValues, {

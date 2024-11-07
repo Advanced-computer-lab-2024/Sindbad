@@ -5,11 +5,27 @@ import StarRatingForm from "./StarRatingForm";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 
+import Comment from "./Comment";
+
+import { getTouristById, getTouristByUsername } from "@/services/TouristApiHandler";
+import Review from "./Review";
+
 function RatingReview({ data, totalRatings, type }) {
     // Helper function to calculate the percentage of each rating
     const getRatingPercentage = (count) => {
         return ((count / totalRatings) * 100).toFixed(1); // Rounded to 1 decimal place
     };
+
+    const fetchTourist = async (identifier) => {
+        const response = type === "review" ?
+            await getTouristByUsername(identifier)
+            : await getTouristById(identifier);
+        if (response.error) {
+            console.error(response.message);
+        } else {
+            return response.data;
+        }
+    }
 
     return (
         <div className="mt-8 flex gap-16">
@@ -45,7 +61,7 @@ function RatingReview({ data, totalRatings, type }) {
                 </div>
             </div>
 
-            {/* Reviews Section */}
+            {/* Reviews/comments Section */}
             <div className="w-2/3 flex flex-col gap-4">
                 <h2 className="text-2xl font-semibold">
                     {type === "review" ? "Customer Reviews" : "Comments"}
@@ -55,37 +71,17 @@ function RatingReview({ data, totalRatings, type }) {
                 <Button className="w-max self-end">
                     Submit
                 </Button>
+
                 {type === "review" && data.reviews?.length > 0 ?
                     <div className="space-y-8">
                         {data.reviews?.map((review) => (
-                            <div key={review.username} className="flex flex-col gap-2">
-                                <div className="flex gap-2">
-                                    <div className="h-11 w-11 rounded-full">
-                                        <ImagePlaceholder type="profile" />
-                                    </div>
-                                    <div className="flex flex-col gap-1">
-                                        <p className="font-semibold">{review.username}</p>
-                                        <StarRating rating={review.rating} size={16} />
-                                        <p className="text-sm">{review.comment}</p>
-                                    </div>
-                                </div>
-                            </div>
+                            <Review key={review.userId} review={review} />
                         ))}
                     </div>
                     : type === "comment" && data.comments?.length > 0 ?
                         <div className="space-y-8">
                             {data.comments?.map((comment) => (
-                                <div key={comment.userId} className="flex flex-col gap-2">
-                                    <div className="flex gap-2">
-                                        <div className="h-11 w-11 rounded-full">
-                                            <ImagePlaceholder type="profile" />
-                                        </div>
-                                        <div className="flex flex-col gap-1">
-                                            <p className="font-semibold">{comment.userId}</p>
-                                            <p className="text-sm">{comment.comment}</p>
-                                        </div>
-                                    </div>
-                                </div>
+                                <Comment key={comment.userId} comment={comment} />
                             ))}
                         </div>
                         :

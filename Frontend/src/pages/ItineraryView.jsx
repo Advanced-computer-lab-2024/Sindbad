@@ -108,8 +108,8 @@ const Itinerary = () => {
 
     const dates = itinerary.availableDatesTimes.map((entry) => {
         const d = new Date(entry.dateTime);
-        console.log(entry);
-        console.log(entry.dateTime);
+        // console.log(entry);
+        // console.log(entry.dateTime);
         const weekday = d.toLocaleString("en-US", { weekday: "short" });
         const day = d.toLocaleString("en-US", { day: "numeric" });
         const month = d.toLocaleString("en-US", { month: "short" });
@@ -283,7 +283,7 @@ const Itinerary = () => {
                         ))}
                     </ul>
                 </div>
-                <div className="col-span-3">
+                <div className="col-span-3 py-6">
                     <h2 className="text-2xl font-semibold mb-4">Search Availability</h2>
                     {itinerary.isActive === true && (
                         <>
