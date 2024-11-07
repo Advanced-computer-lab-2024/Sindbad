@@ -11,12 +11,14 @@ import { ShoppingCart } from "lucide-react";
 
 import { getProductById } from "@/services/ProductApiHandler";
 import RatingReview from "@/components/custom/RatingReview";
+import { useUser } from "@/state management/userInfo";
 
 function ProductView() {
 	const { productId } = useParams();
 	const [error, setError] = useState(false);
 	const [product, setProduct] = useState(null);
 	const [totalRatings, setTotalRatings] = useState(0);
+	const { role, id } = useUser();
 
 	const getProduct = async (productId) => {
 		const response = await getProductById(productId);
@@ -95,6 +97,17 @@ function ProductView() {
 
 						{/* Description */}
 						<p className="text-sm">{product.description}</p>
+
+						{(product.seller?._id === id || role === "admin" && product.seller === null) &&
+							<div className="flex flex-col gap-2">
+								<h2 className="text-base font-semibold">
+									Quantity: <span className="text-sm font-normal">{product.quantity}</span>
+								</h2>
+								<h2 className="text-base font-semibold">
+									Sales: <span className="text-sm font-normal">{product.numSales}</span>
+								</h2>
+							</div>
+						}
 					</div>
 
 					<div>

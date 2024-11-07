@@ -19,6 +19,7 @@ import {
 import ImagePlaceholder from "@/components/custom/ImagePlaceholder";
 import { getTourGuide } from "@/services/TourGuideApiHandler";
 import StarRating from "@/components/custom/StarRating";
+import RatingReview from "@/components/custom/RatingReview";
 
 import { useUser } from "@/state management/userInfo";
 
@@ -474,6 +475,8 @@ const Itinerary = () => {
           )}
         </div>
       </div>
+      {/* <hr className="border-neutral-300 border w-full mt-1.5" />
+			<RatingReview data={itinerary} totalRatings={totalRatings} /> */}
     </div>
   );
 };

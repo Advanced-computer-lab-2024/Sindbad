@@ -1,5 +1,9 @@
 import ImagePlaceholder from "./ImagePlaceholder";
 import StarRating from "./StarRating";
+import StarRatingForm from "./StarRatingForm";
+
+import { Textarea } from "../ui/textarea";
+import { Button } from "../ui/button";
 
 function RatingReview({ data, totalRatings }) {
     // Helper function to calculate the percentage of each rating
@@ -42,8 +46,13 @@ function RatingReview({ data, totalRatings }) {
             </div>
 
             {/* Reviews Section */}
-            <div className="w-2/3 mt-0">
-                <h2 className="text-2xl font-semibold mb-4">Customer Reviews</h2>
+            <div className="w-2/3 flex flex-col gap-4">
+                <h2 className="text-2xl font-semibold">Customer Reviews</h2>
+                <StarRatingForm size={21} />
+                <Textarea placeholder="Type here..." className="resize-none" />
+                <Button className="w-max self-end">
+                    Submit
+                </Button>
                 {data.reviews.length > 0 ?
                     <div className="space-y-8">
                         {data.reviews?.map((review) => (

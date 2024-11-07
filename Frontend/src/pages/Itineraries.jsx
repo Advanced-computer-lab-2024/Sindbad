@@ -105,7 +105,7 @@ function Itineraries() {
 			activeFilters.sortBy.selected,
 			activeFilters.sortOrder.selected
 		);
-		if (!response.error) {
+		if (!response.error && response) {
 			const updatedItineraries = response.map((itinerary) => ({
 				...itinerary, // retain other properties of the itinerary
 				activities: itinerary.activities.map((activity) => activity._id), // map activities to _id
