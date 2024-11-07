@@ -6,7 +6,7 @@ export const productSubmit = (values, id, data) => {
     } else {
       const productWithId = {
         ...values,
-        seller: id,
+        creatorId: id,
       };
       createProduct(productWithId);
     }
