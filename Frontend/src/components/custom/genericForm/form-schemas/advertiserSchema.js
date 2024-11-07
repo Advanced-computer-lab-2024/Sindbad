@@ -14,4 +14,5 @@ export const advertiserSchema = {
 		.min(1, { message: "Mobile number is required!" }),
 	bannerImageUri: z.string(),
 	logoImageUri: z.string(),
+	preferredCurrency: z.string(),
 };

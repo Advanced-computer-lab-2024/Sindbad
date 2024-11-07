@@ -1,6 +1,6 @@
 import { useController, useFieldArray } from 'react-hook-form';
 import { FormControl, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Select, SelectTrigger, SelectOption, SelectContent } from '@/components/ui/select';
+import { Select, SelectTrigger, SelectItem, SelectContent, SelectValue} from '@/components/ui/select';
 import { X } from 'lucide-react';
 
 export const MultiSelectField = ({ name, control, label, options = [] }) => {
@@ -28,13 +28,13 @@ export const MultiSelectField = ({ name, control, label, options = [] }) => {
           {/* Render Select component */}
           <Select onValueChange={handleSelect}>
             <SelectTrigger className="w-full text-black">
-              <span>Select options</span>
+              <SelectValue placeholder="Select Currency" />
             </SelectTrigger>
             <SelectContent>
               {options.map((option, idx) => (
-                <SelectOption key={idx} value={option}>
+                <SelectItem key={idx} value={option}>
                   {option}
-                </SelectOption>
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>

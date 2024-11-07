@@ -22,6 +22,8 @@ export const touristSchema = {
     profileImageUri: z.string(),
 
     bannerImageUri: z.string(),
+
+    preferredCurrency: z.string(),
   
     // addresses: z.array(
     //   z.object({

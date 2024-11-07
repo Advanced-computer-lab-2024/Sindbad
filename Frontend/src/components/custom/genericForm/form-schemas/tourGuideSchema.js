@@ -13,4 +13,6 @@ export const tourGuideSchema = {
     profileImageUri: z.string(),
 
     bannerImageUri: z.string(),
+
+    preferredCurrency: z.string(),
 };
