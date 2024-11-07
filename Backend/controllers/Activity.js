@@ -102,7 +102,18 @@ const addComment = async (req, res) => {
 			return res.status(400).json({ message: "User ID and comment are required." });
 		}
 
-		//TODO implement checking if user has booked the activity
+    const tourist = await Tourist.findById(userId);
+    if (!tourist) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const hasBookedActivity = tourist.bookedEvents.activities.some(
+      (activity) => activity.activityId.toString() === id
+    );
+
+    if (!hasBookedActivity) {
+      return res.status(403).json({ message: "Only users who have booked this activity can rate it." });
+    }
 
 		// Find the activity by ID
 		const activity = await Activity.findById(id);
@@ -127,6 +138,7 @@ const addComment = async (req, res) => {
 
 
 
+
 /**
  * Adds a rating to an activity
  *
@@ -136,25 +148,40 @@ const addComment = async (req, res) => {
  * @returns {Object} - A JSON object with a confirmation message or an error message if not found
  */
 const addRating = async (req, res) => {
-	try {
-		const { id } = req.params;
-		const { userId, rating } = req.body;
-		
-		if(!userId || !rating){
-				return res.status(401)
-				.json({message: "userId and rating must be included "})
-		}
+  try {
+    const { id } = req.params;
+    const { userId, rating } = req.body;
+
+    if (!userId || !rating) {
+      return res.status(401).json({ message: "userId and rating must be included" });
+    }
 
     if (rating < 1 || rating > 5) {
-      return res
-        .status(400)
-        .json({ message: "Rating must be between 1 and 5." });
+      return res.status(400).json({ message: "Rating must be between 1 and 5." });
+    }
+
+    const tourist = await Tourist.findById(userId);
+    if (!tourist) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const hasBookedActivity = tourist.bookedEvents.activities.some(
+      (activity) => activity.activityId.toString() === id
+    );
+
+    if (!hasBookedActivity) {
+      return res.status(403).json({ message: "Only users who have booked this activity can rate it." });
     }
 
     const activity = await Activity.findById(id);
 
     if (!activity) {
       return res.status(404).json({ message: "Activity not found" });
+    }
+
+    // Check if the user has already rated this activity
+    if (activity.userRatings.includes(userId)) {
+      return res.status(403).json({ message: "User has already rated this activity." });
     }
 
     // Ensure that activity.rating is a Map
@@ -165,6 +192,9 @@ const addRating = async (req, res) => {
     // Increment the count of the given rating
     const currentCount = activity.rating.get(rating.toString()) || 0;
     activity.rating.set(rating.toString(), currentCount + 1);
+
+    // Add the userId to the userRatings array
+    activity.userRatings.push(userId);
 
     // Recalculate the average rating
     activity.averageRating = calculateAverageRating(activity.rating);
@@ -181,6 +211,7 @@ const addRating = async (req, res) => {
     });
   }
 };
+
 
 const calculateAverageRating = (ratings) => {
   let totalRating = 0;

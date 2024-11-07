@@ -307,8 +307,18 @@ const addComment = async (req, res) => {
 			return res.status(400).json({ message: "User ID and comment are required." });
 		}
 
-		//TODO implement checking if user has booked the itinerary
+    const tourist = await Tourist.findById(userId);
+    if (!tourist) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
+    const hasBookedItinerary = tourist.bookedEvents.itineraries.some(
+      (itinerary) => itinerary.itineraryId.toString() === id
+    );
+
+    if (!hasBookedItinerary) {
+      return res.status(403).json({ message: "Only users who have booked this Itinerary can rate it." });
+    }
 		// Find the itinerary by ID
 		const itinerary = await Itinerary.findById(id);
 
@@ -350,15 +360,25 @@ const addRating = async (req, res) => {
 				.json({message: "userId and rating must be included "})
 		}
 
-		//TODO check if user purchsed/Booked
-
-		
 		// Validate rating value
 		if (!rating || rating < 1 || rating > 5) {
 			return res
 				.status(400)
 				.json({ message: "Invalid rating value. Must be between 1 and 5." });
 		}
+
+    const tourist = await Tourist.findById(userId);
+    if (!tourist) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const hasBookedItinerary = tourist.bookedEvents.itineraries.some(
+      (itinerary) => itinerary.itineraryId.toString() === itineraryId
+    );
+
+    if (!hasBookedItinerary) {
+      return res.status(403).json({ message: "Only users who have booked this Itinerary can rate it." });
+    }
 
     const itinerary = await Itinerary.findById(itineraryId);
     if (!itinerary) {
@@ -369,9 +389,17 @@ const addRating = async (req, res) => {
       itinerary.rating = new Map(Object.entries(itinerary.rating));
     }
 
+        // Check if the user has already rated this activity
+    if (itinerary.userRatings.includes(userId)) {
+      return res.status(403).json({ message: "User has already rated this itinerary." });
+    }
+
     // Add the rating and update average rating
     const currentCount = itinerary.rating.get(rating.toString()) || 0;
     itinerary.rating.set(rating.toString(), currentCount + 1);
+
+    // Add the userId to the userRatings array
+    itinerary.userRatings.push(userId);
 
     itinerary.averageRating = calculateAverageRating(itinerary.rating);
     await itinerary.save();
