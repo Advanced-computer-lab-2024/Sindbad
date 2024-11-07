@@ -8,8 +8,6 @@ import StarRating from "./StarRating";
 
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { DropdownMenu, DropdownMenuItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 import { updateItinerary, setItineraryInappropriate } from "@/services/ItineraryApiHandler";
 import { setActivityInappropriate } from "@/services/ActivityApiHandler";
@@ -17,6 +15,24 @@ import { setActivityInappropriate } from "@/services/ActivityApiHandler";
 import { ArrowRight, Wallet, EllipsisVertical } from "lucide-react";
 
 import { useUser } from "@/state management/userInfo";
+
+import CardImage from "./cards/CardImage";
+import CardPrice from "./cards/CardPrice";
+import CardMenu from "./cards/CardMenu";
+
+const cardConfig = {
+	itinerary: {
+		showRating: true,
+		showPrice: false,
+		actions: ["activate", "deactivate", "flagAsInappropriate"],
+	},
+	activity: {
+		showRating: true,
+		showPrice: true,
+		actions: ["bookmark", "flagAsInappropriate"],
+	},
+};
+
 
 function Card({ data, cardType, fetchCardData }) {
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -26,162 +42,56 @@ function Card({ data, cardType, fetchCardData }) {
 	const navigate = useNavigate();
 	const { role, id } = useUser();
 
-	// Function to copy the link to clipboard
-	const handleCopyLink = () => {
-		const link = `http://localhost:5173/app/${cardType}/${data._id}`;
-		navigator.clipboard.writeText(link)
-			.then(() => {
-				toast({
-					description: "Link copied to clipboard",
-				});
-			})
-			.catch((err) => console.error('Failed to copy link: ', err));
-	};
-
-	// Function to share via email
-	const handleShareEmail = () => {
-		const subject = encodeURIComponent(`Check out this ${cardType}!`);
-		const body = encodeURIComponent(`Here's ${cardType === "itinerary" || cardType === "activity" ? "an " + cardType : "a " + cardType} I found on Sindbad:\nhttp://localhost:5173/app/${cardType}/${data._id}`);
-		window.location.href = `mailto:?subject=${subject}&body=${body}`;
-	};
-
-	const toggleItineraryActive = async () => {
-		const response = await updateItinerary(data._id, { isActive: !data.isActive });
-		if (response.error) {
-			console.error(response.message);
-		} else {
-			fetchCardData();
-			toast({
-				description: `Itinerary ${data.isActive ? "deactivated" : "activated"} successfully`,
-			});
-		}
-	}
-
-	const toggleInappropriate = async () => {
-		const response = cardType === "itinerary"
-			? await setItineraryInappropriate(data._id, {isInappropriate: !data.isInappropriate})
-			: await setActivityInappropriate(data._id, {isInappropriate: !data.isInappropriate});
-		if (response.error) {
-			console.error(response.message);
-		} else {
-			fetchCardData();
-			toast({
-				description: `This ${cardType} has been ${data.isInappropriate ? "unflagged" : "flagged"} as inappropriate`,
-			});
-		}
-	}
+	console.log(data);
 
 	return (
-		<article className={`w-full flex h-full flex-col border rounded-md overflow-clip group bg-gradient-to-br from-light
-			${(cardType === "itinerary" || cardType === "activity") && data.isInappropriate === true ?
-				"to-red-300/30 border-red-300/50"
-				: cardType === "itinerary" && data.isActive === false
+		<article
+			className={`w-full flex h-full flex-col border rounded-md overflow-clip group bg-gradient-to-br from-light
+			${
+				(cardType === "itinerary" || cardType === "activity") &&
+				data.isInappropriate === true
+					? "to-red-300/30 border-red-300/50"
+					: cardType === "itinerary" && data.isActive === false
 					? "to-neutral-300/50 border-neutral-300/80"
-					: "to-primary-700/50 border-primary-700/80"}`}
+					: "to-primary-700/50 border-primary-700/80"
+			}`}
 		>
 			<div className="h-[156px] relative shrink-0 bg-neutral-300">
-				{/* card photo is first image in the array */}
-				{data.imageUris && data.imageUris.length !== 0 ? (
-					<img
-						src={data.imageUris[0]}
-						alt={data.name}
-						className="object-cover h-full w-full"
-					/>
-				) : (
-					<ImagePlaceholder />
-				)}
-				<DropdownMenu onOpenChange={(open) => setIsDropdownOpen(open)} modal={false}>
-					<DropdownMenuTrigger asChild>
-						<div className={`icon-button ${isDropdownOpen && 'opacity-100'}`}>
-							<EllipsisVertical fill="currentColor" size={16} />
-						</div>
-					</DropdownMenuTrigger>
-					<DropdownMenuContent align="start">
-						<DropdownMenuItem onClick={handleCopyLink}>Copy link</DropdownMenuItem>
-						<DropdownMenuItem onClick={handleShareEmail}>Share via email</DropdownMenuItem>
-						{role === "tourist" && cardType === "activity" &&
-							<DropdownMenuItem>Bookmark</DropdownMenuItem>
-						}
-						{role !== "tourist" && role !== "guest" && id === data.creatorId &&
-							<>
-								<DropdownMenuItem onClick={() => setOpenDialog("edit")}>Edit</DropdownMenuItem>
-								<DropdownMenuItem onClick={() => setOpenDialog("delete")}>Delete</DropdownMenuItem>
-							</>
-						}
-						{cardType === "itinerary" && id === data.creatorId &&
-							<DropdownMenuItem onClick={() => toggleItineraryActive()}>
-								{data.isActive === true ? "Deactivate" : "Activate"}
-							</DropdownMenuItem>
-						}
-						{(cardType === "itinerary" || cardType === "activity") && role === "admin" &&
-							<DropdownMenuItem onClick={() => toggleInappropriate()}>
-								{data.isInappropriate === true ? "Unflag as inappropriate" : "Flag as inappropriate"}
-							</DropdownMenuItem>
-						}
-					</DropdownMenuContent>
-				</DropdownMenu>
-
-				<Dialog open={openDialog === "edit"} onOpenChange={() => setOpenDialog("")}>
-					<DialogContent className="overflow-y-scroll max-h-[50%]">
-						<DialogHeader>
-							<GenericForm
-								type={cardType}
-								id={id}
-								data={data}
-							/>
-						</DialogHeader>
-					</DialogContent>
-				</Dialog>
-				<Dialog open={openDialog === "delete"} onOpenChange={() => setOpenDialog("")}>
-					<DialogContent className="max-h-[50%]">
-						<DialogTitle>
-							Are you sure you want to delete this{" "}
-							{cardType}
-							?
-						</DialogTitle>
-						<DialogHeader>
-							<DeleteForm
-								type={cardType}
-								data={data}
-							/>
-						</DialogHeader>
-					</DialogContent>
-				</Dialog>
+				<CardImage imageUris={data.imageUris} altText={data.name} />
+				<CardMenu
+					data={data}
+					config={cardConfig[cardType]}
+					role={role}
+					id={id}
+					cardType={cardType}
+					fetchCardData={fetchCardData}
+					openDialog={openDialog}
+					setOpenDialog={setOpenDialog}
+				/>
 			</div>
 			{/* card details */}
 			<div className="flex flex-col p-3 gap-2 h-full justify-between">
-				<h4 className="text-base font-semibold line-clamp-2">
-					{data.name}
-				</h4>
+				<h4 className="text-base font-semibold line-clamp-2">{data.name}</h4>
 				<div className="flex flex-col gap-1">
-					{cardType !== "site" &&
+					{cardType !== "site" && (
 						<StarRating
 							rating={data.averageRating ? data.averageRating : 0}
 							size={16}
 						/>
-					}
-					{data.price &&
-						<div className="text-neutral-500 flex gap-1 items-center">
-							<Wallet size={16} />
-							{data.price?.min ? (
-								<p className="text-xs leading-[11px] font-medium">
-									Starting {data.price.min ? `${data.price.min}EGP` : "N/A"}
-								</p>
-							) : data.price ? (
-								<p className="text-xs leading-[11px] font-medium">
-									{data.price ? `${data.price}EGP` : "N/A"}
-								</p>
-							) : null}
-						</div>
-					}
+					)}
+					<CardPrice price = {data.price} />
 					{/* navigate to detailed view of itinerary/activity/site */}
-					<Button onClick={() => navigate(`/app/${cardType}/${data._id}`)}
+					<Button
+						onClick={() => navigate(`/app/${cardType}/${data._id}`)}
 						className={`mt-2
-							${(cardType === "itinerary" || cardType === "activity") && data.isInappropriate === true ?
-								"bg-red-300/70"
-								: cardType === "itinerary" && data.isActive === false
+							${
+								(cardType === "itinerary" || cardType === "activity") &&
+								data.isInappropriate === true
+									? "bg-red-300/70"
+									: cardType === "itinerary" && data.isActive === false
 									? "bg-neutral-300"
-									: "bg-primary-700"}`}
+									: "bg-primary-700"
+							}`}
 					>
 						<p className="text-xs">Read more</p>
 						<div className="shrink-0">
@@ -190,7 +100,7 @@ function Card({ data, cardType, fetchCardData }) {
 					</Button>
 				</div>
 			</div>
-		</article >
+		</article>
 	);
 }
 
