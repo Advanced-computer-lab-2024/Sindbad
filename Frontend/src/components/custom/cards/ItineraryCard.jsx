@@ -13,6 +13,8 @@ import CardMenu from "./CardMenu";
 
 const cardConfig = {
 	actions: {
+		edit: [],
+		delete: [],
 		deactivate: [],
 		flagAsInappropriate: ["admin"],
 	},

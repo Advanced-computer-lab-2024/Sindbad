@@ -13,8 +13,11 @@ import CardMenu from "./CardMenu";
 
 const cardConfig = {
 	actions: {
-		edit: ["seller", "admin"],
-		toggleArchive: ["seller", "admin"],
+		edit: [],
+		delete: [],
+		//HACK: All admins can toggle archive status of all products, but seller can only toggle archive status of their own products
+		//Check the cardMenu implementation for more details
+		toggleArchive: ["admin"],
 	},
 };
 

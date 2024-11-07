@@ -8,6 +8,7 @@ import {
 	setItineraryInappropriate,
 } from "@/services/ItineraryApiHandler";
 import { setActivityInappropriate } from "@/services/ActivityApiHandler";
+import { updateProduct } from "@/services/ProductApiHandler";
 import {
 	DropdownMenu,
 	DropdownMenuItem,
@@ -110,6 +111,31 @@ function CardMenu({
 		}
 	};
 
+	const toggleArchive = async () => {
+		const response = await updateProduct(data._id, {
+			isArchived: !data.isArchived,
+		});
+		if (response.error) {
+			console.error(response.message);
+		} else {
+			fetchCardData();
+			toast({
+				description: `Product ${
+					data.isArchived ? "unarchived" : "archived"
+				} successfully`,
+			});
+		}
+	};
+
+	console.log("Actions: ", config.actions);
+	console.log("Role: ", role);
+	console.log("ID: ", id);
+	console.log("Creator ID: ", data.creatorId);
+	console.log("Data: ", data);
+	console.log(config.actions.toggleArchive);
+	console.log(config.actions.toggleArchive.includes(role));
+	console.log(id === data.creatorId);
+
 	return (
 		<>
 			<DropdownMenu
@@ -133,13 +159,13 @@ function CardMenu({
 						<DropdownMenuItem>Bookmark</DropdownMenuItem>
 					)}
 
-					{config.actions.edit?.includes(role) && id === data.creatorId && (
+					{config.actions.edit && id === data.creatorId && (
 						<DropdownMenuItem onClick={() => setOpenDialog("edit")}>
 							Edit
 						</DropdownMenuItem>
 					)}
 
-					{config.actions.delete?.includes(role) && id === data.creatorId && (
+					{config.actions.delete && id === data.creatorId && (
 						<DropdownMenuItem onClick={() => setOpenDialog("delete")}>
 							Delete
 						</DropdownMenuItem>
@@ -156,6 +182,12 @@ function CardMenu({
 							{data.isInappropriate
 								? "Unflag as inappropriate"
 								: "Flag as inappropriate"}
+						</DropdownMenuItem>
+					)}
+
+					{config.actions.toggleArchive && (config.actions.toggleArchive.includes(role) || id === data.creatorId) && (
+						<DropdownMenuItem onClick={toggleArchive}>
+							{data.isArchived ? "Unarchive" : "Archive"}
 						</DropdownMenuItem>
 					)}
 				</DropdownMenuContent>

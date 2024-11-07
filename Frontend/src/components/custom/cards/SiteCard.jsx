@@ -12,8 +12,8 @@ import CardMenu from "./CardMenu";
 
 const cardConfig = {
 	actions: {
-		bookmark: ["tourist"],
-		flagAsInappropriate: ["admin"],
+		edit: [],
+		delete: [],
 	},
 };
 
