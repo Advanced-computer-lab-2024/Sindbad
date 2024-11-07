@@ -10,7 +10,6 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { ShoppingCart } from "lucide-react";
 
 import { getProductById } from "@/services/ProductApiHandler";
-import { getSeller } from "@/services/SellerApiHandler";
 import RatingReview from "@/components/custom/RatingReview";
 import { useUser } from "@/state management/userInfo";
 
@@ -18,9 +17,8 @@ function ProductView() {
 	const { productId } = useParams();
 	const [error, setError] = useState(false);
 	const [product, setProduct] = useState(null);
-	const [seller, setSeller] = useState(null);
 	const [totalRatings, setTotalRatings] = useState(0);
-	const { id } = useUser();
+	const { role, id } = useUser();
 
 	const getProduct = async (productId) => {
 		const response = await getProductById(productId);
@@ -37,27 +35,11 @@ function ProductView() {
 		}
 	};
 
-	const getSellerInfo = async (sellerId) => {
-		const response = await getSeller(sellerId);
-
-		if (response.error) {
-			console.error(response.message);
-		} else {
-			setSeller(response);
-		}
-	};
-
 	useEffect(() => {
 		if (productId) {
 			getProduct(productId);
 		}
 	}, [productId]);
-
-	useEffect(() => {
-		if (product) {
-			getSellerInfo(product.creatorId);
-		}
-	}, [product]);
 
 	if (!product) {
 		return (
@@ -83,16 +65,16 @@ function ProductView() {
 					<div className="flex flex-col gap-6 w-full">
 						<div>
 							<div className="flex items-center text-base font-medium">
-								{product.creatorId ? (
+								{product.creatorId && product.creatorId !== null ? (
 									<>
 										<span>Sold by{" "}
 											<a
 												className="hover:underline cursor-pointer"
-												href={`/app/profile/${seller?._id}`}
+												href={`/app/profile/${product.creatorId?._id}`}
 												rel="noreferrer"
 											>
-												{seller?.firstName}{" "}
-												{seller?.lastName}
+												{product.creatorId?.firstName}{" "}
+												{product.creatorId?.lastName}
 											</a>
 										</span>
 									</>
@@ -116,7 +98,7 @@ function ProductView() {
 						{/* Description */}
 						<p className="text-sm">{product.description}</p>
 
-						{(product.creatorId === id) &&
+						{(product.creatorId?._id === id || (role === "admin" && product.creatorId === null)) &&
 							<div className="flex flex-col gap-2">
 								<h2 className="text-base font-semibold">
 									Quantity: <span className="text-sm font-normal">{product.quantity}</span>

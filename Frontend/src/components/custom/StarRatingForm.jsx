@@ -1,15 +1,12 @@
 import { useState } from 'react';
 import { Star } from 'lucide-react';
 
-function StarRatingForm({ size, onRatingChange }) {
+function StarRatingForm({ size, onRatingChange, rating }) {
     const totalStars = 5;
-    // State for the current selected rating and hovered rating
-    const [selectedRating, setSelectedRating] = useState(0);
     const [hoveredRating, setHoveredRating] = useState(0);
 
     // Handle star click
     const handleClick = (rating) => {
-        setSelectedRating(rating);
         if (onRatingChange) onRatingChange(rating); // Update parent component or form
     };
 
@@ -29,7 +26,7 @@ function StarRatingForm({ size, onRatingChange }) {
                 .fill()
                 .map((_, i) => {
                     const starNumber = i + 1;
-                    const isFilled = starNumber <= (hoveredRating || selectedRating);
+                    const isFilled = starNumber <= (hoveredRating || rating);
                     
                     return (
                         <Star
