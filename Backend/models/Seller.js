@@ -29,11 +29,11 @@ const SellerSchema = new mongoose.Schema(
 		},
 		idCardImage: {
 			type: Buffer,
-			default:null,
+			default: null,
 		},
 		taxationRegistryCardImage: {
 			type: Buffer,
-			default:null,
+			default: null,
 		},
 		logoImageUri: {
 			type: String,
@@ -41,7 +41,7 @@ const SellerSchema = new mongoose.Schema(
 		bannerImageUri: {
 			type: String,
 		},
-		preferredCurrency:{
+		preferredCurrency: {
 			type: String,
 			default: "EGP",
 		},
@@ -59,6 +59,10 @@ const SellerSchema = new mongoose.Schema(
 			default: null, // Default to null indicating the tour guide is not accepted yet
 		},
 		products: [{}],
+		isRequestedAccountDeletion: {
+			type: Boolean,
+			default: false,
+		},
 	},
 	{ timestamps: true }
 );

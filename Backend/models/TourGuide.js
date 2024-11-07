@@ -29,11 +29,11 @@ const TourGuideSchema = new mongoose.Schema(
 		},
 		idCardImage: {
 			type: Buffer,
-			default:null,
+			default: null,
 		},
 		certificateImage: {
 			type: Buffer,
-			default:null,
+			default: null,
 		},
 		profileImageUri: {
 			type: String,
@@ -41,7 +41,7 @@ const TourGuideSchema = new mongoose.Schema(
 		bannerImageUri: {
 			type: String,
 		},
-		preferredCurrency:{
+		preferredCurrency: {
 			type: String,
 			default: "EGP",
 		},
@@ -52,7 +52,8 @@ const TourGuideSchema = new mongoose.Schema(
 					if (v === null || v === undefined) return true; // Allow null or undefined values
 					return /^\+?[1-9]\d{1,14}$/.test(v); // Validate only if mobile number is provided
 				},
-				message: (props) => `${props.value} is not a valid mobile number!`,
+				message: (props) =>
+					`${props.value} is not a valid mobile number!`,
 			},
 		},
 		yearsOfExperience: {
@@ -84,13 +85,13 @@ const TourGuideSchema = new mongoose.Schema(
 			type: Map,
 			of: Number,
 			default: {
-			  "1": 0,
-			  "2": 0,
-			  "3": 0,
-			  "4": 0,
-			  "5": 0
-			}
-		  },
+				1: 0,
+				2: 0,
+				3: 0,
+				4: 0,
+				5: 0,
+			},
+		},
 		averageRating: {
 			type: Number,
 			default: 0,
@@ -98,13 +99,20 @@ const TourGuideSchema = new mongoose.Schema(
 		comments: [
 			{
 				userId: {
-					 type: mongoose.Schema.Types.ObjectId, ref: "User", required: true 
-					},
-				comment: { 
-					type: String, required: true 
+					type: mongoose.Schema.Types.ObjectId,
+					ref: "User",
+					required: true,
+				},
+				comment: {
+					type: String,
+					required: true,
 				},
 			},
 		],
+		isRequestedAccountDeletion: {
+			type: Boolean,
+			default: false,
+		},
 	},
 	{ timestamps: true }
 );

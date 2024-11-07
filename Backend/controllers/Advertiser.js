@@ -56,6 +56,9 @@ const updateAdveriser = async (req, res) => {
 		if (bannerImageUri !== undefined) {
 			updateData.bannerImageUri = bannerImageUri;
 		}
+		if (req.body.preferredCurrency != undefined) {
+			res.tourist.preferredCurrency = req.body.preferredCurrency;
+		}
 
 		const advertiser = await Advertiser.findByIdAndUpdate(
 			id,
