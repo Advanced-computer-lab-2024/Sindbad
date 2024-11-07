@@ -1,6 +1,5 @@
-import Card from "@/components/custom/Card";
-import ProductCard from "@/components/custom/ProductCard";
 import GenericForm from "../genericForm/genericForm";
+import CardContainer from "@/components/custom/cards/CardContainer";
 
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "@/components/ui/dialog";
 
@@ -50,73 +49,25 @@ function Timeline({ userData, profileId, id, profileRole, cardData, fetchCardDat
 				)}
 			</div>
 			<div>
-				<div className={"grid gap-6 grid-cols-3"}>
-					{/* hook up to API in later sprint*/}
-					{profileRole === "tourist" &&
-						userData?.bookmarks?.map((bookmark, index) => (
-							<Card
-								key={index}
-								data={bookmark}
-								id={id}
-								profileId={profileId}
-								role={role}
-								cardType="activity"
-								fetchCardData={fetchCardData}
-							/>
-						))}
-
-					{profileRole === "tourGuide" &&
-						cardData.length !== 0 &&
-						cardData.map((itinerary, index) => (
-							<Card
-								key={index}
-								data={itinerary}
-								id={id}
-								profileId={profileId}
-								role={role}
-								cardType="itinerary"
-								fetchCardData={fetchCardData}
-							/>
-						))}
-
-					{profileRole === "seller" &&
-						cardData?.map((product, index) => (
-							<ProductCard
-								key={index}
-								data={product}
-								id={id}
-								profileId={profileId}
-								role={role}
-								fetchCardData={fetchCardData}
-							/>
-						))}
-
-					{profileRole === "advertiser" &&
-						cardData?.map((activity, index) => (
-							<Card
-								key={index}
-								data={activity}
-								id={id}
-								profileId={profileId}
-								role={role}
-								cardType="activity"
-								fetchCardData={fetchCardData}
-							/>
-						))}
-
-					{profileRole === "tourismGovernor" &&
-						cardData?.map((site, index) => (
-							<Card
-								key={index}
-								data={site}
-								id={id}
-								profileId={profileId}
-								role={role}
-								cardType="site"
-								fetchCardData={fetchCardData}
-							/>
-						))}
-				</div>
+				<CardContainer
+					cardList={
+						profileRole === "tourist"
+							? userData?.bookmarks || []
+							: cardData
+					}
+					cardType={
+						profileRole === "tourist"
+							? "activity"
+							: profileRole === "tourGuide"
+								? "itinerary"
+								: profileRole === "seller"
+									? "product"
+									: profileRole === "advertiser"
+										? "activity"
+										: "site"
+					}
+					fetchCardData={fetchCardData}
+				/>
 				<div>
 					{profileRole === "tourist" &&
 						(userData?.bookmarks?.length === 0 || !userData?.bookmarks) && (
