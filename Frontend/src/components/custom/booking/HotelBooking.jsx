@@ -4,7 +4,7 @@ import {
 	getHotelsByGeocode,
 } from "@/services/HotelApiHandler";
 import { useState } from "react";
-import CardContainer from "@/components/custom/CardContainer";
+import CardContainer from "@/components/custom/cards/CardContainer";
 
 function HotelBooking() {
 	const [loading, setLoading] = useState(true);
