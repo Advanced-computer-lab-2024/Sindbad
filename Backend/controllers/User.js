@@ -35,6 +35,7 @@ const defaultFields = {
 		wishlist: [],
 		cart: [],
 		addresses: [],
+		preferences: [],
 	},
 	advertiser: {
 		isAccepted: null,
@@ -56,7 +57,8 @@ const defaultFields = {
 const UserController = {
 	signUp: async (req, res) => {
 		try {
-			const { email, username, passwordHash, role, ...userData } = req.body;
+			const { email, username, passwordHash, role, ...userData } =
+				req.body;
 
 			if (!role) {
 				throw new Error("Role is required");
@@ -115,7 +117,9 @@ const UserController = {
 					if (role === "tourguide") {
 						return res.status(200).json({ role: "tourGuide" });
 					} else if (role === "tourismgovernor") {
-						return res.status(200).json({ role: "tourismGovernor" });
+						return res
+							.status(200)
+							.json({ role: "tourismGovernor" });
 					} else {
 						return res.status(200).json({ role });
 					}
@@ -134,7 +138,9 @@ const UserController = {
 	isUniqueUsername: async (username) => {
 		// Check all models for unique username
 		for (let model in models) {
-			const existingUser = await models[model].findOne({ username }).exec();
+			const existingUser = await models[model]
+				.findOne({ username })
+				.exec();
 			if (existingUser) {
 				return false;
 			}
@@ -146,7 +152,9 @@ const UserController = {
 		try {
 			const results = await Promise.all(
 				Object.entries(models).map(async ([role, model]) => {
-					const users = await model.find({ isAccepted: { $ne: null } });
+					const users = await model.find({
+						isAccepted: { $ne: null },
+					});
 					return users.map((user) => ({ ...user._doc, role }));
 				})
 			);
@@ -163,8 +171,11 @@ const UserController = {
 		try {
 			const results = await Promise.all(
 				Object.entries(isAcceptedmodels).map(async ([role, model]) => {
-					const users = await model.find({isAccepted : null});
-					r = role === "tourguide" ? "Tour Guide" : role.charAt(0).toUpperCase() + role.slice(1);
+					const users = await model.find({ isAccepted: null });
+					r =
+						role === "tourguide"
+							? "Tour Guide"
+							: role.charAt(0).toUpperCase() + role.slice(1);
 					return users.map((user) => ({ ...user._doc, role: r }));
 				})
 			);
@@ -180,55 +191,70 @@ const UserController = {
 		try {
 			const { id } = req.params;
 			const { role } = req.body;
-			
 
-			if (role.toLowerCase() == 'advertiser') {
+			if (role.toLowerCase() == "advertiser") {
 				const currentDate = new Date();
 
 				//get number of future actvities which head count ! = 0
 				const activityCount = await Activities.countDocuments({
 					creatorId: id,
 					headCount: { $ne: 0 }, // Only count activities where headCount is not equal to 0
-					dateTime: { $gt: currentDate } // Only future activities
+					dateTime: { $gt: currentDate }, // Only future activities
 				});
 
-
 				if (activityCount != 0) {
-					return res.status(404).json({ canDelete: false, message: 'Activity has bookings.' });
+					return res
+						.status(404)
+						.json({
+							canDelete: false,
+							message: "Activity has bookings.",
+						});
 				}
 
 				// All activities are deletable
 				return res.status(200).json({ canDelete: true });
-
-			}
-			else if (role.toLowerCase() == 'tourguide') {
+			} else if (role.toLowerCase() == "tourguide") {
 				//check if itenirary is still running aka ana b3d el start date bas abl el end date, can i delete?
 				const currentDate = new Date();
-		
+
 				const itineraries = await Itinerary.find({
 					creatorId: id,
 				});
-				if(!itineraries){
-					return res.status(200).json({ canDelete: true});
+				if (!itineraries) {
+					return res.status(200).json({ canDelete: true });
 				}
 				for (const itinerary of itineraries) {
-					const totalHeadCount = itinerary.availableDatesTimes.reduce((sum, date) => {
-						return date.dateTime >= currentDate ? sum + date.headCount : sum;
-					}, 0);
-						
-					if(totalHeadCount > 0){
+					const totalHeadCount = itinerary.availableDatesTimes.reduce(
+						(sum, date) => {
+							return date.dateTime >= currentDate
+								? sum + date.headCount
+								: sum;
+						},
+						0
+					);
+
+					if (totalHeadCount > 0) {
 						// Activity found, return success response or perform the deletion if needed
-						return res.status(403).json({ canDelete: false, message: 'itinerary has bookings.' });
+						return res
+							.status(403)
+							.json({
+								canDelete: false,
+								message: "itinerary has bookings.",
+							});
 					}
 				}
 				return res.status(200).json({ canDelete: true });
-			}
-			else{
+			} else {
 				return res.status(200).json({ canDelete: true });
 			}
 		} catch (error) {
 			console.error(error);
-			return res.status(500).json({ message: 'An error occurred while checking if an account can be deleted.' });
+			return res
+				.status(500)
+				.json({
+					message:
+						"An error occurred while checking if an account can be deleted.",
+				});
 		}
 	},
 
@@ -248,16 +274,13 @@ const UserController = {
 
 			let deletionResult;
 
-			if (role.toLowerCase() == 'advertiser'){
+			if (role.toLowerCase() == "advertiser") {
 				deletionResult = await Activities.deleteMany({ creatorId: id });
-			}
-			else if (role.toLowerCase() == 'tourguide'){
+			} else if (role.toLowerCase() == "tourguide") {
 				deletionResult = await Itinerary.deleteMany({ creatorId: id });
-			}
-			else if (role.toLowerCase() == 'seller'){
+			} else if (role.toLowerCase() == "seller") {
 				deletionResult = await Products.deleteMany({ seller: id });
-			}
-			else if (role.toLowerCase() == 'tourist'){
+			} else if (role.toLowerCase() == "tourist") {
 				deletionResult = await Complaint.deleteMany({ creatorId: id });
 			}
 			const userDeletionResult = await Model.findByIdAndDelete(id);
@@ -304,7 +327,7 @@ const UserController = {
 	},
 	updateUserAcceptance: async (req, res) => {
 		const { id } = req.params;
-		const { role , isAccepted} = req.body;
+		const { role, isAccepted } = req.body;
 
 		if (!role) {
 			return res.status(400).json({ message: "Role is required" });
@@ -329,7 +352,6 @@ const UserController = {
 			return res.status(500).json({ message: error.message });
 		}
 	},
-	
 };
 
 module.exports = UserController;
