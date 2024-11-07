@@ -127,15 +127,6 @@ function CardMenu({
 		}
 	};
 
-	console.log("Actions: ", config.actions);
-	console.log("Role: ", role);
-	console.log("ID: ", id);
-	console.log("Creator ID: ", data.creatorId);
-	console.log("Data: ", data);
-	console.log(config.actions.toggleArchive);
-	console.log(config.actions.toggleArchive.includes(role));
-	console.log(id === data.creatorId);
-
 	return (
 		<>
 			<DropdownMenu
