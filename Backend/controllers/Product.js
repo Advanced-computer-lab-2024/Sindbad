@@ -165,7 +165,7 @@ const addRating = async (req, res) => {
 		if (!product) {
 			return res.status(404).json({ message: "Product not found" });
 		}
-
+		
 		// Ensure that product.rating is a Map
 		if (!(product.rating instanceof Map)) {
 			product.rating = new Map(Object.entries(product.rating));
@@ -178,7 +178,7 @@ const addRating = async (req, res) => {
 		// Recalculate the average rating
 		product.averageRating = calculateAverageRating(product.rating);
 		await product.save();
-
+		
 		res.status(200).json({ message: "Rating added successfully", product });
 	} catch (error) {
 		res.status(500).json({

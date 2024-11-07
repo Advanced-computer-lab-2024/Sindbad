@@ -3,7 +3,7 @@ import ImagePlaceholder from "./ImagePlaceholder";
 import StarRating from "./StarRating";
 import { getTouristByUsername } from "@/services/TouristApiHandler";
 
-function Review({ key, review }) {
+function Review({ review }) {
     const [user, setUser] = useState({});
     const fetchTourist = async (username) => {
         const response = await getTouristByUsername(username);
@@ -19,7 +19,7 @@ function Review({ key, review }) {
     }, [review.username]);
 
     return (
-        <div key={key} className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2">
             <div className="flex gap-2">
                 <div className="h-11 w-11 rounded-full">
                     <ImagePlaceholder type="profile" />

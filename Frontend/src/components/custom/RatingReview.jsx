@@ -1,28 +1,61 @@
+import { useEffect, useState } from "react";
+
 import StarRatingForm from "./StarRatingForm";
+import Comment from "./Comment";
+import Review from "./Review";
 
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 
-import Comment from "./Comment";
+import { useUser } from "@/state management/userInfo";
 
-import { getTouristById, getTouristByUsername } from "@/services/TouristApiHandler";
-import Review from "./Review";
 import { addProductRating, addProductReview } from "@/services/ProductApiHandler";
+import { getTouristById } from "@/services/TouristApiHandler";
 
-function RatingReview({ data, totalRatings, type }) {
+function RatingReview({ data, totalRatings, type, fetchData }) {
+    const [rating, setRating] = useState(0);
+    const [comment, setComment] = useState("");
+    const [user, setUser] = useState({});
+    const [error, setError] = useState("");
+    const { id } = useUser();
+
     // Helper function to calculate the percentage of each rating
     const getRatingPercentage = (count) => {
         return ((count / totalRatings) * 100).toFixed(1); // Rounded to 1 decimal place
     };
 
-    const fetchTourist = async (identifier) => {
-        const response = type === "review" ?
-            await getTouristByUsername(identifier)
-            : await getTouristById(identifier);
+    const getTourist = async (touristId) => {
+        const response = await getTouristById(touristId);
         if (response.error) {
             console.error(response.message);
         } else {
-            return response.data;
+            setUser(response);
+        }
+    }
+
+    useEffect(() => {
+        getTourist(id);
+    }, [id]);
+
+    const handleSubmit = async () => {
+        if (type === "review") {
+            if (rating === 0) {
+                setError("Please add a rating between 1 to 5 stars.");
+                return;
+            }
+            
+            const response = comment === ""
+                ? await addProductRating(data._id, { rating: rating, userId: id })
+                : await addProductReview(data._id, { rating: rating, review: comment, userId: id, username: user.username });
+            if (response.error) {
+                console.error(response.error);
+            }
+            else {
+                setRating(0);
+                setComment("");
+                setError("");
+                fetchData();
+            }
         }
     }
 
@@ -65,22 +98,45 @@ function RatingReview({ data, totalRatings, type }) {
                 <h2 className="text-2xl font-semibold">
                     {type === "review" ? "Customer Reviews" : "Comments"}
                 </h2>
-                {type === "review" && <StarRatingForm size={21} />}
-                <Textarea placeholder="Type here..." className="resize-none" />
-                <Button className="w-max self-end">
+                {type === "review" &&
+                    <div>
+                        <label className="text-base font-medium">
+                            Overall rating
+                            <div className="mt-1">
+                                <StarRatingForm size={21} onRatingChange={setRating} />
+                            </div>
+                        </label>
+                        {error && <p className="text-red-500 text-[13px] mt-1">{error}</p>}
+                    </div>
+                }
+                <label className="text-base font-medium">
+                    Write a {type}
+                    <Textarea
+                        placeholder="Type here..."
+                        className="resize-none mt-1"
+                        rows={4}
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value)}
+                    />
+                </label>
+                <Button className="w-max self-end" onClick={handleSubmit}>
                     Submit
                 </Button>
 
                 {type === "review" && data.reviews?.length > 0 ?
                     <div className="space-y-8">
                         {data.reviews?.map((review) => (
-                            <Review key={review.userId} review={review} />
+                            <div key={review.username}>
+                                <Review review={review} />
+                            </div>
                         ))}
                     </div>
                     : type === "comment" && data.comments?.length > 0 ?
                         <div className="space-y-8">
                             {data.comments?.map((comment) => (
-                                <Comment key={comment.userId} comment={comment} />
+                                <div key={comment.userId}>
+                                    <Comment comment={comment} />
+                                </div>
                             ))}
                         </div>
                         :

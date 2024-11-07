@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import ImagePlaceholder from "./ImagePlaceholder";
 import { getTouristById } from "@/services/TouristApiHandler";
 
-function Comment({ key, comment }) {
+function Comment({ comment }) {
     const [user, setUser] = useState({});
     const fetchTourist = async (touristId) => {
         const response = await getTouristById(touristId);
@@ -18,7 +18,7 @@ function Comment({ key, comment }) {
     }, [comment.userId]);
 
     return (
-        <div key={key} className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2">
             <div className="flex gap-2">
                 <div className="h-11 w-11 rounded-full">
                     <ImagePlaceholder type="profile" />
