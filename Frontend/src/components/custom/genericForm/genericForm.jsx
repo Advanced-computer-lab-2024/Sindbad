@@ -9,6 +9,7 @@ import { CheckboxField } from "./input-fields/CheckboxField";
 import { CoordinatesField } from "./input-fields/CoordinatesField";
 import { TextField } from "./input-fields/TextField";
 import { forms } from "./forms";
+import { SelectField } from "./input-fields/SelectField";
 
 export function GenericForm({ type, data, id }) {
 	// If you need more information about how this component works, check out forms.js in the same folder.
@@ -136,6 +137,13 @@ export function GenericForm({ type, data, id }) {
 						label={field.label || field.name.toUpperCase()}
 					/>
 				);
+			case "select":
+				return <SelectField 
+							key={fullPath} 
+							name={fullPath} 
+							control={form.control} 
+							label={field.label || field.name.toUpperCase()} 
+							options={field.options} />;
 
 			case "text":
 			case "number":

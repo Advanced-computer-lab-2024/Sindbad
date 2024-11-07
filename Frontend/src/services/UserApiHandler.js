@@ -66,3 +66,14 @@ export const updateUserAcceptance = async (id, role, isAccepted) => {
         return error;
     }
 }
+export const updateUserPassword = async (id, role, passwordHash) => {
+    try {
+        const response = await axiosInstance.post(
+            `/user/changePassword/${id}`,
+            { role, passwordHash },
+        );
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+}

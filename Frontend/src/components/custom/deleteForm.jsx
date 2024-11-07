@@ -6,8 +6,6 @@ import { removeTourGuideWork } from "@/services/TourGuideApiHandler";
 import { Button } from "../ui/button";
 
 function DeleteForm( {type, data} ) {
-
-  console.log(data)
     
     const handleButtonClick = () => {
         if (type === "site") {
@@ -22,6 +20,18 @@ function DeleteForm( {type, data} ) {
         if (type === "experience") {
             removeTourGuideWork(data.id, data.experience_id);
         }
+        if (type === "tourGuide") {
+            //deleteTourGuide(data.id);
+        }
+        if (type === "tourist") {
+            //deleteTourist(data.id);
+        }
+        if (type === "seller") {
+            //deleteSeller(data.id);
+        }
+        if (type === "advertiser") {
+            //deleteAdvertiser(data.id);
+        }
     }
   return (
     <div>
@@ -29,7 +39,7 @@ function DeleteForm( {type, data} ) {
         <p className="text-xs text-white">
           Delete
         </p>
-        </Button>
+      </Button>
     </div>
   );
 } 

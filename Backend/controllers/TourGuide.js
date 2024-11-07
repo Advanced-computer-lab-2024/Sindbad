@@ -70,6 +70,9 @@ const updateTourGuide = async (req, res) => {
 	if (req.body.yearsOfExperience != null)tourGuide.yearsOfExperience = req.body.yearsOfExperience;
 	if (req.body.profileImageUri != null)tourGuide.profileImageUri = req.body.profileImageUri;
 	if (req.body.bannerImageUri != null)tourGuide.bannerImageUri = req.body.bannerImageUri;
+	if (req.body.preferredCurrency != undefined) {
+		res.tourist.preferredCurrency = req.body.preferredCurrency;
+	  }
 	// Update or concat previousWork based on wether or not the previous work exists
 	if (req.body.previousWork != null) {
 		if (tourGuide.previousWork.length === 0) {

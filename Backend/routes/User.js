@@ -9,6 +9,7 @@ const {
 	getAllPendingUsers,
 	updateUserAcceptance,
 	checkDeletion,
+	requestAccountDeletion,
 } = require("../controllers/User");
 
 // Sign up route
@@ -28,6 +29,6 @@ router.get("/", getAllUsers);
 
 router.delete("/:id", deleteUser);
 
-
+router.patch("/request-account-deletion/:id", requestAccountDeletion);
 
 module.exports = router;
