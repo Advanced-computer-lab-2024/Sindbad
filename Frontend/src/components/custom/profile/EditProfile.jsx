@@ -4,7 +4,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
-import { Form } from "@/components/ui/form";
+import { Form, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { updateUserPassword } from "@/services/UserApiHandler";
 
@@ -42,11 +42,13 @@ function EditProfile({ userType, id, userData }) {
       <h1 className="text-2xl font-semibold my-4">Change Password</h1>
       <Form {...form}>
 				<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <FormLabel>Old Password</FormLabel>
 					<Input
             label="Old Password"
             type="password"
             {...form.register("oldPassword")}
           />
+          <FormLabel>New Password</FormLabel>
           <Input
             label="New Password"
             type="password"
