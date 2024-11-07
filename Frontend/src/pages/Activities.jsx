@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 import GenericFilter from "@/components/custom/GenericFilter";
-import CardContainer from "@/components/custom/CardContainer";
+import CardContainer from "@/components/custom/cards/CardContainer";
 
 import { getAllActivities } from "@/services/ActivityApiHandler";
 import { getAllCategories } from "@/services/AdminApiHandler";
@@ -20,7 +20,7 @@ function Activities() {
 		name: "",
 		price: {
 			min: priceRange.minPrice,
-			max: priceRange.maxPrice
+			max: priceRange.maxPrice,
 		},
 		date: {
 			start: "",
@@ -47,7 +47,7 @@ function Activities() {
 			label: "Price",
 			range: {
 				min: priceRange.minPrice,
-				max: priceRange.maxPrice
+				max: priceRange.maxPrice,
 			},
 			step: 1,
 		},
@@ -65,7 +65,7 @@ function Activities() {
 			label: "Rating",
 			range: {
 				min: 0,
-				max: 5
+				max: 5,
 			},
 			step: 1,
 		},
@@ -125,9 +125,7 @@ function Activities() {
 			const response = await getAllCategories();
 			if (!response.error) {
 				setCategories(response.data);
-				const set = new Set(
-					response.data.map((category) => category.name)
-				);
+				const set = new Set(response.data.map((category) => category.name));
 				setCategoryNames(Array.from(set));
 			} else {
 				console.error(response.message);
@@ -156,13 +154,15 @@ function Activities() {
 					/>
 				</div>
 				{!loading ? (
-					<CardContainer cardList={activities} cardType={"activity"} fetchCardData={fetchActivities} />
+					<CardContainer
+						cardList={activities}
+						cardType={"activity"}
+						fetchCardData={fetchActivities}
+					/>
 				) : (
 					<div className="flex col-span-3 mx-auto">
 						<div className="flex justify-center w-full">
-							<p className="text-neutral-400 text-sm italic">
-								Loading...
-							</p>
+							<p className="text-neutral-400 text-sm italic">Loading...</p>
 						</div>
 					</div>
 				)}

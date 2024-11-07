@@ -2,9 +2,15 @@ import { useState, useEffect } from "react";
 
 import GenericForm from "@/components/custom/genericForm/genericForm";
 import GenericFilter from "@/components/custom/GenericFilter";
-import CardContainer from "@/components/custom/CardContainer";
+import CardContainer from "@/components/custom/cards/CardContainer";
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@/components/ui/dialog";
 
 import { getAllProducts, getPriceMinMax } from "@/services/ProductApiHandler";
 
@@ -40,7 +46,7 @@ function ShoppingPage() {
 			label: "Price",
 			range: {
 				min: priceRange.minPrice,
-				max: priceRange.maxPrice
+				max: priceRange.maxPrice,
 			},
 			step: 1,
 		},
@@ -58,7 +64,7 @@ function ShoppingPage() {
 			activeFilters.name,
 			activeFilters.price.min,
 			activeFilters.price.max,
-			activeFilters.sortBy,
+			activeFilters.sortBy
 		);
 		if (!response.error) {
 			setProducts(response);
@@ -127,17 +133,18 @@ function ShoppingPage() {
 				</div>
 
 				{!loading ? (
-					<CardContainer cardList={products} cardType={"product"} fetchCardData={fetchProducts} />
+					<CardContainer
+						cardList={products}
+						cardType={"product"}
+						fetchCardData={fetchProducts}
+					/>
 				) : (
 					<div className="flex col-span-3 mx-auto">
 						<div className="flex justify-center w-full">
-							<p className="text-neutral-400 text-sm italic">
-								Loading...
-							</p>
+							<p className="text-neutral-400 text-sm italic">Loading...</p>
 						</div>
 					</div>
 				)}
-
 			</div>
 		</div>
 	);

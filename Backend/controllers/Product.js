@@ -7,7 +7,7 @@ const ProductSales = require("../models/ProductSales");
 const getProductById = async (req, res) => {
 	try {
 		const product = await Product.findById(req.params.id).populate(
-			"seller"
+			"creatorId"
 		); // Use req.params.id
 		if (!product) {
 			return res.status(404).json({ message: "Product not found" });
@@ -284,6 +284,28 @@ const getProductSalesDetails = async (req, res) => {
 	}
 };
 
+// Add getProductsByCreatorId function
+const getProductsByCreatorId = async (req, res) => {
+	try {
+		const creatorId = req.params.creatorId;
+
+		const products = await Product.find({ creatorId });
+
+		if (!products.length) {
+			return res
+				.status(404)
+				.json({ message: "No products found for this creator" });
+		}
+
+		res.status(200).json(products);
+	} catch (error) {
+		return res.status(500).json({
+			message: "Error fetching products for creator",
+			error: error.message,
+		});
+	}
+};
+
 module.exports = {
 	createProduct,
 	updateProduct,
@@ -294,4 +316,6 @@ module.exports = {
 	getMinMaxPrices,
 	addRating,
 	getProductSalesDetails,
+	// Export getProductsByCreatorId function
+	getProductsByCreatorId,
 };
