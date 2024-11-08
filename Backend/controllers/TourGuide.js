@@ -1,5 +1,6 @@
 const TourGuide = require("../models/TourGuide");
-
+const Tourist = require("../models/Tourist");
+const Itinerary = require("../models/Itinerary");
 /**
  * Retrieves all tourGuides
  *
@@ -204,9 +205,30 @@ const addRating = async (req, res) => {
 				.json({ message: "Rating must be between 1 and 5." });
 		}
 
-		//TODO check if userbooked this tour guide before
-
+		// // Check if the tour guide exists
 		const tourGuide = await TourGuide.findById(id);
+		if (!tourGuide) {
+		  return res.status(404).json({ message: "TourGuide not found" });
+		}
+	
+		// // Find the tourist by userId to get their itineraries
+		const tourist = await Tourist.findById(userId);
+		if (!tourist) {
+		  return res.status(404).json({ message: "Tourist not found" });
+		}
+	
+		// Populate itineraries to get creatorId from Itinerary
+		const itineraries = await Itinerary.find({
+			'_id': { $in: tourist.bookedEvents.itineraries.map(itinerary => itinerary.itineraryId) }
+		});
+	
+		// Check if any itinerary's creatorId matches the tour guide's ID
+		const hasBookedItinerary = itineraries.some(itinerary => itinerary.creatorId.toString() === id);
+	
+		if (!hasBookedItinerary) {
+			return res.status(403).json({ message: "User has not booked an itinerary with this tour guide." });
+		}
+
 
 		if (!tourGuide) {
 			return res.status(404).json({ message: "TourGuide not found" });
@@ -215,11 +237,19 @@ const addRating = async (req, res) => {
 		// Ensure that tourGuide.rating is a Map
 		if (!(tourGuide.rating instanceof Map)) {
 			tourGuide.rating = new Map(Object.entries(tourGuide.rating));
+			console.log("Converted tourGuide.rating to Map:", tourGuide.rating);
 		}
+
+		if (tourGuide.userRatings.includes(userId)) {
+			return res.status(403).json({ message: "User has already rated this tour guide." });
+		}	  
 
 		// Increment the count of the given rating
 		const currentCount = tourGuide.rating.get(rating.toString()) || 0;
 		tourGuide.rating.set(rating.toString(), currentCount + 1);
+
+	    // Add the userId to the userRatings array
+		tourGuide.userRatings.push(userId);
 
 		// Recalculate the average rating
 		tourGuide.averageRating = calculateAverageRating(tourGuide.rating);
@@ -266,6 +296,24 @@ const addComment = async (req, res) => {
 
 		if (!tourGuide) {
 			return res.status(405).json({ message: "TourGuide not found" });
+		}
+
+		// Find the tourist by userId to get their itineraries
+		const tourist = await Tourist.findById(userId);
+		if (!tourist) {
+		  return res.status(404).json({ message: "Tourist not found" });
+		}
+	
+		// Populate itineraries to get creatorId from Itinerary
+		const itineraries = await Itinerary.find({
+			'_id': { $in: tourist.bookedEvents.itineraries.map(itinerary => itinerary.itineraryId) }
+		});
+	
+		// Check if any itinerary's creatorId matches the tour guide's ID
+		const hasBookedItinerary = itineraries.some(itinerary => itinerary.creatorId.toString() === id);
+	
+		if (!hasBookedItinerary) {
+			return res.status(403).json({ message: "User has not booked an itinerary with this tour guide." });
 		}
 
 		// Add the comment to the tourGuide's comments array
