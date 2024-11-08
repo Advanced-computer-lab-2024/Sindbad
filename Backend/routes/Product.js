@@ -26,7 +26,7 @@ router
 	.delete(deleteProduct)
 	.post(addRating);
 
-router.route("/review/:id").post(addReview);
+router.route("/:id/review").post(addReview);
 
 router.route("/sales-details/:id").get(getProductSalesDetails);
 

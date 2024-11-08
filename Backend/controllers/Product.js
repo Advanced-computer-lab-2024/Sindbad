@@ -1,6 +1,6 @@
 const Product = require("../models/Product");
 const ProductSales = require("../models/ProductSales");
-
+const Tourist = require("../models/Tourist");
 /**
  * Gets a product by ID
  */
@@ -144,28 +144,38 @@ const updateProduct = async (req, res) => {
 
 const addRating = async (req, res) => {
 	try {
-		const { id } = req.params;
+		const { id } = req.params; // Product ID
 		const { userId, rating } = req.body;
-		
-		if(!userId || !rating){
-				return res.status(401)
-				.json({message: "userId and rating must be included "})
+
+		if (!userId || !rating) {
+			return res.status(401).json({ message: "userId and rating must be included" });
 		}
 
 		if (rating < 1 || rating > 5) {
-			return res
-				.status(400)
-				.json({ message: "Rating must be between 1 and 5." });
+			return res.status(400).json({ message: "Rating must be between 1 and 5." });
 		}
 
-		//TODO check if user purchased this product before
+		// Check if the user has purchased this product before
+		const purchaseRecord = await ProductSales.findOne({
+			productId: id,
+			buyerId: userId,
+		});
+
+		if (!purchaseRecord) {
+			return res.status(403).json({ message: "User has not purchased this product and cannot rate it." });
+		}
 
 		const product = await Product.findById(id);
 
 		if (!product) {
 			return res.status(404).json({ message: "Product not found" });
 		}
-		
+
+		// Check if the user has already rated this product
+		if (product.userRatings.includes(userId)) {
+			return res.status(403).json({ message: "User has already rated this product." });
+		}
+
 		// Ensure that product.rating is a Map
 		if (!(product.rating instanceof Map)) {
 			product.rating = new Map(Object.entries(product.rating));
@@ -175,10 +185,13 @@ const addRating = async (req, res) => {
 		const currentCount = product.rating.get(rating.toString()) || 0;
 		product.rating.set(rating.toString(), currentCount + 1);
 
+		// Add the userId to the userRatings array
+		product.userRatings.push(userId);
+
 		// Recalculate the average rating
 		product.averageRating = calculateAverageRating(product.rating);
 		await product.save();
-		
+
 		res.status(200).json({ message: "Rating added successfully", product });
 	} catch (error) {
 		res.status(500).json({
@@ -195,31 +208,30 @@ const addReview = async (req, res) => {
 		if (!product) {
 			return res.status(404).json({ message: "Product not found" });
 		}
-		const { userId, username, rating, comment } = req.body;
+		const { userId, comment} = req.body;
 
-		if(!userId || !rating){
+		if(!userId || !comment){
 				return res.status(401)
-				.json({message: "userId and rating must be included "})
+				.json({message: "userId and comment must be included "})
+		}
+		
+		const tourist = await Tourist.findById(userId);
+		if (!tourist) {
+		  return res.status(404).json({ message: "User not found" });
 		}
 
-		//TODO check if user purchsed/Booked
+		// Check if the user has purchased this product before
+		const purchaseRecord = await ProductSales.findOne({
+			productId: product,
+			buyerId: userId,
+		});
 
-
-		if (rating < 1 || rating > 5) {
-			return res
-				.status(400)
-				.json({ message: "Rating must be between 0 and 5" });
+		if (!purchaseRecord) {
+			return res.status(403).json({ message: "User has not purchased this product and cannot review it." });
 		}
 
-		const newReview = { username, rating, comment };
+		const newReview = { userId, comment };
 		product.reviews.push(newReview);
-
-		product.rating.set(
-			rating.toString(),
-			(product.rating.get(rating.toString()) || 0) + 1
-		);
-
-		product.averageRating = calculateAverageRating(product.rating);
 
 		await product.save();
 
