@@ -20,7 +20,7 @@ function RatingReview({ data, totalRatings, type, fetchData, addComment, addRati
     const [myReview, setMyReview] = useState(null);
     const [error, setError] = useState("");
 
-    const { id } = useUser();
+    const { id, role } = useUser();
     const { toast } = useToast();
 
     // Helper function to calculate the percentage of each rating
@@ -124,7 +124,7 @@ function RatingReview({ data, totalRatings, type, fetchData, addComment, addRati
                         </div>
                     ))}
                 </div>
-                {
+                {role === "tourist" &&
                     <label className="text-base font-medium mt-4">
                         Leave a rating
                         <div className="mt-1">
@@ -139,7 +139,7 @@ function RatingReview({ data, totalRatings, type, fetchData, addComment, addRati
                 <h2 className="text-2xl font-semibold">
                     {type === "review" ? "Customer Reviews" : "Comments"}
                 </h2>
-                {myReview === null &&
+                {role === "tourist" && myReview === null &&
                     <>
                         {type === "review" &&
                             <div>
