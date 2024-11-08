@@ -18,8 +18,8 @@ import TagCategoryManagement from "./components/custom/admin/TagCategoryManageme
 import UserVerification from "./components/custom/admin/UserVerification";
 import UserManagement from "./components/custom/admin/user-management/UserManagement";
 import Booking from "./pages/Booking";
-import FlightBooking from "./components/custom/booking/FlightBooking";
-import HotelBooking from "./components/custom/booking/HotelBooking";
+import FlightBooking from "./pages/FlightBooking";
+import HotelBooking from "./pages/HotelBooking";
 
 import { useUser } from "@/state management/userInfo";
 
