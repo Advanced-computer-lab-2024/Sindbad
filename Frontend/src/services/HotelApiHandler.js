@@ -167,8 +167,8 @@ const bookHotel = async (bookingData, id) => {
 		},
 	});
 
-	console.log("Booking response:", response.data);
-	return response.data;
+	console.log("Booking response:", response.data.data);
+	return response.data.data;
 };
 
 export { getHotelsByCity, getHotelsByGeocode, bookHotel, getHotelOffers };
