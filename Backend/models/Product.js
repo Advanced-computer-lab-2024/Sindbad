@@ -23,7 +23,7 @@ const productSchema = mongoose.Schema(
 			type: String,
 			required: [true, "Please add a product description"],
 		},
-		seller: {
+		creatorId: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Seller",
 			required: [true, "Please add the seller of the product"],

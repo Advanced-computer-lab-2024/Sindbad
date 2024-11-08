@@ -23,7 +23,12 @@ export const itinerarySchema = {
 
 	price: z.number().min(0, { message: "Price must be a non-negative number" }),
 
-	availableDatesTimes: z.array(z.string()),
+	availableDatesTimes: z.array(
+		z.object({
+			dateTime: z.string().min(1, { message: "Date and time must be provided" }),
+			headCount: z.number().default(0),
+		})
+	),
 
 	accessibility: z
 		.array(
@@ -35,6 +40,6 @@ export const itinerarySchema = {
 		.string()
 		.min(1, { message: "Please add the pick-up location" }),
 
-  dropOffLocation: z.string().min(1, { message: "Please add the drop-off location" }),
+	dropOffLocation: z.string().min(1, { message: "Please add the drop-off location" }),
 
 };

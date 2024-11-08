@@ -54,6 +54,32 @@ if (process.env.NODE_ENV !== "test") {
     });
 }
 
+app.post(
+  '/advertiser/upload/:id',
+  upload.fields([
+    { name: 'idCardImage', maxCount: 1 },
+    { name: 'taxationRegistryCardImage', maxCount: 1 },
+  ]),
+  AdvertiserController.addAdvertiserDocuments
+);
+
+app.post(
+  '/seller/upload/:id',
+  upload.fields([
+    { name: 'idCardImage', maxCount: 1 },
+    { name: 'taxationRegistryCardImage', maxCount: 1 },
+  ]),
+  SellerController.addSellerDocuments
+);
+
+app.post(
+  '/tourGuide/upload/:id',
+  upload.fields([
+    { name: 'idCardImage', maxCount: 1 },
+    { name: 'certificateImage', maxCount: 1 },
+  ]),
+  TourGuideController.addTourGuideDocuments
+);
 
 
 //User routes
@@ -102,33 +128,7 @@ app.use("/complaint", complaintRoutes);
 app.use("/flight", flightRoutes);
 
 //To work with pictures
-app.use(
-  '/advertiser/upload/:id',
-  upload.fields([
-    { name: 'idCardImage', maxCount: 1 },
-    { name: 'taxationRegistryCardImage', maxCount: 1 },
-  ]),
-  AdvertiserController.addAdvertiserDocuments
-);
 
-app.use(
-  '/seller/upload/:id',
-  upload.fields([
-    { name: 'idCardImage', maxCount: 1 },
-    { name: 'taxationRegistryCardImage', maxCount: 1 },
-  ]),
-  SellerController.addSellerDocuments
-);
-
-
-app.use(
-  '/tourGuide/upload/:id',
-  upload.fields([
-    { name: 'idCardImage', maxCount: 1 },
-    { name: 'certificateImage', maxCount: 1 },
-  ]),
-  TourGuideController.addTourGuideDocuments
-);
 
 
 // Fallback route for unknown endpoints

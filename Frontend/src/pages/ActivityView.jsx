@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import GoogleMapRead from "@/components/custom/maps/GoogleMapRead";
 import StarRating from "@/components/custom/StarRating";
 import ImagePlaceholder from "@/components/custom/ImagePlaceholder";
+import RatingReview from "@/components/custom/RatingReview";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -16,26 +17,12 @@ import {
 
 import { MapPin, CalendarDays, AlarmClock, ArrowRight } from "lucide-react";
 
-import { getActivityById, bookActivity } from "@/services/ActivityApiHandler";
+import { getActivityById, bookActivity, addActivityComment, addActivityRating } from "@/services/ActivityApiHandler";
 import { getAdvertiser } from "@/services/AdvertiserApiHandler";
 
 import { useUser } from "@/state management/userInfo";
 
-function getRandomRating() {
-  return (Math.round(Math.random() * 10) / 2).toFixed(1);
-}
-
-function getRandomReviews() {
-  return Math.floor(Math.random() * 1000) + 1;
-}
-
 function handleActivityValues(activity) {
-  if (!activity.averageRating) {
-    activity.averageRating = getRandomRating();
-  }
-  if (!activity.reviews) {
-    activity.reviews = getRandomReviews();
-  }
   if (!activity.description) {
     activity.description =
       "With the history going back to 420 B.C., this tour includes sights throughout history. From the local alley drug dealer to the Queen's castle";
@@ -50,7 +37,6 @@ function handleActivityValues(activity) {
   }
 
   if (typeof activity.location === "string") {
-    console.log("Location is a string");
     activity.location = {
       address: activity.location,
       coordinates: { lat: 0, lng: 0 },
@@ -62,8 +48,9 @@ function Activity() {
   const { activityId } = useParams();
   const [activity, setActivity] = useState(null);
   const [creator, setCreator] = useState(null);
+  const [totalRatings, setTotalRatings] = useState(0);
   const [error, setError] = useState(false);
-  const { role, id } = useUser();
+  const { id } = useUser();
 
   const getActivity = async () => {
     let response = await getActivityById(activityId);
@@ -74,6 +61,9 @@ function Activity() {
     } else {
       handleActivityValues(response);
       setActivity(response);
+      setTotalRatings(
+        Object.values(response.rating).reduce((acc, cur) => acc + cur, 0)
+      );
       setError(false);
     }
   };
@@ -274,6 +264,15 @@ function Activity() {
           </div>
         </div>
       </div>
+      <hr className="border-neutral-300 border w-full mt-1.5" />
+      <RatingReview
+        data={activity}
+        totalRatings={totalRatings}
+        type="comment"
+        fetchData={getActivity}
+        addComment={addActivityComment}
+        addRating={addActivityRating}
+      />
     </div>
   );
 }

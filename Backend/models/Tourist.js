@@ -125,7 +125,10 @@ const TouristSchema = new mongoose.Schema(
     bookedEvents: {
       activities: [
         {
-          activityId: { type: mongoose.Schema.Types.ObjectId, ref: "Activity" },
+          activityId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Activity",
+          },
           priceCharged: { type: Number, required: true },
         },
       ],
@@ -136,8 +139,16 @@ const TouristSchema = new mongoose.Schema(
             ref: "Itinerary",
           },
           ticketsBooked: { type: Number, required: true, default: 1 },
+          dateBooked: { type: Date, required: false },
         },
       ],
+    },
+    preferences: {
+      type: [String],
+    },
+    isRequestedAccountDeletion: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }

@@ -65,11 +65,24 @@ const updateTourGuide = async (req, res) => {
 		return res.status(404).send("TourGuide not accepted yet");
 
 	if (req.body.email != null) tourGuide.email = req.body.email;
-	if (req.body.username != null) tourGuide.username = req.body.username;
-	if (req.body.mobileNumber != null)tourGuide.mobileNumber = req.body.mobileNumber;
-	if (req.body.yearsOfExperience != null)tourGuide.yearsOfExperience = req.body.yearsOfExperience;
-	if (req.body.profileImageUri != null)tourGuide.profileImageUri = req.body.profileImageUri;
-	if (req.body.bannerImageUri != null)tourGuide.bannerImageUri = req.body.bannerImageUri;
+
+	if (req.body.mobileNumber != null)
+		tourGuide.mobileNumber = req.body.mobileNumber;
+
+	if (req.body.yearsOfExperience != null)
+		tourGuide.yearsOfExperience = req.body.yearsOfExperience;
+
+	if (req.body.profileImageUri != null)
+		tourGuide.profileImageUri = req.body.profileImageUri;
+
+	if (req.body.bannerImageUri != null)
+		tourGuide.bannerImageUri = req.body.bannerImageUri;
+
+	if (req.body.preferredCurrency != undefined)
+		tourGuide.preferredCurrency = req.body.preferredCurrency;
+
+	if (req.body.portfolioUrl) tourGuide.portfolioUrl = req.body.portfolioUrl;
+
 	// Update or concat previousWork based on wether or not the previous work exists
 	if (req.body.previousWork != null) {
 		if (tourGuide.previousWork.length === 0) {
@@ -184,40 +197,140 @@ const deletePreviousWork = async (req, res) => {
 	}
 };
 
+const addRating = async (req, res) => {
+	try {
+		const { id } = req.params;
+		const { userId, rating } = req.body;
+
+		if (!userId || !rating) {
+			return res
+				.status(401)
+				.json({ message: "userId and rating must be included " });
+		}
+
+		if (rating < 1 || rating > 5) {
+			return res
+				.status(400)
+				.json({ message: "Rating must be between 1 and 5." });
+		}
+
+		//TODO check if userbooked this tour guide before
+
+		const tourGuide = await TourGuide.findById(id);
+
+		if (!tourGuide) {
+			return res.status(404).json({ message: "TourGuide not found" });
+		}
+
+		// Ensure that tourGuide.rating is a Map
+		if (!(tourGuide.rating instanceof Map)) {
+			tourGuide.rating = new Map(Object.entries(tourGuide.rating));
+		}
+
+		// Increment the count of the given rating
+		const currentCount = tourGuide.rating.get(rating.toString()) || 0;
+		tourGuide.rating.set(rating.toString(), currentCount + 1);
+
+		// Recalculate the average rating
+		tourGuide.averageRating = calculateAverageRating(tourGuide.rating);
+		await tourGuide.save();
+
+		res.status(200).json({
+			message: "Rating added successfully",
+			tourGuide,
+		});
+	} catch (error) {
+		res.status(500).json({
+			message: "Error adding rating",
+			error: error.message,
+		});
+	}
+};
+
+const calculateAverageRating = (ratings) => {
+	let totalRating = 0;
+	let totalVotes = 0;
+
+	// Use the entries of the Map and a for...of loop
+	for (const [rating, count] of ratings.entries()) {
+		totalRating += parseInt(rating) * count; // Multiply rating by the number of votes
+		totalVotes += count; // Sum the number of votes
+	}
+
+	return totalVotes > 0 ? totalRating / totalVotes : 0; // Return average or 0 if no votes
+};
+
+const addComment = async (req, res) => {
+	try {
+		const { id } = req.params;
+		const { userId, comment } = req.body;
+		
+		// Validate input
+		if (!userId || !comment) {
+			return res
+				.status(400)
+				.json({ message: "User ID and comment are required." });
+		}
+
+		//TODO implement checking if user has booked the tourGuide
+
+		// Find the tourGuide by ID
+		const tourGuide = await TourGuide.findById(id);
+
+		if (!tourGuide) {
+			return res.status(405).json({ message: "TourGuide not found" });
+		}
+
+		// Add the comment to the tourGuide's comments array
+		tourGuide.comments.push({ userId, comment });
+		await tourGuide.save();
+
+		res.status(200).json({
+			message: "Comment added successfully",
+			tourGuide,
+		});
+	} catch (error) {
+		res.status(500).json({
+			message: "Error adding comment",
+			error: error.message,
+		});
+	}
+};
 
 const addTourGuideDocuments = async (req, res) => {
 	const { id } = req.params; // Get tourguide ID from params
 	const files = req.files; // Multer file object
 
 	const updateData = {};
+	console.log(req);
 
 	if (files.idCardImage) {
 		updateData.idCardImage = files.idCardImage[0].buffer; // Get binary data from the first file
-	  }
-	
-	  if (files.certificateImage) {
+	}
+
+	if (files.certificateImage) {
 		updateData.certificateImage = files.certificateImage[0].buffer;
 	}
 
-	
 	try {
 		// Update the tourguide document with the new image data
 		const tourguide = await TourGuide.findByIdAndUpdate(
-		  id,
-		  { $set: updateData }, // Use $set to only update specified fields
-		  { new: true } // Return the updated document
+			id,
+			{ $set: updateData }, // Use $set to only update specified fields
+			{ new: true } // Return the updated document
 		);
-	
-		if (!tourguide) {
-		  return res.status(404).json({ message: "tourguide not found!" });
-		}
-	
-		return res.status(200).json(tourguide);
-	  } catch (error) {
-		return res.status(500).json({ message: "Error updating tourguide", error });
-	  }
-};
 
+		if (!tourguide) {
+			return res.status(404).json({ message: "tourguide not found!" });
+		}
+
+		return res.status(200).json(tourguide);
+	} catch (error) {
+		return res
+			.status(500)
+			.json({ message: "Error updating tourguide", error });
+	}
+};
 
 module.exports = {
 	getAllTourGuides,
@@ -225,5 +338,7 @@ module.exports = {
 	updateTourGuide,
 	deleteTourGuide,
 	deletePreviousWork,
+	addComment,
+	addRating,
 	addTourGuideDocuments,
 };

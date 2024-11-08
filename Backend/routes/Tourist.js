@@ -3,6 +3,7 @@ const router = express.Router();
 
 const {
   getTouristById,
+  getTouristByUsername,
   getAllTourists,
   updateTourist,
   deleteTourist,
@@ -11,11 +12,14 @@ const {
 
 router.route("/").get(getAllTourists);
 
+router.route("/user/:username").get(getTouristByUsername);
+
 router
-  .route("/:id")
-  .get(getTouristById)
-  .put(updateTourist)
-  .delete(deleteTourist)
-  .post(redeemPoints);
+.route("/:id")
+.get(getTouristById)
+.put(updateTourist)
+.delete(deleteTourist)
+.post(redeemPoints);
+
 
 module.exports = router;

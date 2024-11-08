@@ -40,12 +40,12 @@ const getSellerById = async (req, res) => {
 const updateSeller = async (req, res) => {
 	try {
 		const { id } = req.params;
-		const { email, username, firstName, lastName, description, logoImageUri , bannerImageUri} =
+		const { email, firstName, lastName, description, logoImageUri , bannerImageUri, preferredCurrency} =
 			req.body;
 
 		const updatedSeller = await Seller.findByIdAndUpdate(
 			id,
-			{ email, username, firstName, lastName, description, logoImageUri , bannerImageUri},
+			{ email, firstName, lastName, description, logoImageUri , bannerImageUri, preferredCurrency },
 			{ new: true, runValidators: true }
 		);
 

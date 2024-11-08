@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 import GenericFilter from "@/components/custom/GenericFilter";
-import CardContainer from "@/components/custom/CardContainer";
+import CardContainer from "@/components/custom/cards/CardContainer";
 
 import { getAllItineraries } from "@/services/ItineraryApiHandler";
 import { getAllTags } from "@/services/AdminApiHandler";
@@ -20,7 +20,7 @@ function Itineraries() {
 		name: "",
 		price: {
 			min: priceRange.minPrice,
-			max: priceRange.maxPrice
+			max: priceRange.maxPrice,
 		},
 		date: {
 			start: "",
@@ -48,7 +48,7 @@ function Itineraries() {
 			label: "Price",
 			range: {
 				min: priceRange.minPrice,
-				max: priceRange.maxPrice
+				max: priceRange.maxPrice,
 			},
 			step: 1,
 		},
@@ -66,7 +66,7 @@ function Itineraries() {
 			label: "Rating",
 			range: {
 				min: 0,
-				max: 5
+				max: 5,
 			},
 			step: 1,
 		},
@@ -91,9 +91,7 @@ function Itineraries() {
 		setLoading(true);
 		let tagToSend = "";
 		if (activeFilters.tag.selected !== "") {
-			tagToSend = tags.find(
-				(tag) => tag.name === activeFilters.tag.selected
-			);
+			tagToSend = tags.find((tag) => tag.name === activeFilters.tag.selected);
 		}
 		const response = await getAllItineraries(
 			activeFilters.name,
@@ -105,7 +103,7 @@ function Itineraries() {
 			activeFilters.sortBy.selected,
 			activeFilters.sortOrder.selected
 		);
-		if (!response.error) {
+		if (!response.error && response) {
 			const updatedItineraries = response.map((itinerary) => ({
 				...itinerary, // retain other properties of the itinerary
 				activities: itinerary.activities.map((activity) => activity._id), // map activities to _id
@@ -160,13 +158,15 @@ function Itineraries() {
 					/>
 				</div>
 				{!loading ? (
-					<CardContainer cardList={itineraries} cardType={"itinerary"} fetchCardData={fetchItineraries} />
+					<CardContainer
+						cardList={itineraries}
+						cardType={"itinerary"}
+						fetchCardData={fetchItineraries}
+					/>
 				) : (
 					<div className="flex col-span-3 mx-auto">
 						<div className="flex justify-center w-full">
-							<p className="text-neutral-400 text-sm italic">
-								Loading...
-							</p>
+							<p className="text-neutral-400 text-sm italic">Loading...</p>
 						</div>
 					</div>
 				)}

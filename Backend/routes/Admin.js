@@ -6,17 +6,16 @@ const {
 	getAdminById,
 	updateAdmin,
 	deleteAdmin,
+	getAllRequestedAccountDeletionUsers,
 } = require("../controllers/Admin");
 
-router
-	.route("/")
-	.get(getAllAdmins)
-	.post(createAdmin);
+router.route("/").get(getAllAdmins).post(createAdmin);
 
-router
-	.route("/:id")
-	.get(getAdminById)
-	.put(updateAdmin)
-	.delete(deleteAdmin);
+router.get(
+	"/requested-account-deletion-users",
+	getAllRequestedAccountDeletionUsers
+);
+
+router.route("/:id").get(getAdminById).put(updateAdmin).delete(deleteAdmin);
 
 module.exports = router;

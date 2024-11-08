@@ -4,16 +4,17 @@ export const userSignUp = async (finalValues, registerType) => {
     const { password, ...rest } = finalValues; // Exclude 'password' from finalValues
 
     // Adjust the data format based on the role
+    const { idCardImage, certificateImage, taxationRegistryCardImage, ...remaining } = finalValues; // Exclude 'idCardImage' and 'certificateImage' from finalValues
     let requestBody = {};
     if (registerType === "Tourist") {
         requestBody = {
-            ...rest,
+            ...remaining,
             passwordHash: password, // hash the password if required
             role: "tourist",
         };
     } else {
         requestBody = {
-            ...rest,
+            ...remaining,
             passwordHash: finalValues.password, // hash the password if required
             role: registerType.toLowerCase(),
         };
@@ -59,6 +60,17 @@ export const updateUserAcceptance = async (id, role, isAccepted) => {
         const response = await axiosInstance.post(
             `/user/changeAcceptance/${id}`,
             { role, isAccepted },
+        );
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+}
+export const updateUserPassword = async (id, role, passwordHash) => {
+    try {
+        const response = await axiosInstance.post(
+            `/user/changePassword/${id}`,
+            { role, passwordHash },
         );
         return response.data;
     } catch (error) {

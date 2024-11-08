@@ -17,6 +17,9 @@ import ComplaintManagement from "./components/custom/admin/complaint-management/
 import TagCategoryManagement from "./components/custom/admin/TagCategoryManagement";
 import UserVerification from "./components/custom/admin/UserVerification";
 import UserManagement from "./components/custom/admin/user-management/UserManagement";
+import Booking from "./pages/Booking";
+import FlightBooking from "./components/custom/booking/FlightBooking";
+import HotelBooking from "./components/custom/booking/HotelBooking";
 
 import { useUser } from "@/state management/userInfo";
 
@@ -43,6 +46,11 @@ function App() {
 						<Route path="verification" element={<UserVerification />} />
 						<Route path="complaints" element={<ComplaintManagement />} />
 						<Route path="tagcategories" element={<TagCategoryManagement />} />
+					</Route>
+					<Route path="booking" element={<Booking />}>
+						<Route path="" element={<Navigate to="hotel" replace />} />
+						<Route path="flight" element={<FlightBooking />} />
+						<Route path="hotel" element={<HotelBooking />} />
 					</Route>
 					<Route path="itinerary/:itineraryId" element={<Itinerary />} />
 					<Route path="activity/:activityId" element={<Activity />} />

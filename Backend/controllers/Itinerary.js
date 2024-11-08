@@ -295,6 +295,40 @@ const getAllItineraries = async (req, res) => {
   }
 };
 
+const addComment = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { userId, comment } = req.body;
+
+    // Validate input
+    if (!userId || !comment) {
+      return res
+        .status(400)
+        .json({ message: "User ID and comment are required." });
+    }
+
+    //TODO implement checking if user has booked the itinerary
+
+    // Find the itinerary by ID
+    const itinerary = await Itinerary.findById(id);
+
+    if (!itinerary) {
+      return res.status(405).json({ message: "Itinerary not found" });
+    }
+
+    // Add the comment to the itinerary's comments array
+    itinerary.comments.push({ userId, comment });
+    await itinerary.save();
+
+    res.status(200).json({ message: "Comment added successfully", itinerary });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error adding comment",
+      error: error.message,
+    });
+  }
+};
+
 /**
  * @route POST /itinerary/:id/rate
  * @description Add a rating to an itinerary
@@ -308,13 +342,21 @@ const getAllItineraries = async (req, res) => {
 const addRating = async (req, res) => {
   try {
     const itineraryId = req.params.id;
-    const { rating } = req.body;
+    const { userId, rating } = req.body;
+
+    if (!userId || !rating) {
+      return res
+        .status(401)
+        .json({ message: "userId and rating must be included " });
+    }
+
+    //TODO check if user purchsed/Booked
 
     // Validate rating value
     if (!rating || rating < 1 || rating > 5) {
-      return res.status(400).json({
-        message: "Invalid rating value. Must be between 1 and 5.",
-      });
+      return res
+        .status(400)
+        .json({ message: "Invalid rating value. Must be between 1 and 5." });
     }
 
     const itinerary = await Itinerary.findById(itineraryId);
@@ -413,9 +455,29 @@ const bookItinerary = async (req, res) => {
       return res.status(404).json({ message: "Itinerary not found" });
     }
 
+    if (itinerary.isInappropriate) {
+      return res.status(400).json({
+        message:
+          "This itinerary cannot be booked as it has been flagged as inappropriate.",
+      });
+    }
+
     const tourist = await Tourist.findById(userId);
     if (!tourist) {
       return res.status(404).json({ message: "User not found" });
+    }
+
+    const alreadyBooked = tourist.bookedEvents.itineraries.some(
+      (booking) =>
+        booking.itineraryId.toString() === itineraryId.toString() &&
+        new Date(booking.dateBooked).toString() === new Date(date).toString()
+    );
+
+    if (alreadyBooked) {
+      return res.status(400).json({
+        message:
+          "You have already booked this itinerary for the selected date.",
+      });
     }
 
     if (!itinerary.isBookingOpen) {
@@ -448,6 +510,7 @@ const bookItinerary = async (req, res) => {
     tourist.bookedEvents.itineraries.push({
       itineraryId: itineraryId,
       ticketsBooked: childTicketCount + adultTicketCount,
+      dateBooked: new Date(date),
     });
     await tourist.save();
 
@@ -481,6 +544,94 @@ const bookItinerary = async (req, res) => {
     res.status(500).json({
       message: "Error booking itinerary",
       error: err.message,
+    });
+  }
+};
+
+const cancelBooking = async (req, res) => {
+  try {
+    const { date, itineraryId, userId } = req.body;
+    let itinerary = await Itinerary.findById(itineraryId);
+    const currentDate = new Date();
+    const datePlus48Hours = new Date(
+      currentDate.getTime() + 48 * 60 * 60 * 1000
+    );
+
+    if (!itinerary) {
+      return res.status(404).json({ message: "Itinerary not found" });
+    }
+
+    if (new Date(date) <= datePlus48Hours) {
+      return res.status(400).json({
+        message:
+          "You cannot cancel the itinerary as it is too close or already passed.",
+      });
+    }
+
+    const tourist = await Tourist.findById(userId);
+    if (!tourist) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const itineraryInArray = tourist.bookedEvents.itineraries.find(
+      (itinerary) => itinerary.itineraryId.toString() === itineraryId.toString()
+    );
+
+    let priceCharged;
+    if (typeof itinerary.price === "number") {
+      priceCharged = itinerary.price * itineraryInArray.ticketsBooked;
+    } else {
+      const { min, max } = itinerary.price;
+      priceCharged = min * itineraryInArray.ticketsBooked;
+    }
+
+    headcount = getHeadCountForDate(itinerary, date);
+    itinerary = setHeadCountForDate(
+      itinerary,
+      date,
+      headcount - itineraryInArray.ticketsBooked
+    );
+
+    await itinerary.save();
+
+    tourist.wallet += priceCharged;
+
+    let loyaltyPoints = tourist.loyaltyPoints;
+    switch (tourist.level) {
+      case 1:
+        loyaltyPoints -= priceCharged * 0.5;
+        break;
+      case 2:
+        loyaltyPoints -= priceCharged;
+        break;
+      case 3:
+        loyaltyPoints -= priceCharged * 1.5;
+        break;
+    }
+    tourist.loyaltyPoints = loyaltyPoints;
+
+    let level = tourist.level;
+    if (loyaltyPoints > 100000 && loyaltyPoints <= 500000) level = 2;
+    if (loyaltyPoints > 500000) level = 3;
+    tourist.level = level;
+
+    tourist.bookedEvents.itineraries = tourist.bookedEvents.itineraries.filter(
+      (itinerary) => {
+        return (
+          itinerary.itineraryId.toString() !== itineraryId.toString() ||
+          new Date(itinerary.dateBooked).toString() !==
+            new Date(date).toString()
+        );
+      }
+    );
+
+    await tourist.save();
+    res.status(200).json({ message: "Itinerary cancelled successfully" });
+  } catch (error) {
+    // console.error("Error canceling activity:", error);
+    res.status(500).json({
+      message: "Error canceling activity",
+      error: error.message,
     });
   }
 };
@@ -519,6 +670,8 @@ module.exports = {
   getAllItineraries,
   getMyItineraries,
   bookItinerary,
+  cancelBooking,
   addRating,
+  addComment,
   setIsInappropriate,
 };
