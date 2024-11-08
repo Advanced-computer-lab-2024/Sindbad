@@ -411,12 +411,10 @@ const bookActivity = async (req, res) => {
     }
 
     if (activity.isInappropriate) {
-      return res
-        .status(400)
-        .json({
-          message:
-            "This activity cannot be booked as it has been flagged as inappropriate.",
-        });
+      return res.status(400).json({
+        message:
+          "This activity cannot be booked as it has been flagged as inappropriate.",
+      });
     }
 
     const tourist = await Tourist.findById(userId);
@@ -560,7 +558,7 @@ const cancelBooking = async (req, res) => {
 
     await tourist.save();
 
-    res.status(200).json({ message: "Activity canceled successfully" });
+    res.status(200).json({ message: "Activity cancelled successfully" });
   } catch (error) {
     console.error("Error canceling activity:", error);
     res.status(500).json({

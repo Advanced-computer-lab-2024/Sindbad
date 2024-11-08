@@ -467,6 +467,19 @@ const bookItinerary = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
+    const alreadyBooked = tourist.bookedEvents.itineraries.some(
+      (booking) =>
+        booking.itineraryId.toString() === itineraryId.toString() &&
+        new Date(booking.dateBooked).toString() === new Date(date).toString()
+    );
+
+    if (alreadyBooked) {
+      return res.status(400).json({
+        message:
+          "You have already booked this itinerary for the selected date.",
+      });
+    }
+
     if (!itinerary.isBookingOpen) {
       return res.status(400).json({ message: "Bookings are currently closed" });
     }
@@ -497,6 +510,7 @@ const bookItinerary = async (req, res) => {
     tourist.bookedEvents.itineraries.push({
       itineraryId: itineraryId,
       ticketsBooked: childTicketCount + adultTicketCount,
+      dateBooked: new Date(date),
     });
     await tourist.save();
 
@@ -530,6 +544,94 @@ const bookItinerary = async (req, res) => {
     res.status(500).json({
       message: "Error booking itinerary",
       error: err.message,
+    });
+  }
+};
+
+const cancelBooking = async (req, res) => {
+  try {
+    const { date, itineraryId, userId } = req.body;
+    let itinerary = await Itinerary.findById(itineraryId);
+    const currentDate = new Date();
+    const datePlus48Hours = new Date(
+      currentDate.getTime() + 48 * 60 * 60 * 1000
+    );
+
+    if (!itinerary) {
+      return res.status(404).json({ message: "Itinerary not found" });
+    }
+
+    if (new Date(date) <= datePlus48Hours) {
+      return res.status(400).json({
+        message:
+          "You cannot cancel the itinerary as it is too close or already passed.",
+      });
+    }
+
+    const tourist = await Tourist.findById(userId);
+    if (!tourist) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const itineraryInArray = tourist.bookedEvents.itineraries.find(
+      (itinerary) => itinerary.itineraryId.toString() === itineraryId.toString()
+    );
+
+    let priceCharged;
+    if (typeof itinerary.price === "number") {
+      priceCharged = itinerary.price * itineraryInArray.ticketsBooked;
+    } else {
+      const { min, max } = itinerary.price;
+      priceCharged = min * itineraryInArray.ticketsBooked;
+    }
+
+    headcount = getHeadCountForDate(itinerary, date);
+    itinerary = setHeadCountForDate(
+      itinerary,
+      date,
+      headcount - itineraryInArray.ticketsBooked
+    );
+
+    await itinerary.save();
+
+    tourist.wallet += priceCharged;
+
+    let loyaltyPoints = tourist.loyaltyPoints;
+    switch (tourist.level) {
+      case 1:
+        loyaltyPoints -= priceCharged * 0.5;
+        break;
+      case 2:
+        loyaltyPoints -= priceCharged;
+        break;
+      case 3:
+        loyaltyPoints -= priceCharged * 1.5;
+        break;
+    }
+    tourist.loyaltyPoints = loyaltyPoints;
+
+    let level = tourist.level;
+    if (loyaltyPoints > 100000 && loyaltyPoints <= 500000) level = 2;
+    if (loyaltyPoints > 500000) level = 3;
+    tourist.level = level;
+
+    tourist.bookedEvents.itineraries = tourist.bookedEvents.itineraries.filter(
+      (itinerary) => {
+        return (
+          itinerary.itineraryId.toString() !== itineraryId.toString() ||
+          new Date(itinerary.dateBooked).toString() !==
+            new Date(date).toString()
+        );
+      }
+    );
+
+    await tourist.save();
+    res.status(200).json({ message: "Itinerary cancelled successfully" });
+  } catch (error) {
+    // console.error("Error canceling activity:", error);
+    res.status(500).json({
+      message: "Error canceling activity",
+      error: error.message,
     });
   }
 };
@@ -568,6 +670,7 @@ module.exports = {
   getAllItineraries,
   getMyItineraries,
   bookItinerary,
+  cancelBooking,
   addRating,
   addComment,
   setIsInappropriate,
