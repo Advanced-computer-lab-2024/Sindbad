@@ -1,5 +1,5 @@
 import { updateSeller } from '@/services/SellerApiHandler';
 
-export const sellerSubmit = (values, id) => {
-    return updateSeller(id, values);
-}
+export const sellerSubmit = (values, id, navigate) => {
+	return updateSeller(id, values);
+};
