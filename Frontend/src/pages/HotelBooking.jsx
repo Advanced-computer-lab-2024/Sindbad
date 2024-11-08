@@ -1,30 +1,65 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
 	getHotelsByCity,
 	getHotelsByGeocode,
 } from "@/services/HotelApiHandler";
-import { useState } from "react";
 import CardContainer from "@/components/custom/cards/CardContainer";
+import GenericFilter from "@/components/custom/GenericFilter";
+import { set } from "date-fns";
 
 function HotelBooking() {
 	const [loading, setLoading] = useState(true);
 	const [hotels, setHotels] = useState([]);
 
+	const [activeFilters, setActiveFilters] = useState({
+		cityCode: "CAI",
+		radius: 10,
+	});
+
+	const formFields = {
+		cityCode: {
+			type: "search",
+			label: "City Code",
+		},
+		radius: {
+			type: "search",
+			label: "Search Radius",
+			min: 1,
+			max: 100,
+		},
+	};
+
 	const fetchHotels = async () => {
 		setLoading(true);
-		try {
-			const cityHotels = await getHotelsByCity("CAI", 10);
-			console.log("City Hotels:", cityHotels);
-			setHotels(cityHotels.data);
-		} catch (error) {
-			console.error("Error fetching hotels:", error);
+		console.log(activeFilters.cityCode, activeFilters.radius);
+		const response = await getHotelsByCity(
+			activeFilters.cityCode,
+			activeFilters.radius
+		);
+		if (!response.error && response) {
+			setHotels(response.data);
+			console.log(hotels);
+		} else {
+			setHotels([]);
+			console.error(response.message);
 		}
 		setLoading(false);
 	};
 
+	// Debouncing logic for the API call
 	useEffect(() => {
-		fetchHotels();
-	}, []);
+		const delayDebounceFn = setTimeout(() => {
+			// Only fetch itineraries after a 1-second delay
+			fetchHotels();
+		}, 1000); // Adjust debounce time as needed (e.g., 500ms, 1000ms)
+
+		// Clear the timeout if activeFilters changes before the timeout is complete
+		// console.log("activeFilters changed", activeFilters);
+		return () => clearTimeout(delayDebounceFn);
+	}, [activeFilters]); // Dependency on activeFilters
+
+
+
 
 	return (
 		<div className="py-8 px-24 max-w-[1200px] flex flex-col gap-4 mx-auto">
@@ -33,6 +68,13 @@ function HotelBooking() {
 				<hr className="border-neutral-300 border w-full mt-1.5" />
 			</div>
 			<div className="flex gap-10">
+				<div className="w-[280px] shrink-0">
+					<GenericFilter
+						formFields={formFields}
+						activeFilters={activeFilters}
+						setActiveFilters={setActiveFilters}
+					/>
+				</div>
 				{!loading ? (
 					<CardContainer
 						cardList={hotels}
