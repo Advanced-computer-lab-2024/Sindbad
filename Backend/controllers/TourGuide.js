@@ -253,7 +253,7 @@ const addComment = async (req, res) => {
 	try {
 		const { id } = req.params;
 		const { userId, comment } = req.body;
-
+		
 		// Validate input
 		if (!userId || !comment) {
 			return res.status(400).json({ message: "User ID and comment are required." });

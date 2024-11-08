@@ -75,3 +75,35 @@ export const updateTourGuideFiles = async (tourGuideId, files) => {
 		return error;
 	}
 }
+
+export const addTourGuideRating = async (tourGuideId, rating) => {
+	try {
+		const response = await axiosInstance.post(
+			`/tourGuide/${tourGuideId}`,
+			rating,
+			{
+				resourceName: "Tour guide",
+			}
+		);
+
+		return response.data;
+	} catch (error) {
+		return error;
+	}
+}
+
+export const addTourGuideComment = async (tourGuideId, comment) => {
+	try {
+		const response = await axiosInstance.post(
+			`/tourGuide/${tourGuideId}/comment`,
+			comment,
+			{
+				resourceName: "Tour guide",
+			}
+		);
+
+		return response.data;
+	} catch (error) {
+		return error;
+	}
+}

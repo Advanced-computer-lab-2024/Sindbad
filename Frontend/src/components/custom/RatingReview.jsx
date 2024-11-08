@@ -68,6 +68,7 @@ function RatingReview({ data, totalRatings, type, fetchData, addComment, addRati
                 fetchData();
             }
         } else if (type === "comment") {
+            console.log(data._id, { comment: comment, userId: id });
             const response = await addComment(data._id, { comment: comment, userId: id });
             if (response.error) {
                 console.error(response.error);
