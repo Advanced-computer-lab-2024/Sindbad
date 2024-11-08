@@ -4,15 +4,15 @@ export const advertiser = {
     { name: "websiteLink", type: "text", label: "Website Link" },
     { name: "hotline", type: "text", label: "Hotline" },
     {
-      name: "bannerImageUri",
+      name: "logoImageUri",
       type: "text",
-      label: "Banner Image",
+      label: "Profile Image",
       required: true,
     },
     {
-      name: "logoImageUri",
+      name: "bannerImageUri",
       type: "text",
-      label: "Logo Image",
+      label: "Banner Image",
       required: true,
     },
     {

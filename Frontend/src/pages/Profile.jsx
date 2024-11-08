@@ -145,7 +145,7 @@ function Profile() {
     }
 
     if (
-        userData &&
+        userData.isAccepted &&
         userData.isAccepted !== true &&
         role !== "admin" &&
         profileId !== id
