@@ -3,6 +3,7 @@ import ItineraryCard from "./ItineraryCard";
 import ActivityCard from "./ActivityCard";
 import SiteCard from "./SiteCard";
 import { useLocation } from "react-router-dom";
+import HotelCard from "./HotelCard";
 
 /*
 The CardContainer is used to call the appropriate card components based on the cardType prop, and render them in a grid layout.
@@ -61,6 +62,8 @@ const CardContainer = ({ cardList, cardType, fetchCardData, columns = 3 }) => {
 				return SiteCard;
 			case "product":
 				return ProductCard;
+			case "hotel":
+				return HotelCard;
 			default:
 				return SiteCard;
 		}

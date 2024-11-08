@@ -36,7 +36,7 @@ function HotelBooking() {
 				{!loading ? (
 					<CardContainer
 						cardList={hotels}
-						cardType={"activity"}
+						cardType={"hotel"}
 						fetchCardData={fetchHotels}
 					/>
 				) : (

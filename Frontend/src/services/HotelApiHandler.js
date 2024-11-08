@@ -38,7 +38,7 @@ const getHotelsByCity = async (cityCode, radius) => {
       }
     });
 
-    console.log('Hotels:', response.data);
+
     return response.data;
   } catch (error) {
     console.error('Error fetching hotels:', error);
@@ -58,13 +58,54 @@ const getHotelsByGeocode = async (latitude, longitude, radius) => {
         'Content-Type': 'application/json'
       }
     });
-
-    console.log('Hotels:', response.data);
+    
     return response.data;
   } catch (error) {
     console.error('Error fetching hotels:', error);
     throw error;
   }
+};
+
+// Most hotels here don't seem to have ratings from the API, so this is currently unused
+const appendRatings = async (hotels) => {
+  console.log("Hotels:", hotels);
+  const hotelIds = hotels.map(hotel => hotel.hotelId);
+  console.log("Hotel IDs:", hotelIds);
+  const ratings = await getHotelRatings(hotelIds);
+
+  return hotels.map(hotel => {
+    const rating = ratings.find(rating => rating.hotelId === hotel.hotelId);
+    return { ...hotel, rating };
+  });
+}
+
+const getHotelRatings = async (hotelIds) => {
+  const endpoint = "https://test.api.amadeus.com/v2/e-reputation/hotel-sentiments";
+  const accessToken = await getAccessToken();
+  const maxIdsPerCall = 3;
+  let allRatings = [];
+
+  for (let i = 0; i < hotelIds.length; i += maxIdsPerCall) {
+    const hotelIdsSubset = hotelIds.slice(i, i + maxIdsPerCall).join(',');
+
+    try {
+      const response = await axios.get(endpoint, {
+        params: { hotelIds: hotelIdsSubset },
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      console.log('Hotel ratings:', response.data);
+      allRatings = allRatings.concat(response.data);
+    } catch (error) {
+      console.error('Error fetching hotel ratings:', error);
+      throw error;
+    }
+  }
+
+  return allRatings;
 };
 
 const bookHotel = async (bookingData) => {
