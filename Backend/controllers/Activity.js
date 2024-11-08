@@ -89,43 +89,39 @@ const setActivity = async (req, res) => {
   }
 };
 
-
-
-
 const addComment = async (req, res) => {
-	try {
-		const { id } = req.params;
-		const { userId, comment } = req.body;
+  try {
+    const { id } = req.params;
+    const { userId, comment } = req.body;
 
-		// Validate input
-		if (!userId || !comment) {
-			return res.status(400).json({ message: "User ID and comment are required." });
-		}
+    // Validate input
+    if (!userId || !comment) {
+      return res
+        .status(400)
+        .json({ message: "User ID and comment are required." });
+    }
 
-		//TODO implement checking if user has booked the activity
+    //TODO implement checking if user has booked the activity
 
-		// Find the activity by ID
-		const activity = await Activity.findById(id);
+    // Find the activity by ID
+    const activity = await Activity.findById(id);
 
-		if (!activity) {
-			return res.status(405).json({ message: "Activity not found" });
-		}
+    if (!activity) {
+      return res.status(405).json({ message: "Activity not found" });
+    }
 
-		// Add the comment to the activity's comments array
-		activity.comments.push({ userId, comment });
-		await activity.save();
+    // Add the comment to the activity's comments array
+    activity.comments.push({ userId, comment });
+    await activity.save();
 
-		res.status(200).json({ message: "Comment added successfully", activity });
-	} catch (error) {
-		res.status(500).json({
-			message: "Error adding comment",
-			error: error.message,
-		});
-	}
+    res.status(200).json({ message: "Comment added successfully", activity });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error adding comment",
+      error: error.message,
+    });
+  }
 };
-
-
-
 
 /**
  * Adds a rating to an activity
@@ -136,14 +132,15 @@ const addComment = async (req, res) => {
  * @returns {Object} - A JSON object with a confirmation message or an error message if not found
  */
 const addRating = async (req, res) => {
-	try {
-		const { id } = req.params;
-		const { userId, rating } = req.body;
-		
-		if(!userId || !rating){
-				return res.status(401)
-				.json({message: "userId and rating must be included "})
-		}
+  try {
+    const { id } = req.params;
+    const { userId, rating } = req.body;
+
+    if (!userId || !rating) {
+      return res
+        .status(401)
+        .json({ message: "userId and rating must be included " });
+    }
 
     if (rating < 1 || rating > 5) {
       return res
@@ -413,9 +410,23 @@ const bookActivity = async (req, res) => {
       return res.status(404).json({ message: "Activity not found" });
     }
 
+    if (activity.isInappropriate) {
+      return res.status(400).json({
+        message:
+          "This activity cannot be booked as it has been flagged as inappropriate.",
+      });
+    }
+
     const tourist = await Tourist.findById(userId);
     if (!tourist) {
       return res.status(404).json({ message: "User not found" });
+    }
+
+    const alreadyBooked = tourist.bookedEvents.activities.some(
+      (activity) => activity.activityId.toString() === activityId
+    );
+    if (alreadyBooked) {
+      return res.status(400).json({ message: "Activity already booked" });
     }
 
     if (!activity.isBookingOpen) {
@@ -439,7 +450,7 @@ const bookActivity = async (req, res) => {
       return res.status(400).json({ message: "Insufficient funds" });
     }
 
-    activity.headCount += 1; // Consider the number of tickets here if needed
+    activity.headCount += 1;
     await activity.save();
 
     tourist.wallet -= priceCharged;
@@ -484,6 +495,79 @@ const bookActivity = async (req, res) => {
   }
 };
 
+const cancelBooking = async (req, res) => {
+  try {
+    const { activityId, userId } = req.body;
+    const activity = await Activity.findById(activityId);
+    const tourist = await Tourist.findById(userId);
+    const currentDate = new Date();
+    const datePlus48Hours = new Date(
+      currentDate.getTime() + 48 * 60 * 60 * 1000
+    );
+
+    if (!activity) {
+      return res.status(404).json({ message: "Activity not found" });
+    }
+
+    if (new Date(activity.dateTime) <= datePlus48Hours) {
+      return res.status(400).json({
+        message: "You cannot cancel the activity as it is within 48 hours.",
+      });
+    }
+
+    activity.headCount -= 1;
+    await activity.save();
+    let priceCharged;
+    if (typeof activity.price === "number") {
+      priceCharged = activity.price;
+    } else {
+      const { min, max } = activity.price;
+      if (tourist.job === "Student") {
+        priceCharged = min;
+      } else {
+        priceCharged = max;
+      }
+    }
+
+    tourist.wallet += priceCharged;
+
+    let loyaltyPoints = tourist.loyaltyPoints;
+    switch (tourist.level) {
+      case 1:
+        loyaltyPoints -= priceCharged * 0.5;
+        break;
+      case 2:
+        loyaltyPoints -= priceCharged;
+        break;
+      case 3:
+        loyaltyPoints -= priceCharged * 1.5;
+        break;
+    }
+    tourist.loyaltyPoints = loyaltyPoints;
+    await tourist.save();
+
+    let level = tourist.level;
+    if (loyaltyPoints > 100000 && loyaltyPoints <= 500000) level = 2;
+    if (loyaltyPoints > 500000) level = 3;
+    tourist.level = level;
+    await tourist.save();
+
+    tourist.bookedEvents.activities = tourist.bookedEvents.activities.filter(
+      (activity) => activity.activityId.toString() !== activityId.toString()
+    );
+
+    await tourist.save();
+
+    res.status(200).json({ message: "Activity cancelled successfully" });
+  } catch (error) {
+    console.error("Error canceling activity:", error);
+    res.status(500).json({
+      message: "Error canceling activity",
+      error: error.message,
+    });
+  }
+};
+
 const setIsInappropriate = async (req, res) => {
   try {
     const activityId = req.params.id;
@@ -518,7 +602,8 @@ module.exports = {
   getMyActivities,
   getActivities,
   addRating,
-	addComment,
+  addComment,
   bookActivity,
+  cancelBooking,
   setIsInappropriate,
 };

@@ -39,6 +39,7 @@ const updateAdveriser = async (req, res) => {
 			email,
 			logoImageUri,
 			bannerImageUri,
+			preferredCurrency,
 		} = req.body; // Get username and other fields from the body
 
 		// Create an object to hold the fields that need to be updated
@@ -63,8 +64,8 @@ const updateAdveriser = async (req, res) => {
 		if (bannerImageUri !== undefined) {
 			updateData.bannerImageUri = bannerImageUri;
 		}
-		if (req.body.preferredCurrency != undefined) {
-			updateData.preferredCurrency = req.body.preferredCurrency;
+		if (preferredCurrency != undefined) {
+			updateData.preferredCurrency = preferredCurrency;
 		}
 
 		const advertiser = await Advertiser.findByIdAndUpdate(

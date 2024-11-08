@@ -7,15 +7,18 @@ const {
   deleteItinerary,
   getAllItineraries,
   getMyItineraries,
-	addComment,
-	addRating,
+  addComment,
+  addRating,
   bookItinerary,
+  cancelBooking,
   setIsInappropriate,
 } = require("../controllers/Itinerary");
 
 router.route("/").post(createItinerary).get(getAllItineraries);
 
 router.route("/book").post(bookItinerary);
+
+router.route("/cancel").post(cancelBooking);
 
 router.route("/my-itineraries/:creatorId").get(getMyItineraries);
 

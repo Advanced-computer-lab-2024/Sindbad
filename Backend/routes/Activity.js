@@ -8,8 +8,9 @@ const {
   getMyActivities,
   getActivities,
   addRating,
-	addComment,
+  addComment,
   bookActivity,
+  cancelBooking,
   setIsInappropriate,
 } = require("../controllers/Activity");
 
@@ -20,6 +21,8 @@ router.route("/").post(setActivity).get(getActivities);
 router.route("/:id/comment").post(addComment);
 
 router.route("/book").post(bookActivity);
+
+router.route("/cancel").post(cancelBooking);
 
 router
   .route("/:id")
