@@ -24,7 +24,7 @@ function Comment({ comment }) {
                     <ImagePlaceholder type="profile" />
                 </div>
                 <div className="flex flex-col gap-1">
-                    <p className="font-semibold">{user?.username}</p>
+                    <p className="font-semibold">{user?.username || "Deleted user"}</p>
                     <p className="text-sm">{comment.comment}</p>
                 </div>
             </div>

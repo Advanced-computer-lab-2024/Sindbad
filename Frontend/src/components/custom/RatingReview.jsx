@@ -13,14 +13,14 @@ import { useUser } from "@/state management/userInfo";
 import { addProductRating, addProductReview } from "@/services/ProductApiHandler";
 import { getTouristById } from "@/services/TouristApiHandler";
 
-function RatingReview({ data, totalRatings, type, fetchData }) {
+function RatingReview({ data, totalRatings, type, fetchData, addComment, addRating }) {
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState("");
     const [user, setUser] = useState({});
     const [myReview, setMyReview] = useState(null);
     const [error, setError] = useState("");
 
-    const { id } = useUser();
+    const { id, role } = useUser();
     const { toast } = useToast();
 
     // Helper function to calculate the percentage of each rating
@@ -66,8 +66,30 @@ function RatingReview({ data, totalRatings, type, fetchData }) {
                 setComment("");
                 setError("");
                 fetchData();
-                toast({ description: "Your review has been posted" });
             }
+        } else if (type === "comment") {
+            console.log(data._id, { comment: comment, userId: id });
+            const response = await addComment(data._id, { comment: comment, userId: id });
+            if (response.error) {
+                console.error(response.error);
+                toast({ description: "An error occurred, please try again later" });
+            }
+            else {
+                setComment("");
+                fetchData();
+            }
+        }
+    }
+
+    const submitRating = async (rating) => {
+        const response = await addRating(data._id, { rating: rating, userId: id });
+        if (response.error) {
+            console.error(response.error);
+            toast({ description: "An error occurred, please try again later" });
+        }
+        else {
+            fetchData();
+            toast({ description: "Rating submitted successfully" });
         }
     }
 
@@ -103,6 +125,14 @@ function RatingReview({ data, totalRatings, type, fetchData }) {
                         </div>
                     ))}
                 </div>
+                {role === "tourist" &&
+                    <label className="text-base font-medium mt-4">
+                        Leave a rating
+                        <div className="mt-1">
+                            <StarRatingForm size={21} onRatingChange={submitRating} rating={rating} />
+                        </div>
+                    </label>
+                }
             </div>
 
             {/* Reviews/comments Section */}
@@ -110,7 +140,7 @@ function RatingReview({ data, totalRatings, type, fetchData }) {
                 <h2 className="text-2xl font-semibold">
                     {type === "review" ? "Customer Reviews" : "Comments"}
                 </h2>
-                {myReview === null &&
+                {role === "tourist" && myReview === null &&
                     <>
                         {type === "review" &&
                             <div>
@@ -140,7 +170,7 @@ function RatingReview({ data, totalRatings, type, fetchData }) {
                 }
 
                 {type === "review" && data.reviews?.length > 0 ?
-                    <div className="flex flex-col-reverse gap-6">
+                    <div className="flex flex-col-reverse gap-7">
                         {data.reviews?.map((review) => (
                             <div key={review.username}>
                                 <Review review={review} />
@@ -148,7 +178,7 @@ function RatingReview({ data, totalRatings, type, fetchData }) {
                         ))}
                     </div>
                     : type === "comment" && data.comments?.length > 0 ?
-                        <div className="space-y-8">
+                        <div className="flex flex-col-reverse gap-7">
                             {data.comments?.map((comment) => (
                                 <div key={comment.userId}>
                                     <Comment comment={comment} />

@@ -266,7 +266,7 @@ const addComment = async (req, res) => {
 	try {
 		const { id } = req.params;
 		const { userId, comment } = req.body;
-
+		
 		// Validate input
 		if (!userId || !comment) {
 			return res

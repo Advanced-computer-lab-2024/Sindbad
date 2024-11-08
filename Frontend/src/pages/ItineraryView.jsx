@@ -18,6 +18,7 @@ import {
 } from "@/services/ItineraryApiHandler";
 import ImagePlaceholder from "@/components/custom/ImagePlaceholder";
 import { getTourGuide } from "@/services/TourGuideApiHandler";
+import { addItineraryComment, addItineraryRating } from "@/services/ItineraryApiHandler";
 import StarRating from "@/components/custom/StarRating";
 import RatingReview from "@/components/custom/RatingReview";
 
@@ -460,7 +461,14 @@ const Itinerary = () => {
                 </div>
             </div>
             <hr className="border-neutral-300 border w-full mt-1.5" />
-			<RatingReview data={itinerary} totalRatings={totalRatings} type="comment" />
+            <RatingReview
+                data={itinerary}
+                totalRatings={totalRatings}
+                type="comment"
+                fetchData={getItinerary}
+                addComment={addItineraryComment}
+                addRating={addItineraryRating}
+            />
         </div>
     );
 };

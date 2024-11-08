@@ -142,3 +142,33 @@ export const setActivityInappropriate = async (activityId, isInappropriate) => {
 		return error;
 	}
 }
+
+export const addActivityRating = async (activityId, ratingData) => {
+  try {
+    const response = await axiosInstance.post(
+      `/activity/${activityId}`,
+      ratingData,
+      {
+        resourceName: "Activity",
+      }
+    );
+    return response.data;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const addActivityComment = async (activityId, commentData) => {
+  try {
+    const response = await axiosInstance.post(
+      `/activity/${activityId}/comment`,
+      commentData,
+      {
+        resourceName: "Activity",
+      }
+    );
+    return response.data;
+  } catch (error) {
+    return error;
+  }
+};
