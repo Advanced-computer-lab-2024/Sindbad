@@ -295,40 +295,39 @@ const getAllItineraries = async (req, res) => {
   }
 };
 
-
-
 const addComment = async (req, res) => {
-	try {
-		const { id } = req.params;
-		const { userId, comment } = req.body;
+  try {
+    const { id } = req.params;
+    const { userId, comment } = req.body;
 
-		// Validate input
-		if (!userId || !comment) {
-			return res.status(400).json({ message: "User ID and comment are required." });
-		}
+    // Validate input
+    if (!userId || !comment) {
+      return res
+        .status(400)
+        .json({ message: "User ID and comment are required." });
+    }
 
-		//TODO implement checking if user has booked the itinerary
+    //TODO implement checking if user has booked the itinerary
 
-		// Find the itinerary by ID
-		const itinerary = await Itinerary.findById(id);
+    // Find the itinerary by ID
+    const itinerary = await Itinerary.findById(id);
 
-		if (!itinerary) {
-			return res.status(405).json({ message: "Itinerary not found" });
-		}
+    if (!itinerary) {
+      return res.status(405).json({ message: "Itinerary not found" });
+    }
 
-		// Add the comment to the itinerary's comments array
-		itinerary.comments.push({ userId, comment });
-		await itinerary.save();
+    // Add the comment to the itinerary's comments array
+    itinerary.comments.push({ userId, comment });
+    await itinerary.save();
 
-		res.status(200).json({ message: "Comment added successfully", itinerary });
-	} catch (error) {
-		res.status(500).json({
-			message: "Error adding comment",
-			error: error.message,
-		});
-	}
+    res.status(200).json({ message: "Comment added successfully", itinerary });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error adding comment",
+      error: error.message,
+    });
+  }
 };
-
 
 /**
  * @route POST /itinerary/:id/rate
@@ -341,24 +340,24 @@ const addComment = async (req, res) => {
  * @returns {Object} 500 - Error message if an error occurs
  */
 const addRating = async (req, res) => {
-	try {
-		const itineraryId = req.params.id;
-		const { userId, rating } = req.body;
-		
-		if(!userId || !rating){
-				return res.status(401)
-				.json({message: "userId and rating must be included "})
-		}
+  try {
+    const itineraryId = req.params.id;
+    const { userId, rating } = req.body;
 
-		//TODO check if user purchsed/Booked
+    if (!userId || !rating) {
+      return res
+        .status(401)
+        .json({ message: "userId and rating must be included " });
+    }
 
-		
-		// Validate rating value
-		if (!rating || rating < 1 || rating > 5) {
-			return res
-				.status(400)
-				.json({ message: "Invalid rating value. Must be between 1 and 5." });
-		}
+    //TODO check if user purchsed/Booked
+
+    // Validate rating value
+    if (!rating || rating < 1 || rating > 5) {
+      return res
+        .status(400)
+        .json({ message: "Invalid rating value. Must be between 1 and 5." });
+    }
 
     const itinerary = await Itinerary.findById(itineraryId);
     if (!itinerary) {
@@ -563,6 +562,6 @@ module.exports = {
   getMyItineraries,
   bookItinerary,
   addRating,
-	addComment,
+  addComment,
   setIsInappropriate,
 };
