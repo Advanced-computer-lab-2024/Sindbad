@@ -71,7 +71,8 @@ const CardContainer = ({ cardList, cardType, fetchCardData, columns = 3 }) => {
 	}
 
 	return (
-		<div className={`grid gap-6 grid-cols-${columns} w-full auto-rows-max`}>
+		// TODO: Make this change columns based on prop
+		<div className={`grid gap-6 grid-cols-3 w-full auto-rows-max`}>
 			{cardList.length > 0 ? (
 				cardList.map((item, index) => {
 					const CardComponent = getCardComponent(cardType);

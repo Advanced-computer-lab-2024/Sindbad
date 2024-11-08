@@ -5,7 +5,7 @@ export const seller = {
     { name: "lastName", type: "text", label: "Last Name" },
     { name: "description", type: "text", label: "Description" },
     {
-      name: "profileImageUri",
+      name: "logoImageUri",
       type: "text",
       label: "Profile Image",
       required: true,
@@ -58,7 +58,7 @@ export const seller = {
     firstName: "",
     lastName: "",
     description: "",
-    profileImageUri: "",
+    logoImageUri: "",
     bannerImageUri: "",
     preferredCurrency: "",
   },

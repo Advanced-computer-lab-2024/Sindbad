@@ -13,7 +13,7 @@ export const sellerSchema = {
 
 	description: z.string().optional(),
 
-	profileImageUri: z.string(),
+	logoImageUri: z.string(),
 
     bannerImageUri: z.string(),
 
