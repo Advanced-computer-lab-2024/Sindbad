@@ -66,8 +66,6 @@ const updateTourGuide = async (req, res) => {
 
 	if (req.body.email != null) tourGuide.email = req.body.email;
 
-	if (req.body.username != null) tourGuide.username = req.body.username;
-
 	if (req.body.mobileNumber != null)
 		tourGuide.mobileNumber = req.body.mobileNumber;
 
