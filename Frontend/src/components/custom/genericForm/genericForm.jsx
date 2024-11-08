@@ -59,10 +59,7 @@ export function GenericForm({ type, data, id }) {
 	});
 
 	const handleSubmit = (values) => {
-		console.log("Submitted values: ", values);
 		if (typeof onSubmit === "function") {
-			console.log("Submitting form...");
-			console.log("onSubmit: ", onSubmit);
 			if (onSubmit.length === 2) {
 				onSubmit(values, id);
 			} else {

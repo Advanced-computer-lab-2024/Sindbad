@@ -46,27 +46,34 @@ export const hotelBooking = {
         {
           name: "paymentCard",
           type: "object",
-          label: "Payment Card",
+          label: " ",
           fields: [
             {
-              name: "vendorCode",
-              type: "text",
-              label: "Vendor Code",
-            },
-            {
-              name: "cardNumber",
-              type: "text",
-              label: "Card Number",
-            },
-            {
-              name: "expiryDate",
-              type: "text",
-              label: "Expiry Date",
-            },
-            {
-              name: "holderName",
-              type: "text",
-              label: "Card Holder Name",
+              name: "paymentCardInfo",
+              type: "object",
+              label: "   ",
+              fields: [
+                {
+                  name: "vendorCode",
+                  type: "text",
+                  label: "Vendor Code",
+                },
+                {
+                  name: "cardNumber",
+                  type: "text",
+                  label: "Card Number",
+                },
+                {
+                  name: "expiryDate",
+                  type: "text",
+                  label: "Expiry Date",
+                },
+                {
+                  name: "holderName",
+                  type: "text",
+                  label: "Card Holder Name",
+                }
+              ]
             }
           ]
         }

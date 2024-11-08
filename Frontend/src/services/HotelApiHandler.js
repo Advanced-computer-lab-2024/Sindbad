@@ -142,7 +142,7 @@ const bookHotel = async (bookingData, id) => {
 	});
 	bookingData.travelAgent = {
 		contact: {
-			email: "farah.eltaher@student.guc.edu.eg",
+			email: "farah.eltaher@sindbad.com",
 		},
 	};
 	bookingData.roomAssociations = bookingData.guests.map((guest) => {
@@ -160,20 +160,15 @@ const bookHotel = async (bookingData, id) => {
 
 	console.log("Request:", request);
 
-	try {
-		const response = await axios.post(endpoint, request, {
-			headers: {
-				Authorization: `Bearer ${accessToken}`,
-				"Content-Type": "application/json",
-			},
-		});
+	const response = await axios.post(endpoint, request, {
+		headers: {
+			Authorization: `Bearer ${accessToken}`,
+			"Content-Type": "application/vnd.amadeus+json",
+		},
+	});
 
-		console.log("Booking response:", response.data);
-		return response.data;
-	} catch (error) {
-		console.error("Error booking hotel:", error);
-		throw error;
-	}
+	console.log("Booking response:", response.data);
+	return response.data;
 };
 
 export { getHotelsByCity, getHotelsByGeocode, bookHotel, getHotelOffers };

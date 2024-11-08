@@ -7,7 +7,7 @@ export const hotelBookingSchema = {
 				title: z.string().min(1, { message: "Title is required" }),
 				firstName: z.string().min(1, { message: "First name is required" }),
 				lastName: z.string().min(1, { message: "Last name is required" }),
-				phone: z.string().min(1, { message: "Phone number is required" }),
+				phone: z.string().min(2, { message: "Phone number is required" }),
 				email: z.string().email({ message: "Invalid email address" }),
 			})
 		)
