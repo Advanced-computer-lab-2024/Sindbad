@@ -113,6 +113,9 @@ const TourGuideSchema = new mongoose.Schema(
 			type: Boolean,
 			default: false,
 		},
+		portfolioUrl: {
+			type: String,
+		},
 	},
 	{ timestamps: true }
 );
