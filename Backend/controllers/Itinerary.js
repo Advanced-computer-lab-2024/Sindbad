@@ -455,6 +455,13 @@ const bookItinerary = async (req, res) => {
       return res.status(404).json({ message: "Itinerary not found" });
     }
 
+    if (itinerary.isInappropriate) {
+      return res.status(400).json({
+        message:
+          "This itinerary cannot be booked as it has been flagged as inappropriate.",
+      });
+    }
+
     const tourist = await Tourist.findById(userId);
     if (!tourist) {
       return res.status(404).json({ message: "User not found" });
