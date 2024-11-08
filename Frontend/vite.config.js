@@ -10,4 +10,13 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  server: {
+    proxy: {
+      '/amadeus': {
+        target: 'https://test.api.amadeus.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/amadeus/, '')
+      }
+    }
+  }
 })

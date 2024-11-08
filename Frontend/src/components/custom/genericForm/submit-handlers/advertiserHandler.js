@@ -1,5 +1,5 @@
 import { updateAdvertiser } from '@/services/AdvertiserApiHandler';
 
-export const advertiserSubmit = (values, id) => {
-    return updateAdvertiser(values, id);
-}
+export const advertiserSubmit = (values, id, navigate) => {
+	return updateAdvertiser(values, id);
+};

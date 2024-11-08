@@ -1,6 +1,5 @@
 import { updateSeller } from '@/services/SellerApiHandler';
 
-export const sellerSubmit = (values, id) => {
-    console.log("Seller values: ", values);
-    return updateSeller(id, values);
-}
+export const sellerSubmit = (values, id, navigate) => {
+	return updateSeller(id, values);
+};

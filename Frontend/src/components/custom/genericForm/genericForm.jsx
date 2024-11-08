@@ -10,11 +10,11 @@ import { CoordinatesField } from "./input-fields/CoordinatesField";
 import { TextField } from "./input-fields/TextField";
 import { forms } from "./forms";
 import { SelectField } from "./input-fields/SelectField";
+import { useNavigate } from "react-router-dom";
 
 export function GenericForm({ type, data, id }) {
 	// If you need more information about how this component works, check out forms.js in the same folder.
 	const formObject = forms[type];
-
 	const onSubmit = formObject.onSubmit;
 	const formSchema = z.object(formObject.zodSchema);
 	const formFields = formObject.renderedFields;
@@ -59,12 +59,13 @@ export function GenericForm({ type, data, id }) {
 		defaultValues: defaultValues,
 	});
 
+	const navigate = useNavigate();
 	const handleSubmit = (values) => {
 		if (typeof onSubmit === "function") {
-			if (onSubmit.length === 2) {
-				onSubmit(values, id);
+			if (onSubmit.length === 3) {
+				onSubmit(values, id, navigate);
 			} else {
-				onSubmit(values, id, data);
+				onSubmit(values, id, data, navigate);
 			}
 		}
 	};
@@ -138,12 +139,15 @@ export function GenericForm({ type, data, id }) {
 					/>
 				);
 			case "select":
-				return <SelectField 
-							key={fullPath} 
-							name={fullPath} 
-							control={form.control} 
-							label={field.label || field.name.toUpperCase()} 
-							options={field.options} />;
+				return (
+					<SelectField
+						key={fullPath}
+						name={fullPath}
+						control={form.control}
+						label={field.label || field.name.toUpperCase()}
+						options={field.options}
+					/>
+				);
 
 			case "text":
 			case "number":
