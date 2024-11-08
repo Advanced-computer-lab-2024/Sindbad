@@ -20,6 +20,7 @@ import UserManagement from "./components/custom/admin/user-management/UserManage
 import Booking from "./pages/Booking";
 import FlightBooking from "./pages/FlightBooking";
 import HotelBooking from "./pages/HotelBooking";
+import HotelView from "./pages/HotelView";
 
 import { useUser } from "@/state management/userInfo";
 
@@ -50,8 +51,9 @@ function App() {
 					<Route path="booking" element={<Booking />}>
 						<Route path="" element={<Navigate to="hotel" replace />} />
 						<Route path="flight" element={<FlightBooking />} />
-						<Route path="hotel" element={<HotelBooking />} />
+						<Route path="hotel" element={<HotelBooking />}/>
 					</Route>
+					<Route path="hotel/:hotelId" element={<HotelView />} />
 					<Route path="itinerary/:itineraryId" element={<Itinerary />} />
 					<Route path="activity/:activityId" element={<Activity />} />
 					<Route path="site/:siteId" element={<Site />} />

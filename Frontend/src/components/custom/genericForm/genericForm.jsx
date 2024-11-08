@@ -14,7 +14,6 @@ import { SelectField } from "./input-fields/SelectField";
 export function GenericForm({ type, data, id }) {
 	// If you need more information about how this component works, check out forms.js in the same folder.
 	const formObject = forms[type];
-
 	const onSubmit = formObject.onSubmit;
 	const formSchema = z.object(formObject.zodSchema);
 	const formFields = formObject.renderedFields;
@@ -60,7 +59,10 @@ export function GenericForm({ type, data, id }) {
 	});
 
 	const handleSubmit = (values) => {
+		console.log("Submitted values: ", values);
 		if (typeof onSubmit === "function") {
+			console.log("Submitting form...");
+			console.log("onSubmit: ", onSubmit);
 			if (onSubmit.length === 2) {
 				onSubmit(values, id);
 			} else {
@@ -138,12 +140,15 @@ export function GenericForm({ type, data, id }) {
 					/>
 				);
 			case "select":
-				return <SelectField 
-							key={fullPath} 
-							name={fullPath} 
-							control={form.control} 
-							label={field.label || field.name.toUpperCase()} 
-							options={field.options} />;
+				return (
+					<SelectField
+						key={fullPath}
+						name={fullPath}
+						control={form.control}
+						label={field.label || field.name.toUpperCase()}
+						options={field.options}
+					/>
+				);
 
 			case "text":
 			case "number":

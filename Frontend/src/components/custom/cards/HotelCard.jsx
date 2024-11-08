@@ -24,7 +24,7 @@ function HotelCard({ data, fetchCardData, styles }) {
 		<article
 			className={styles.container}
 		>
-			<div className={styles.imageContainer}>
+			<div className={styles.noImageContainer}>
 				<CardMenu
 					data={data}
 					config={cardConfig}
@@ -41,10 +41,10 @@ function HotelCard({ data, fetchCardData, styles }) {
 				<div className="flex flex-col gap-1">
 
 					<Button
-						onClick={() => navigate(`/app/site/${data._id}`)}
+						onClick={() => navigate(`/app/hotel/${data.hotelId}`)}
 						className={styles.button}
 					>
-						<p className={styles.buttonText}>Book now</p>
+						<p className={styles.buttonText}>Book </p>
 						<div className={styles.buttonIcon}>
 							<ArrowRight size={13} />
 						</div>

@@ -16,6 +16,14 @@ function HotelBooking() {
 		radius: 10,
 	});
 
+	const toTitleCase = (str) => {
+		return str
+			.toLowerCase()
+			.split(' ')
+			.map(word => word.charAt(0).toUpperCase() + word.slice(1))
+			.join(' ');
+	}
+
 	const formFields = {
 		cityCode: {
 			type: "search",
@@ -37,6 +45,9 @@ function HotelBooking() {
 			activeFilters.radius
 		);
 		if (!response.error && response) {
+			response.data.forEach((hotel) => {
+				hotel.name = toTitleCase(hotel.name);
+			});
 			setHotels(response.data);
 			console.log(hotels);
 		} else {
