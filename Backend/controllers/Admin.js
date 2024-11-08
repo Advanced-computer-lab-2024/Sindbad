@@ -97,6 +97,8 @@ const getAdminById = async (req, res) => {
  */
 const updateAdmin = async (req, res) => {
 	try {
+		req.body.username = undefined; // Prevent updating the username
+
 		const admin = await Admin.findByIdAndUpdate(req.params.id, req.body, {
 			new: true,
 			runValidators: true, // To ensure validations are run on update
