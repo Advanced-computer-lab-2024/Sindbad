@@ -33,7 +33,7 @@ const userSlice = createSlice({
 
 const currencySlice = createSlice({
     name: "currency",
-    initialState: "USD",
+    initialState: "EUR",
     reducers: {
         setCurrency(state, action) {
             return action.payload;
