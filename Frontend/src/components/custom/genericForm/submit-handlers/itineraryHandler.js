@@ -1,6 +1,6 @@
 import { createItinerary, updateItinerary } from "@/services/ItineraryApiHandler";
 
-export const itinerarySubmit = (values, id, data, navigate) => {
+export const itinerarySubmit = (values, id, data, navigate, dispatch) => {
 	const formattedValues = {
 		...values,
 		availableDatesTimes: values.availableDatesTimes.map((dateTime) => ({

@@ -155,7 +155,7 @@ function Profile() {
 
     // if the profile belongs to a tour guide, seller or advertiser and the profile is not accepted yet
     // only admins and the user themselves can view the profile
-    if (rejectable === true && userData.isAccepted !== true && myProfile === false && role !== "admin") {
+    if (rejectable() === true && userData.isAccepted !== true && myProfile() === false && role !== "admin") {
         return (
             <div className="py-8 px-24 max-w-[1200px] flex gap-9 mx-auto">
                 <div className="flex justify-center w-full">
@@ -178,7 +178,7 @@ function Profile() {
                         profileRole={profileRole}
                         setEditing={setEditing}
                     />
-                    {profileRole === "tourist" && myProfile === true && (
+                    {profileRole === "tourist" && myProfile() === true && (
                         <Wallet userData={userData} />
                     )}
                     {role === "admin" && userData.isAccepted === null && (
@@ -202,10 +202,10 @@ function Profile() {
                             {profileRole === "tourGuide" && (
                                 <Experience userData={userData} profileId={profileId} id={id} />
                             )}
-                            {rejectable === true && ((role === "admin") || (myProfile === true && userData.isAccepted !== true)) &&
+                            {rejectable() === true && ((role === "admin") || (myProfile() === true && userData.isAccepted !== true)) &&
                                 <Documents userData={userData} />
                             }
-                            {!(rejectable === true && userData.isAccepted === null && role === "admin") && (
+                            {!(rejectable() === true && userData.isAccepted === null && role === "admin") && (
                                 <Timeline
                                     userData={userData}
                                     profileId={profileId}
@@ -215,7 +215,7 @@ function Profile() {
                                     fetchCardData={() => getCardData(profileId)}
                                 />
                             )}
-                            {profileRole === "tourismGovernor" && myProfile === true && (
+                            {profileRole === "tourismGovernor" && myProfile() === true && (
                                 <div className="mt-12">
                                     <TagManagement />
                                 </div>
