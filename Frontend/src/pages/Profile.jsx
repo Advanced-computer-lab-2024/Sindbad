@@ -104,7 +104,7 @@ function Profile() {
             } else {
                 setCardData(response);
             }
-        } else if (profileRole === "seller") {
+        } else if (profileRole === "seller" || profileRole === "admin") {
             response = await getMyProducts(profileId);
             if (response.error) {
                 console.error(response.message);

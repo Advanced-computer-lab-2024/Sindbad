@@ -41,7 +41,7 @@ function Timeline({ userData, profileId, id, profileRole, cardData, fetchCardDat
 							<DialogHeader>
 								<GenericForm
 									type={
-										role === "seller"
+										role === "seller" || role === "admin"
 											? "product"
 											: role === "advertiser"
 												? "activity"
