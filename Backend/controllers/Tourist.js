@@ -97,6 +97,9 @@ const updateTourist = async (req, res) => {
   if (req.body.wallet != null) {
     res.tourist.wallet = req.body.wallet;
   }
+  if (req.body.preferences != null) {
+    res.tourist.preferences = req.body.preferences;
+  }
   if (req.body.profileImageUri != null) {
     res.tourist.profileImageUri = req.body.profileImageUri;
   }
