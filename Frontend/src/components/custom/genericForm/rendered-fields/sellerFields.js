@@ -1,3 +1,5 @@
+import { getCurrencyOptions } from "@/utilities/getCurrencyOptions";
+
 export const seller = {
   fields: [
     { name: "email", type: "text", label: "Email" },
@@ -21,36 +23,7 @@ export const seller = {
       type: "select",
       label: "Preferred Currency",
       required: true,
-      options: [
-        "EGP",
-        "USD",
-        "EUR",
-        "GBP",
-        "JPY",
-        "CNY",
-        "CAD",
-        "AUD",
-        "CHF",
-        "SEK",
-        "NZD",
-        "MXN",
-        "SGD",
-        "HKD",
-        "NOK",
-        "KRW",
-        "TRY",
-        "RUB",
-        "INR",
-        "BRL",
-        "ZAR",
-        "AED",
-        "SAR",
-        "QAR",
-        "KWD",
-        "OMR",
-        "BHD",
-        "JOD"
-      ]
+      options: await getCurrencyOptions(),
     }
   ],
   defaultValues: {

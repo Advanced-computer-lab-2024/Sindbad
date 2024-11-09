@@ -33,6 +33,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "easy-currencies": "^1.8.1",
     "embla-carousel-react": "^8.3.0",
     "lucide": "^0.446.0",
     "lucide-react": "^0.445.0",
