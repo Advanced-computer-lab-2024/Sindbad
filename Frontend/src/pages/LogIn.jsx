@@ -78,8 +78,8 @@ function LogIn() {
 
     async function onSubmit(values) {
         if (values.username === "tourist" && values.password === "tourist") {
-            dispatch(login({ role: "tourist", id: "672501d2d5a2d7588e2ce414" }));
-            const currency = await getTouristPreferredCurrency("672501d2d5a2d7588e2ce414");
+            dispatch(login({ role: "tourist", id: "672faf6be3120c5df6679670" }));
+            const currency = await getTouristPreferredCurrency("672faf6be3120c5df6679670");
             dispatch(setCurrency(currency));
             navigate(`/app/itineraries`, { replace: true });
         }

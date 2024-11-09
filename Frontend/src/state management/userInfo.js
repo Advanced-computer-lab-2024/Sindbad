@@ -7,7 +7,7 @@ const userSlice = createSlice({
         // role: "admin",
         // id: "672537b565d46abdbd520858",
         role: "tourist",
-        id: "672501d2d5a2d7588e2ce414",
+        id: "672faf6be3120c5df6679670",
         // role: "tourGuide",
         // id: "6725031bd5a2d7588e2ce42a",
         // role: "seller",
