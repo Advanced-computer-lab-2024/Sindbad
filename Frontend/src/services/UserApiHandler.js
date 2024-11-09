@@ -1,25 +1,15 @@
 import axiosInstance from "./axiosInstance";
 
 export const userSignUp = async (finalValues, registerType) => {
-    const { password, ...rest } = finalValues; // Exclude 'password' from finalValues
+    const { password, ...remaining } = finalValues; // Exclude 'password' from finalValues
 
-    // Adjust the data format based on the role
-    const { idCardImage, certificateImage, taxationRegistryCardImage, ...remaining } = finalValues; // Exclude 'idCardImage' and 'certificateImage' from finalValues
     let requestBody = {};
-    if (registerType === "Tourist") {
-        requestBody = {
-            ...remaining,
-            passwordHash: password, // hash the password if required
-            role: "tourist",
-        };
-    } else {
-        requestBody = {
-            ...remaining,
-            passwordHash: finalValues.password, // hash the password if required
-            role: registerType.toLowerCase(),
-        };
-    }
-
+    requestBody = {
+        ...remaining,
+        passwordHash: password,
+        role: registerType.toLowerCase(),
+    };
+    
     try {
         const response = await axiosInstance.post(
             `/user/signup`,

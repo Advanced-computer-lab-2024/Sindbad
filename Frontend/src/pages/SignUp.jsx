@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,6 +17,8 @@ import { ArrowLeft } from "lucide-react";
 import { updateTourGuideFiles } from "@/services/TourGuideApiHandler";
 import { updateSellerFiles } from "@/services/SellerApiHandler";
 import { updateAdvertiserFiles } from "@/services/AdvertiserApiHandler";
+import { getAllTags } from "@/services/AdminApiHandler";
+import { MultiSelectField } from "@/components/custom/genericForm/input-fields/MultiSelectField";
 
 function SignUp() {
     const [registerType, setRegisterType] = useState("Tourist");
@@ -26,14 +28,21 @@ function SignUp() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [accepted, setAccepted] = useState(false);
+    const [tags, setTags] = useState([]);
     const navigate = useNavigate();
 
     const handleRegisterTypeChange = (value) => {
         setRegisterType(value);
-        console.log(value)
     };
 
-    
+    const fetchTags = async () => {
+        const reqtags = await getAllTags();
+        setTags(reqtags.data);
+        console.log(reqtags);
+    };
+    useEffect(() => {
+        fetchTags();
+    }, []);
 
     const commonFormSchema = z.object({
         username: z.string().min(2, {
@@ -59,6 +68,9 @@ function SignUp() {
         }),
         job: z.string().min(1, {
             message: "Job is required"
+        }),
+        preferences: z.array(z.string()).min(1, {
+            message: "At least one preference is required"
         }),
     });
 
@@ -95,6 +107,7 @@ function SignUp() {
         nationality: "",
         job: "",
         mobileNumber: "",
+        preferences: [],
     };
 
     const tourGuideDefaultValues = {
@@ -287,6 +300,19 @@ function SignUp() {
                         </FormControl>
                         <FormMessage />
                     </FormItem>
+                )}
+            />
+            <FormField 
+                key="preferences" 
+                control={touristForm.control} 
+                name="preferences" 
+                render={({ field }) => (
+                    <MultiSelectField 
+                        name="preferences" 
+                        control={touristForm.control} 
+                        label="Preferences" 
+                        options={Array.from(tags)}
+                    />
                 )}
             />
         </div>
