@@ -43,7 +43,7 @@ const SellerSchema = new mongoose.Schema(
 		},
 		preferredCurrency: {
 			type: String,
-			default: "EGP",
+			default: "USD",
 		},
 		firstName: {
 			type: String,

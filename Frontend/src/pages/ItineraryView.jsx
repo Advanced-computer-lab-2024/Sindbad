@@ -413,7 +413,7 @@ const Itinerary = () => {
                                         <div className="flex justify-between">
                                             <p>Total:</p>
                                             <p className="font-medium">
-                                                {adult * itinerary.price + child * itinerary.price} EGP
+                                                {adult * itinerary.price + child * itinerary.price} USD
                                             </p>
                                         </div>
                                         <p className="text-xs text-neutral-500 italic mt-0.5">

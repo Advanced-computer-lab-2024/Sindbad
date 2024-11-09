@@ -10,10 +10,10 @@ import { useUser } from '@/state management/userInfo';
 function Timeline({ userData, profileId, id, profileRole, cardData, fetchCardData }) {
 	const { role } = useUser();
 
-	function rejectable() {
+	const rejectable = () => {
 		return profileRole === "tourGuide" || profileRole === "seller" || profileRole === "advertiser";
 	}
-	function myProfile() {
+	const myProfile = () => {
 		return profileId === id;
 	}
 
@@ -32,7 +32,7 @@ function Timeline({ userData, profileId, id, profileRole, cardData, fetchCardDat
 									: "Itineraries"}
 				</h1>
 				<hr className="border-neutral-300 border w-full mt-1.5" />
-				{role !== "tourist" && myProfile() && (!rejectable() || userData.isAccepted === true) &&
+				{role !== "tourist" && myProfile === true && (rejectable === false || userData.isAccepted === true) &&
 					<Dialog>
 						<DialogTrigger className="shrink-0 mt-1.5 text-neutral-400 hover:text-neutral-600 transition-all">
 							<CirclePlus size={24} />

@@ -59,7 +59,7 @@ const TouristSchema = new mongoose.Schema(
     },
     preferredCurrency: {
       type: String,
-      default: "EGP",
+      default: "USD",
     },
     bookmarks: {
       type: [String], // Array of bookmark IDs or URLs

@@ -92,7 +92,7 @@ function ProductView() {
 
 						{/* Price */}
 						<p className="text-lg font-semibold mb-1">
-							{product.price} EGP
+							{product.price} USD
 						</p>
 
 						{/* Description */}

@@ -214,7 +214,7 @@ function Site() {
 												<span className="text-xl font-semibold">
 													{price + " "}
 												</span>
-												<span className="text-sm">EGP</span>
+												<span className="text-sm">USD</span>
 											</>
 										)}
 									</div>
