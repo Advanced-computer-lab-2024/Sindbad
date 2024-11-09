@@ -9,13 +9,21 @@ import { useUser } from '@/state management/userInfo';
 
 function Timeline({ userData, profileId, id, profileRole, cardData, fetchCardData }) {
 	const { role } = useUser();
+
+	function rejectable() {
+		return profileRole === "tourGuide" || profileRole === "seller" || profileRole === "advertiser";
+	}
+	function myProfile() {
+		return profileId === id;
+	}
+
 	return (
 		<div className="flex flex-col gap-6">
 			<div className="flex items-center gap-6">
 				<h1 className="text-3xl font-extrabold shrink-0">
 					{profileRole === "tourist"
 						? "Bookmarks"
-						: profileRole === "seller"
+						: profileRole === "seller" || profileRole === "admin"
 							? "Products"
 							: profileRole === "advertiser"
 								? "Activities"
@@ -24,7 +32,7 @@ function Timeline({ userData, profileId, id, profileRole, cardData, fetchCardDat
 									: "Itineraries"}
 				</h1>
 				<hr className="border-neutral-300 border w-full mt-1.5" />
-				{role !== "tourist" && profileId === id && (userData.isAccepted === true || role === "tourismGovernor") && (
+				{role !== "tourist" && myProfile() && (!rejectable() || userData.isAccepted === true) &&
 					<Dialog>
 						<DialogTrigger className="shrink-0 mt-1.5 text-neutral-400 hover:text-neutral-600 transition-all">
 							<CirclePlus size={24} />
@@ -33,7 +41,7 @@ function Timeline({ userData, profileId, id, profileRole, cardData, fetchCardDat
 							<DialogHeader>
 								<GenericForm
 									type={
-										role === "seller"
+										role === "seller" || role === "admin"
 											? "product"
 											: role === "advertiser"
 												? "activity"
@@ -46,7 +54,7 @@ function Timeline({ userData, profileId, id, profileRole, cardData, fetchCardDat
 							</DialogHeader>
 						</DialogContent>
 					</Dialog>
-				)}
+				}
 			</div>
 			<div>
 				<CardContainer
@@ -60,7 +68,7 @@ function Timeline({ userData, profileId, id, profileRole, cardData, fetchCardDat
 							? "activity"
 							: profileRole === "tourGuide"
 								? "itinerary"
-								: profileRole === "seller"
+								: profileRole === "seller" || profileRole === "admin"
 									? "product"
 									: profileRole === "advertiser"
 										? "activity"
@@ -88,7 +96,7 @@ function Timeline({ userData, profileId, id, profileRole, cardData, fetchCardDat
 						</p>
 					)}
 
-					{profileRole === "seller" && cardData.length === 0 && (
+					{(profileRole === "seller" || profileRole === "admin") && cardData.length === 0 && (
 						<p className="text-neutral-400 text-sm italic">
 							{profileId !== id
 								? "No products to show."

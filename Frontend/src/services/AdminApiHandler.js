@@ -108,3 +108,23 @@ export const deleteUser = async (id, role) => {
 		return error; // Handle errors appropriately
 	}
 };
+
+export const getAdmin = async (id) => {
+	try {
+		let admin = await axiosInstance.get(`/admin/${id}`);
+		return admin.data;
+	} catch (error) {
+		console.error("Error fetching admin: ", error);
+		return error; // Handle errors appropriately
+	}
+}
+
+export const updateAdmin = async (id, data) => {
+	try {
+		let admin = await axiosInstance.put(`/admin/${id}`, data);
+		return admin.data;
+	} catch (error) {
+		console.error("Error editing admin: ", error);
+		return error; // Handle errors appropriately
+	}
+}
