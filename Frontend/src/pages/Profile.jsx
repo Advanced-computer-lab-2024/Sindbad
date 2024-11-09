@@ -67,6 +67,7 @@ function Profile() {
             setError(false);
             setUserData(response);
         }
+        console.log(response);
     };
 
     const getRole = async (profileId) => {

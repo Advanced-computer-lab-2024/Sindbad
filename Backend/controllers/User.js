@@ -260,6 +260,8 @@ const UserController = {
 		const { id } = req.params;
 		const { role } = req.body;
 
+		console.log(req.body);
+
 		if (!role) {
 			return res.status(400).json({ message: "Role is required" });
 		}

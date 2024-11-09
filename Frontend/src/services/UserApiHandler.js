@@ -77,3 +77,14 @@ export const updateUserPassword = async (id, role, passwordHash) => {
         return error;
     }
 }
+export const deleteUser = async (id, role) => {
+    try {
+        const response = await axiosInstance.patch(
+            `/user/request-account-deletion/${id}`,
+            { role },
+        )
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+}
