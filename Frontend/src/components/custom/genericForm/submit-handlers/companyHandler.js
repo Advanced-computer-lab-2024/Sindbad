@@ -1,6 +1,6 @@
 import { updateAdvertiser } from "@/services/AdvertiserApiHandler";
 
-export const companySubmit = (values, id, navigate) => {
+export const companySubmit = (values, id, navigate, dispatch) => {
 	let companyProfile = {};
 	for (const key in values) {
 		if (key === "name") {

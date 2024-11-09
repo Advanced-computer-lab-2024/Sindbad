@@ -11,6 +11,7 @@ import { TextField } from "./input-fields/TextField";
 import { forms } from "./forms";
 import { SelectField } from "./input-fields/SelectField";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 
 export function GenericForm({ type, data, id }) {
 	// If you need more information about how this component works, check out forms.js in the same folder.
@@ -60,12 +61,13 @@ export function GenericForm({ type, data, id }) {
 	});
 
 	const navigate = useNavigate();
+	const dispatch = useDispatch();
 	const handleSubmit = (values) => {
 		if (typeof onSubmit === "function") {
-			if (onSubmit.length === 3) {
-				onSubmit(values, id, navigate);
+			if (onSubmit.length === 4) {
+				onSubmit(values, id, navigate, dispatch);
 			} else {
-				onSubmit(values, id, data, navigate);
+				onSubmit(values, id, data, navigate, dispatch);
 			}
 		}
 	};

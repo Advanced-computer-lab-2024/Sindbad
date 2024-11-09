@@ -32,7 +32,7 @@ function ProfileBanner({ userData, profileId, id, profileRole, setEditing }) {
     const myProfile = () => {
         return profileId === id;
     }
-
+    
     return (
         <section className="group relative w-[280px] border border-neutral-300 rounded-md overflow-clip flex flex-col items-center shrink-0 pb-6 bg-gradient-to-b from-neutral-200/60 to-light">
             <div className="h-[110px] w-full">
@@ -49,7 +49,7 @@ function ProfileBanner({ userData, profileId, id, profileRole, setEditing }) {
 
                 }
                 {/* profile edit button (only visible if logged-in user id is the same id as the profile) */}
-                {myProfile === true && (rejectable === false || userData.isAccepted === true) &&
+                {myProfile() === true && (rejectable() === false || userData.isAccepted === true) &&
                     <button className="icon-button">
                         <Edit3
                             size={16}
@@ -90,7 +90,7 @@ function ProfileBanner({ userData, profileId, id, profileRole, setEditing }) {
                                     (userData.lastName !== undefined && userData.lastName)}
                             </h3>
                             {/* badge to appear if accepted onto system */}
-                            {profileRole !== "tourist" && (rejectable === false || userData.isAccepted === true) &&
+                            {profileRole !== "tourist" && (rejectable() === false || userData.isAccepted === true) &&
                                 <div className="shrink-0">
                                     <BadgeCheck size={19} />
                                 </div>
@@ -134,7 +134,7 @@ function ProfileBanner({ userData, profileId, id, profileRole, setEditing }) {
                         </div>
                         <a className="text-xs break-all pt-[1px]">{userData.email}</a>
                     </div>
-                    {profileRole === "tourist" && myProfile === true &&
+                    {profileRole === "tourist" && myProfile() === true &&
                         <>
                             <div className="flex gap-2">
                                 <div className="shrink-0">
