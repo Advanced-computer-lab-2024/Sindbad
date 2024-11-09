@@ -118,3 +118,13 @@ export const getAdmin = async (id) => {
 		return error; // Handle errors appropriately
 	}
 }
+
+export const updateAdmin = async (id, data) => {
+	try {
+		let admin = await axiosInstance.put(`/admin/${id}`, data);
+		return admin.data;
+	} catch (error) {
+		console.error("Error editing admin: ", error);
+		return error; // Handle errors appropriately
+	}
+}
