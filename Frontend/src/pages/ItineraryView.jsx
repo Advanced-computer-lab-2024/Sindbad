@@ -96,7 +96,7 @@ const Itinerary = () => {
             try {
                 const convert = await Convert().from("USD").fetch();
 
-                if (price) {
+                if (itinerary.price) {
                     const rate = await convert.amount(itinerary.price).to(currency);
                     setConvertedPrice(rate);
                 }
@@ -436,7 +436,7 @@ const Itinerary = () => {
                                         <div className="flex justify-between">
                                             <p>Total:</p>
                                             <p className="font-medium">
-                                                {adult * convertedPrice + child * convertedPrice} {currency}
+                                                {(adult * convertedPrice + child * convertedPrice).toFixed(2)} {currency}
                                             </p>
                                         </div>
                                         <p className="text-xs text-neutral-500 italic mt-0.5">
