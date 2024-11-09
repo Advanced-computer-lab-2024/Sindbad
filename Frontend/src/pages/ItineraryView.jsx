@@ -22,7 +22,8 @@ import { addItineraryComment, addItineraryRating } from "@/services/ItineraryApi
 import StarRating from "@/components/custom/StarRating";
 import RatingReview from "@/components/custom/RatingReview";
 
-import { useUser } from "@/state management/userInfo";
+import { useUser, useCurrency } from "@/state management/userInfo";
+import { Convert } from "easy-currencies";
 
 function handleItineraryValues(itinerary) {
     if (!itinerary.description) {
@@ -52,6 +53,8 @@ const Itinerary = () => {
     const [totalRatings, setTotalRatings] = useState(0);
     const [error, setError] = useState(false);
     const { id } = useUser();
+    const currency = useCurrency();
+    const [convertedPrice, setConvertedPrice] = useState(null);
 
     const getItinerary = async () => {
         let response = await getItineraryById(itineraryId);
@@ -87,6 +90,26 @@ const Itinerary = () => {
             getCreator();
         }
     }, [itinerary]);
+
+    useEffect(() => {
+        const fetchConversionRate = async () => {
+            try {
+                const convert = await Convert().from("USD").fetch();
+
+                if (price) {
+                    const rate = await convert.amount(itinerary.price).to(currency);
+                    setConvertedPrice(rate);
+                }
+            } catch (error) {
+                console.error("Error fetching conversion rate:", error);
+                setConvertedPrice(null); // Reset on error
+            }
+        };
+
+        if (itinerary) {
+            fetchConversionRate();
+        }
+    }, [currency, itinerary]);
 
     // Ensure itinerary is not null or undefined before rendering
     if (!itinerary) {
@@ -413,7 +436,7 @@ const Itinerary = () => {
                                         <div className="flex justify-between">
                                             <p>Total:</p>
                                             <p className="font-medium">
-                                                {adult * itinerary.price + child * itinerary.price} USD
+                                                {adult * convertedPrice + child * convertedPrice} {currency}
                                             </p>
                                         </div>
                                         <p className="text-xs text-neutral-500 italic mt-0.5">
