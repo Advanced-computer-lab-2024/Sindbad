@@ -87,6 +87,11 @@ const activitySchema = mongoose.Schema(
       type: Number,
       default: 0,
     },
+    userRatings: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "User",
+      default: [],
+    },
     comments: [
       {
         userId: {

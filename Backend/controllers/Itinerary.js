@@ -307,10 +307,20 @@ const addComment = async (req, res) => {
         .json({ message: "User ID and comment are required." });
     }
 
-    //TODO implement checking if user has booked the itinerary
+    const tourist = await Tourist.findById(userId);
+    if (!tourist) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
-    // Find the itinerary by ID
-    const itinerary = await Itinerary.findById(id);
+    const hasBookedItinerary = tourist.bookedEvents.itineraries.some(
+      (itinerary) => itinerary.itineraryId.toString() === id
+    );
+
+    if (!hasBookedItinerary) {
+      return res.status(403).json({ message: "Only users who have booked this Itinerary can rate it." });
+    }
+		// Find the itinerary by ID
+		const itinerary = await Itinerary.findById(id);
 
     if (!itinerary) {
       return res.status(405).json({ message: "Itinerary not found" });
@@ -340,23 +350,33 @@ const addComment = async (req, res) => {
  * @returns {Object} 500 - Error message if an error occurs
  */
 const addRating = async (req, res) => {
-  try {
-    const itineraryId = req.params.id;
-    const { userId, rating } = req.body;
+	try {
+		const itineraryId = req.params.id;
+		const { userId, rating } = req.body;
+		
+		if(!userId || !rating){
+				return res.status(401)
+				.json({message: "userId and rating must be included "})
+		}
 
-    if (!userId || !rating) {
-      return res
-        .status(401)
-        .json({ message: "userId and rating must be included " });
+		// Validate rating value
+		if (!rating || rating < 1 || rating > 5) {
+			return res
+				.status(400)
+				.json({ message: "Invalid rating value. Must be between 1 and 5." });
+		}
+
+    const tourist = await Tourist.findById(userId);
+    if (!tourist) {
+      return res.status(404).json({ message: "User not found" });
     }
 
-    //TODO check if user purchsed/Booked
+    const hasBookedItinerary = tourist.bookedEvents.itineraries.some(
+      (itinerary) => itinerary.itineraryId.toString() === itineraryId
+    );
 
-    // Validate rating value
-    if (!rating || rating < 1 || rating > 5) {
-      return res
-        .status(400)
-        .json({ message: "Invalid rating value. Must be between 1 and 5." });
+    if (!hasBookedItinerary) {
+      return res.status(403).json({ message: "Only users who have booked this Itinerary can rate it." });
     }
 
     const itinerary = await Itinerary.findById(itineraryId);
@@ -368,9 +388,17 @@ const addRating = async (req, res) => {
       itinerary.rating = new Map(Object.entries(itinerary.rating));
     }
 
+        // Check if the user has already rated this activity
+    if (itinerary.userRatings.includes(userId)) {
+      return res.status(403).json({ message: "User has already rated this itinerary." });
+    }
+
     // Add the rating and update average rating
     const currentCount = itinerary.rating.get(rating.toString()) || 0;
     itinerary.rating.set(rating.toString(), currentCount + 1);
+
+    // Add the userId to the userRatings array
+    itinerary.userRatings.push(userId);
 
     itinerary.averageRating = calculateAverageRating(itinerary.rating);
     await itinerary.save();
