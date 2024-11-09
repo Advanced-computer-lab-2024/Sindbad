@@ -106,10 +106,10 @@ function ShoppingPage() {
 
 	return (
 		<div className="py-8 px-24 max-w-[1200px] flex flex-col gap-4 mx-auto">
-			<div className="flex items-center gap-6">
+			<div className="flex items-center gap-6 mb-6">
 				<h1 className="text-3xl font-extrabold shrink-0">Products</h1>
 				<hr className="border-neutral-300 border w-full mt-1.5" />
-				{role === "admin" && (
+				{/* {role === "admin" && (
 					<Dialog>
 						<DialogTrigger className="shrink-0 mt-1.5 text-neutral-400 hover:text-neutral-600 transition-all">
 							<CirclePlus size={24} />
@@ -121,7 +121,7 @@ function ShoppingPage() {
 							</DialogHeader>
 						</DialogContent>
 					</Dialog>
-				)}
+				)} */}
 			</div>
 			<div className="flex gap-10">
 				<div className="flex flex-col gap-7 w-[280px] shrink-0">

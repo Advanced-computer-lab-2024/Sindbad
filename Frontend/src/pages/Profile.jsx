@@ -66,7 +66,6 @@ function Profile() {
         } else {
             setError(false);
             setUserData(response);
-            console.log(response);
         }
     };
 
@@ -147,16 +146,16 @@ function Profile() {
         );
     }
 
-    function rejectable() {
+    const rejectable = () => {
         return profileRole === "tourGuide" || profileRole === "seller" || profileRole === "advertiser";
     }
-    function myProfile() {
+    const myProfile = () => {
         return profileId === id;
     }
 
     // if the profile belongs to a tour guide, seller or advertiser and the profile is not accepted yet
     // only admins and the user themselves can view the profile
-    if (rejectable() && userData.isAccepted !== true && !myProfile() && role !== "admin") {
+    if (rejectable === true && userData.isAccepted !== true && myProfile === false && role !== "admin") {
         return (
             <div className="py-8 px-24 max-w-[1200px] flex gap-9 mx-auto">
                 <div className="flex justify-center w-full">
@@ -179,7 +178,7 @@ function Profile() {
                         profileRole={profileRole}
                         setEditing={setEditing}
                     />
-                    {profileRole === "tourist" && myProfile() && (
+                    {profileRole === "tourist" && myProfile === true && (
                         <Wallet userData={userData} />
                     )}
                     {role === "admin" && userData.isAccepted === null && (
@@ -203,10 +202,10 @@ function Profile() {
                             {profileRole === "tourGuide" && (
                                 <Experience userData={userData} profileId={profileId} id={id} />
                             )}
-                            {rejectable() && ((role === "admin") || (myProfile() && userData.isAccepted !== true)) &&
+                            {rejectable === true && ((role === "admin") || (myProfile === true && userData.isAccepted !== true)) &&
                                 <Documents userData={userData} />
                             }
-                            {!(rejectable() && userData.isAccepted === null && role === "admin") && (
+                            {!(rejectable === true && userData.isAccepted === null && role === "admin") && (
                                 <Timeline
                                     userData={userData}
                                     profileId={profileId}
@@ -216,7 +215,7 @@ function Profile() {
                                     fetchCardData={() => getCardData(profileId)}
                                 />
                             )}
-                            {profileRole === "tourismGovernor" && myProfile() && (
+                            {profileRole === "tourismGovernor" && myProfile === true && (
                                 <div className="mt-12">
                                     <TagManagement />
                                 </div>

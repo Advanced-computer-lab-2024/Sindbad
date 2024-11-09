@@ -217,16 +217,16 @@ function Activity() {
             {typeof activity.price === "object" ? (
               <p className="text-3xl font-semibold ">
                 {activity.price.min}
-                <span className="text-xl font-medium"> EGP</span>
+                <span className="text-xl font-medium"> USD</span>
                 <span className=" p-2">-</span>
                 {activity.price.max}
-                <span className="text-xl font-medium"> EGP</span>
+                <span className="text-xl font-medium"> USD</span>
               </p>
             ) : (
               // If it's a single price (number)
               <p className="text-3xl font-semibold">
                 {activity.price}
-                <span className="text-xl font-medium"> EGP</span>
+                <span className="text-xl font-medium"> USD</span>
               </p>
             )}
 

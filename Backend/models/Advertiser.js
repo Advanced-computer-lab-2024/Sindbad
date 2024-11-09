@@ -43,7 +43,7 @@ const AdvertiserSchema = new mongoose.Schema(
 		},
 		preferredCurrency: {
 			type: String,
-			default: "EGP",
+			default: "USD",
 		},
 		websiteLink: {
 			type: String,

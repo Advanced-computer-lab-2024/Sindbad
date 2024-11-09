@@ -26,10 +26,10 @@ function ProfileBanner({ userData, profileId, id, profileRole, setEditing }) {
         return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
     }
 
-    function rejectable() {
+    const rejectable = () => {
         return profileRole === "tourGuide" || profileRole === "seller" || profileRole === "advertiser";
     }
-    function myProfile() {
+    const myProfile = () => {
         return profileId === id;
     }
 
@@ -49,7 +49,7 @@ function ProfileBanner({ userData, profileId, id, profileRole, setEditing }) {
 
                 }
                 {/* profile edit button (only visible if logged-in user id is the same id as the profile) */}
-                {myProfile() && (!rejectable() || userData.isAccepted === true) &&
+                {myProfile === true && (rejectable === false || userData.isAccepted === true) &&
                     <button className="icon-button">
                         <Edit3
                             size={16}
@@ -90,7 +90,7 @@ function ProfileBanner({ userData, profileId, id, profileRole, setEditing }) {
                                     (userData.lastName !== undefined && userData.lastName)}
                             </h3>
                             {/* badge to appear if accepted onto system */}
-                            {profileRole !== "tourist" && (!rejectable() || userData.isAccepted === true) &&
+                            {profileRole !== "tourist" && (rejectable === false || userData.isAccepted === true) &&
                                 <div className="shrink-0">
                                     <BadgeCheck size={19} />
                                 </div>
@@ -134,7 +134,7 @@ function ProfileBanner({ userData, profileId, id, profileRole, setEditing }) {
                         </div>
                         <a className="text-xs break-all pt-[1px]">{userData.email}</a>
                     </div>
-                    {profileRole === "tourist" && myProfile() (
+                    {profileRole === "tourist" && myProfile === true &&
                         <>
                             <div className="flex gap-2">
                                 <div className="shrink-0">
@@ -159,7 +159,7 @@ function ProfileBanner({ userData, profileId, id, profileRole, setEditing }) {
                                 <a className="text-xs break-all pt-[1px]">{userData.job}</a>
                             </div>
                         </>
-                    )}
+                    }
                     {profileRole === "advertiser" && userData.websiteLink && (
                         <div className="flex flex-col gap-2">
                             <div className="flex gap-2">

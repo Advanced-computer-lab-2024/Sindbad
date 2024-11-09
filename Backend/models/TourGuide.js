@@ -43,7 +43,7 @@ const TourGuideSchema = new mongoose.Schema(
 		},
 		preferredCurrency: {
 			type: String,
-			default: "EGP",
+			default: "USD",
 		},
 		mobileNumber: {
 			type: String,
