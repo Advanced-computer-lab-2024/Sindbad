@@ -15,7 +15,7 @@ function Timeline({ userData, profileId, id, profileRole, cardData, fetchCardDat
 				<h1 className="text-3xl font-extrabold shrink-0">
 					{profileRole === "tourist"
 						? "Bookmarks"
-						: profileRole === "seller"
+						: profileRole === "seller" || profileRole === "admin"
 							? "Products"
 							: profileRole === "advertiser"
 								? "Activities"
@@ -24,7 +24,7 @@ function Timeline({ userData, profileId, id, profileRole, cardData, fetchCardDat
 									: "Itineraries"}
 				</h1>
 				<hr className="border-neutral-300 border w-full mt-1.5" />
-				{role !== "tourist" && profileId === id && (userData.isAccepted === true || role === "tourismGovernor") && (
+				{role !== "tourist" && profileId === id && ((userData.isAccepted === true) || role === "tourismGovernor") && (
 					<Dialog>
 						<DialogTrigger className="shrink-0 mt-1.5 text-neutral-400 hover:text-neutral-600 transition-all">
 							<CirclePlus size={24} />

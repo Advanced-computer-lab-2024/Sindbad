@@ -12,6 +12,7 @@ import Documents from "@/components/custom/profile/Documents";
 import RatingReview from "@/components/custom/RatingReview";
 import { getTouristById } from "@/services/TouristApiHandler";
 import { getTourGuide, addTourGuideComment, addTourGuideRating } from "@/services/TourGuideApiHandler";
+import { getAdmin } from "@/services/AdminApiHandler";
 import { getSeller } from "@/services/SellerApiHandler";
 import { getMyProducts } from "@/services/ProductApiHandler";
 import { getAdvertiser } from "@/services/AdvertiserApiHandler";
@@ -55,6 +56,8 @@ function Profile() {
             response = await getAdvertiser(profileId);
         } else if (r === "tourismGovernor") {
             response = await getTourismGovernor(profileId);
+        } else if (r === "admin") {
+            response = await getAdmin(profileId);
         }
 
         if (response.error) {
@@ -144,12 +147,16 @@ function Profile() {
         );
     }
 
-    if (
-        userData.isAccepted &&
-        userData.isAccepted !== true &&
-        role !== "admin" &&
-        profileId !== id
-    ) {
+    function rejectable() {
+        return profileRole === "tourGuide" || profileRole === "seller" || profileRole === "advertiser";
+    }
+    function myProfile() {
+        return profileId === id;
+    }
+
+    // if the profile belongs to a tour guide, seller or advertiser and the profile is not accepted yet
+    // only admins and the user themselves can view the profile
+    if (rejectable() && userData.isAccepted !== true && !myProfile() && role !== "admin") {
         return (
             <div className="py-8 px-24 max-w-[1200px] flex gap-9 mx-auto">
                 <div className="flex justify-center w-full">
@@ -172,7 +179,7 @@ function Profile() {
                         profileRole={profileRole}
                         setEditing={setEditing}
                     />
-                    {profileRole === "tourist" && profileId === id && (
+                    {profileRole === "tourist" && myProfile() && (
                         <Wallet userData={userData} />
                     )}
                     {role === "admin" && userData.isAccepted === null && (
@@ -196,13 +203,10 @@ function Profile() {
                             {profileRole === "tourGuide" && (
                                 <Experience userData={userData} profileId={profileId} id={id} />
                             )}
-                            {(role === "admin" ||
-                                (id === profileId &&
-                                    userData.isAccepted !== true &&
-                                    userData.isAccepted !== undefined)) && (
-                                    <Documents userData={userData} />
-                                )}
-                            {!(userData.isAccepted === null && role === "admin") && (
+                            {rejectable() && ((role === "admin") || (myProfile() && userData.isAccepted !== true)) &&
+                                <Documents userData={userData} />
+                            }
+                            {!(rejectable() && userData.isAccepted === null && role === "admin") && (
                                 <Timeline
                                     userData={userData}
                                     profileId={profileId}
@@ -212,7 +216,7 @@ function Profile() {
                                     fetchCardData={() => getCardData(profileId)}
                                 />
                             )}
-                            {profileRole === "tourismGovernor" && profileId === id && (
+                            {profileRole === "tourismGovernor" && myProfile() && (
                                 <div className="mt-12">
                                     <TagManagement />
                                 </div>
@@ -223,7 +227,7 @@ function Profile() {
                     )}
                 </div>
             </div>
-            {profileRole === "tourGuide" &&
+            {profileRole === "tourGuide" && userData.isAccepted === true &&
                 <>
                     <hr className="border-neutral-300 border w-full mt-8" />
                     <RatingReview

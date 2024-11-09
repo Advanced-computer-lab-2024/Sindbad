@@ -37,8 +37,6 @@ function EditProfile({ userType, id, userData }) {
   return (
     <div>
       <GenericForm type={userType} id={id} data={userData} />
-      <h1 className="text-2xl font-semibold my-4">Danger Area</h1>
-      <DeleteForm type={userType}/>
       <h1 className="text-2xl font-semibold my-4">Change Password</h1>
       <Form {...form}>
 				<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -59,6 +57,8 @@ function EditProfile({ userType, id, userData }) {
 					</Button>
 				</form>
 			</Form>
+      <h1 className="text-2xl font-semibold my-4">Danger Area</h1>
+      <DeleteForm type={userType}/>
     </div>
   );
 }
