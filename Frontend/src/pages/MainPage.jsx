@@ -9,7 +9,7 @@ import { CircleUserRound } from "lucide-react";
 import { getRolePermissions } from "@/utilities/roleConfig";
 
 import { useDispatch } from "react-redux";
-import { useUser, logout } from "@/state management/userInfo";
+import { useUser, logout, setCurrency } from "@/state management/userInfo";
 
 function MainPage() {
     const navigate = useNavigate();
@@ -85,6 +85,7 @@ function MainPage() {
                                             }
                                             else {
                                                 dispatch(logout());
+                                                dispatch(setCurrency("USD"));
                                                 navigate(`/app/itineraries`, { replace: true });
                                             }
                                         }}

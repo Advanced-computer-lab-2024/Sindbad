@@ -1,6 +1,6 @@
 import { useController, useFieldArray } from 'react-hook-form';
 import { FormControl, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Select, SelectTrigger, SelectOption, SelectContent } from '@/components/ui/select';
+import { Select, SelectTrigger, SelectItem, SelectContent, SelectValue} from '@/components/ui/select';
 import { X } from 'lucide-react';
 
 export const MultiSelectField = ({ name, control, label, options = [] }) => {
@@ -15,9 +15,17 @@ export const MultiSelectField = ({ name, control, label, options = [] }) => {
 
   // Helper function to add unique items
   const handleSelect = (value) => {
+    console.log(value);
+    
     if (!field.value.includes(value)) {
       append(value);
     }
+    console.log(field.value);
+  };
+
+  const getNameById = (id) => {
+    const found = options.find(option => option._id === id);
+    return found ? found.name : '';
   };
 
   return (
@@ -28,22 +36,22 @@ export const MultiSelectField = ({ name, control, label, options = [] }) => {
           {/* Render Select component */}
           <Select onValueChange={handleSelect}>
             <SelectTrigger className="w-full text-black">
-              <span>Select options</span>
+              <SelectValue placeholder="" />
             </SelectTrigger>
             <SelectContent>
               {options.map((option, idx) => (
-                <SelectOption key={idx} value={option}>
-                  {option}
-                </SelectOption>
+                <SelectItem key={idx} value={option._id}>
+                  {option.name}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
 
           {/* Render selected items */}
           <div className="flex flex-wrap gap-2">
-            {fields.map((fieldItem, index) => (
-              <div key={fieldItem.id} className="flex items-center space-x-2 bg-gray-200 px-2 py-1 rounded">
-                <span>{fieldItem.value}</span>
+            {field.value.map((fieldItem, index) => (
+              <div key={fieldItem} className="flex items-center space-x-2 bg-indigo-200 text-xs px-2 py-1 rounded">
+                <span>{getNameById(fieldItem)}</span>
                 <button
                   type="button"
                   onClick={() => remove(index)}

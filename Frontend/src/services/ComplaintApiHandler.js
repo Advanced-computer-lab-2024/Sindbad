@@ -25,7 +25,10 @@ export const getComplaintById = async (complaintId) => {
 export const replyToComplaint = async (complaintId, isResolved, comment) => {
     try {
         // Reply to a complaint
-        let response = await axiosInstance.put(`/complaint/${complaintId}`, isResolved, comment);
+        let response = await axiosInstance.put(`/complaint/${complaintId}`, {
+            isResolved,
+            comment
+        });
         return response;
     } catch (error) {
         console.error("Error replying to complaint: ", error);

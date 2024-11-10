@@ -10,13 +10,8 @@ import { getSiteById } from "@/services/SiteApiHandler";
 
 import { Star, MapPin, Frown, CalendarDays, AlarmClock, ArrowRight } from "lucide-react";
 
-function getRandomRating() {
-	return (Math.round(Math.random() * 10) / 2).toFixed(1);
-}
-
-function getRandomReviews() {
-	return Math.floor(Math.random() * 1000) + 1;
-}
+import { useCurrency } from "@/state management/userInfo";
+import { Convert } from "easy-currencies";
 
 const convertMinutesToTime = (minutes) => {
 	const hours = Math.floor(minutes / 60);
@@ -28,20 +23,12 @@ const convertMinutesToTime = (minutes) => {
 	return `${formattedHours}:${formattedMins} ${period}`;
 };
 
-function handleSiteValues(site) {
-	if (!site.rating) {
-		site.rating = getRandomRating();
-	}
-	if (!site.reviews) {
-		site.reviews = getRandomReviews();
-	}
-}
-
-
 function Site() {
 	const { siteId } = useParams();
 	const [site, setSite] = useState(null);
 	const [error, setError] = useState(false);
+	const currency = useCurrency();
+	const [convertedPrice, setConvertedPrice] = useState(null);
 
 	const getSite = async () => {
 		let response = await getSiteById(siteId);
@@ -50,7 +37,6 @@ function Site() {
 			console.error(response.message);
 			setError(true);
 		} else {
-			handleSiteValues(response);
 			setSite(response);
 			setError(false);
 		}
@@ -59,6 +45,34 @@ function Site() {
 	useEffect(() => {
 		getSite();
 	}, []);
+
+	useEffect(() => {
+		const fetchConversionRate = async () => {
+			try {
+				const convert = await Convert().from("USD").fetch();
+
+				if (site.ticketPrices && site.ticketPrices.child && site.ticketPrices.adult && site.ticketPrices.student && site.ticketPrices.foreigner) {
+					const rateChild = await convert.amount(site.ticketPrices.child).to(currency);
+					const rateAdult = await convert.amount(site.ticketPrices.adult).to(currency);
+					const rateStudent = await convert.amount(site.ticketPrices.student).to(currency);
+					const rateForeigner = await convert.amount(site.ticketPrices.foreigner).to(currency);
+					setConvertedPrice({
+						child: rateChild,
+						adult: rateAdult,
+						student: rateStudent,
+						foreigner: rateForeigner,
+					});
+				}
+			} catch (error) {
+				console.error("Error fetching conversion rate:", error);
+				setConvertedPrice(null); // Reset on error
+			}
+		};
+
+		if (site) {
+			fetchConversionRate();
+		}
+	}, [currency, site]);
 
 	if (!site) {
 		return (
@@ -75,9 +89,6 @@ function Site() {
 			</div>
 		);
 	}
-
-	const fullStars = site.rating;
-	const emptyStar = 5 - fullStars;
 
 	return (
 		<div className="py-8 px-24 max-w-[1200px] mx-auto">
@@ -186,40 +197,44 @@ function Site() {
 						</div>
 					) : (
 						<div className="w-full h-full">
-							{Object.entries(site.ticketPrices).map(([type, price]) => (
-								<div
-									key={type}
-									className="relative p-6 bg-gradient-to-br from-neutral-200/60 to-light rounded-md mt-4 overflow-clip"
-								>
-									{/* border */}
-									<div className="absolute top-0 left-0 rounded-md border border-neutral-500 h-full w-full"></div>
-									{/* cutouts */}
-									<div className="z-10 absolute left-[200px] -top-5 -bottom-5 flex flex-col justify-between">
-										<div className="h-[32px] w-4 bg-light rounded-l-full border-l border-b border-neutral-500"></div>
-										<div className="h-[32px] w-4 bg-light rounded-l-full border-l border-t border-neutral-500"></div>
-									</div>
-									<div className="z-10 absolute left-[216px] -top-5 -bottom-5 flex flex-col justify-between">
-										<div className="h-[32px] w-2 bg-light rounded-r-full border-r border-b border-neutral-500"></div>
-										<div className="h-[32px] w-2 bg-light rounded-r-full border-r border-t border-neutral-500"></div>
-									</div>
+							{convertedPrice &&
+								<>
+									{Object.entries(convertedPrice).map(([type, price]) => (
+										<div
+											key={type}
+											className="relative p-6 bg-gradient-to-br from-neutral-200/60 to-light rounded-md mt-4 overflow-clip"
+										>
+											{/* border */}
+											<div className="absolute top-0 left-0 rounded-md border border-neutral-500 h-full w-full"></div>
+											{/* cutouts */}
+											<div className="z-10 absolute left-[200px] -top-5 -bottom-5 flex flex-col justify-between">
+												<div className="h-[32px] w-4 bg-light rounded-l-full border-l border-b border-neutral-500"></div>
+												<div className="h-[32px] w-4 bg-light rounded-l-full border-l border-t border-neutral-500"></div>
+											</div>
+											<div className="z-10 absolute left-[216px] -top-5 -bottom-5 flex flex-col justify-between">
+												<div className="h-[32px] w-2 bg-light rounded-r-full border-r border-b border-neutral-500"></div>
+												<div className="h-[32px] w-2 bg-light rounded-r-full border-r border-t border-neutral-500"></div>
+											</div>
 
-									<div className="h-[100%] absolute left-[216px] top-0 w-0 border border-neutral-400 border-dashed"></div>
+											<div className="h-[100%] absolute left-[216px] top-0 w-0 border border-neutral-400 border-dashed"></div>
 
-									<p className="text-base font-medium">{type} ticket</p>
-									<div className="text-end">
-										{price === 0 ? (
-											<span className="text-xl font-semibold">Free</span>
-										) : (
-											<>
-												<span className="text-xl font-semibold">
-													{price + " "}
-												</span>
-												<span className="text-sm">EGP</span>
-											</>
-										)}
-									</div>
-								</div>
-							))}
+											<p className="text-base font-medium">{type} ticket</p>
+											<div className="text-end">
+												{price === 0 ? (
+													<span className="text-xl font-semibold">Free</span>
+												) : (
+													<>
+														<span className="text-xl font-semibold">
+															{price.toFixed(2) + " "}
+														</span>
+														<span className="text-sm">{currency}</span>
+													</>
+												)}
+											</div>
+										</div>
+									))}
+								</>
+							}
 						</div>
 					)}
 				</div>

@@ -1,16 +1,20 @@
 import { useState, useEffect } from "react";
 
 import GenericFilter from "@/components/custom/GenericFilter";
-import CardContainer from "@/components/custom/CardContainer";
+import CardContainer from "@/components/custom/cards/CardContainer";
 
 import { getAllActivities } from "@/services/ActivityApiHandler";
 import { getAllCategories } from "@/services/AdminApiHandler";
+
+import { useCurrency } from "@/state management/userInfo";
+import { Convert } from "easy-currencies";
 
 function Activities() {
 	const [loading, setLoading] = useState(true);
 	const [activities, setActivities] = useState([]);
 	const [categories, setCategories] = useState([]);
 	const [categoryNames, setCategoryNames] = useState([]);
+	const currency = useCurrency();
 	const [priceRange, setPriceRange] = useState({
 		minPrice: 0,
 		maxPrice: 1000,
@@ -20,7 +24,7 @@ function Activities() {
 		name: "",
 		price: {
 			min: priceRange.minPrice,
-			max: priceRange.maxPrice
+			max: priceRange.maxPrice,
 		},
 		date: {
 			start: "",
@@ -47,7 +51,7 @@ function Activities() {
 			label: "Price",
 			range: {
 				min: priceRange.minPrice,
-				max: priceRange.maxPrice
+				max: priceRange.maxPrice,
 			},
 			step: 1,
 		},
@@ -65,7 +69,7 @@ function Activities() {
 			label: "Rating",
 			range: {
 				min: 0,
-				max: 5
+				max: 5,
 			},
 			step: 1,
 		},
@@ -90,9 +94,15 @@ function Activities() {
 				(category) => category.name === activeFilters.category.selected
 			);
 		}
+
+		const converter = await Convert().from("USD").fetch();
+		const convertedMin = activeFilters.price.min / converter.rates[currency];
+		const convertedMax = activeFilters.price.max / converter.rates[currency];
+		const convertedPrice = { min: convertedMin, max: convertedMax };
+
 		const response = await getAllActivities(
 			activeFilters.name,
-			activeFilters.price,
+			convertedPrice,
 			activeFilters.date, // Pass start and end separately
 			categoryToSend, // Send the category ID
 			activeFilters.rating,
@@ -120,14 +130,33 @@ function Activities() {
 		return () => clearTimeout(delayDebounceFn);
 	}, [activeFilters]); // Dependency on activeFilters
 
+	const getPriceRange = async () => {
+		const response = priceRange;
+		const converter = await Convert().from("USD").fetch();
+		let responseConverted = {
+			minPrice: await converter.amount(response.minPrice).to(currency),
+			maxPrice: await converter.amount(response.maxPrice).to(currency),
+		}
+		responseConverted = {
+			minPrice: Math.floor(responseConverted.minPrice),
+			maxPrice: Math.ceil(responseConverted.maxPrice),
+		}
+		setPriceRange(responseConverted);
+		setActiveFilters({
+			...activeFilters,
+			price: {
+				min: responseConverted.minPrice,
+				max: responseConverted.maxPrice,
+			},
+		});
+	};
+
 	const fetchCategories = async () => {
 		try {
 			const response = await getAllCategories();
 			if (!response.error) {
 				setCategories(response.data);
-				const set = new Set(
-					response.data.map((category) => category.name)
-				);
+				const set = new Set(response.data.map((category) => category.name));
 				setCategoryNames(Array.from(set));
 			} else {
 				console.error(response.message);
@@ -136,9 +165,12 @@ function Activities() {
 			console.error("Error fetching categories: ", error);
 		}
 	};
+
 	useEffect(() => {
 		fetchCategories();
+		getPriceRange();
 	}, []);
+
 	return (
 		<div className="py-8 px-24 max-w-[1200px] flex flex-col gap-4 mx-auto">
 			<div className="flex items-center gap-6 mb-6">
@@ -146,19 +178,23 @@ function Activities() {
 				<hr className="border-neutral-300 border w-full mt-1.5" />
 			</div>
 			<div className="flex gap-10">
-				<GenericFilter
-					formFields={formFields}
-					activeFilters={activeFilters}
-					setActiveFilters={setActiveFilters}
-				/>
+				<div className="w-[280px] shrink-0">
+					<GenericFilter
+						formFields={formFields}
+						activeFilters={activeFilters}
+						setActiveFilters={setActiveFilters}
+					/>
+				</div>
 				{!loading ? (
-					<CardContainer cardList={activities} cardType={"activity"} />
+					<CardContainer
+						cardList={activities}
+						cardType={"activity"}
+						fetchCardData={fetchActivities}
+					/>
 				) : (
 					<div className="flex col-span-3 mx-auto">
 						<div className="flex justify-center w-full">
-							<p className="text-neutral-400 text-sm italic">
-								Loading...
-							</p>
+							<p className="text-neutral-400 text-sm italic">Loading...</p>
 						</div>
 					</div>
 				)}

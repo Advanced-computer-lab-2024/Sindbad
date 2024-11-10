@@ -58,3 +58,37 @@ export const getPriceMinMax = async () => {
 		return error;
 	}
 };
+
+export const addProductRating = async (productId, ratingData) => {
+	try {
+		const response = await axiosInstance.post(
+			`/product/${productId}`,
+			ratingData
+		);
+		return response.data;
+	} catch (error) {
+		return error;
+	}
+};
+
+export const addProductReview = async (productId, reviewData) => {
+	try {
+		const response = await axiosInstance.post(
+			`/product/review/${productId}`,
+			reviewData
+		);
+		return response.data;
+	} catch (error) {
+		return error;
+	}
+}
+
+export const getMyProducts = async (creatorId) => {
+    try {
+        const response = await axiosInstance.get(`/product/my-products/${creatorId}`);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
+

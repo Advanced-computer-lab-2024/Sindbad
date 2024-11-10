@@ -50,7 +50,7 @@ const getAllComplaints = async (req, res) => {
 
 		const sortOptions = { createdAt: sortOrder === "asc" ? 1 : -1 };
 
-		const complaints = await Complaint.find(filter).sort(sortOptions);
+		const complaints = await Complaint.find(filter).populate("creatorId").sort(sortOptions);
 
 		res.status(200).json(complaints);
 	} catch (err) {

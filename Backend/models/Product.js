@@ -23,7 +23,7 @@ const productSchema = mongoose.Schema(
 			type: String,
 			required: [true, "Please add a product description"],
 		},
-		seller: {
+		creatorId: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Seller",
 			required: [true, "Please add the seller of the product"],
@@ -43,23 +43,20 @@ const productSchema = mongoose.Schema(
 			type: Number,
 			default: 0,
 		},
+		userRatings: {
+			type: [mongoose.Schema.Types.ObjectId],
+			ref: "User",
+			default: [],
+		  },
 		reviews: [
 			{
-				username: {
-					type: String,
-					required: [true, "Username is required for a review"],
+				userId: {
+				   type: mongoose.Schema.Types.ObjectId, ref: "User", required: true 
+				  },
+				comment: { 
+				  type: String, required: true 
 				},
-				rating: {
-					type: Number,
-					min: 1,
-					max: 5,
-					required: [true, "Rating is required"],
-				},
-				comment: {
-					type: String,
-					required: [true, "Comment is required"],
-				},
-			},
+			  },
 		],
 		quantity: {
 			type: Number,

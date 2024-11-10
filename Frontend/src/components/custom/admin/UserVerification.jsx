@@ -36,6 +36,7 @@ function UserVerification() {
                 ? [{ id: "role", value: selectedRoles }]
                 : []
         );
+        console.log(columnFilters);
     }, [selectedRoles]);
 
     const handleRoleFilterChange = (role) => {

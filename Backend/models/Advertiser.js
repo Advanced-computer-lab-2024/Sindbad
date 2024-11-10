@@ -29,11 +29,11 @@ const AdvertiserSchema = new mongoose.Schema(
 		},
 		idCardImage: {
 			type: Buffer,
-			default:null,
+			default: null,
 		},
 		taxationRegistryCardImage: {
 			type: Buffer,
-			default:null,
+			default: null,
 		},
 		logoImageUri: {
 			type: String,
@@ -41,9 +41,9 @@ const AdvertiserSchema = new mongoose.Schema(
 		bannerImageUri: {
 			type: String,
 		},
-		preferredCurrency:{
+		preferredCurrency: {
 			type: String,
-			default: "EGP",
+			default: "USD",
 		},
 		websiteLink: {
 			type: String,
@@ -58,7 +58,8 @@ const AdvertiserSchema = new mongoose.Schema(
 			type: String,
 			validate: {
 				validator: (v) => /^\+?[1-9]\d{1,14}$/.test(v), // Basic validation for international phone numbers
-				message: (props) => `${props.value} is not a valid hotline number!`,
+				message: (props) =>
+					`${props.value} is not a valid hotline number!`,
 			},
 		},
 		companyProfile: {
@@ -74,7 +75,8 @@ const AdvertiserSchema = new mongoose.Schema(
 				type: String,
 				validate: {
 					validator: (v) => v.length <= 500, // Limiting description to 500 characters
-					message: "Description cannot be longer than 500 characters.",
+					message:
+						"Description cannot be longer than 500 characters.",
 				},
 			},
 			location: {
@@ -85,6 +87,10 @@ const AdvertiserSchema = new mongoose.Schema(
 		isAccepted: {
 			type: Boolean,
 			default: null, // Indicates whether the advertiser has been accepted
+		},
+		isRequestedAccountDeletion: {
+			type: Boolean,
+			default: false,
 		},
 	},
 	{ timestamps: true }

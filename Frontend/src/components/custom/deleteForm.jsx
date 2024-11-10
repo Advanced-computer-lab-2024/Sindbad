@@ -4,10 +4,9 @@ import { deleteItinerary } from "../../services/ItineraryApiHandler";
 import { removeTourGuideWork } from "@/services/TourGuideApiHandler";
 
 import { Button } from "../ui/button";
+import { deleteUser } from "@/services/UserApiHandler";
 
 function DeleteForm( {type, data} ) {
-
-  console.log(data)
     
     const handleButtonClick = () => {
         if (type === "site") {
@@ -22,14 +21,17 @@ function DeleteForm( {type, data} ) {
         if (type === "experience") {
             removeTourGuideWork(data.id, data.experience_id);
         }
+        if (type === "tourGuide" || type === "tourist" || type === "seller" || type === "advertiser") { 
+          deleteUser(data._id, type);
+        }
     }
   return (
     <div>
-      <Button onClick={handleButtonClick}>
+      <Button onClick={handleButtonClick} className="bg-destructive">
         <p className="text-xs text-white">
           Delete
         </p>
-        </Button>
+      </Button>
     </div>
   );
 } 

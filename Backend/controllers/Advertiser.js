@@ -32,7 +32,15 @@ const getAllAdvertisers = async (req, res) => {
 const updateAdveriser = async (req, res) => {
 	try {
 		const { id } = req.params; // Get username from the params
-		const { websiteLink, hotline, companyProfile, email , logoImageUri , bannerImageUri } = req.body; // Get username and other fields from the body
+		const {
+			websiteLink,
+			hotline,
+			companyProfile,
+			email,
+			logoImageUri,
+			bannerImageUri,
+			preferredCurrency,
+		} = req.body; // Get username and other fields from the body
 
 		// Create an object to hold the fields that need to be updated
 		const updateData = {};
@@ -55,6 +63,9 @@ const updateAdveriser = async (req, res) => {
 		}
 		if (bannerImageUri !== undefined) {
 			updateData.bannerImageUri = bannerImageUri;
+		}
+		if (preferredCurrency != undefined) {
+			updateData.preferredCurrency = preferredCurrency;
 		}
 
 		const advertiser = await Advertiser.findByIdAndUpdate(
@@ -82,31 +93,32 @@ const addAdvertiserDocuments = async (req, res) => {
 
 	if (files.idCardImage) {
 		updateData.idCardImage = files.idCardImage[0].buffer; // Get binary data from the first file
-	  }
-	
-	  if (files.taxationRegistryCardImage) {
-		updateData.taxationRegistryCardImage = files.taxationRegistryCardImage[0].buffer;
 	}
 
-	
+	if (files.taxationRegistryCardImage) {
+		updateData.taxationRegistryCardImage =
+			files.taxationRegistryCardImage[0].buffer;
+	}
+
 	try {
 		// Update the advertiser document with the new image data
 		const advertiser = await Advertiser.findByIdAndUpdate(
-		  id,
-		  { $set: updateData }, // Use $set to only update specified fields
-		  { new: true } // Return the updated document
+			id,
+			{ $set: updateData }, // Use $set to only update specified fields
+			{ new: true } // Return the updated document
 		);
-	
-		if (!advertiser) {
-		  return res.status(404).json({ message: "Advertiser not found!" });
-		}
-	
-		return res.status(200).json(advertiser);
-	  } catch (error) {
-		return res.status(500).json({ message: "Error updating advertiser", error });
-	  }
-};
 
+		if (!advertiser) {
+			return res.status(404).json({ message: "Advertiser not found!" });
+		}
+
+		return res.status(200).json(advertiser);
+	} catch (error) {
+		return res
+			.status(500)
+			.json({ message: "Error updating advertiser", error });
+	}
+};
 
 module.exports = {
 	getAdvertiserById,

@@ -1,23 +1,29 @@
-import Card from "@/components/custom/Card";
-import ProductCard from "@/components/custom/ProductCard";
 import GenericForm from "../genericForm/genericForm";
-import TagManagement from "../admin/tag-management/TagManagement";
+import CardContainer from "@/components/custom/cards/CardContainer";
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "@/components/ui/dialog";
 
 import { CirclePlus } from "lucide-react";
 
 import { useUser } from '@/state management/userInfo';
 
-function Timeline({ userData, profileId, id, profileRole, cardData, setCardData }) {
+function Timeline({ userData, profileId, id, profileRole, cardData, fetchCardData }) {
 	const { role } = useUser();
+
+	const rejectable = () => {
+		return profileRole === "tourGuide" || profileRole === "seller" || profileRole === "advertiser";
+	}
+	const myProfile = () => {
+		return profileId === id;
+	}
+
 	return (
 		<div className="flex flex-col gap-6">
 			<div className="flex items-center gap-6">
 				<h1 className="text-3xl font-extrabold shrink-0">
 					{profileRole === "tourist"
 						? "Bookmarks"
-						: profileRole === "seller"
+						: profileRole === "seller" || profileRole === "admin"
 							? "Products"
 							: profileRole === "advertiser"
 								? "Activities"
@@ -26,7 +32,7 @@ function Timeline({ userData, profileId, id, profileRole, cardData, setCardData 
 									: "Itineraries"}
 				</h1>
 				<hr className="border-neutral-300 border w-full mt-1.5" />
-				{role !== "tourist" && profileId === id && (userData.isAccepted === true || role === "tourismGovernor") && (
+				{role !== "tourist" && myProfile() === true && (rejectable() === false || userData.isAccepted === true) &&
 					<Dialog>
 						<DialogTrigger className="shrink-0 mt-1.5 text-neutral-400 hover:text-neutral-600 transition-all">
 							<CirclePlus size={24} />
@@ -35,7 +41,7 @@ function Timeline({ userData, profileId, id, profileRole, cardData, setCardData 
 							<DialogHeader>
 								<GenericForm
 									type={
-										role === "seller"
+										role === "seller" || role === "admin"
 											? "product"
 											: role === "advertiser"
 												? "activity"
@@ -48,80 +54,28 @@ function Timeline({ userData, profileId, id, profileRole, cardData, setCardData 
 							</DialogHeader>
 						</DialogContent>
 					</Dialog>
-				)}
+				}
 			</div>
 			<div>
-				<div
-					className={`grid gap-6 ${profileRole === "tourismGovernor" ? "grid-cols-5" : "grid-cols-3"
-						}`}
-				>
-					{/* hook up to API in later sprint*/}
-					{profileRole === "tourist" &&
-						userData?.bookmarks?.map((bookmark, index) => (
-							<Card
-								key={index}
-								data={bookmark}
-								id={id}
-								profileId={profileId}
-								role={role}
-								cardType="activity"
-								setData={setCardData}
-							/>
-						))}
-
-					{profileRole === "tourGuide" &&
-						cardData.length !== 0 &&
-						cardData.map((itinerary, index) => (
-							<Card
-								key={index}
-								data={itinerary}
-								id={id}
-								profileId={profileId}
-								role={role}
-								cardType="itinerary"
-								setData={setCardData}
-							/>
-						))}
-
-					{profileRole === "seller" &&
-						cardData?.map((product, index) => (
-							<ProductCard
-								key={index}
-								data={product}
-								id={id}
-								profileId={profileId}
-								role={role}
-								parent="profile"
-								setData={setCardData}
-							/>
-						))}
-
-					{profileRole === "advertiser" &&
-						cardData?.map((activity, index) => (
-							<Card
-								key={index}
-								data={activity}
-								id={id}
-								profileId={profileId}
-								role={role}
-								cardType="activity"
-								setData={setCardData}
-							/>
-						))}
-
-					{profileRole === "tourismGovernor" &&
-						cardData?.map((site, index) => (
-							<Card
-								key={index}
-								data={site}
-								id={id}
-								profileId={profileId}
-								role={role}
-								cardType="site"
-								setData={setCardData}
-							/>
-						))}
-				</div>
+				<CardContainer
+					cardList={
+						profileRole === "tourist"
+							? userData?.bookmarks || []
+							: cardData
+					}
+					cardType={
+						profileRole === "tourist"
+							? "activity"
+							: profileRole === "tourGuide"
+								? "itinerary"
+								: profileRole === "seller" || profileRole === "admin"
+									? "product"
+									: profileRole === "advertiser"
+										? "activity"
+										: "site"
+					}
+					fetchCardData={fetchCardData}
+				/>
 				<div>
 					{profileRole === "tourist" &&
 						(userData?.bookmarks?.length === 0 || !userData?.bookmarks) && (
@@ -142,7 +96,7 @@ function Timeline({ userData, profileId, id, profileRole, cardData, setCardData 
 						</p>
 					)}
 
-					{profileRole === "seller" && cardData.length === 0 && (
+					{(profileRole === "seller" || profileRole === "admin") && cardData.length === 0 && (
 						<p className="text-neutral-400 text-sm italic">
 							{profileId !== id
 								? "No products to show."

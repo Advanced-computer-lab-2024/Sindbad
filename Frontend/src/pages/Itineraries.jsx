@@ -1,16 +1,20 @@
 import { useState, useEffect } from "react";
 
 import GenericFilter from "@/components/custom/GenericFilter";
-import CardContainer from "@/components/custom/CardContainer";
+import CardContainer from "@/components/custom/cards/CardContainer";
 
 import { getAllItineraries } from "@/services/ItineraryApiHandler";
 import { getAllTags } from "@/services/AdminApiHandler";
+
+import { useCurrency } from "@/state management/userInfo";
+import { Convert } from "easy-currencies";
 
 function Itineraries() {
 	const [loading, setLoading] = useState(true);
 	const [itineraries, setItineraries] = useState([]);
 	const [tags, setTags] = useState([]);
 	const [tagNames, setTagNames] = useState([]);
+	const currency = useCurrency();
 	const [priceRange, setPriceRange] = useState({
 		minPrice: 0,
 		maxPrice: 1000,
@@ -20,7 +24,7 @@ function Itineraries() {
 		name: "",
 		price: {
 			min: priceRange.minPrice,
-			max: priceRange.maxPrice
+			max: priceRange.maxPrice,
 		},
 		date: {
 			start: "",
@@ -48,7 +52,7 @@ function Itineraries() {
 			label: "Price",
 			range: {
 				min: priceRange.minPrice,
-				max: priceRange.maxPrice
+				max: priceRange.maxPrice,
 			},
 			step: 1,
 		},
@@ -66,7 +70,7 @@ function Itineraries() {
 			label: "Rating",
 			range: {
 				min: 0,
-				max: 5
+				max: 5,
 			},
 			step: 1,
 		},
@@ -91,13 +95,17 @@ function Itineraries() {
 		setLoading(true);
 		let tagToSend = "";
 		if (activeFilters.tag.selected !== "") {
-			tagToSend = tags.find(
-				(tag) => tag.name === activeFilters.tag.selected
-			);
+			tagToSend = tags.find((tag) => tag.name === activeFilters.tag.selected);
 		}
+
+		const converter = await Convert().from("USD").fetch();
+		const convertedMin = activeFilters.price.min / converter.rates[currency];
+		const convertedMax = activeFilters.price.max / converter.rates[currency];
+		const convertedPrice = { min: convertedMin, max: convertedMax };
+
 		const response = await getAllItineraries(
 			activeFilters.name,
-			activeFilters.price,
+			convertedPrice,
 			activeFilters.date,
 			tagToSend,
 			activeFilters.rating,
@@ -105,7 +113,7 @@ function Itineraries() {
 			activeFilters.sortBy.selected,
 			activeFilters.sortOrder.selected
 		);
-		if (!response.error) {
+		if (!response.error && response) {
 			const updatedItineraries = response.map((itinerary) => ({
 				...itinerary, // retain other properties of the itinerary
 				activities: itinerary.activities.map((activity) => activity._id), // map activities to _id
@@ -130,6 +138,27 @@ function Itineraries() {
 		return () => clearTimeout(delayDebounceFn);
 	}, [activeFilters]); // Dependency on activeFilters
 
+	const getPriceRange = async () => {
+		const response = priceRange;
+		const converter = await Convert().from("USD").fetch();
+		let responseConverted = {
+			minPrice: await converter.amount(response.minPrice).to(currency),
+			maxPrice: await converter.amount(response.maxPrice).to(currency),
+		}
+		responseConverted = {
+			minPrice: Math.floor(responseConverted.minPrice),
+			maxPrice: Math.ceil(responseConverted.maxPrice),
+		}
+		setPriceRange(responseConverted);
+		setActiveFilters({
+			...activeFilters,
+			price: {
+				min: responseConverted.minPrice,
+				max: responseConverted.maxPrice,
+			},
+		});
+	};
+
 	const fetchTags = async () => {
 		const response = await getAllTags();
 		if (!response.error) {
@@ -143,6 +172,7 @@ function Itineraries() {
 
 	useEffect(() => {
 		fetchTags();
+		getPriceRange();
 	}, []);
 
 	return (
@@ -152,19 +182,23 @@ function Itineraries() {
 				<hr className="border-neutral-300 border w-full mt-1.5" />
 			</div>
 			<div className="flex gap-10">
-				<GenericFilter
-					formFields={formFields}
-					activeFilters={activeFilters}
-					setActiveFilters={setActiveFilters}
-				/>
+				<div className="w-[280px] shrink-0">
+					<GenericFilter
+						formFields={formFields}
+						activeFilters={activeFilters}
+						setActiveFilters={setActiveFilters}
+					/>
+				</div>
 				{!loading ? (
-					<CardContainer cardList={itineraries} cardType={"itinerary"} />
+					<CardContainer
+						cardList={itineraries}
+						cardType={"itinerary"}
+						fetchCardData={fetchItineraries}
+					/>
 				) : (
 					<div className="flex col-span-3 mx-auto">
 						<div className="flex justify-center w-full">
-							<p className="text-neutral-400 text-sm italic">
-								Loading...
-							</p>
+							<p className="text-neutral-400 text-sm italic">Loading...</p>
 						</div>
 					</div>
 				)}

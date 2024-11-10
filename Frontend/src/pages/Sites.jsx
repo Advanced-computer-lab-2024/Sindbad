@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 import GenericFilter from "@/components/custom/GenericFilter";
-import CardContainer from "@/components/custom/CardContainer";
+import CardContainer from "@/components/custom/cards/CardContainer";
 
 import { getAllSites } from "@/services/SiteApiHandler";
 import { getAllTags } from "@/services/AdminApiHandler";
@@ -84,19 +84,23 @@ function Sites() {
 				<hr className="border-neutral-300 border w-full mt-1.5" />
 			</div>
 			<div className="flex gap-10">
-				<GenericFilter
-					formFields={formFields}
-					activeFilters={activeFilters}
-					setActiveFilters={setActiveFilters}
-				/>
+				<div className="w-[280px] shrink-0">
+					<GenericFilter
+						formFields={formFields}
+						activeFilters={activeFilters}
+						setActiveFilters={setActiveFilters}
+					/>
+				</div>
 				{!loading ? (
-					<CardContainer cardList={sites} cardType={"site"} />
+					<CardContainer
+						cardList={sites}
+						cardType={"site"}
+						fetchCardData={fetchSites}
+					/>
 				) : (
 					<div className="flex col-span-3 mx-auto">
 						<div className="flex justify-center w-full">
-							<p className="text-neutral-400 text-sm italic">
-								Loading...
-							</p>
+							<p className="text-neutral-400 text-sm italic">Loading...</p>
 						</div>
 					</div>
 				)}

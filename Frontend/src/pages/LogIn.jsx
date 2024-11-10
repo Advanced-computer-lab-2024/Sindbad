@@ -10,7 +10,12 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
 import { useDispatch } from 'react-redux';
-import { useUser, login } from "@/state management/userInfo";
+import { useUser, login, setCurrency } from "@/state management/userInfo";
+
+import { getTouristById } from "@/services/TouristApiHandler";
+import { getTourGuide } from "@/services/TourGuideApiHandler";
+import { getSeller } from "@/services/SellerApiHandler";
+import { getAdvertiser } from "@/services/AdvertiserApiHandler";
 
 function LogIn() {
     const dispatch = useDispatch();
@@ -51,21 +56,49 @@ function LogIn() {
         defaultValues: touristDefaultValues,
     });
 
-    function onSubmit(values) {
+    const getTouristPreferredCurrency = async (touristId) => {
+        const tourist = await getTouristById(touristId);
+        return tourist.preferredCurrency;
+    };
+
+    const getTourGuidePreferredCurrency = async (tourGuideId) => {
+        const tourGuide = await getTourGuide(tourGuideId);
+        return tourGuide.preferredCurrency;
+    };
+
+    const getSellerPreferredCurrency = async (sellerId) => {
+        const seller = await getSeller(sellerId);
+        return seller.preferredCurrency;
+    };
+
+    const getAdvertiserPreferredCurrency = async (advertiserId) => {
+        const advertiser = await getAdvertiser(advertiserId);
+        return advertiser.preferredCurrency;
+    };
+
+    async function onSubmit(values) {
         if (values.username === "tourist" && values.password === "tourist") {
-            dispatch(login({ role: "tourist", id: "672501d2d5a2d7588e2ce414" }));
+            dispatch(login({ role: "tourist", id: "672faf6be3120c5df6679670" }));
+            const currency = await getTouristPreferredCurrency("672faf6be3120c5df6679670");
+            dispatch(setCurrency(currency));
             navigate(`/app/itineraries`, { replace: true });
         }
         else if (values.username === "tourGuide" && values.password === "tourGuide") {
             dispatch(login({ role: "tourGuide", id: "6725031bd5a2d7588e2ce42a" }));
+            const currency = await getTourGuidePreferredCurrency("6725031bd5a2d7588e2ce42a");
+            dispatch(setCurrency(currency));
             navigate(`/app/profile`, { replace: true });
         }
         else if (values.username === "seller" && values.password === "seller") {
             dispatch(login({ role: "seller", id: "67252de1d5a2d7588e2ce7fe" }));
+            const currency = await getSellerPreferredCurrency("67252de1d5a2d7588e2ce7fe");
+            dispatch(setCurrency(currency));
             navigate(`/app/store`, { replace: true });
         }
         else if (values.username === "advertiser" && values.password === "advertiser") {
             dispatch(login({ role: "advertiser", id: "672505d8d5a2d7588e2ce4a2" }));
+            const currency = await getAdvertiserPreferredCurrency("672505d8d5a2d7588e2ce4a2");
+            dispatch(setCurrency(currency));
             navigate(`/app/profile`, { replace: true });
         }
         else if (values.username === "tourismGovernor" && values.password === "tourismGovernor") {
@@ -78,6 +111,7 @@ function LogIn() {
         }
         else if (values.username === "guest" && values.password === "guest") {
             dispatch(login({ role: "guest", id: null }));
+            dispatch(setCurrency("USD"));
             navigate(`/app/itineraries`, { replace: true });
         }
         else {

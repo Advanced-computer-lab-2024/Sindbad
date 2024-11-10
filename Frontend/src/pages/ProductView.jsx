@@ -1,18 +1,29 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import ImagePlaceholder from "@/components/custom/ImagePlaceholder";
+import StarRating from "@/components/custom/StarRating";
+
+import { Button } from "@/components/ui/button";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+
+import { ShoppingCart } from "lucide-react";
 
 import { getProductById } from "@/services/ProductApiHandler";
+import RatingReview from "@/components/custom/RatingReview";
+import { useUser, useCurrency } from "@/state management/userInfo";
+import { Convert } from "easy-currencies";
 
 function ProductView() {
 	const { productId } = useParams();
 	const [error, setError] = useState(false);
-	const [productData, setProductData] = useState(null);
+	const [product, setProduct] = useState(null);
 	const [totalRatings, setTotalRatings] = useState(0);
-	const navigate = useNavigate();
+	const { role, id } = useUser();
+	const currency = useCurrency();
+	const [convertedPrice, setConvertedPrice] = useState(null);
 
-	const getProductData = async (productId) => {
+	const getProduct = async (productId) => {
 		const response = await getProductById(productId);
 
 		if (response.error) {
@@ -20,25 +31,40 @@ function ProductView() {
 			console.error(response.message);
 		} else {
 			setError(false);
-			setProductData(response);
+			setProduct(response);
 			setTotalRatings(
 				Object.values(response.rating).reduce((acc, cur) => acc + cur, 0)
 			);
 		}
 	};
 
-	// Helper function to calculate the percentage of each rating
-	const getRatingPercentage = (count) => {
-		return ((count / totalRatings) * 100).toFixed(1); // Rounded to 1 decimal place
-	};
-
 	useEffect(() => {
 		if (productId) {
-			getProductData(productId);
+			getProduct(productId);
 		}
 	}, [productId]);
 
-	if (!productData) {
+	useEffect(() => {
+		const fetchConversionRate = async () => {
+			try {
+				const convert = await Convert().from("USD").fetch();
+
+				if (product.price) {
+					const rate = await convert.amount(product.price).to(currency);
+					setConvertedPrice(rate);
+				}
+			} catch (error) {
+				console.error("Error fetching conversion rate:", error);
+				setConvertedPrice(null); // Reset on error
+			}
+		};
+
+		if (product) {
+			fetchConversionRate();
+		}
+	}, [currency, product]);
+
+	if (!product) {
 		return (
 			<div className="py-8 px-24 max-w-[1200px] flex gap-9 mx-auto">
 				<div className="flex justify-center w-full">
@@ -51,131 +77,100 @@ function ProductView() {
 	}
 
 	return (
-		<div className="py-8 px-24 max-w-[1200px] flex flex-col gap-9 mx-auto">
-			<>
-				{/* Product Info */}
-				<div className="flex flex-row gap-8">
-					{/* Product Image */}
-					{productData.imageUris ? (
-						<div className="border w-1/2 rounded-md border-neutral-800">
-							<img
-								src={productData.imageUris[0]}
-								alt={productData.name}
-								className="object-cover h-full w-full"
-							/>
-						</div>
-					) : (
-						<div className="w-1/2 rounded-md h-96">
-							<ImagePlaceholder />
-						</div>
-					)}
-
-					{/* Product Details */}
-					<div className="w-1/2 p-6 flex flex-col justify-between">
+		<div className="py-8 px-24 max-w-[1200px] mx-auto">
+			<div className="flex items-center gap-6">
+				<h1 className="text-3xl font-extrabold shrink-0">{product.name}</h1>
+				<hr className="border-neutral-300 border w-full mt-1.5" />
+			</div>
+			{/* Product Info */}
+			<div className="flex justify-between gap-32 py-6">
+				<div className="flex flex-col w-full justify-between">
+					<div className="flex flex-col gap-6 w-full">
 						<div>
-							{/* Product Title */}
-							<h1 className="text-2xl font-bold mb-4">{productData.name}</h1>
-
-							{/* Price */}
-							<p className="text-xl font-semibold mb-4">
-								{productData.price} EGP
-							</p>
-
-							{/* Description */}
-							<p className="mb-6">{productData.description}</p>
-
-							{/* Seller */}
-							<div className="flex items-center mb-4">
-								{productData.seller && productData.seller !== null ? (
+							<div className="flex items-center text-base font-medium">
+								{product.creatorId && product.creatorId !== null ? (
 									<>
-										<span className="">Sold by:</span>
-										<a
-											className="ml-2 hover:underline cursor-pointer"
-											href={`/app/profile/${productData.seller?._id}`}
-											rel="noreferrer"
-										>
-											{productData.seller?.firstName}{" "}
-											{productData.seller?.lastName}
-										</a>
+										<span>Sold by{" "}
+											<a
+												className="hover:underline cursor-pointer"
+												href={`/app/profile/${product.creatorId?._id}`}
+												rel="noreferrer"
+											>
+												{product.creatorId?.firstName}{" "}
+												{product.creatorId?.lastName}
+											</a>
+										</span>
 									</>
 								) : (
-									<span className="">Sold by Sindbad</span>
+									<span>Sold by Sindbad</span>
 								)}
 							</div>
 
-							{/* Ratings */}
-							<div className="flex items-center mb-6">
-								<p className="leading-[11px] font-medium">
-									Rating:{" "}
-									{productData.averageRating
-										? `${Math.round(productData.averageRating * 2) / 2} / 5`
-										: "N/A"}
-								</p>
-								{/* <p className="ml-2 text-gray-600">(123 reviews)</p> */}
+							{/*Star Section */}
+							<div className="mt-1 flex gap-1 items-end">
+								<StarRating rating={product.averageRating} size={20} />
+								<p className="text-xs text-neutral-400">{"(" + totalRatings + " ratings)"}</p>
 							</div>
 						</div>
 
-						{/* Call to Action */}
-						<button className="mt-auto bg-blue-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-600 transition">
-							Add to Cart
-						</button>
+						{/* Price */}
+						{convertedPrice &&
+							<p className="text-lg font-semibold mb-1">
+								{convertedPrice.toFixed(2)} {currency}
+							</p>
+						}
+
+						{/* Description */}
+						<p className="text-sm">{product.description}</p>
+
+						{(product.creatorId?._id === id || (role === "admin" && product.creatorId === null)) &&
+							<div className="flex flex-col gap-2">
+								<h2 className="text-base font-semibold">
+									Quantity: <span className="text-sm font-normal">{product.quantity}</span>
+								</h2>
+								<h2 className="text-base font-semibold">
+									Sales: <span className="text-sm font-normal">{product.numSales}</span>
+								</h2>
+							</div>
+						}
+					</div>
+
+					<div>
+						<Button>
+							<p>
+								Add to cart
+							</p>
+							<ShoppingCart size={24} className="shrink-0" />
+						</Button>
 					</div>
 				</div>
-
-				{/* Ratings and Reviews */}
-				<div className="mt-8 flex flex-col md:flex-row">
-					{/* Ratings Breakdown */}
-					<div className="w-1/3 pr-8">
-						<h2 className="text-2xl font-bold mb-4">Ratings</h2>
-
-						{/* Ratings Summary */}
-						<div className="space-y-2">
-							{[5, 4, 3, 2, 1, 0].map((star) => (
-								<div key={star} className="flex items-center">
-									<span className="w-12">{star} star</span>
-									<div className="flex-grow bg-neutral-200 rounded-lg h-3 mx-2">
-										<div
-											className="bg-yellow-400 h-3 rounded-lg"
-											style={{
-												width: `${getRatingPercentage(
-													productData?.averageRating?.[star] || 0
-												)}%`,
-											}}
-										></div>
-									</div>
-									<span className="ml-2">
-										{getRatingPercentage(
-											productData?.averageRating?.[star] || 0
-										)}
-										%
-									</span>
-								</div>
-							))}
-						</div>
-					</div>
-
-					{/* Reviews Section */}
-					<div className="w-2/3 mt-0">
-						<h2 className="text-2xl font-bold mb-4">Customer Reviews</h2>
-						<div className="space-y-6">
-							{productData.reviews?.map((review) => (
-								<div key={review._id} className="p-4 rounded-md shadow">
-									<div className="flex items-center mb-2">
-										<p className="font-semibold">{review.username}</p>
-										<div className="flex items-center ml-2 text-yellow-400">
-											<span>
-												{"★".repeat(review.rating)}
-												{"☆".repeat(5 - review.rating)}
-											</span>
-										</div>
-									</div>
-									<p className="">{review.comment}</p>
-								</div>
-							))}
-						</div>
-					</div>
+				{/* Product Image */}
+				<div className="h-[400px] w-[400px] shrink-0">
+					<Carousel>
+						<CarouselContent>
+							{product.imageUris.length !== 0 ? (
+								product.imageUris.map((image, index) => (
+									<CarouselItem key={index} className="h-[400px] w-[400px]">
+										<img
+											src={image}
+											alt={`Image ${index + 1}`}
+											className="h-full w-full object-cover rounded-md border border-neutral-300"
+										/>
+									</CarouselItem>
+								))
+							) : (
+								<CarouselItem className="h-[400px]">
+									<ImagePlaceholder />
+								</CarouselItem>
+							)}
+						</CarouselContent>
+						<CarouselPrevious />
+						<CarouselNext />
+					</Carousel>
 				</div>
-			</>
+			</div>
+			<hr className="border-neutral-300 border w-full mt-1.5" />
+			<RatingReview data={product} totalRatings={totalRatings} type="review" fetchData={() => getProduct(productId)} />
 		</div>
 	);
 }

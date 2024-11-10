@@ -9,6 +9,9 @@ import { siteSchema } from "./form-schemas/siteSchema";
 import { productSchema } from "./form-schemas/productSchema";
 import { companyProfileSchema } from "./form-schemas/companyProfileSchema";
 import { previousWorkSchema } from "./form-schemas/previousWorkSchema";
+import { tourismGovernorSchema } from "./form-schemas/tourismGovernorSchema";
+import { hotelBookingSchema } from "./form-schemas/hotelBookingSchema";
+import { adminSchema } from "./form-schemas/adminSchema";
 import { complaintSchema } from "./form-schemas/complaintSchema";
 
 //import rendered fields here
@@ -22,6 +25,9 @@ import { tourGuide } from "./rendered-fields/tourGuideFields";
 import { seller } from "./rendered-fields/sellerFields";
 import { advertiser } from "./rendered-fields/advertiserFields";
 import { itinerary } from "./rendered-fields/itineraryFields";
+import { tourismGovernor } from "./rendered-fields/tourismGovernorFields";
+import { hotelBooking } from "./rendered-fields/hotelBookingFields";
+import { admin } from "./rendered-fields/adminFields";
 import { complaint } from "./rendered-fields/complaintFields";
 
 //import submit handlers here
@@ -35,6 +41,9 @@ import { siteSubmit } from "./submit-handlers/siteHandler";
 import { productSubmit } from "./submit-handlers/productHandler";
 import { companySubmit } from "./submit-handlers/companyHandler";
 import { experienceSubmit } from "./submit-handlers/experienceHandler";
+import { tourismGovernorSubmit } from "./submit-handlers/tourismGovernorHandler";
+import { hotelBookingSubmit } from "./submit-handlers/hotelBookingHandler";
+import { adminSubmit } from "./submit-handlers/adminHandler";
 import { complaintSubmit } from "./submit-handlers/complaintHandler";
 
 /*
@@ -59,76 +68,96 @@ import { complaintSubmit } from "./submit-handlers/complaintHandler";
 */
 
 export const forms = {
+	tourist: {
+		zodSchema: touristSchema,
+		renderedFields: tourist.fields,
+		defaultValues: tourist.defaultValues,
+		onSubmit: touristSubmit,
+	},
 
-  tourist: {
-    zodSchema: touristSchema,
-    renderedFields: tourist.fields,
-    defaultValues: tourist.defaultValues,
-    onSubmit: touristSubmit,
-  },
+	tourGuide: {
+		zodSchema: tourGuideSchema,
+		renderedFields: tourGuide.fields,
+		defaultValues: tourGuide.defaultValues,
+		onSubmit: tourGuideSubmit,
+	},
 
-  tourGuide: {
-    zodSchema: tourGuideSchema,
-    renderedFields: tourGuide.fields,
-    defaultValues: tourGuide.defaultValues,
-    onSubmit: tourGuideSubmit,
-  },
+	seller: {
+		zodSchema: sellerSchema,
+		renderedFields: seller.fields,
+		defaultValues: seller.defaultValues,
+		onSubmit: sellerSubmit,
+	},
 
-  seller: {
-    zodSchema: sellerSchema,
-    renderedFields: seller.fields,
-    defaultValues: seller.defaultValues,
-    onSubmit: sellerSubmit,
-  },
+	itinerary: {
+		zodSchema: itinerarySchema,
+		renderedFields: itinerary.fields,
+		defaultValues: itinerary.defaultValues,
+		onSubmit: itinerarySubmit,
+	},
 
-  itinerary: {
-    zodSchema: itinerarySchema,
-    renderedFields: itinerary.fields,
-    defaultValues: itinerary.defaultValues,
-    onSubmit: itinerarySubmit,
-  },
+	advertiser: {
+		zodSchema: advertiserSchema,
+		renderedFields: advertiser.fields,
+		defaultValues: advertiser.defaultValues,
+		onSubmit: advertiserSubmit,
+	},
 
-  advertiser: {
-    zodSchema: advertiserSchema,
-    renderedFields: advertiser.fields,
-    defaultValues: advertiser.defaultValues,
-    onSubmit: advertiserSubmit,
-  },
+	activity: {
+		zodSchema: activitySchema,
+		renderedFields: activity.fields,
+		defaultValues: activity.defaultValues,
+		onSubmit: activitySubmit,
+	},
 
-  activity: {
-    zodSchema: activitySchema,
-    renderedFields: activity.fields,
-    defaultValues: activity.defaultValues,
-    onSubmit: activitySubmit,
-  },
+	site: {
+		zodSchema: siteSchema,
+		renderedFields: site.fields,
+		defaultValues: site.defaultValues,
+		onSubmit: siteSubmit,
+	},
 
-  site: {
-    zodSchema: siteSchema,
-    renderedFields: site.fields,
-    defaultValues: site.defaultValues,
-    onSubmit: siteSubmit,
-  },
+	product: {
+		zodSchema: productSchema,
+		renderedFields: product.fields,
+		defaultValues: product.defaultValues,
+		onSubmit: productSubmit,
+	},
 
-  product: {
-    zodSchema: productSchema,
-    renderedFields: product.fields,
-    defaultValues: product.defaultValues,
-    onSubmit: productSubmit,
-  },
+	company: {
+		zodSchema: companyProfileSchema,
+		renderedFields: company.fields,
+		defaultValues: company.defaultValues,
+		onSubmit: companySubmit,
+	},
 
-  company: {
-    zodSchema: companyProfileSchema,
-    renderedFields: company.fields,
-    defaultValues: company.defaultValues,
-    onSubmit: companySubmit,
-  },
+	experience: {
+		zodSchema: previousWorkSchema,
+		renderedFields: previousWork.fields,
+		defaultValues: previousWork.defaultValues,
+		onSubmit: experienceSubmit,
+	},
 
-  experience: {
-    zodSchema: previousWorkSchema,
-    renderedFields: previousWork.fields,
-    defaultValues: previousWork.defaultValues,
-    onSubmit: experienceSubmit,
-  },
+	tourismGovernor: {
+		zodSchema: tourismGovernorSchema,
+		renderedFields: tourismGovernor.fields,
+		defaultValues: tourismGovernor.defaultValues,
+		onSubmit: tourismGovernorSubmit,
+	},
+
+	hotelBooking: {
+		zodSchema: hotelBookingSchema,
+		renderedFields: hotelBooking.fields,
+		defaultValues: hotelBooking.defaultValues,
+		onSubmit: hotelBookingSubmit,
+	},
+
+	admin: {
+		zodSchema: adminSchema,
+		renderedFields: admin.fields,
+		defaultValues: admin.defaultValues,
+		onSubmit: adminSubmit,
+	},
 
   complaint: {
     zodSchema:complaintSchema,
