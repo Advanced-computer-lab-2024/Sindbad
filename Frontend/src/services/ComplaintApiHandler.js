@@ -35,3 +35,26 @@ export const replyToComplaint = async (complaintId, isResolved, comment) => {
         return error;
     }
 }
+
+export const getMyComplaints = async (creatorId) => {
+    try{
+        let complaints = await axiosInstance.get(`/complaint/my-complaints/${creatorId}`, 
+            {
+            resourceName: "Complaint",
+            });
+        return complaints;
+    }catch (error){
+        console.error("Error fetching compaints: ", error);
+        return error;
+    }
+}
+
+export const createComplaint = async (complaintData) => {
+    try {
+        const response = await axiosInstance.post(`/complaint`, complaintData);
+        console.log(response.data);
+        return response.data;
+    } catch (error){
+        return error;
+    }
+};

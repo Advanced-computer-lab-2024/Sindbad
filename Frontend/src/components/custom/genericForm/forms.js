@@ -12,6 +12,7 @@ import { previousWorkSchema } from "./form-schemas/previousWorkSchema";
 import { tourismGovernorSchema } from "./form-schemas/tourismGovernorSchema";
 import { hotelBookingSchema } from "./form-schemas/hotelBookingSchema";
 import { adminSchema } from "./form-schemas/adminSchema";
+import { complaintSchema } from "./form-schemas/complaintSchema";
 
 //import rendered fields here
 import { tourist } from "./rendered-fields/touristFields";
@@ -27,6 +28,7 @@ import { itinerary } from "./rendered-fields/itineraryFields";
 import { tourismGovernor } from "./rendered-fields/tourismGovernorFields";
 import { hotelBooking } from "./rendered-fields/hotelBookingFields";
 import { admin } from "./rendered-fields/adminFields";
+import { complaint } from "./rendered-fields/complaintFields";
 
 //import submit handlers here
 import { touristSubmit } from "./submit-handlers/touristHandler";
@@ -42,6 +44,7 @@ import { experienceSubmit } from "./submit-handlers/experienceHandler";
 import { tourismGovernorSubmit } from "./submit-handlers/tourismGovernorHandler";
 import { hotelBookingSubmit } from "./submit-handlers/hotelBookingHandler";
 import { adminSubmit } from "./submit-handlers/adminHandler";
+import { complaintSubmit } from "./submit-handlers/complaintHandler";
 
 /*
     Forms for the generic form component should be generated based on this object:
@@ -154,5 +157,12 @@ export const forms = {
 		renderedFields: admin.fields,
 		defaultValues: admin.defaultValues,
 		onSubmit: adminSubmit,
-	}
+	},
+
+  complaint: {
+    zodSchema:complaintSchema,
+    renderedFields: complaint.fields,
+    defaultValues: complaint.defaultValues,
+    onSubmit: complaintSubmit,
+  }
 };
