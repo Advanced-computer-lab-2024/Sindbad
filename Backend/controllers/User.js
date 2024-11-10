@@ -157,7 +157,10 @@ const UserController = {
 			const results = await Promise.all(
 				Object.entries(models).map(async ([role, model]) => {
 					const users = await model.find({
-						isAccepted: { $ne: null },
+						$or: [
+							{ isAccepted: { $exists: false } },
+							{ isAccepted: { $ne: null } }
+						]
 					});
 					return users.map((user) => ({ ...user._doc, role }));
 				})
