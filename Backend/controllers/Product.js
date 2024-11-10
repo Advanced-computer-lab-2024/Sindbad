@@ -304,6 +304,58 @@ const addReview = async (req, res) => {
     }
 };
 
+
+const buyProduct = async (req, res) => {
+    try {
+        const productId = req.params.id;
+        const { userId} = req.body;
+
+        // if (!quantity || quantity < 1) {
+        //     return res.status(400).json({ message: "Quantity must be at least 1" });
+        // }
+
+        // Find the product by ID
+        const product = await Product.findById(productId);
+
+        if (!product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+
+        // Check if the product has sufficient quantity
+        // if (product.quantity < quantity) {
+        //     return res.status(400).json({ message: "Insufficient quantity available" });
+        // }
+
+		quantity=1;
+
+        // Calculate the total price
+        const totalPrice = product.price
+
+        // Create a new entry in the ProductSales collection
+        const productSale = new ProductSales({
+            productId,
+            buyerId: userId,
+            quantity,
+            totalPrice,
+        });
+
+        await productSale.save();
+
+        // Update the product's numSales and quantity
+        product.numSales += quantity;
+        // product.quantity -= quantity;
+
+        await product.save();
+
+        res.status(201).json({ message: "Product purchased successfully", productSale });
+    } catch (error) {
+        return res.status(500).json({ message: "Error processing purchase", error: error.message });
+    }
+};
+
+module.exports = { buyProduct };
+
+
 /**
  * Deletes a product by ID
  */
