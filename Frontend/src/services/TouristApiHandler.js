@@ -16,7 +16,7 @@ export const getTouristByUsername = async (username) => {
   } catch (error) {
     return error;
   }
-}
+};
 
 export const updateTourist = async (touristId, updatedValues) => {
   try {
@@ -29,17 +29,14 @@ export const updateTourist = async (touristId, updatedValues) => {
   }
 };
 
-export const redeemPoints = async (touristId, updatedValues) => {
+export const redeemPoints = async (touristId) => {
   try {
-    const response = axiosInstance.post(
-      `/tourist/${touristId}`,
-      updatedValues,
-      {
-        resourceName: "Tourist",
-      }
-    );
-    return response.data;
+    const response = await axiosInstance.post(`/tourist/${touristId}`, {
+      resourceName: "Tourist",
+    });
+    return response; // Return only the data from the response
   } catch (error) {
+    console.log(error.status);
     return error;
   }
 };
