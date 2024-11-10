@@ -111,7 +111,9 @@ const addComment = async (req, res) => {
     );
 
     if (!hasBookedActivity) {
-      return res.status(403).json({ message: "Only users who have booked this activity can rate it." });
+      return res.status(403).json({
+        message: "Only users who have booked this activity can rate it.",
+      });
     }
 
     // Find the activity by ID
@@ -134,10 +136,6 @@ const addComment = async (req, res) => {
   }
 };
 
-
-
-
-
 /**
  * Adds a rating to an activity
  *
@@ -152,11 +150,15 @@ const addRating = async (req, res) => {
     const { userId, rating } = req.body;
 
     if (!userId || !rating) {
-      return res.status(401).json({ message: "userId and rating must be included" });
+      return res
+        .status(401)
+        .json({ message: "userId and rating must be included" });
     }
 
     if (rating < 1 || rating > 5) {
-      return res.status(400).json({ message: "Rating must be between 1 and 5." });
+      return res
+        .status(400)
+        .json({ message: "Rating must be between 1 and 5." });
     }
 
     const tourist = await Tourist.findById(userId);
@@ -169,7 +171,9 @@ const addRating = async (req, res) => {
     );
 
     if (!hasBookedActivity) {
-      return res.status(403).json({ message: "Only users who have booked this activity can rate it." });
+      return res.status(403).json({
+        message: "Only users who have booked this activity can rate it.",
+      });
     }
 
     const activity = await Activity.findById(id);
@@ -180,7 +184,9 @@ const addRating = async (req, res) => {
 
     // Check if the user has already rated this activity
     if (activity.userRatings.includes(userId)) {
-      return res.status(403).json({ message: "User has already rated this activity." });
+      return res
+        .status(403)
+        .json({ message: "User has already rated this activity." });
     }
 
     // Ensure that activity.rating is a Map
@@ -210,7 +216,6 @@ const addRating = async (req, res) => {
     });
   }
 };
-
 
 const calculateAverageRating = (ratings) => {
   let totalRating = 0;
@@ -458,6 +463,7 @@ const bookActivity = async (req, res) => {
     const alreadyBooked = tourist.bookedEvents.activities.some(
       (activity) => activity.activityId.toString() === activityId
     );
+
     if (alreadyBooked) {
       return res.status(400).json({ message: "Activity already booked" });
     }
@@ -548,6 +554,16 @@ const cancelBooking = async (req, res) => {
       });
     }
 
+    const isActivityBooked = tourist.bookedEvents.activities.some(
+      (item) => item.activityId.toString() === activityId
+    );
+
+    if (!isActivityBooked) {
+      return res.status(400).json({
+        message: "This activity is not booked.",
+      });
+    }
+
     activity.headCount -= 1;
     await activity.save();
     let priceCharged;
@@ -577,13 +593,11 @@ const cancelBooking = async (req, res) => {
         break;
     }
     tourist.loyaltyPoints = loyaltyPoints;
-    await tourist.save();
 
     let level = tourist.level;
     if (loyaltyPoints > 100000 && loyaltyPoints <= 500000) level = 2;
     if (loyaltyPoints > 500000) level = 3;
     tourist.level = level;
-    await tourist.save();
 
     tourist.bookedEvents.activities = tourist.bookedEvents.activities.filter(
       (activity) => activity.activityId.toString() !== activityId.toString()
@@ -593,7 +607,6 @@ const cancelBooking = async (req, res) => {
 
     res.status(200).json({ message: "Activity cancelled successfully" });
   } catch (error) {
-    console.error("Error canceling activity:", error);
     res.status(500).json({
       message: "Error canceling activity",
       error: error.message,

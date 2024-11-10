@@ -5,6 +5,7 @@ import GoogleMapRead from "@/components/custom/maps/GoogleMapRead";
 import StarRating from "@/components/custom/StarRating";
 import ImagePlaceholder from "@/components/custom/ImagePlaceholder";
 import RatingReview from "@/components/custom/RatingReview";
+import { useToast } from "@/hooks/use-toast";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -17,7 +18,13 @@ import {
 
 import { MapPin, CalendarDays, AlarmClock, ArrowRight } from "lucide-react";
 
-import { getActivityById, bookActivity, addActivityComment, addActivityRating } from "@/services/ActivityApiHandler";
+import {
+    getActivityById,
+    bookActivity,
+    addActivityComment,
+    addActivityRating,
+    cancelBooking,
+} from "@/services/ActivityApiHandler";
 import { getAdvertiser } from "@/services/AdvertiserApiHandler";
 
 import { useUser, useCurrency } from "@/state management/userInfo";
@@ -52,6 +59,7 @@ function Activity() {
     const [totalRatings, setTotalRatings] = useState(0);
     const [error, setError] = useState(false);
     const { id } = useUser();
+    const { toast } = useToast();
     const currency = useCurrency();
     const [convertedPrice, setConvertedPrice] = useState(null);
 
@@ -124,17 +132,23 @@ function Activity() {
         );
     }
 
-    const fullStars = activity.averageRating;
-    const emptyStar = 5 - fullStars;
-
     const handleBooking = async () => {
-        try {
-            const result = await bookActivity(activityId, id); // Attempt to book the activity
-            alert("Booking successful. ");
-        } catch (error) {
-            console.error("Error during booking:", error); // Log the error for debugging
-            alert("Error occured during booking");
-            setError("An error occurred while booking the activity."); // Set a user-friendly error message
+        const response = await bookActivity(activityId, id);
+        if (response.error) {
+            console.error(response.error);
+            toast({ description: "An error occurred, please try again later" });
+        } else {
+            toast({ description: "Successfully booked activity" });
+        }
+    };
+
+    const handleCancelBooking = async () => {
+        const response = await cancelBooking(activityId, id);
+        if (response.error) {
+            console.error(response.error);
+            toast({ description: "An error occurred, please try again later" });
+        } else {
+            toast({ description: "Successfully cancelled booking" });
         }
     };
 
@@ -243,7 +257,7 @@ function Activity() {
                                 {convertedPrice?.min ? (convertedPrice.min).toFixed(2) : activity.price.min}
                                 <span className="text-xl font-medium"> {currency}</span>
                                 <span className=" p-2">-</span>
-                                {convertedPrice?.max ? (convertedPrice?.max).toFixed(2): activity.price.max}
+                                {convertedPrice?.max ? (convertedPrice?.max).toFixed(2) : activity.price.max}
                                 <span className="text-xl font-medium"> {currency}</span>
                             </p>
                         ) : (
@@ -267,12 +281,16 @@ function Activity() {
                         <div className="">
                             {activity.isBookingOpen ? (
                                 <div className="items-center flex flex-col gap-1">
-                                    <Button onClick={handleBooking}>
-                                        Book activity
-                                        <ArrowRight className="inline-block ml-1" size={12} />
-                                    </Button>
-                                    {console.log("my id is " + activityId)}
-                                    {console.log("my id is " + id)}
+                                    <div className="flex gap-2">
+                                        <Button onClick={handleBooking}>
+                                            Book activity
+                                            <ArrowRight className="inline-block ml-1" size={12} />
+                                        </Button>
+                                        {/* Cancel Booking Button */}
+                                        <Button variant="outline" onClick={handleCancelBooking}>
+                                            Cancel booking
+                                        </Button>
+                                    </div>
                                     {activity.headCount > 0 && (
                                         <p className="text-sm text-neutral-400">
                                             {activity.headCount} Sindbad users have already registerd!

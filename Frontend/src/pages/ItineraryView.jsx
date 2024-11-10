@@ -18,9 +18,14 @@ import {
 } from "@/services/ItineraryApiHandler";
 import ImagePlaceholder from "@/components/custom/ImagePlaceholder";
 import { getTourGuide } from "@/services/TourGuideApiHandler";
-import { addItineraryComment, addItineraryRating } from "@/services/ItineraryApiHandler";
+import {
+    addItineraryComment,
+    addItineraryRating,
+    cancelBooking,
+} from "@/services/ItineraryApiHandler";
 import StarRating from "@/components/custom/StarRating";
 import RatingReview from "@/components/custom/RatingReview";
+import { useToast } from "@/hooks/use-toast";
 
 import { useUser, useCurrency } from "@/state management/userInfo";
 import { Convert } from "easy-currencies";
@@ -55,6 +60,7 @@ const Itinerary = () => {
     const { id } = useUser();
     const currency = useCurrency();
     const [convertedPrice, setConvertedPrice] = useState(null);
+    const { toast } = useToast();
 
     const getItinerary = async () => {
         let response = await getItineraryById(itineraryId);
@@ -447,31 +453,59 @@ const Itinerary = () => {
 
                                 <div className="border border-neutral-400 border-dashed -mx-6 mt-4 mb-6"></div>
 
-                                {/* Book Now Button */}
-                                <Button
-                                    className="text-center w-full py-3 relative"
-                                    onClick={async () => {
-                                        try {
-                                            const result = await bookItinerary(
+                                {/* Book Now and Cancel Itinerary Buttons */}
+                                <div className="flex justify-center gap-2">
+                                    {/* Book Now Button */}
+                                    <Button
+                                        className="text-center w-30 py-3 relative bg-white border border-neutral-400 hover:bg-neutral-100"
+                                        onClick={async () => {
+                                            const response = await bookItinerary(
                                                 itineraryId,
                                                 id,
                                                 itinerary.availableDatesTimes[selectedDate].dateTime,
                                                 adult,
                                                 child
                                             );
-                                            alert("Itinerary booked successfully!");
-                                        } catch (error) {
-                                            // Handle any unexpected errors
-                                            console.error("Error during booking:", error);
-                                            alert(
-                                                "An unexpected error occurred while booking. Please try again."
+                                            if (response.error) {
+                                                console.error(response.error);
+                                                toast({
+                                                    description:
+                                                        "An error occurred, please try again later",
+                                                });
+                                            } else {
+                                                toast({ description: "Successfully booked itinerary" });
+                                            }
+                                        }}
+                                    >
+                                        <p>Book itinerary</p>
+                                        <ArrowRight />
+                                    </Button>
+
+                                    {/* Cancel Itinerary Button */}
+                                    <Button
+                                        className="text-center w-22 py-3 relative bg-white border border-neutral-400 hover:bg-neutral-100"
+                                        onClick={async () => {
+                                            const response = await cancelBooking(
+                                                itineraryId,
+                                                id,
+                                                itinerary.availableDatesTimes[selectedDate].dateTime
                                             );
-                                        }
-                                    }}
-                                >
-                                    <p>Book itinerary</p>
-                                    <ArrowRight />
-                                </Button>
+                                            if (response.error) {
+                                                console.error(response.error);
+                                                toast({
+                                                    description:
+                                                        "An error occurred, please try again later",
+                                                });
+                                            } else {
+                                                toast({
+                                                    description: "Successfully cancelled itinerary",
+                                                });
+                                            }
+                                        }}
+                                    >
+                                        <p>Cancel booking</p>
+                                    </Button>
+                                </div>
                             </div>
                         </>
                     )}

@@ -14,34 +14,24 @@ function Wallet({ userData, setUserData }) {
 
     const handleRedeemPoints = async () => {
         try {
-            const response = await fetch(
-                `http://localhost:3000/tourist/${userData._id}`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                }
-            );
+            const result = await redeemPoints(id);
 
-            if (!response.ok) {
-                throw new Error("Failed to redeem points");
+            if (result.status === 200) {
+                alert(result.data.message);
+                setUserData((prevData) => ({
+                    ...prevData,
+                    wallet: result.wallet,
+                    loyaltyPoints: result.loyaltyPoints,
+                }));
+            } else {
+                if (result.status === 400) alert("You don't have any points to redeem");
+                else alert("An error occurred while redeeming points.");
             }
-
-            //   const data = await response.json();
-            //   if (data.loyaltyPoints === 0) {
-            //     alert("You don't have any points to redeem");
-            //   }
-
-            setUserData((prevData) => ({
-                ...prevData,
-                wallet: data.wallet,
-            }));
         } catch (error) {
-            console.error("Error redeeming points:", error);
-            alert("Error redeeming points: " + error.message);
+            alert("An error occurred while redeeming points.");
         }
     };
+
 
     useEffect(() => {
         const fetchConversionRate = async () => {
@@ -76,6 +66,15 @@ function Wallet({ userData, setUserData }) {
                                 {convertedPrice} {currency}
                             </h3>
                         }
+                    </div>
+                    {/* Loyalty Points Section */}
+                    <div className="flex flex-col items-center">
+                        <h4 className="text-center font-semibold text-base text-neutral-500 mb-1.5">
+                            Loyalty Points
+                        </h4>
+                        <h3 className="font-inter font-bold text-xl text-center">
+                            {userData.loyaltyPoints}
+                        </h3>
                     </div>
                 </div>
                 <Button variant="rounded" onClick={handleRedeemPoints}>

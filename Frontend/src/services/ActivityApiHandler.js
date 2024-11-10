@@ -129,19 +129,19 @@ export const bookActivity = async (activityId, userId) => {
 };
 
 export const setActivityInappropriate = async (activityId, isInappropriate) => {
-	try {
-		const response = await axiosInstance.patch(
-			`/activity/set-inappropriate/${activityId}`,
-			isInappropriate,
-			{
-				resourceName: "Activity",
-			}
-		)
-		return response.data;
-	} catch (error) {
-		return error;
-	}
-}
+  try {
+    const response = await axiosInstance.patch(
+      `/activity/set-inappropriate/${activityId}`,
+      isInappropriate,
+      {
+        resourceName: "Activity",
+      }
+    );
+    return response.data;
+  } catch (error) {
+    return error;
+  }
+};
 
 export const addActivityRating = async (activityId, ratingData) => {
   try {
@@ -170,5 +170,28 @@ export const addActivityComment = async (activityId, commentData) => {
     return response.data;
   } catch (error) {
     return error;
+  }
+};
+
+export const cancelBooking = async (activityId, userId) => {
+  try {
+    const response = await axiosInstance.post(
+      `/activity/cancel/`,
+      {
+        activityId,
+        userId,
+      },
+      {
+        headers: {
+          resourceName: "Activity",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error during cancelBooking:", error);
+    throw new Error(
+      error.response?.data?.message || "You can't cancel this booking"
+    );
   }
 };

@@ -97,6 +97,9 @@ const updateTourist = async (req, res) => {
   if (req.body.wallet != null) {
     res.tourist.wallet = req.body.wallet;
   }
+  if (req.body.preferences != null) {
+    res.tourist.preferences = req.body.preferences;
+  }
   if (req.body.profileImageUri != null) {
     res.tourist.profileImageUri = req.body.profileImageUri;
   }
@@ -148,6 +151,10 @@ const redeemPoints = async (req, res) => {
     if (!tourist) {
       return res.status(404).json({ message: "Tourist not found" });
     }
+    if (tourist.loyaltyPoints === 0)
+      return res
+        .status(400)
+        .json({ message: "You don't have any points to redeem" });
 
     tourist.wallet += tourist.loyaltyPoints / 100;
     tourist.loyaltyPoints = 0;
