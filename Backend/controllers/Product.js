@@ -203,44 +203,105 @@ const addRating = async (req, res) => {
 
 //add review by id
 const addReview = async (req, res) => {
-	try {
-		const product = await Product.findById(req.params.id);
-		if (!product) {
-			return res.status(404).json({ message: "Product not found" });
-		}
-		const { userId, comment} = req.body;
+    try {
+        const product = await Product.findById(req.params.id);
+        const { userId, rating, comment } = req.body;
 
-		if(!userId || !comment){
-				return res.status(401)
-				.json({message: "userId and comment must be included "})
-		}
-		
-		const tourist = await Tourist.findById(userId);
-		if (!tourist) {
-		  return res.status(404).json({ message: "User not found" });
-		}
+        if (!product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
 
-		// Check if the user has purchased this product before
-		const purchaseRecord = await ProductSales.findOne({
-			productId: product,
-			buyerId: userId,
-		});
+        const purchaseRecord = await ProductSales.findOne({
+            productId: product,
+            buyerId: userId,
+        });
 
-		if (!purchaseRecord) {
-			return res.status(403).json({ message: "User has not purchased this product and cannot review it." });
-		}
+        if (!purchaseRecord) {
+            return res.status(403).json({ message: "User has not purchased this product and cannot review it." });
+        }
 
-		const newReview = { userId, comment };
-		product.reviews.push(newReview);
+        if (!rating && !comment) {
+            return res.status(403).json({ message: "User must add a rating or a comment or both" });
+        }
 
-		await product.save();
+        // Find the existing review
+        const existingReviewIndex = product.reviews.findIndex(review => review.userId === userId);
+        let reviewUpdated = false;
 
-		res.status(201).json({ message: "Review added successfully", product });
-	} catch (error) {
-		return res
-			.status(500)
-			.json({ message: "Error adding review", error: error.message });
-	}
+        if (existingReviewIndex !== -1) {
+            // Review exists, check if it already has a rating
+            const existingReview = product.reviews[existingReviewIndex];
+
+            if (rating && existingReview.rating !== undefined) {
+                return res.status(403).json({ message: "Rating cannot be updated once set. Only comments can be updated." });
+            }
+
+            // Update the comment if provided
+            if (comment) {
+                existingReview.comment = comment;
+                reviewUpdated = true;
+            }
+
+            // Add a rating only if none exists
+            if (rating && existingReview.rating === undefined) {
+
+				if (rating < 1 || rating > 5) {
+					return res.status(400).json({ message: "Rating must be between 1 and 5." });
+				}
+
+                if (!(product.rating instanceof Map)) {
+                    product.rating = new Map(Object.entries(product.rating));
+                }
+
+                product.rating.set(
+                    rating.toString(),
+                    (product.rating.get(rating.toString()) || 0) + 1
+                );
+
+                existingReview.rating = rating;
+                product.userRatings.push(userId);
+                reviewUpdated = true;
+            }
+
+            product.reviews[existingReviewIndex] = existingReview;
+        } else {
+            // Add a new review if not found
+            const newReview = { userId, rating, comment };
+
+            product.reviews.push(newReview);
+
+            if (rating) {	
+				if (rating < 1 || rating > 5) {
+					return res.status(400).json({ message: "Rating must be between 1 and 5." });
+				}
+
+                if (!(product.rating instanceof Map)) {
+                    product.rating = new Map(Object.entries(product.rating));
+                }
+
+                product.rating.set(
+                    rating.toString(),
+                    (product.rating.get(rating.toString()) || 0) + 1
+                );
+
+                product.userRatings.push(userId);
+            }
+
+            reviewUpdated = true;
+        }
+
+        // Recalculate average rating if a rating was added
+        if (rating) {
+            product.averageRating = calculateAverageRating(product.rating);
+        }
+
+        await product.save();
+
+        const responseMessage = reviewUpdated ? "Review updated successfully" : "Review added successfully";
+        res.status(201).json({ message: responseMessage, product });
+    } catch (error) {
+        return res.status(500).json({ message: "Error adding or updating review", error: error.message });
+    }
 };
 
 /**
