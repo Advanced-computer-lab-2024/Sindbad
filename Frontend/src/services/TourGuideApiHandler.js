@@ -51,6 +51,7 @@ export const removeTourGuideWork = async (userId, experienceId) => {
 	}
 };
 export const updateTourGuideFiles = async (tourGuideId, files) => {
+	console.log("inAPICall")
 	const formData = new FormData();
 
 	if (files.idCardImage) {
