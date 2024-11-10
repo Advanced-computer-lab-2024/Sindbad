@@ -48,15 +48,23 @@ const productSchema = mongoose.Schema(
 			ref: "User",
 			default: [],
 		  },
-		reviews: [
+		  reviews: [
 			{
 				userId: {
-				   type: mongoose.Schema.Types.ObjectId, ref: "User", required: true 
-				  },
-				comment: { 
-				  type: String, required: true 
+					type: String,
+					required: [true, "UserID is required for a review"],
 				},
-			  },
+				rating: {
+					type: Number,
+					min: 1,
+					max: 5,
+					required: [false, "Rating is required"],
+				},
+				comment: {
+					type: String,
+					required: [false, "Comment is required"],
+				},
+			},
 		],
 		quantity: {
 			type: Number,
