@@ -23,7 +23,7 @@ import FlightBooking from "./pages/FlightBooking";
 import HotelBooking from "./pages/HotelBooking";
 import HotelView from "./pages/HotelView";
 import HotelConfirmation from "./pages/HotelConfirmation";
-
+import DeletionRequests from "./components/custom/admin/deletion-requests/deletionRequest";
 import { useUser } from "@/state management/userInfo";
 
 function App() {
@@ -49,6 +49,7 @@ function App() {
 						<Route path="verification" element={<UserVerification />} />
 						<Route path="complaints" element={<ComplaintManagement />} />
 						<Route path="tagcategories" element={<TagCategoryManagement />} />
+						<Route path="deletion-requests" element={<DeletionRequests/>} />
 					</Route>
 					<Route path="booking" element={<Booking />}>
 						<Route path="" element={<Navigate to="hotel" replace />} />

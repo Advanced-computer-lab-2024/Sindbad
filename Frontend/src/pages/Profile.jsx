@@ -226,7 +226,7 @@ function Profile() {
 					{profileRole === "tourGuide" && (
 						<Experience userData={userData} profileId={profileId} id={id} />
 					)}
-					{(role === "admin" || (id === profileId && userData.isAccepted !== true && userData.isAccepted !== undefined)) &&
+					{rejectable() === true && ((role === "admin") || (myProfile() === true && userData.isAccepted !== true)) &&
 						<Documents userData={userData} />
 					}
 					{!(userData.isAccepted === null && role === "admin") &&
