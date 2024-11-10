@@ -268,7 +268,7 @@ function Activity() {
                             </p>
                         )}
 
-                        {activity.discounts && activity.discounts > 0 && (
+                        {activity.discounts > 0 && (
                             <p className="text-sm">
                                 <span className="text-primary-950 font-semibold">
                                     {activity.discounts}%
