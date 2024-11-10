@@ -595,6 +595,7 @@ const cancelBooking = async (req, res) => {
     tourist.loyaltyPoints = loyaltyPoints;
 
     let level = tourist.level;
+    if (loyaltyPoints <= 100000) level = 1;
     if (loyaltyPoints > 100000 && loyaltyPoints <= 500000) level = 2;
     if (loyaltyPoints > 500000) level = 3;
     tourist.level = level;
