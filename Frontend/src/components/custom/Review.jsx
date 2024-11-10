@@ -35,7 +35,7 @@ function Review({ review }) {
                 </div>
                 <div className="flex flex-col gap-1">
                     <p className="font-semibold">{user?.username}</p>
-                    <StarRating rating={review.rating} size={16} />
+                    {/* <StarRating rating={review.rating} size={16} /> */}
                     <p className="text-sm">{review.comment}</p>
                 </div>
             </div>
