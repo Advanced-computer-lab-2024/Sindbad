@@ -67,11 +67,14 @@ function ShoppingPage() {
 		const convertedMin = activeFilters.price.min / converter.rates[currency];
 		const convertedMax = activeFilters.price.max / converter.rates[currency];
 		// console.log("post conversion", Math.floor(convertedMin), Math.ceil(convertedMax));
+
+		const sort = activeFilters.sortBy.selected === 'Rating: Low to High' ? "asc" : "dsc";
+
 		const response = await getAllProducts(
 			activeFilters.name,
 			convertedMin,
 			convertedMax,
-			activeFilters.sortBy
+			sort
 		);
 		if (!response.error) {
 			setProducts(response);
