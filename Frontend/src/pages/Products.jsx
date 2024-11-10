@@ -63,7 +63,7 @@ function ShoppingPage() {
 	const fetchProducts = async () => {
 		setLoading(true);
 		const converter = await Convert().from("USD").fetch();
-		console.log("pre conversion", activeFilters.price.min, activeFilters.price.max);
+		// console.log("pre conversion", activeFilters.price.min, activeFilters.price.max);
 		const convertedMin = activeFilters.price.min / converter.rates[currency];
 		const convertedMax = activeFilters.price.max / converter.rates[currency];
 		// console.log("post conversion", Math.floor(convertedMin), Math.ceil(convertedMax));
