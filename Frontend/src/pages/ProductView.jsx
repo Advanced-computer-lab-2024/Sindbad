@@ -11,7 +11,8 @@ import { ShoppingCart } from "lucide-react";
 
 import { getProductById } from "@/services/ProductApiHandler";
 import RatingReview from "@/components/custom/RatingReview";
-import { useUser } from "@/state management/userInfo";
+import { useUser, useCurrency } from "@/state management/userInfo";
+import { Convert } from "easy-currencies";
 
 function ProductView() {
 	const { productId } = useParams();
@@ -19,6 +20,8 @@ function ProductView() {
 	const [product, setProduct] = useState(null);
 	const [totalRatings, setTotalRatings] = useState(0);
 	const { role, id } = useUser();
+	const currency = useCurrency();
+	const [convertedPrice, setConvertedPrice] = useState(null);
 
 	const getProduct = async (productId) => {
 		const response = await getProductById(productId);
@@ -40,6 +43,26 @@ function ProductView() {
 			getProduct(productId);
 		}
 	}, [productId]);
+
+	useEffect(() => {
+		const fetchConversionRate = async () => {
+			try {
+				const convert = await Convert().from("USD").fetch();
+
+				if (product.price) {
+					const rate = await convert.amount(product.price).to(currency);
+					setConvertedPrice(rate);
+				}
+			} catch (error) {
+				console.error("Error fetching conversion rate:", error);
+				setConvertedPrice(null); // Reset on error
+			}
+		};
+
+		if (product) {
+			fetchConversionRate();
+		}
+	}, [currency, product]);
 
 	if (!product) {
 		return (
@@ -91,9 +114,11 @@ function ProductView() {
 						</div>
 
 						{/* Price */}
-						<p className="text-lg font-semibold mb-1">
-							{product.price} USD
-						</p>
+						{convertedPrice &&
+							<p className="text-lg font-semibold mb-1">
+								{convertedPrice.toFixed(2)} {currency}
+							</p>
+						}
 
 						{/* Description */}
 						<p className="text-sm">{product.description}</p>

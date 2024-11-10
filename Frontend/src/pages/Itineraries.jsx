@@ -6,11 +6,15 @@ import CardContainer from "@/components/custom/cards/CardContainer";
 import { getAllItineraries } from "@/services/ItineraryApiHandler";
 import { getAllTags } from "@/services/AdminApiHandler";
 
+import { useCurrency } from "@/state management/userInfo";
+import { Convert } from "easy-currencies";
+
 function Itineraries() {
 	const [loading, setLoading] = useState(true);
 	const [itineraries, setItineraries] = useState([]);
 	const [tags, setTags] = useState([]);
 	const [tagNames, setTagNames] = useState([]);
+	const currency = useCurrency();
 	const [priceRange, setPriceRange] = useState({
 		minPrice: 0,
 		maxPrice: 1000,
@@ -93,9 +97,15 @@ function Itineraries() {
 		if (activeFilters.tag.selected !== "") {
 			tagToSend = tags.find((tag) => tag.name === activeFilters.tag.selected);
 		}
+
+		const converter = await Convert().from("USD").fetch();
+		const convertedMin = activeFilters.price.min / converter.rates[currency];
+		const convertedMax = activeFilters.price.max / converter.rates[currency];
+		const convertedPrice = { min: convertedMin, max: convertedMax };
+
 		const response = await getAllItineraries(
 			activeFilters.name,
-			activeFilters.price,
+			convertedPrice,
 			activeFilters.date,
 			tagToSend,
 			activeFilters.rating,
@@ -128,6 +138,27 @@ function Itineraries() {
 		return () => clearTimeout(delayDebounceFn);
 	}, [activeFilters]); // Dependency on activeFilters
 
+	const getPriceRange = async () => {
+		const response = priceRange;
+		const converter = await Convert().from("USD").fetch();
+		let responseConverted = {
+			minPrice: await converter.amount(response.minPrice).to(currency),
+			maxPrice: await converter.amount(response.maxPrice).to(currency),
+		}
+		responseConverted = {
+			minPrice: Math.floor(responseConverted.minPrice),
+			maxPrice: Math.ceil(responseConverted.maxPrice),
+		}
+		setPriceRange(responseConverted);
+		setActiveFilters({
+			...activeFilters,
+			price: {
+				min: responseConverted.minPrice,
+				max: responseConverted.maxPrice,
+			},
+		});
+	};
+
 	const fetchTags = async () => {
 		const response = await getAllTags();
 		if (!response.error) {
@@ -141,6 +172,7 @@ function Itineraries() {
 
 	useEffect(() => {
 		fetchTags();
+		getPriceRange();
 	}, []);
 
 	return (

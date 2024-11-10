@@ -16,12 +16,14 @@ import { getAllProducts, getPriceMinMax } from "@/services/ProductApiHandler";
 
 import { CirclePlus } from "lucide-react";
 
-import { useUser } from "@/state management/userInfo";
+import { useUser, useCurrency } from "@/state management/userInfo";
+import { Convert } from "easy-currencies";
 
 function ShoppingPage() {
 	const [products, setProducts] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const { role, id } = useUser();
+	const currency = useCurrency();
 	const [priceRange, setPriceRange] = useState({
 		minPrice: 0,
 		maxPrice: 1000,
@@ -60,10 +62,15 @@ function ShoppingPage() {
 	// Function to fetch products based on filters and sorting order
 	const fetchProducts = async () => {
 		setLoading(true);
+		const converter = await Convert().from("USD").fetch();
+		// console.log("pre conversion", activeFilters.price.min, activeFilters.price.max);
+		const convertedMin = activeFilters.price.min / converter.rates[currency];
+		const convertedMax = activeFilters.price.max / converter.rates[currency];
+		// console.log("post conversion", Math.floor(convertedMin), Math.ceil(convertedMax));
 		const response = await getAllProducts(
 			activeFilters.name,
-			activeFilters.price.min,
-			activeFilters.price.max,
+			convertedMin,
+			convertedMax,
 			activeFilters.sortBy
 		);
 		if (!response.error) {
@@ -86,15 +93,24 @@ function ShoppingPage() {
 	const getPriceRange = async () => {
 		const response = await getPriceMinMax();
 		if (!response.error) {
-			setPriceRange(response);
+			const converter = await Convert().from("USD").fetch();
+			let responseConverted = {
+				minPrice: await converter.amount(response.minPrice).to(currency),
+				maxPrice: await converter.amount(response.maxPrice).to(currency),
+			}
+			responseConverted = {
+				minPrice: Math.floor(responseConverted.minPrice),
+				maxPrice: Math.ceil(responseConverted.maxPrice),
+			}
+			setPriceRange(responseConverted);
 			setActiveFilters({
 				...activeFilters,
 				price: {
-					min: response.minPrice,
-					max: response.maxPrice,
+					min: responseConverted.minPrice,
+					max: responseConverted.maxPrice,
 				},
 			});
-			console.log(response);
+			// console.log(response);
 		} else {
 			console.error(response.message);
 		}
