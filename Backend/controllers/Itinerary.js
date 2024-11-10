@@ -317,10 +317,12 @@ const addComment = async (req, res) => {
     );
 
     if (!hasBookedItinerary) {
-      return res.status(403).json({ message: "Only users who have booked this Itinerary can rate it." });
+      return res.status(403).json({
+        message: "Only users who have booked this Itinerary can rate it.",
+      });
     }
-		// Find the itinerary by ID
-		const itinerary = await Itinerary.findById(id);
+    // Find the itinerary by ID
+    const itinerary = await Itinerary.findById(id);
 
     if (!itinerary) {
       return res.status(405).json({ message: "Itinerary not found" });
@@ -350,21 +352,22 @@ const addComment = async (req, res) => {
  * @returns {Object} 500 - Error message if an error occurs
  */
 const addRating = async (req, res) => {
-	try {
-		const itineraryId = req.params.id;
-		const { userId, rating } = req.body;
-		
-		if(!userId || !rating){
-				return res.status(401)
-				.json({message: "userId and rating must be included "})
-		}
+  try {
+    const itineraryId = req.params.id;
+    const { userId, rating } = req.body;
 
-		// Validate rating value
-		if (!rating || rating < 1 || rating > 5) {
-			return res
-				.status(400)
-				.json({ message: "Invalid rating value. Must be between 1 and 5." });
-		}
+    if (!userId || !rating) {
+      return res
+        .status(401)
+        .json({ message: "userId and rating must be included " });
+    }
+
+    // Validate rating value
+    if (!rating || rating < 1 || rating > 5) {
+      return res
+        .status(400)
+        .json({ message: "Invalid rating value. Must be between 1 and 5." });
+    }
 
     const tourist = await Tourist.findById(userId);
     if (!tourist) {
@@ -376,7 +379,9 @@ const addRating = async (req, res) => {
     );
 
     if (!hasBookedItinerary) {
-      return res.status(403).json({ message: "Only users who have booked this Itinerary can rate it." });
+      return res.status(403).json({
+        message: "Only users who have booked this Itinerary can rate it.",
+      });
     }
 
     const itinerary = await Itinerary.findById(itineraryId);
@@ -388,9 +393,11 @@ const addRating = async (req, res) => {
       itinerary.rating = new Map(Object.entries(itinerary.rating));
     }
 
-        // Check if the user has already rated this activity
+    // Check if the user has already rated this activity
     if (itinerary.userRatings.includes(userId)) {
-      return res.status(403).json({ message: "User has already rated this itinerary." });
+      return res
+        .status(403)
+        .json({ message: "User has already rated this itinerary." });
     }
 
     // Add the rating and update average rating
@@ -512,6 +519,9 @@ const bookItinerary = async (req, res) => {
       return res.status(400).json({ message: "Bookings are currently closed" });
     }
 
+    if (adultTicketCount == 0 && childTicketCount == 0)
+      return res.status(400).json({ message: "Please select ticket count" });
+
     let priceCharged;
     if (typeof itinerary.price === "number") {
       priceCharged = itinerary.price * (adultTicketCount + childTicketCount);
@@ -604,6 +614,12 @@ const cancelBooking = async (req, res) => {
     const itineraryInArray = tourist.bookedEvents.itineraries.find(
       (itinerary) => itinerary.itineraryId.toString() === itineraryId.toString()
     );
+    console.log(itineraryInArray);
+
+    if (!itineraryInArray)
+      return res
+        .status(400)
+        .json({ message: "Itinerary not booked and can't be cancelled" });
 
     let priceCharged;
     if (typeof itinerary.price === "number") {
