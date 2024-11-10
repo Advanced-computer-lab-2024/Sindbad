@@ -12,6 +12,7 @@ import SitesPage from "./pages/Sites";
 import Site from "./pages/SiteView";
 import ShoppingPage from "./pages/Products";
 import ProductView from "./pages/ProductView";
+import ComplaintView from "./pages/TouristComplaints/ComplaintView";
 import AdminManagementView from "./pages/AdminManagementView";
 import ComplaintManagement from "./components/custom/admin/complaint-management/ComplaintManagement";
 import TagCategoryManagement from "./components/custom/admin/TagCategoryManagement";
@@ -62,6 +63,7 @@ function App() {
 					<Route path="itinerary/:itineraryId" element={<Itinerary />} />
 					<Route path="activity/:activityId" element={<Activity />} />
 					<Route path="site/:siteId" element={<Site />} />
+					<Route path="complaints/:creatorId" element={<ComplaintView />} />
 				</Route>
 				<Route path="/login" element={<LogIn />} />
 				<Route path="/signup" element={<SignUp />} />

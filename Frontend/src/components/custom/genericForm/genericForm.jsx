@@ -8,10 +8,13 @@ import { ObjectArrayField } from "./input-fields/ObjectArrayField";
 import { CheckboxField } from "./input-fields/CheckboxField";
 import { CoordinatesField } from "./input-fields/CoordinatesField";
 import { TextField } from "./input-fields/TextField";
+import { TextArea } from './input-fields/TextArea';
 import { forms } from "./forms";
 import { SelectField } from "./input-fields/SelectField";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { useToast } from "@/hooks/use-toast";
+import { Star } from "lucide-react";
 
 export function GenericForm({ type, data, id }) {
 	// If you need more information about how this component works, check out forms.js in the same folder.
@@ -62,14 +65,21 @@ export function GenericForm({ type, data, id }) {
 
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
+	const { toast } = useToast();
 	const handleSubmit = (values) => {
+	try{
 		if (typeof onSubmit === "function") {
 			if (onSubmit.length === 4) {
 				onSubmit(values, id, navigate, dispatch);
 			} else {
 				onSubmit(values, id, data, navigate, dispatch);
 			}
+			
+		toast({ description: "Submitted successfully" });
 		}
+	}catch{
+		toast({ description: "Error occured on submission" });
+	}
 	};
 
 	function renderField(field, path = "") {
@@ -163,7 +173,16 @@ export function GenericForm({ type, data, id }) {
 						label={field.label || field.name.toUpperCase()}
 					/>
 				);
-
+			case 'textArea':
+				return(
+					<TextArea
+						key={fullPath}
+						name={fullPath}
+						control={form.control}
+						type={field.type}
+						label={field.label || field.name.toUpperCase()}
+					/>
+			 	)
 			default:
 				return null;
 		}
