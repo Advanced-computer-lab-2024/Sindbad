@@ -18,7 +18,6 @@ export const hotelBookingSchema = {
 
 		paymentCard: z.object({
 			paymentCardInfo: z.object({
-				vendorCode: z.string().min(1, { message: "Vendor code is required" }),
 				cardNumber: z.string().min(1, { message: "Card number is required" }),
 				expiryDate: z.string().min(1, { message: "Expiry date is required" }),
 				holderName: z

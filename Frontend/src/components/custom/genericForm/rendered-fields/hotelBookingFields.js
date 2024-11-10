@@ -54,11 +54,6 @@ export const hotelBooking = {
               label: "   ",
               fields: [
                 {
-                  name: "vendorCode",
-                  type: "text",
-                  label: "Vendor Code",
-                },
-                {
                   name: "cardNumber",
                   type: "text",
                   label: "Card Number",
