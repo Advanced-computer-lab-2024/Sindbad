@@ -1,10 +1,10 @@
-const multer = require('multer');
+const multer = require("multer");
 const express = require("express");
-const cors = require('cors');
+const cors = require("cors");
 const mongoose = require("mongoose");
 const passport = require("passport");
 const session = require("express-session");
-const Amadeus = require('amadeus');
+const Amadeus = require("amadeus");
 require("dotenv").config();
 
 const adminRoutes = require("./routes/Admin");
@@ -25,18 +25,20 @@ const flightRoutes = require("./routes/flight");
 const AdvertiserController = require("./controllers/Advertiser");
 const SellerController = require("./controllers/Seller");
 const TourGuideController = require("./controllers/TourGuide");
-
+const tripRoutes = require("./routes/Trip");
 
 //Set memory preference to be RAM
 const upload = multer({ storage: multer.memoryStorage() });
 
 const app = express();
 
-app.use(cors({
-  origin: 'http://localhost:5173',
-  methods: 'GET,POST,PUT,DELETE,PATCH',
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    methods: "GET,POST,PUT,DELETE,PATCH",
+    credentials: true,
+  })
+);
 
 // Middleware to parse JSON and URL-encoded data
 app.use(express.json());
@@ -55,32 +57,31 @@ if (process.env.NODE_ENV !== "test") {
 }
 
 app.post(
-  '/advertiser/upload/:id',
+  "/advertiser/upload/:id",
   upload.fields([
-    { name: 'idCardImage', maxCount: 1 },
-    { name: 'taxationRegistryCardImage', maxCount: 1 },
+    { name: "idCardImage", maxCount: 1 },
+    { name: "taxationRegistryCardImage", maxCount: 1 },
   ]),
   AdvertiserController.addAdvertiserDocuments
 );
 
 app.post(
-  '/seller/upload/:id',
+  "/seller/upload/:id",
   upload.fields([
-    { name: 'idCardImage', maxCount: 1 },
-    { name: 'taxationRegistryCardImage', maxCount: 1 },
+    { name: "idCardImage", maxCount: 1 },
+    { name: "taxationRegistryCardImage", maxCount: 1 },
   ]),
   SellerController.addSellerDocuments
 );
 
 app.post(
-  '/tourGuide/upload/:id',
+  "/tourGuide/upload/:id",
   upload.fields([
-    { name: 'idCardImage', maxCount: 1 },
-    { name: 'certificateImage', maxCount: 1 },
+    { name: "idCardImage", maxCount: 1 },
+    { name: "certificateImage", maxCount: 1 },
   ]),
   TourGuideController.addTourGuideDocuments
 );
-
 
 //User routes
 app.use("/user", userRoutes);
@@ -127,9 +128,10 @@ app.use("/complaint", complaintRoutes);
 // flight routes
 app.use("/flight", flightRoutes);
 
+// Trip routes
+app.use("/trip", tripRoutes);
+
 //To work with pictures
-
-
 
 // Fallback route for unknown endpoints
 app.use((req, res, next) => {
