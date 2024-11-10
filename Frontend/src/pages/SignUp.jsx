@@ -161,8 +161,17 @@ function SignUp() {
     };
 
     const submitForm = async (values) => {
+        
         setLoading(true);
-        const response = await userSignUp(values, registerType);
+        const signUpValues = {}
+        
+        for (const key in values) {
+            if (key !== "idCardImage" && key !== "certificateImage" && key !== "taxationRegistryCardImage") {
+                signUpValues[key] = values[key];
+            }
+        }
+
+        const response = await userSignUp(signUpValues, registerType);
         if (registerType === "TourGuide") {
             if (response.error) {
                 setCurrentStep(1);
