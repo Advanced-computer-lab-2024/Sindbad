@@ -1,7 +1,7 @@
 export const complaint = {
     fields: [
-        { name: 'title', type: 'text', label: 'Issue experinced' },
-        { name: 'body', type: 'textArea', label: 'Desription of issue experinced' }
+        { name: 'title', type: 'text', label: 'Issue experienced' },
+        { name: 'body', type: 'textArea', label: 'Desription of issue experienced' }
     ],
     defaultValues: {
         title: "",
