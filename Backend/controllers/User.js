@@ -298,6 +298,8 @@ const UserController = {
 	updateUserPassword: async (req, res) => {
 		const { id } = req.params;
 		const { role, passwordHash } = req.body;
+		console.log(req.body);
+		console.log(req.params)
 
 		if (!role) {
 			return res.status(400).json({ message: "Role is required" });
