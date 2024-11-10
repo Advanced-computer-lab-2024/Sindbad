@@ -6,11 +6,15 @@ import CardContainer from "@/components/custom/cards/CardContainer";
 import { getAllActivities } from "@/services/ActivityApiHandler";
 import { getAllCategories } from "@/services/AdminApiHandler";
 
+import { useCurrency } from "@/state management/userInfo";
+import { Convert } from "easy-currencies";
+
 function Activities() {
 	const [loading, setLoading] = useState(true);
 	const [activities, setActivities] = useState([]);
 	const [categories, setCategories] = useState([]);
 	const [categoryNames, setCategoryNames] = useState([]);
+	const currency = useCurrency();
 	const [priceRange, setPriceRange] = useState({
 		minPrice: 0,
 		maxPrice: 1000,
@@ -90,9 +94,15 @@ function Activities() {
 				(category) => category.name === activeFilters.category.selected
 			);
 		}
+
+		const converter = await Convert().from("USD").fetch();
+		const convertedMin = activeFilters.price.min / converter.rates[currency];
+		const convertedMax = activeFilters.price.max / converter.rates[currency];
+		const convertedPrice = { min: convertedMin, max: convertedMax };
+
 		const response = await getAllActivities(
 			activeFilters.name,
-			activeFilters.price,
+			convertedPrice,
 			activeFilters.date, // Pass start and end separately
 			categoryToSend, // Send the category ID
 			activeFilters.rating,
@@ -120,6 +130,27 @@ function Activities() {
 		return () => clearTimeout(delayDebounceFn);
 	}, [activeFilters]); // Dependency on activeFilters
 
+	const getPriceRange = async () => {
+		const response = priceRange;
+		const converter = await Convert().from("USD").fetch();
+		let responseConverted = {
+			minPrice: await converter.amount(response.minPrice).to(currency),
+			maxPrice: await converter.amount(response.maxPrice).to(currency),
+		}
+		responseConverted = {
+			minPrice: Math.floor(responseConverted.minPrice),
+			maxPrice: Math.ceil(responseConverted.maxPrice),
+		}
+		setPriceRange(responseConverted);
+		setActiveFilters({
+			...activeFilters,
+			price: {
+				min: responseConverted.minPrice,
+				max: responseConverted.maxPrice,
+			},
+		});
+	};
+
 	const fetchCategories = async () => {
 		try {
 			const response = await getAllCategories();
@@ -137,6 +168,7 @@ function Activities() {
 
 	useEffect(() => {
 		fetchCategories();
+		getPriceRange();
 	}, []);
 
 	return (

@@ -101,7 +101,7 @@ function Itineraries() {
 		const converter = await Convert().from("USD").fetch();
 		const convertedMin = activeFilters.price.min / converter.rates[currency];
 		const convertedMax = activeFilters.price.max / converter.rates[currency];
-		const convertedPrice = {min: convertedMin, max: convertedMax};
+		const convertedPrice = { min: convertedMin, max: convertedMax };
 
 		const response = await getAllItineraries(
 			activeFilters.name,
@@ -140,23 +140,23 @@ function Itineraries() {
 
 	const getPriceRange = async () => {
 		const response = priceRange;
-			const converter = await Convert().from("USD").fetch();
-			let responseConverted = {
-				minPrice: await converter.amount(response.minPrice).to(currency),
-				maxPrice: await converter.amount(response.maxPrice).to(currency),
-			}
-			responseConverted = {
-				minPrice: Math.floor(responseConverted.minPrice),
-				maxPrice: Math.ceil(responseConverted.maxPrice),
-			}
-			setPriceRange(responseConverted);
-			setActiveFilters({
-				...activeFilters,
-				price: {
-					min: responseConverted.minPrice,
-					max: responseConverted.maxPrice,
-				},
-			});
+		const converter = await Convert().from("USD").fetch();
+		let responseConverted = {
+			minPrice: await converter.amount(response.minPrice).to(currency),
+			maxPrice: await converter.amount(response.maxPrice).to(currency),
+		}
+		responseConverted = {
+			minPrice: Math.floor(responseConverted.minPrice),
+			maxPrice: Math.ceil(responseConverted.maxPrice),
+		}
+		setPriceRange(responseConverted);
+		setActiveFilters({
+			...activeFilters,
+			price: {
+				min: responseConverted.minPrice,
+				max: responseConverted.maxPrice,
+			},
+		});
 	};
 
 	const fetchTags = async () => {
