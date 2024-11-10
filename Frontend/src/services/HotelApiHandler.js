@@ -132,7 +132,9 @@ const bookHotel = async (bookingData, id) => {
 	const endpoint = "/amadeus/v2/booking/hotel-orders";
 	const accessToken = await getAccessToken();
 
+	console.log("Booking data:", bookingData);
 	bookingData.type = "hotel-order";
+	bookingData.payment.paymentCard.paymentCardInfo.vendorCode = "VI";
 	let tidCounter = 1;
 	bookingData.guests = bookingData.guests.map((guest) => {
 		return {
