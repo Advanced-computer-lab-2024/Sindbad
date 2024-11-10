@@ -176,7 +176,7 @@ function CardMenu({
 						</DropdownMenuItem>
 					)}
 
-					{config.actions.toggleArchive && (config.actions.toggleArchive.includes(role) || id === data.creatorId) && (
+					{config.actions.toggleArchive && id === data.creatorId && (
 						<DropdownMenuItem onClick={toggleArchive}>
 							{data.isArchived ? "Unarchive" : "Archive"}
 						</DropdownMenuItem>
