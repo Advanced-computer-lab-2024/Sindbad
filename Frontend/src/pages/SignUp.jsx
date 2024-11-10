@@ -448,7 +448,7 @@ function SignUp() {
                                     {renderCommonFields()}
                                     {error && <p className="text-red-500 text-sm text-center">{error}</p>}
                                     <Button type="submit" disabled={loading} className="bg-primary-700 justify-center w-full mt-4">
-                                        {loading ? <SpinnerSVG /> : registerType == "Tourist" ? "Continue" : "Sign Up"}
+                                        {loading && error === false ? <SpinnerSVG /> : registerType == "Tourist" ? "Continue" : "Sign Up"}
                                     </Button>
 
                                     <Input type="checkbox" id="accept" name="accept" onChange={() => setAccepted(!accepted)} />

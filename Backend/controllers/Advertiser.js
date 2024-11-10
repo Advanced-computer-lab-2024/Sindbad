@@ -44,7 +44,7 @@ const updateAdveriser = async (req, res) => {
 
 		// Create an object to hold the fields that need to be updated
 		const updateData = {};
-
+		console.log(req.body);
 		// Add only the fields that are defined (not undefined) to the update object
 		if (websiteLink !== undefined) {
 			updateData.websiteLink = websiteLink;
