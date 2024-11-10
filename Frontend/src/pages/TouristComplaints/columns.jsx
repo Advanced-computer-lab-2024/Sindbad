@@ -14,26 +14,7 @@ export const columns = () => [
 	},
 	{
         accessorKey: "isResolved",
-        header:({ column }) => {
-            return(
-                <DropdownMenu onOpenChange={(open) => console.log(open)} modal={false}>
-					<DropdownMenuTrigger asChild>
-						<Button variant="ghost">
-							Status
-							<Filter className="ml-2 h-4 w-4" />
-						</Button>
-					</DropdownMenuTrigger>
-					<DropdownMenuContent align="start" className="ml-12">
-						<DropdownMenuCheckboxItem value="true">
-							Resolved
-						</DropdownMenuCheckboxItem>
-						<DropdownMenuCheckboxItem value="false">
-							Pending
-						</DropdownMenuCheckboxItem>
-					</DropdownMenuContent>
-				</DropdownMenu>
-			);
-		},
+        header: "Status",
 		cell: ({ row }) => {
 			return (
 				<Badge variant={row.original.isResolved ? "dark" : "outline"}>
@@ -44,17 +25,7 @@ export const columns = () => [
 	},
 	{
 		accessorKey: "createdAt",
-		header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Date
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            )
-        },
+		header: "Date",
 		cell: ({ row }) => {
 			const date = new Date(row.original.createdAt);
 			const formattedDate = date.toLocaleDateString("en-US", {
@@ -70,5 +41,13 @@ export const columns = () => [
     {
         accessorKey: "body",
 		header: "Body",
+		cell: ({ row }) => {
+			return (
+				<span style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
+					{row.original.body}
+				</span>
+			);
+		},
+
     }
 ];
