@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import TableSkeleton from "@/components/custom/TableSkeleton";
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
+import { useNavigate } from "react-router-dom";
 
 import {deleteUser, getRequestedDeleteUsers } from "@/services/AdminApiHandler";
 
@@ -12,6 +13,8 @@ export default function DeletionRequests() {
 	const [data, setData] = useState(null);
 	const [loading, setLoading] = useState(true);
 	const [message, setMessage] = useState(null); // message replaces error
+
+	const navigate = useNavigate();
 
 	// useEffect to load data on component mount
 	useEffect(() => {
@@ -69,7 +72,7 @@ export default function DeletionRequests() {
 			{loading ? (
 				<TableSkeleton rows={5} cols={4} />
 			) : data ? ( // Check if data
-				<DataTable columns={columns(handleDeleteUser)} data={data} />
+				<DataTable columns={columns(handleDeleteUser, navigate)} data={data} />
 			) : (
 				<div>Unable to get users.</div>
 			)}

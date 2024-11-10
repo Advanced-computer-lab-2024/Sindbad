@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Trash } from "lucide-react";
 
-export const columns = (handleDeleteUser) => [
+export const columns = (handleDeleteUser, navigate) => [
 	{
 		accessorKey: "username",
 		header: "Username",
@@ -14,6 +14,22 @@ export const columns = (handleDeleteUser) => [
 		accessorKey: "role",
 		header: "Role",
 	},
+	{
+        header: "Profile",
+        cell: ({ row }) => {
+            return (
+                <Button
+                    variant="ghostDestructive"
+                    className="p-3"
+                    onClick={() => {
+                        navigate(`/app/profile/${row.original._id}`);
+                    }}
+                >
+                    View Profile
+                </Button>
+            );
+        },
+    },
 	{
 		accessorKey: "actions",
 		header: "",
