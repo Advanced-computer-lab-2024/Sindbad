@@ -63,7 +63,7 @@ function Wallet({ userData, setUserData }) {
                         </h4>
                         {convertedPrice &&
                             <h3 className="font-inter font-bold text-xl break-all">
-                                {convertedPrice} {currency}
+                                {convertedPrice.toFixed(2)} {currency}
                             </h3>
                         }
                     </div>
