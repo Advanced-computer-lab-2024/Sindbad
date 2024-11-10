@@ -4,12 +4,12 @@ const ProductSalesSchema = new mongoose.Schema(
 	{
 		productId: {
 			type: mongoose.Schema.Types.ObjectId,
-			ref: "products",
+			ref: "Product",
 			required: true,
 		},
 		buyerId: {
 			type: mongoose.Schema.Types.ObjectId,
-			ref: "tourists",
+			ref: "Tourist",
 			required: true,
 		},
 		quantity: {
