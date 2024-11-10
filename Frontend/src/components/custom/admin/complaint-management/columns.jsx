@@ -7,7 +7,6 @@ import {
 	DropdownMenuTrigger,
 	DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu";
-import { Trash } from "lucide-react";
 
 export const columns = (handleStatusFilterChange, selectedFilters) => [
 	{
