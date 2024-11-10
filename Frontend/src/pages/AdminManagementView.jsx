@@ -15,6 +15,7 @@ function AdminManagementView() {
 					<TabsTrigger value="verification" onClick={() => navigate("verification")}>Verification</TabsTrigger>
 					<TabsTrigger value="complaints" onClick={() => navigate("complaints")}>Complaints</TabsTrigger>
 					<TabsTrigger value="tagcategories" onClick={() => navigate("tagcategories")}>Tags & Categories</TabsTrigger>
+					<TabsTrigger value="Deletion Requests" onClick={() => navigate("deletion-requests")}>Deletion Requests</TabsTrigger>
 				</TabsList>
 			</Tabs>
 			<Outlet />

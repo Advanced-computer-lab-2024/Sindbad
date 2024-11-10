@@ -128,3 +128,13 @@ export const updateAdmin = async (id, data) => {
 		return error; // Handle errors appropriately
 	}
 }
+
+export const getRequestedDeleteUsers = async () => {
+	try {
+		let users = await axiosInstance.get(`/admin/requested-account-deletion-users`);
+		return users;
+	} catch (error) {
+		console.error("Error fetching requested delete users: ", error);
+		return error; // Handle errors appropriately
+	}
+}

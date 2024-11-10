@@ -137,22 +137,38 @@ const deleteAdmin = async (req, res) => {
 
 const getAllRequestedAccountDeletionUsers = async (req, res) => {
 	try {
-		const tourists = await Tourist.find({
-			isRequestedAccountDeletion: true,
-		});
-		const tourGuides = await TourGuide.find({
-			isRequestedAccountDeletion: true,
-		});
-		const advertisers = await Advertiser.find({
-			isRequestedAccountDeletion: true,
-		});
-		const sellers = await Seller.find({ isRequestedAccountDeletion: true });
+		const [tourists, tourGuides, advertisers, sellers] = await Promise.all([
+			Tourist.find({ isRequestedAccountDeletion: true }),
+			TourGuide.find({ isRequestedAccountDeletion: true }),
+			Advertiser.find({ isRequestedAccountDeletion: true }),
+			Seller.find({ isRequestedAccountDeletion: true }),
+		]);
+		
+		const touristsWithRole = tourists.map((tourist) => ({
+			...tourist.toObject(),
+			role: "tourist",
+		}));
+
+		const tourGuidesWithRole = tourGuides.map((tourGuide) => ({
+			...tourGuide.toObject(),
+			role: "tourGuide",
+		}));
+
+		const advertisersWithRole = advertisers.map((advertiser) => ({
+			...advertiser.toObject(),
+			role: "advertiser",
+		}));
+
+		const sellersWithRole = sellers.map((seller) => ({
+			...seller.toObject(),
+			role: "seller",
+		}));
 
 		const allRequestedAccountDeletionUsers = [
-			...tourists,
-			...tourGuides,
-			...advertisers,
-			...sellers,
+			...touristsWithRole,
+			...tourGuidesWithRole,
+			...advertisersWithRole,
+			...sellersWithRole,
 		];
 
 		res.status(200).json(allRequestedAccountDeletionUsers);
