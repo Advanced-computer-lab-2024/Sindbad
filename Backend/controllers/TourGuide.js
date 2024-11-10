@@ -350,7 +350,6 @@ const addTourGuideDocuments = async (req, res) => {
 	const files = req.files; // Multer file object
 
 	const updateData = {};
-	console.log(req);
 
 	if (files.idCardImage) {
 		updateData.idCardImage = files.idCardImage[0].buffer; // Get binary data from the first file
