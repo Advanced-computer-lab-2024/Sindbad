@@ -208,6 +208,23 @@ function ProfileBanner({ userData, profileId, id, profileRole, setEditing }) {
                             </div>
                         </div>
                     )}
+                    {profileRole === "tourGuide" && userData.portfolioUrl && (
+                        <div className="flex flex-col gap-2">
+                            <div className="flex gap-2">
+                                <div className="shrink-0">
+                                    <Link size={16} />
+                                </div>
+                                <a
+                                    className="text-xs break-all pt-[1px] hover:underline"
+                                    href={`https://${userData.portfolioUrl}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                >
+                                    {userData.portfolioUrl}
+                                </a>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </section>
