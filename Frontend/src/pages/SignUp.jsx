@@ -86,6 +86,9 @@ function SignUp() {
             .instanceof(FileList)
             .refine((file) => file?.length == 1, 'File is required.')
         ,
+        portfolioUrl: z.string().url({
+            message: "Invalid URL"
+        }),
     })
 
     const sellerFormSchema = z.object({
@@ -97,6 +100,26 @@ function SignUp() {
             .instanceof(FileList)
             .refine((file) => file?.length == 1, 'File is required.')
         ,
+    })
+
+    const advertiserFormSchema = z.object({
+        idCardImage: z
+            .instanceof(FileList)
+            .refine((file) => file?.length == 1, 'File is required.')
+        ,
+        taxationRegistryCardImage: z
+            .instanceof(FileList)
+            .refine((file) => file?.length == 1, 'File is required.')
+        ,
+        name: z.string().min(1, {
+            message: "Company name is required"
+        }),
+        description: z.string().max(500, {
+            message: "Description must be less than 500 characters"
+        }),
+        location: z.string().min(1, {
+            message: "Location is required"
+        }),
     })
 
     const commonDefaultValues = {
@@ -116,11 +139,20 @@ function SignUp() {
     const tourGuideDefaultValues = {
         certificateImage: "",
         idCardImage: "",
+        portfolioUrl: "",
     }
 
     const sellerDefaultValues = {
         idCardImage: "",
         taxationRegistryCardImage: "",
+    }
+
+    const advertiserDefaultValues = {
+        idCardImage: "",
+        taxationRegistryCardImage: "",
+        name: "",
+        description: "",
+        location: "",
     }
 
 
@@ -144,11 +176,19 @@ function SignUp() {
         defaultValues: sellerDefaultValues,
     })
 
+    const advertiserForm = useForm({
+        resolver: zodResolver(advertiserFormSchema),
+        defaultValues: advertiserDefaultValues,
+    })
+
     const idCardImageRef = tourGuideForm.register('idCardImage');
     const certificateImageRef = tourGuideForm.register('certificateImage');
 
     const taxationRegistryCardImageRef = sellerForm.register('taxationRegistryCardImage');
     const idCardImageRefSeller = sellerForm.register('idCardImage');
+
+    const taxationRegistryCardImageRefAdv = advertiserForm.register('taxationRegistryCardImage');
+    const idCardImageRefAdv = advertiserForm.register('idCardImage');
 
     const handleCommonFormSubmit = (data) => {
         if (!accepted) {
@@ -161,7 +201,18 @@ function SignUp() {
     };
 
     const handleTouristFormSubmit = (data) => {
-        submitForm({ ...formValues, ...data });
+        let finalData = {};
+        if (registerType === "Advertiser") {
+            finalData.companyProfile = {};
+            finalData.companyProfile.name = data.name;
+            finalData.companyProfile.description = data.description;
+            finalData.companyProfile.location = data.location;
+            finalData.idCardImage = data.idCardImage;
+            finalData.taxationRegistryCardImage = data.taxationRegistryCardImage;
+        } else {
+            finalData = data;
+        }
+        submitForm({ ...formValues, ...finalData });
     };
 
     const submitForm = async (values) => {
@@ -371,6 +422,20 @@ function SignUp() {
                     </FormItem>
                 )}
             />
+            <FormField
+                key="portfolioUrl"
+                control={tourGuideForm.control}
+                name="portfolioUrl"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel htmlFor="portfolioUrl">Linkedin Profile</FormLabel>
+                        <FormControl>
+                            <Input id="portfolioUrl" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
         </div>
     )
 
@@ -416,6 +481,92 @@ function SignUp() {
             />
         </div>
     )
+
+    const renderAdvertiserFields = () => (
+        <div className="flex flex-col gap-2">
+            <FormField
+                key="idCardImage"
+                control={advertiserForm.control}
+                name="idCardImage"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel htmlFor="idCardImage">ID Card Image</FormLabel>
+                        <FormControl>
+                            <Input id="idCardImage" type="file" name="idCardImage"
+                                {...idCardImageRefAdv}
+                                onChange={(event) => {
+                                    field.onChange(event.target?.files?.[0] ?? undefined);
+                                }}
+                            />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                key="taxationRegistryCardImage"
+                control={advertiserForm.control}
+                name="taxationRegistryCardImage"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel htmlFor="taxationRegistryCardImage">Taxation Registry Card Image</FormLabel>
+                        <FormControl>
+                            <Input id="taxationRegistryCardImage" type="file" name="taxationRegistryCardImage"
+                                {...taxationRegistryCardImageRefAdv}
+                                onChange={(event) => {
+                                    field.onChange(event.target?.files?.[0] ?? undefined);
+                                }}
+                            />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                key="name"
+                control={advertiserForm.control}
+                name="name"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel htmlFor="name">Company Name</FormLabel>
+                        <FormControl>
+                            <Input id="name" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                key="description"
+                control={advertiserForm.control}
+                name="description"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel htmlFor="description">Company Description</FormLabel>
+                        <FormControl>
+                            <Input id="description" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                key="location"
+                control={advertiserForm.control}
+                name="location"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel htmlFor="location">Company Location</FormLabel>
+                        <FormControl>
+                            <Input id="location" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+        </div>
+    )
+
     return (
         <div className="w-full min-h-screen grid grid-cols-2">
             <div className="bg-primary-700">
@@ -557,10 +708,26 @@ function SignUp() {
                             </Form>
                         }
 
-                        {currentStep === 2 && (registerType === "Seller" || registerType === "Advertiser") &&
+                        {currentStep === 2 && registerType === "Seller" &&
                             <Form {...sellerForm} enctype="multipart/form-data">
                                 <form onSubmit={sellerForm.handleSubmit(handleTouristFormSubmit)} className="gap-2 flex flex-col">
                                     {renderSellerFields()}
+                                    {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+                                    <Button type="submit" disabled={loading} className="bg-primary-700 justify-center w-full mt-4">
+                                        {loading ? <SpinnerSVG /> : "Sign Up"}
+                                    </Button>
+                                    <Button onClick={() => setCurrentStep(1)} variant="link" className="text-center -mt-1 flex gap-2 self-center">
+                                        <ArrowLeft size={12} />
+                                        Back
+                                    </Button>
+                                </form>
+                            </Form>
+                        }
+
+                        {currentStep === 2 && registerType === "Advertiser" &&
+                            <Form {...advertiserForm} enctype="multipart/form-data">
+                                <form onSubmit={advertiserForm.handleSubmit(handleTouristFormSubmit)} className="gap-2 flex flex-col">
+                                    {renderAdvertiserFields()}
                                     {error && <p className="text-red-500 text-sm text-center">{error}</p>}
                                     <Button type="submit" disabled={loading} className="bg-primary-700 justify-center w-full mt-4">
                                         {loading ? <SpinnerSVG /> : "Sign Up"}
