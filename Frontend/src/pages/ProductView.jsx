@@ -14,6 +14,7 @@ import { getProductById, buyProduct } from "@/services/ProductApiHandler";
 import RatingReview from "@/components/custom/RatingReview";
 import { useUser, useCurrency } from "@/state management/userInfo";
 import { Convert } from "easy-currencies";
+import { useNavigate } from "react-router-dom";
 
 function ProductView() {
 	const { productId } = useParams();
@@ -24,6 +25,7 @@ function ProductView() {
 	const currency = useCurrency();
 	const [convertedPrice, setConvertedPrice] = useState(null);
 	const { toast } = useToast();
+	const navigate = useNavigate();
 
 	const getProduct = async (productId) => {
 		const response = await getProductById(productId);
@@ -107,8 +109,7 @@ function ProductView() {
 										<span>Sold by{" "}
 											<a
 												className="hover:underline cursor-pointer"
-												href={`/app/profile/${product.creatorId?._id}`}
-												rel="noreferrer"
+												onClick={() => navigate(`/app/profile/${product.creatorId?._id}`)}
 											>
 												{product.creatorId?.firstName}{" "}
 												{product.creatorId?.lastName}

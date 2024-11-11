@@ -30,6 +30,8 @@ import { getAdvertiser } from "@/services/AdvertiserApiHandler";
 import { useUser, useCurrency } from "@/state management/userInfo";
 import { Convert } from "easy-currencies";
 
+import { useNavigate } from "react-router-dom";
+
 function handleActivityValues(activity) {
     if (!activity.description) {
         activity.description =
@@ -62,6 +64,7 @@ function Activity() {
     const { toast } = useToast();
     const currency = useCurrency();
     const [convertedPrice, setConvertedPrice] = useState(null);
+    const navigate = useNavigate();
 
     const getActivity = async () => {
         let response = await getActivityById(activityId);
@@ -165,8 +168,7 @@ function Activity() {
                             Offered by{" "}
                             <a
                                 className="hover:underline cursor-pointer"
-                                href={`/app/profile/${creator?._id}`}
-                                rel="noreferrer"
+                                onClick={() => navigate(`/app/profile/${creator?._id}`)}
                             >
                                 {creator?.username}
                             </a>

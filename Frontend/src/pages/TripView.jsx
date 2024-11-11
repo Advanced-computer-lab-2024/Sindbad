@@ -22,6 +22,8 @@ import { MapPin, CalendarDays, AlarmClock, ArrowRight } from "lucide-react";
 import { getTrip, bookTrip } from "@/services/TripApiHandler";
 import { getAdvertiser } from "@/services/AdvertiserApiHandler";
 
+import { useNavigate } from "react-router-dom";
+
 function handleTripValues(trip) {
   if (!trip.description) {
     trip.description =
@@ -38,6 +40,7 @@ function Trip() {
   const currency = useCurrency();
   const { id, role } = useUser();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const getTripById = async () => {
     let response = await getTrip(tripId);
@@ -133,8 +136,7 @@ function Trip() {
               Offered by{" "}
               <a
                 className="hover:underline text-primary-950 cursor-pointer"
-                href={`/app/profile/${creator?._id}`}
-                rel="noreferrer"
+                onClick={() => navigate(`/app/profile/${creator?._id}`)}
               >
                 {creator?.username}
               </a>

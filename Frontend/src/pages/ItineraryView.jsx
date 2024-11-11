@@ -30,6 +30,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useUser, useCurrency } from "@/state management/userInfo";
 import { Convert } from "easy-currencies";
 
+import { useNavigate } from "react-router-dom";
+
 function handleItineraryValues(itinerary) {
     if (!itinerary.description) {
         itinerary.description =
@@ -61,6 +63,7 @@ const Itinerary = () => {
     const currency = useCurrency();
     const [convertedPrice, setConvertedPrice] = useState(null);
     const { toast } = useToast();
+    const navigate = useNavigate();
 
     const getItinerary = async () => {
         let response = await getItineraryById(itineraryId);
@@ -176,7 +179,7 @@ const Itinerary = () => {
                             {itinerary.duration} day trip offered by{" "}
                             <a
                                 className="hover:underline cursor-pointer"
-                                href={`/app/profile/${creator?._id}`}
+                                onClick={() => navigate(`/app/profile/${creator?._id}`)}
                             >
                                 {creator?.username}
                             </a>
