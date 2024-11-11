@@ -52,7 +52,7 @@ function HotelView() {
 			<div className="py-8 px-24 max-w-[1200px] flex gap-9 mx-auto">
 				<div className="flex justify-center w-full">
 					<p className="text-neutral-400 text-sm italic">
-						{error === true ? "Hotel does not exist." : "Loading..."}
+						{error === true ? "No offers currently available for this hotel." : "Loading..."}
 					</p>
 				</div>
 			</div>
@@ -63,7 +63,7 @@ function HotelView() {
 		<div className="py-8 px-24 max-w-[1200px] mx-auto">
 			<div className="flex items-center gap-6">
 				<h1 className="text-3xl font-extrabold shrink-0">
-					{data?.hotel?.name} + Offers
+					{data?.hotel?.name} Offers
 				</h1>
 				<hr className="border-neutral-300 border w-full mt-1.5" />
 			</div>
