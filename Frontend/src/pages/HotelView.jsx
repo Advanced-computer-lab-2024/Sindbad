@@ -76,7 +76,7 @@ function HotelView() {
 						<DialogTrigger asChild>
 							<Button>Book now</Button>
 						</DialogTrigger>
-						<DialogContent className="sm:max-w-[425px]">
+						<DialogContent className="max-h-[500px] overflow-y-scroll">
 							<DialogHeader>
 								<DialogTitle>Confirm your booking</DialogTitle>
 								<DialogDescription>

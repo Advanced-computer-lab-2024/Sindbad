@@ -12,12 +12,12 @@ const userSlice = createSlice({
         // id: "6725031bd5a2d7588e2ce42a",
         // role: "seller",
         // id: "67252de1d5a2d7588e2ce7fe",
-        role: "advertiser",
-        id: "67327815411855f8de68b97a",
+        // role: "advertiser",
+        // id: "67327815411855f8de68b97a",
         // role: "tourismGovernor",
         // id: "67250766d5a2d7588e2ce4fe",
-        // role: "guest",
-        // id: null
+        role: "guest",
+        id: null
     },
     reducers: {
         login(state, action) {
