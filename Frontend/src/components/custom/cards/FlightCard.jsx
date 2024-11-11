@@ -3,10 +3,12 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 import { useUser } from "@/state management/userInfo";
 
 import CardMenu from "./CardMenu";
+import GenericForm from "../genericForm/genericForm";
 
 const cardConfig = {
 	actions: {
@@ -35,18 +37,24 @@ function FlightCard({ data, fetchCardData, styles }) {
 				/>
 			</div>
 			<div className={styles.detailsContainer}>
-				<h4 className={styles.title}>{data.name}</h4>
+				<h4 className={styles.title}>
+					{"Aircraft " + data.itineraries[0].segments[0].aircraft.code + " Flight " + data.itineraries[0].segments[0].number}
+				</h4>
 				<div className="flex flex-col gap-1">
-
-					<Button
-						onClick={() => navigate(`/app/flight/${data.flightId}`)}
-						className={styles.button}
-					>
-						<p className={styles.buttonText}>Book </p>
-						<div className={styles.buttonIcon}>
-							<ArrowRight size={13} />
-						</div>
-					</Button>
+					<Dialog>
+						<DialogTrigger asChild>
+							<Button className={styles.button}>
+								<p className={styles.buttonText}>Book </p>
+								<div className={styles.buttonIcon}>
+									<ArrowRight size={13} />
+								</div>
+							</Button>
+						</DialogTrigger>
+						<DialogContent className="overflow-y-scroll max-h-[50%]">
+							<DialogTitle>Book Flight</DialogTitle>
+									
+						</DialogContent>
+					</Dialog>
 				</div>
 			</div>
 		</article>

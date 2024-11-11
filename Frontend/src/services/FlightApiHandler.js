@@ -42,3 +42,45 @@ export const getFlights = async (details) => {
         throw error;
     }
 };
+
+export const confirmFlightPrice = async (data) => {
+    const accessToken = await getAccessToken();
+
+    try {
+        const response = await axios.put(
+            `${baseURL}/flight/confirmFlight`,
+            { data },
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    "Content-Type": "application/json",
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error("Error confirming flight price:", error);
+        throw error;
+    }
+};
+
+export const bookFlight = async (id, data) => {
+    const accessToken = await getAccessToken();
+
+    try {
+        const response = await axios.put(
+            `${baseURL}/flight/bookFlight`,
+            { data },
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    "Content-Type": "application/json",
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error("Error booking flight:", error);
+        throw error;
+    }
+};
