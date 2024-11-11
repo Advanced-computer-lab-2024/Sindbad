@@ -2,23 +2,21 @@ import { useEffect, useState } from "react";
 
 import StarRatingForm from "./StarRatingForm";
 import Comment from "./Comment";
-import Review from "./Review";
 
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { useToast } from "@/hooks/use-toast";
 
+import { getTouristById } from "@/services/TouristApiHandler";
+
 import { useUser } from "@/state management/userInfo";
 
-import { addProductRating, addProductReview, productSalesDetails } from "@/services/ProductApiHandler";
-
-function RatingComment({ data, totalRatings, type, fetchData, addComment, addRating }) {
+function RatingComment({ data, totalRatings, fetchData, addComment, addRating, type }) {
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState("");
-    const [myReview, setMyReview] = useState(null);
+    const [user, setUser] = useState(null);
     const [rated, setRated] = useState(false);
     const [purchased, setPurchased] = useState(false);
-    const [error, setError] = useState("");
 
     const { id, role } = useUser();
     const { toast } = useToast();
@@ -29,66 +27,52 @@ function RatingComment({ data, totalRatings, type, fetchData, addComment, addRat
     };
 
     useEffect(() => {
-        if (data.reviews) {
-            const review = data.reviews.find((review) => review.userId === id);
-            if (review) {
-                setMyReview(review);
-            }
-        }
-    }, [id, data.reviews]);
-
-    useEffect(() => {
         if (data.userRatings) {
             setRated(data.userRatings.includes(id));
         }
     }, [id, data.userRatings]);
 
+    const getUser = async () => {
+        if (role === "tourist") {
+            const response = await getTouristById(id);
+            if (response.error) {
+                console.error(response.error);
+            } else {
+                setUser(response);
+            }
+        }
+    }
+
+    useEffect(() => {
+        getUser();
+    }, [id]);
+
     const getPurchased = async () => {
-        const response = await productSalesDetails(data._id);
-        if (response.error) {
-            console.error(response.error);
-        } else {
-            const sales = response.productSales;
-            const hasPurchased = sales.some(sale => sale.buyerId === id && sale.productId === data._id);
-            setPurchased(hasPurchased);
+        if(user) {
+            if (type === "itinerary") {
+                setPurchased(user.bookedEvents.itineraries.some(
+                    (itinerary) => (
+                        itinerary.itineraryId === data._id &&
+                        new Date(itinerary.dateBooked) < new Date()
+                    )
+                ));
+            }
         }
     }
 
     useEffect(() => {
         getPurchased();
-    }, [data]);
+    }, [data, user]);
 
     const handleSubmit = async () => {
-        if (type === "review") {
-            if (rating === 0) {
-                setError("Please add a rating between 1 to 5 stars.");
-                return;
-            }
-
-            const response = comment === ""
-                ? await addProductRating(data._id, { rating: rating, userId: id })
-                : await addProductReview(data._id, { rating: rating, comment: comment, userId: id });
-            if (response.error) {
-                console.error(response.error);
-                toast({ description: "An error occurred, please try again later" });
-            }
-            else {
-                setRating(0);
-                setComment("");
-                setError("");
-                fetchData();
-            }
-        } else if (type === "comment") {
-            console.log(data._id, { comment: comment, userId: id });
-            const response = await addComment(data._id, { comment: comment, userId: id });
-            if (response.error) {
-                console.error(response.error);
-                toast({ description: "An error occurred, please try again later" });
-            }
-            else {
-                setComment("");
-                fetchData();
-            }
+        const response = await addComment(data._id, { comment: comment, userId: id });
+        if (response.error) {
+            console.error(response.error);
+            toast({ description: "An error occurred, please try again later" });
+        }
+        else {
+            setComment("");
+            fetchData();
         }
     }
 
@@ -136,7 +120,7 @@ function RatingComment({ data, totalRatings, type, fetchData, addComment, addRat
                         </div>
                     ))}
                 </div>
-                {role === "tourist" && type === "comment" && !rated && purchased &&
+                {role === "tourist" && !rated && purchased &&
                     <label className="text-base font-medium mt-4">
                         Leave a rating
                         <div className="mt-1">
@@ -149,61 +133,38 @@ function RatingComment({ data, totalRatings, type, fetchData, addComment, addRat
             {/* Reviews/comments Section */}
             <div className="w-2/3 flex flex-col gap-4">
                 <h2 className="text-2xl font-semibold">
-                    {type === "review" ? "Customer Reviews" : "Comments"}
+                    Comments
                 </h2>
-                {role === "tourist" && myReview === null && purchased &&
+                {role === "tourist" && purchased &&
                     <>
-                        {type === "review" && !rated &&
-                            <div>
-                                <label className="text-base font-medium">
-                                    Overall rating
-                                    <div className="mt-1">
-                                        <StarRatingForm size={21} onRatingChange={setRating} rating={rating} />
-                                    </div>
-                                </label>
-                                {error && <p className="text-red-500 text-[13px] mt-1">{error}</p>}
-                            </div>
-                        }
-                        {(type === "comment" || (type === "review" && !rated && myReview === null)) &&
-                            <>
-                                <label className="text-base font-medium">
-                                    Write a {type}
-                                    <Textarea
-                                        placeholder="Type here..."
-                                        className="resize-none mt-1"
-                                        rows={4}
-                                        value={comment}
-                                        onChange={(e) => setComment(e.target.value)}
-                                    />
-                                </label>
-                                <Button className="w-max self-end" onClick={handleSubmit}>
-                                    Submit
-                                </Button>
-                            </>
-                        }
+                        <label className="text-base font-medium">
+                            Write a comment
+                            <Textarea
+                                placeholder="Type here..."
+                                className="resize-none mt-1"
+                                rows={4}
+                                value={comment}
+                                onChange={(e) => setComment(e.target.value)}
+                            />
+                        </label>
+                        <Button className="w-max self-end" onClick={handleSubmit}>
+                            Submit
+                        </Button>
                     </>
                 }
 
-                {type === "review" && data.reviews?.length > 0 ?
+                {data.comments?.length > 0 ?
                     <div className="flex flex-col-reverse gap-7">
-                        {data.reviews?.map((review) => (
-                            <div key={review.username}>
-                                <Review review={review} />
+                        {data.comments?.map((comment) => (
+                            <div key={comment.userId}>
+                                <Comment comment={comment} />
                             </div>
                         ))}
                     </div>
-                    : type === "comment" && data.comments?.length > 0 ?
-                        <div className="flex flex-col-reverse gap-7">
-                            {data.comments?.map((comment) => (
-                                <div key={comment.userId}>
-                                    <Comment comment={comment} />
-                                </div>
-                            ))}
-                        </div>
-                        :
-                        <p className="text-neutral-400 text-sm italic">
-                            No {type}s yet.
-                        </p>
+                    :
+                    <p className="text-neutral-400 text-sm italic">
+                        No comments yet.
+                    </p>
                 }
             </div>
         </div>
