@@ -1,18 +1,29 @@
 import { useState, useEffect } from "react";
 import CardContainer from "@/components/custom/cards/CardContainer";
-import { getAllTrips } from "@/services/TripApiHandler";
+import { getAllTrips, getMyTrips } from "@/services/TripApiHandler";
+import { Plus } from "lucide-react";
+import GenericForm from "@/components/custom/genericForm/genericForm";
+import { useUser } from "@/state management/userInfo";
 
 function Trips() {
-  const [trips, setTrips] = useState([]); // State for trips data
-  const [loading, setLoading] = useState(true); // Loading state
-  const [error, setError] = useState(null); // Error state if fetching fails
+  // State for trips data, loading, and error
+  const [trips, setTrips] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const { id, role } = useUser();
+  const [showForm, setShowForm] = useState(false);
 
-  // Fetch all trips when the component mounts
   useEffect(() => {
     const fetchTrips = async () => {
       try {
-        const response = await getAllTrips();
-        setTrips(response); // Set trips data
+        let response;
+        if (role === "advertiser") {
+          response = await getMyTrips(id);
+          console.log(response);
+        } else {
+          response = await getAllTrips();
+        }
+        setTrips(response);
       } catch (err) {
         setError("Failed to load trips.");
         console.error(err);
@@ -21,14 +32,31 @@ function Trips() {
       }
     };
     fetchTrips();
-  }, []);
+  }, [id, role]);
+
+  // Toggle the form visibility when the button is clicked
+  const toggleForm = () => {
+    setShowForm((prevState) => !prevState);
+  };
 
   return (
     <div className="py-8 px-24 max-w-[1200px] flex flex-col gap-4 mx-auto">
-      <div className="flex items-center gap-6 mb-6">
+      <div className="flex items-center gap-4 mb-6">
         <h1 className="text-3xl font-extrabold">Trips</h1>
+        {role === "advertiser" && (
+          <button
+            onClick={toggleForm} // Toggle the form visibility
+            className="p-1 rounded-full hover:bg-neutral-200 transition-colors"
+          >
+            <Plus className="w-5 h-5 text-neutral-500" />
+          </button>
+        )}
         <hr className="border-neutral-300 border w-full mt-1.5" />
       </div>
+
+      {/* Display form if showForm is true */}
+      {showForm && <GenericForm type="trip" id={id} data={null} />}
+
       <div className="flex gap-10">
         {!loading && error ? (
           <div className="flex justify-center w-full">

@@ -67,3 +67,30 @@ export const bookTrip = async (userId, tripId) => {
     return error;
   }
 };
+
+export const updateTrip = async (tripId, tripData) => {
+  try {
+    const response = await axiosInstance.put(`/trip/${tripId}`, tripData);
+    return response.data;
+  } catch (error) {
+    return error.response ? error.response.data : error;
+  }
+};
+
+export const deleteTrip = async (tripId) => {
+  try {
+    const response = await axiosInstance.delete(`/trip/${tripId}`);
+    return response.data;
+  } catch (error) {
+    return error.response ? error.response.data : error;
+  }
+};
+
+export const getMyTrips = async (creatorId) => {
+  try {
+    const response = await axiosInstance.get(`/trip/my-trips/${creatorId}`);
+    return response.data;
+  } catch (error) {
+    return error.response ? error.response.data : error;
+  }
+};

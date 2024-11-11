@@ -88,10 +88,95 @@ async function bookTrip(req, res) {
   }
 }
 
+// Update an existing trip
+async function updateTrip(req, res) {
+  try {
+    const { tripId } = req.params; // The ID of the trip to update
+    const {
+      name,
+      description,
+      dateTime,
+      price,
+      pickupLocation,
+      dropoffLocation,
+      imageUris,
+      discount,
+      isBookingOpen,
+      capacity,
+    } = req.body;
+
+    // Find the trip by ID and update it
+    const updatedTrip = await Trip.findByIdAndUpdate(
+      tripId,
+      {
+        name,
+        description,
+        dateTime,
+        price,
+        pickupLocation,
+        dropoffLocation,
+        imageUris,
+        discount,
+        isBookingOpen,
+        capacity,
+      },
+      { new: true } // The new option returns the updated document
+    );
+
+    if (!updatedTrip) {
+      return res.status(404).json({ message: "Trip not found" });
+    }
+
+    res.status(200).json(updatedTrip); // Return the updated trip data
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+// Delete a trip
+async function deleteTrip(req, res) {
+  try {
+    const { tripId } = req.params; // The ID of the trip to delete
+
+    // Find the trip by ID and remove it
+    const deletedTrip = await Trip.findByIdAndDelete(tripId);
+
+    if (!deletedTrip) {
+      return res.status(404).json({ message: "Trip not found" });
+    }
+
+    res.status(200).json({ message: "Trip deleted successfully" }); // Confirm deletion
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+// Get trips by creatorId
+async function getMyTrips(req, res) {
+  try {
+    const { creatorId } = req.params;
+
+    const trips = await Trip.find({ creatorId: creatorId });
+
+    if (!trips) {
+      return res
+        .status(404)
+        .json({ message: "No trips found for this creator" });
+    }
+
+    // Return the found trips
+    res.status(200).json(trips);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
 // Export all methods
 module.exports = {
   createTrip,
   getAllTrips,
   getTrip,
+  getMyTrips,
   bookTrip,
+  updateTrip,
+  deleteTrip,
 };

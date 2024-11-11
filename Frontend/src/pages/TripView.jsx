@@ -81,16 +81,18 @@ function Trip() {
   }
 
   const handleBooking = async () => {
+    // Check if the user is a tourist
+    if (role !== "tourist") {
+      toast({ description: "You must be a tourist to book a trip" });
+      return; // Exit the function if not a tourist
+    }
+
     const response = await bookTrip(id, tripId);
     if (response.error) {
       console.error(response.error);
       toast({ description: "An error occurred, please try again later" });
     } else {
-      if (role === "tourist") {
-        toast({ description: "Successfully booked trip" });
-      } else {
-        toast({ description: "Must be a tourist to book a trip" });
-      }
+      toast({ description: "Successfully booked trip" });
     }
   };
 
