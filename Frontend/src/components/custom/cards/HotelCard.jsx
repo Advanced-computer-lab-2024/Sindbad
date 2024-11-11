@@ -6,8 +6,6 @@ import { ArrowRight } from "lucide-react";
 
 import { useUser } from "@/state management/userInfo";
 
-import CardImage from "./CardImage";
-import CardPrice from "./CardPrice";
 import CardMenu from "./CardMenu";
 
 const cardConfig = {

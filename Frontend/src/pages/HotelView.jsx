@@ -5,13 +5,10 @@ import {
 	Dialog,
 	DialogContent,
 	DialogDescription,
-	DialogFooter,
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import GenericForm from "@/components/custom/genericForm/genericForm";
 
 import { getHotelOffers } from "@/services/HotelApiHandler";

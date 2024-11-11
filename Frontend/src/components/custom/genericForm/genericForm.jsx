@@ -17,6 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Star } from "lucide-react";
 
 export function GenericForm({ type, data, id }) {
+	console.log(data);
 	// If you need more information about how this component works, check out forms.js in the same folder.
 	const formObject = forms[type];
 	const onSubmit = formObject.onSubmit;
@@ -75,10 +76,10 @@ export function GenericForm({ type, data, id }) {
 					onSubmit(values, id, data, navigate, dispatch);
 				}
 				
-				toast({ description: "Submitted successfully" });
+				//toast({ description: "Submitted" });
 			}
-		}catch{
-			toast({ description: "Error occured on submission" });
+		}catch(e){
+			toast({ description: `Error occured on submission: ${e.message}` });
 		}
 	};
 

@@ -23,6 +23,8 @@ import FlightBooking from "./pages/FlightBooking";
 import HotelBooking from "./pages/HotelBooking";
 import HotelView from "./pages/HotelView";
 import HotelConfirmation from "./pages/HotelConfirmation";
+import FlightView from "./pages/FlightView";
+import FlightConfirmation from "./pages/FlightConfirmation";
 import DeletionRequests from "./components/custom/admin/deletion-requests/deletionRequest";
 import Trips from "./pages/Trips";
 import TripView from "./pages/TripView";
@@ -60,7 +62,9 @@ function App() {
             <Route path="hotel" element={<HotelBooking />} />
           </Route>
           <Route path="hotel/:hotelId" element={<HotelView />} />
+          <Route path="flight/:flightId" element={<FlightView />} />
           <Route path="hotel/confirmation" element={<HotelConfirmation />} />
+          <Route path="flight/confirmation" element={<FlightConfirmation />} />
           <Route path="itinerary/:itineraryId" element={<Itinerary />} />
           <Route path="activity/:activityId" element={<Activity />} />
           <Route path="site/:siteId" element={<Site />} />
