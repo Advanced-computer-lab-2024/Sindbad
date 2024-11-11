@@ -13,7 +13,7 @@ const cardConfig = {
 	},
 };
 
-function HotelCard({ data, fetchCardData, styles }) {
+function FlightCard({ data, fetchCardData, styles }) {
 	const [openDialog, setOpenDialog] = useState("");
 	const navigate = useNavigate();
 	const { role, id } = useUser();
@@ -28,7 +28,7 @@ function HotelCard({ data, fetchCardData, styles }) {
 					config={cardConfig}
 					role={role}
 					id={id}
-					cardType="hotel"
+					cardType="flight"
 					fetchCardData={fetchCardData}
 					openDialog={openDialog}
 					setOpenDialog={setOpenDialog}
@@ -39,7 +39,7 @@ function HotelCard({ data, fetchCardData, styles }) {
 				<div className="flex flex-col gap-1">
 
 					<Button
-						onClick={() => navigate(`/app/hotel/${data.hotelId}`)}
+						onClick={() => navigate(`/app/flight/${data.flightId}`)}
 						className={styles.button}
 					>
 						<p className={styles.buttonText}>Book </p>
@@ -53,4 +53,4 @@ function HotelCard({ data, fetchCardData, styles }) {
 	);
 }
 
-export default HotelCard;
+export default FlightCard;

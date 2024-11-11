@@ -5,7 +5,6 @@ import {
 } from "@/services/HotelApiHandler";
 import CardContainer from "@/components/custom/cards/CardContainer";
 import GenericFilter from "@/components/custom/GenericFilter";
-import { set } from "date-fns";
 
 function HotelBooking() {
 	const [loading, setLoading] = useState(true);
