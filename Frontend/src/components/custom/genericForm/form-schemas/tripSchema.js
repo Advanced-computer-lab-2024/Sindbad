@@ -23,7 +23,7 @@ export const tripSchema = {
 
   price: z.number(),
 
-  discounts: z
+  discount: z
     .number()
     .min(0, { message: "Discount must be between 0 and 100" })
     .max(100, { message: "Discount must be between 0 and 100" }),

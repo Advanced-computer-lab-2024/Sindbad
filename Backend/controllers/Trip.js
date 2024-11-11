@@ -3,6 +3,7 @@ const Trip = require("../models/Trip");
 // Create a new trip
 async function createTrip(req, res) {
   try {
+    console.log(req.body);
     const {
       name,
       description,

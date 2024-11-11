@@ -67,19 +67,19 @@ export function GenericForm({ type, data, id }) {
 	const dispatch = useDispatch();
 	const { toast } = useToast();
 	const handleSubmit = (values) => {
-	try{
-		if (typeof onSubmit === "function") {
-			if (onSubmit.length === 4) {
-				onSubmit(values, id, navigate, dispatch);
-			} else {
-				onSubmit(values, id, data, navigate, dispatch);
+		try{
+			if (typeof onSubmit === "function") {
+				if (onSubmit.length === 4) {
+					onSubmit(values, id, navigate, dispatch);
+				} else {
+					onSubmit(values, id, data, navigate, dispatch);
+				}
+				
+				toast({ description: "Submitted successfully" });
 			}
-			
-		toast({ description: "Submitted successfully" });
+		}catch{
+			toast({ description: "Error occured on submission" });
 		}
-	}catch{
-		toast({ description: "Error occured on submission" });
-	}
 	};
 
 	function renderField(field, path = "") {
