@@ -9,7 +9,7 @@ import Timeline from "@/components/custom/profile/Timeline";
 import TagManagement from "@/components/custom/admin/tag-management/TagManagement";
 import Verify from "@/components/custom/profile/Verify";
 import Documents from "@/components/custom/profile/Documents";
-import RatingReview from "@/components/custom/RatingReview";
+import RatingComment from "@/components/custom/RatingComment";
 import { getTouristById } from "@/services/TouristApiHandler";
 import {
     getTourGuide,
@@ -261,14 +261,14 @@ function Profile() {
             {profileRole === "tourGuide" && userData.isAccepted === true && editing === false && (
                 <>
                     <hr className="border-neutral-300 border w-full mt-8" />
-                    <RatingReview
+                    <RatingComment
                         data={userData}
                         totalRatings={totalRatings}
-                        type="comment"
                         fetchData={() => getUserInfo(profileId)}
                         addComment={addTourGuideComment}
                         addRating={addTourGuideRating}
-                    />
+                        type="tourGuide"
+                        />
                 </>
             )}
         </div>

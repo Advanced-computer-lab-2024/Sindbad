@@ -1,23 +1,24 @@
 import { useEffect, useState } from "react";
 
 import StarRatingForm from "./StarRatingForm";
-import Review from "./Review";
+import Comment from "./Comment";
 
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { useToast } from "@/hooks/use-toast";
 
+import { getTouristById } from "@/services/TouristApiHandler";
+import { getMyItineraries } from "@/services/ItineraryApiHandler";
+
 import { useUser } from "@/state management/userInfo";
 
-import { addProductRating, addProductReview, productSalesDetails } from "@/services/ProductApiHandler";
-
-function RatingReview({ data, totalRatings, fetchData }) {
+function RatingComment({ data, totalRatings, fetchData, addComment, addRating, type }) {
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState("");
-    const [myReview, setMyReview] = useState(null);
+    const [user, setUser] = useState(null);
+    const [itineraries, setItineraries] = useState([]);
     const [rated, setRated] = useState(false);
     const [purchased, setPurchased] = useState(false);
-    const [error, setError] = useState("");
 
     const { id, role } = useUser();
     const { toast } = useToast();
@@ -28,53 +29,99 @@ function RatingReview({ data, totalRatings, fetchData }) {
     };
 
     useEffect(() => {
-        if (data.reviews) {
-            const review = data.reviews.find((review) => review.userId === id);
-            if (review) {
-                setMyReview(review);
-            }
-        }
-    }, [id, data.reviews]);
-
-    useEffect(() => {
         if (data.userRatings) {
             setRated(data.userRatings.includes(id));
         }
     }, [id, data.userRatings]);
 
-    const getPurchased = async () => {
-        const response = await productSalesDetails(data._id);
+    const getUser = async () => {
+        if (role === "tourist") {
+            const response = await getTouristById(id);
+            if (response.error) {
+                console.error(response.error);
+            } else {
+                setUser(response);
+            }
+        }
+    }
+
+    useEffect(() => {
+        getUser();
+    }, [id]);
+
+    const getTourGuideItineraries = async () => {
+        const response = await getMyItineraries(data._id);
         if (response.error) {
             console.error(response.error);
         } else {
-            const sales = response.productSales;
-            const hasPurchased = sales.some(sale => sale.buyerId === id && sale.productId === data._id);
-            setPurchased(hasPurchased);
+            setItineraries(response);
+        }
+    }
+
+    const getPurchased = async () => {
+        if (user) {
+            if (type === "itinerary") {
+                setPurchased(user.bookedEvents.itineraries.some(
+                    (itinerary) => (
+                        itinerary.itineraryId === data._id &&
+                        new Date(itinerary.dateBooked) < new Date()
+                    )
+                ));
+            } else if (type === "activity") {
+                const paid = user.bookedEvents.activities.some(
+                    (activity) => activity.activityId === data._id
+                );
+                const attended = new Date(data.dateTime) < new Date();
+                setPurchased(paid && attended);
+            } else if (type === "tourGuide") {
+                setPurchased(user.bookedEvents.itineraries.some(
+                    (itinerary) => (
+                        itineraries.some(
+                            (myItinerary) => (
+                                myItinerary._id === itinerary.itineraryId &&
+                                new Date(itinerary.dateBooked) < new Date()
+                            )
+                        )
+                    )
+                )
+                )
+                console.log(user.bookedEvents.itineraries);
+                console.log(itineraries);
+            }
         }
     }
 
     useEffect(() => {
         getPurchased();
-    }, [data]);
+    }, [data, user, itineraries]);
+
+    useEffect(() => {
+        if (type === "tourGuide") {
+            getTourGuideItineraries();
+        }
+    }, [type]);
 
     const handleSubmit = async () => {
-        if (rating === 0) {
-            setError("Please add a rating between 1 to 5 stars.");
-            return;
-        }
-
-        const response = comment === ""
-            ? await addProductRating(data._id, { rating: rating, userId: id })
-            : await addProductReview(data._id, { rating: rating, comment: comment, userId: id });
+        const response = await addComment(data._id, { comment: comment, userId: id });
         if (response.error) {
             console.error(response.error);
             toast({ description: "An error occurred, please try again later" });
         }
         else {
-            setRating(0);
             setComment("");
-            setError("");
             fetchData();
+        }
+    }
+
+    const submitRating = async (rating) => {
+        const response = await addRating(data._id, { rating: rating, userId: id });
+        if (response.error) {
+            console.error(response.error);
+            toast({ description: "An error occurred, please try again later" });
+        }
+        else {
+            fetchData();
+            toast({ description: "Rating submitted successfully" });
         }
     }
 
@@ -110,27 +157,25 @@ function RatingReview({ data, totalRatings, fetchData }) {
                         </div>
                     ))}
                 </div>
+                {role === "tourist" && !rated && purchased &&
+                    <label className="text-base font-medium mt-4">
+                        Leave a rating
+                        <div className="mt-1">
+                            <StarRatingForm size={21} onRatingChange={submitRating} rating={rating} />
+                        </div>
+                    </label>
+                }
             </div>
 
-            {/* Reviews Section */}
+            {/* Reviews/comments Section */}
             <div className="w-2/3 flex flex-col gap-4">
                 <h2 className="text-2xl font-semibold">
-                    Customer Reviews
+                    Comments
                 </h2>
-                {role === "tourist" && myReview === null && purchased && !rated &&
+                {role === "tourist" && purchased &&
                     <>
-                        <div>
-                            <label className="text-base font-medium">
-                                Overall rating
-                                <div className="mt-1">
-                                    <StarRatingForm size={21} onRatingChange={setRating} rating={rating} />
-                                </div>
-                            </label>
-                            {error && <p className="text-red-500 text-[13px] mt-1">{error}</p>}
-                        </div>
-
                         <label className="text-base font-medium">
-                            Write a review
+                            Write a comment
                             <Textarea
                                 placeholder="Type here..."
                                 className="resize-none mt-1"
@@ -145,17 +190,17 @@ function RatingReview({ data, totalRatings, fetchData }) {
                     </>
                 }
 
-                {data.reviews?.length > 0 ?
+                {data.comments?.length > 0 ?
                     <div className="flex flex-col-reverse gap-7">
-                        {data.reviews?.map((review) => (
-                            <div key={review.username}>
-                                <Review review={review} />
+                        {data.comments?.map((comment) => (
+                            <div key={comment.userId}>
+                                <Comment comment={comment} />
                             </div>
                         ))}
                     </div>
                     :
                     <p className="text-neutral-400 text-sm italic">
-                        No reviews yet.
+                        No comments yet.
                     </p>
                 }
             </div>
@@ -163,4 +208,4 @@ function RatingReview({ data, totalRatings, fetchData }) {
     );
 }
 
-export default RatingReview;
+export default RatingComment;

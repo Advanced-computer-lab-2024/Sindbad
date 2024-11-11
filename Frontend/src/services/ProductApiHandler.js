@@ -74,7 +74,7 @@ export const addProductRating = async (productId, ratingData) => {
 export const addProductReview = async (productId, reviewData) => {
 	try {
 		const response = await axiosInstance.post(
-			`/product/review/${productId}`,
+			`/product/${productId}/review`,
 			reviewData
 		);
 		return response.data;
@@ -92,3 +92,20 @@ export const getMyProducts = async (creatorId) => {
     }
 };
 
+export const buyProduct = async (productId, userId) => {
+	try {
+		const response = await axiosInstance.post(`/product/${productId}/buy`, { userId });
+		return response.data;
+	} catch (error) {
+		return error;
+	}
+};
+
+export const productSalesDetails = async (productId) => {
+	try {
+		const response = await axiosInstance.get(`/product/sales-details/${productId}`);
+		return response.data;
+	} catch (error) {
+		return error;
+	}
+};

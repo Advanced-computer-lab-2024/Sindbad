@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import GoogleMapRead from "@/components/custom/maps/GoogleMapRead";
 import StarRating from "@/components/custom/StarRating";
 import ImagePlaceholder from "@/components/custom/ImagePlaceholder";
-import RatingReview from "@/components/custom/RatingReview";
+import RatingComment from "@/components/custom/RatingComment";
 import { useToast } from "@/hooks/use-toast";
 
 import { Button } from "@/components/ui/button";
@@ -307,13 +307,13 @@ function Activity() {
                 </div>
             </div>
             <hr className="border-neutral-300 border w-full mt-1.5" />
-            <RatingReview
+            <RatingComment
                 data={activity}
                 totalRatings={totalRatings}
-                type="comment"
                 fetchData={getActivity}
                 addComment={addActivityComment}
                 addRating={addActivityRating}
+                type="activity"
             />
         </div>
     );

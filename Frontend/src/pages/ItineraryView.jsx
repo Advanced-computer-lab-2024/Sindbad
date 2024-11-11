@@ -24,7 +24,7 @@ import {
     cancelBooking,
 } from "@/services/ItineraryApiHandler";
 import StarRating from "@/components/custom/StarRating";
-import RatingReview from "@/components/custom/RatingReview";
+import RatingComment from "@/components/custom/RatingComment";
 import { useToast } from "@/hooks/use-toast";
 
 import { useUser, useCurrency } from "@/state management/userInfo";
@@ -52,8 +52,8 @@ const Itinerary = () => {
     const [child, setChild] = useState(0);
     const { itineraryId } = useParams();
     const [itinerary, setItinerary] = useState(null); // Initialize as null
-    const [selectedDate, setSelectedDate] = useState(0);
-    const [selectedTime, setSelectedTime] = useState(0);
+    const [selectedDate, setSelectedDate] = useState(-1);
+    const [selectedTime, setSelectedTime] = useState(-1);
     const [creator, setCreator] = useState(null);
     const [totalRatings, setTotalRatings] = useState(0);
     const [error, setError] = useState(false);
@@ -143,7 +143,10 @@ const Itinerary = () => {
         const weekday = d.toLocaleString("en-US", { weekday: "short" });
         const day = d.toLocaleString("en-US", { day: "numeric" });
         const month = d.toLocaleString("en-US", { month: "short" });
-        return `${weekday} ${day} ${month}`;
+        return {
+            dateObj: d, // for future comparison
+            display: `${weekday} ${day} ${month}` // for display purposes
+        };
     });
 
     const times = itinerary.availableDatesTimes.map((entry) => {
@@ -319,40 +322,37 @@ const Itinerary = () => {
                         <>
                             <Carousel>
                                 <CarouselContent className="px-0.5 -ml-4 mr-3">
-                                    {dates.map((date, idx) => (
-                                        <CarouselItem className="basis-1/3 py-0.5 pl-4">
-                                            <button
-                                                key={idx}
-                                                onClick={() => {
-                                                    setSelectedDate(idx);
-                                                    setSelectedTime(idx);
-                                                }}
-                                                className={`border py-2 px-3 min-h-20 w-24 rounded-md bg-gradient-to-br from-primary-700/80 to-primary-900/80 text-center ${selectedDate === idx
-                                                    ? "ring-secondary ring-2"
-                                                    : "ring-transparent"
-                                                    }`}
-                                            >
-                                                <div className="flex flex-col">
-                                                    {/* Weekday */}
-                                                    <span className="text-sm">{date.split(" ")[0]}</span>
-                                                    {/* Day */}
-                                                    <span className="text-lg font-bold">
-                                                        {date.split(" ")[1]}
-                                                    </span>
-                                                    {/* Month */}
-                                                    <span className="text-sm">
-                                                        {date.split(" ")[2]}
-                                                    </span>{" "}
-                                                </div>
-                                                <hr className="border-primary-900 border-1 w-full my-1.5" />
-                                                <p className="text-xs">{times[idx]}</p>
-                                            </button>
-                                        </CarouselItem>
-                                    ))}
+                                    {dates.map((date, idx) => {
+                                        if (date.dateObj >= new Date()) { // Only render future dates
+                                            return (
+                                                <CarouselItem key={idx} className="basis-1/3 py-0.5 pl-4">
+                                                    <button
+                                                        onClick={() => {
+                                                            setSelectedDate(idx);
+                                                            setSelectedTime(idx);
+                                                        }}
+                                                        className={`border py-2 px-3 min-h-20 w-24 rounded-md bg-gradient-to-br from-primary-700/80 to-primary-900/80 text-center ${selectedDate === idx ? "ring-secondary ring-2" : "ring-transparent"
+                                                            }`}
+                                                    >
+                                                        <div className="flex flex-col">
+                                                            {/* Weekday, Day, Month */}
+                                                            <span className="text-sm">{date.display.split(" ")[0]}</span>
+                                                            <span className="text-lg font-bold">{date.display.split(" ")[1]}</span>
+                                                            <span className="text-sm">{date.display.split(" ")[2]}</span>
+                                                        </div>
+                                                        <hr className="border-primary-900 border-1 w-full my-1.5" />
+                                                        <p className="text-xs">{times[idx]}</p>
+                                                    </button>
+                                                </CarouselItem>
+                                            );
+                                        }
+                                        return null; // Skip past dates
+                                    })}
                                 </CarouselContent>
                                 <CarouselPrevious className="-left-5" />
                                 <CarouselNext />
                             </Carousel>
+
 
                             <div className="relative p-6 bg-gradient-to-b from-neutral-200/60 to-light rounded-md mt-4 overflow-clip">
                                 {/* border */}
@@ -459,6 +459,10 @@ const Itinerary = () => {
                                     <Button
                                         className="text-center w-30 py-3 relative bg-white border border-neutral-400 hover:bg-neutral-100"
                                         onClick={async () => {
+                                            if (selectedDate === -1) {
+                                                toast({ description: "Please select a date" });
+                                                return;
+                                            }
                                             const response = await bookItinerary(
                                                 itineraryId,
                                                 id,
@@ -518,13 +522,13 @@ const Itinerary = () => {
                 </div>
             </div>
             <hr className="border-neutral-300 border w-full mt-1.5" />
-            <RatingReview
+            <RatingComment
                 data={itinerary}
                 totalRatings={totalRatings}
-                type="comment"
                 fetchData={getItinerary}
                 addComment={addItineraryComment}
                 addRating={addItineraryRating}
+                type="itinerary"
             />
         </div>
     );

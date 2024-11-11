@@ -203,157 +203,157 @@ const addRating = async (req, res) => {
 
 //add review by id
 const addReview = async (req, res) => {
-    try {
-        const product = await Product.findById(req.params.id);
-        const { userId, rating, comment } = req.body;
+	try {
+		const product = await Product.findById(req.params.id);
+		const { userId, rating, comment } = req.body;
 
-        if (!product) {
-            return res.status(404).json({ message: "Product not found" });
-        }
+		if (!product) {
+			return res.status(404).json({ message: "Product not found" });
+		}
 
-        const purchaseRecord = await ProductSales.findOne({
-            productId: product,
-            buyerId: userId,
-        });
+		const purchaseRecord = await ProductSales.findOne({
+			productId: product,
+			buyerId: userId,
+		});
 
-        if (!purchaseRecord) {
-            return res.status(403).json({ message: "User has not purchased this product and cannot review it." });
-        }
+		if (!purchaseRecord) {
+			return res.status(403).json({ message: "User has not purchased this product and cannot review it." });
+		}
 
-        if (!rating && !comment) {
-            return res.status(403).json({ message: "User must add a rating or a comment or both" });
-        }
+		if (!rating && !comment) {
+			return res.status(403).json({ message: "User must add a rating or a comment or both" });
+		}
 
-        // Find the existing review
-        const existingReviewIndex = product.reviews.findIndex(review => review.userId === userId);
-        let reviewUpdated = false;
+		// Find the existing review
+		const existingReviewIndex = product.reviews.findIndex(review => review.userId === userId);
+		let reviewUpdated = false;
 
-        if (existingReviewIndex !== -1) {
-            // Review exists, check if it already has a rating
-            const existingReview = product.reviews[existingReviewIndex];
+		if (existingReviewIndex !== -1) {
+			// Review exists, check if it already has a rating
+			const existingReview = product.reviews[existingReviewIndex];
 
-            if (rating && existingReview.rating !== undefined) {
-                return res.status(403).json({ message: "Rating cannot be updated once set. Only comments can be updated." });
-            }
+			if (rating && existingReview.rating !== undefined) {
+				return res.status(403).json({ message: "Rating cannot be updated once set. Only comments can be updated." });
+			}
 
-            // Update the comment if provided
-            if (comment) {
-                existingReview.comment = comment;
-                reviewUpdated = true;
-            }
+			// Update the comment if provided
+			if (comment) {
+				existingReview.comment = comment;
+				reviewUpdated = true;
+			}
 
-            // Add a rating only if none exists
-            if (rating && existingReview.rating === undefined) {
+			// Add a rating only if none exists
+			if (rating && existingReview.rating === undefined) {
 
 				if (rating < 1 || rating > 5) {
 					return res.status(400).json({ message: "Rating must be between 1 and 5." });
 				}
 
-                if (!(product.rating instanceof Map)) {
-                    product.rating = new Map(Object.entries(product.rating));
-                }
+				if (!(product.rating instanceof Map)) {
+					product.rating = new Map(Object.entries(product.rating));
+				}
 
-                product.rating.set(
-                    rating.toString(),
-                    (product.rating.get(rating.toString()) || 0) + 1
-                );
+				product.rating.set(
+					rating.toString(),
+					(product.rating.get(rating.toString()) || 0) + 1
+				);
 
-                existingReview.rating = rating;
-                product.userRatings.push(userId);
-                reviewUpdated = true;
-            }
+				existingReview.rating = rating;
+				product.userRatings.push(userId);
+				reviewUpdated = true;
+			}
 
-            product.reviews[existingReviewIndex] = existingReview;
-        } else {
-            // Add a new review if not found
-            const newReview = { userId, rating, comment };
+			product.reviews[existingReviewIndex] = existingReview;
+		} else {
+			// Add a new review if not found
+			const newReview = { userId, rating, comment };
 
-            product.reviews.push(newReview);
+			product.reviews.push(newReview);
 
-            if (rating) {	
+			if (rating) {
 				if (rating < 1 || rating > 5) {
 					return res.status(400).json({ message: "Rating must be between 1 and 5." });
 				}
 
-                if (!(product.rating instanceof Map)) {
-                    product.rating = new Map(Object.entries(product.rating));
-                }
+				if (!(product.rating instanceof Map)) {
+					product.rating = new Map(Object.entries(product.rating));
+				}
 
-                product.rating.set(
-                    rating.toString(),
-                    (product.rating.get(rating.toString()) || 0) + 1
-                );
+				product.rating.set(
+					rating.toString(),
+					(product.rating.get(rating.toString()) || 0) + 1
+				);
 
-                product.userRatings.push(userId);
-            }
+				product.userRatings.push(userId);
+			}
 
-            reviewUpdated = true;
-        }
+			reviewUpdated = true;
+		}
 
-        // Recalculate average rating if a rating was added
-        if (rating) {
-            product.averageRating = calculateAverageRating(product.rating);
-        }
+		// Recalculate average rating if a rating was added
+		if (rating) {
+			product.averageRating = calculateAverageRating(product.rating);
+		}
 
-        await product.save();
+		await product.save();
 
-        const responseMessage = reviewUpdated ? "Review updated successfully" : "Review added successfully";
-        res.status(201).json({ message: responseMessage, product });
-    } catch (error) {
-        return res.status(500).json({ message: "Error adding or updating review", error: error.message });
-    }
+		const responseMessage = reviewUpdated ? "Review updated successfully" : "Review added successfully";
+		res.status(201).json({ message: responseMessage, product });
+	} catch (error) {
+		return res.status(500).json({ message: "Error adding or updating review", error: error.message });
+	}
 };
 
 
 const buyProduct = async (req, res) => {
-    try {
-        const productId = req.params.id;
-        const { userId} = req.body;
+	try {
+		const productId = req.params.id;
+		const { userId } = req.body;
 
-        // if (!quantity || quantity < 1) {
-        //     return res.status(400).json({ message: "Quantity must be at least 1" });
-        // }
+		// if (!quantity || quantity < 1) {
+		//     return res.status(400).json({ message: "Quantity must be at least 1" });
+		// }
 
-        // Find the product by ID
-        const product = await Product.findById(productId);
+		// Find the product by ID
+		const product = await Product.findById(productId);
 
-        if (!product) {
-            return res.status(404).json({ message: "Product not found" });
-        }
+		if (!product) {
+			return res.status(404).json({ message: "Product not found" });
+		}
 
-        // Check if the product has sufficient quantity
-        // if (product.quantity < quantity) {
-        //     return res.status(400).json({ message: "Insufficient quantity available" });
-        // }
+		// Check if the product has sufficient quantity
+		// if (product.quantity < quantity) {
+		//     return res.status(400).json({ message: "Insufficient quantity available" });
+		// }
 
-		quantity=1;
+		quantity = 1;
 
-        // Calculate the total price
-        const totalPrice = product.price
+		// Calculate the total price
+		const totalPrice = product.price
 
-        // Create a new entry in the ProductSales collection
-        const productSale = new ProductSales({
-            productId,
-            buyerId: userId,
-            quantity,
-            totalPrice,
-        });
+		// Create a new entry in the ProductSales collection
+		const productSale = new ProductSales({
+			productId,
+			buyerId: userId,
+			quantity,
+			totalPrice,
+		});
 
-        await productSale.save();
+		await productSale.save();
 
-        // Update the product's numSales and quantity
-        product.numSales += quantity;
-        // product.quantity -= quantity;
+		// Update the product's numSales and quantity
+		product.numSales += quantity;
+		product.quantity -= quantity;
 
-        await product.save();
+		await product.save();
 
-        res.status(201).json({ message: "Product purchased successfully", productSale });
-    } catch (error) {
-        return res.status(500).json({ message: "Error processing purchase", error: error.message });
-    }
+		res.status(201).json({ message: "Product purchased successfully", productSale });
+	} catch (error) {
+		return res.status(500).json({ message: "Error processing purchase", error: error.message });
+	}
 };
 
-module.exports = { buyProduct };
+// module.exports = { buyProduct };
 
 
 /**
@@ -443,4 +443,5 @@ module.exports = {
 	getProductSalesDetails,
 	// Export getProductsByCreatorId function
 	getProductsByCreatorId,
+	buyProduct
 };
