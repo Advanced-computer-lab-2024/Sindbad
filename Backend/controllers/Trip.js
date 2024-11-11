@@ -3,7 +3,6 @@ const Trip = require("../models/Trip");
 // Create a new trip
 async function createTrip(req, res) {
   try {
-    console.log(req.body);
     const {
       name,
       description,
@@ -16,7 +15,7 @@ async function createTrip(req, res) {
       isBookingOpen,
       creatorId,
       capacity,
-    } = req.body;
+    } = req.body.values;
 
     const trip = new Trip({
       name,
@@ -35,6 +34,7 @@ async function createTrip(req, res) {
     const savedTrip = await trip.save();
     res.status(201).json(savedTrip);
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: error.message });
   }
 }

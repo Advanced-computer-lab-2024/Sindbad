@@ -1,32 +1,12 @@
 import axiosInstance from "./axiosInstance";
 
 export const createTrip = async (
-  name,
-  description,
-  dateTime,
-  price,
-  pickupLocation,
-  dropoffLocation,
-  imageUris,
-  discount,
-  isBookingOpen,
-  creatorId,
-  capacity
+  values
 ) => {
   try {
     const response = await axiosInstance.post(`/trip/create/`, {
       resourceName: "Trip",
-      name,
-      description,
-      dateTime,
-      price,
-      pickupLocation,
-      dropoffLocation,
-      imageUris,
-      discount,
-      isBookingOpen,
-      creatorId,
-      capacity,
+      values,
     });
     return response.data;
   } catch (error) {
