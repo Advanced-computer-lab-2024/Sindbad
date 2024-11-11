@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import StarRatingForm from "./StarRatingForm";
+import Comment from "./Comment";
 import Review from "./Review";
 
 import { Textarea } from "../ui/textarea";
@@ -11,7 +12,7 @@ import { useUser } from "@/state management/userInfo";
 
 import { addProductRating, addProductReview, productSalesDetails } from "@/services/ProductApiHandler";
 
-function RatingReview({ data, totalRatings, fetchData }) {
+function RatingComment({ data, totalRatings, type, fetchData, addComment, addRating }) {
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState("");
     const [myReview, setMyReview] = useState(null);
@@ -58,23 +59,48 @@ function RatingReview({ data, totalRatings, fetchData }) {
     }, [data]);
 
     const handleSubmit = async () => {
-        if (rating === 0) {
-            setError("Please add a rating between 1 to 5 stars.");
-            return;
-        }
+        if (type === "review") {
+            if (rating === 0) {
+                setError("Please add a rating between 1 to 5 stars.");
+                return;
+            }
 
-        const response = comment === ""
-            ? await addProductRating(data._id, { rating: rating, userId: id })
-            : await addProductReview(data._id, { rating: rating, comment: comment, userId: id });
+            const response = comment === ""
+                ? await addProductRating(data._id, { rating: rating, userId: id })
+                : await addProductReview(data._id, { rating: rating, comment: comment, userId: id });
+            if (response.error) {
+                console.error(response.error);
+                toast({ description: "An error occurred, please try again later" });
+            }
+            else {
+                setRating(0);
+                setComment("");
+                setError("");
+                fetchData();
+            }
+        } else if (type === "comment") {
+            console.log(data._id, { comment: comment, userId: id });
+            const response = await addComment(data._id, { comment: comment, userId: id });
+            if (response.error) {
+                console.error(response.error);
+                toast({ description: "An error occurred, please try again later" });
+            }
+            else {
+                setComment("");
+                fetchData();
+            }
+        }
+    }
+
+    const submitRating = async (rating) => {
+        const response = await addRating(data._id, { rating: rating, userId: id });
         if (response.error) {
             console.error(response.error);
             toast({ description: "An error occurred, please try again later" });
         }
         else {
-            setRating(0);
-            setComment("");
-            setError("");
             fetchData();
+            toast({ description: "Rating submitted successfully" });
         }
     }
 
@@ -110,42 +136,55 @@ function RatingReview({ data, totalRatings, fetchData }) {
                         </div>
                     ))}
                 </div>
+                {role === "tourist" && type === "comment" && !rated && purchased &&
+                    <label className="text-base font-medium mt-4">
+                        Leave a rating
+                        <div className="mt-1">
+                            <StarRatingForm size={21} onRatingChange={submitRating} rating={rating} />
+                        </div>
+                    </label>
+                }
             </div>
 
-            {/* Reviews Section */}
+            {/* Reviews/comments Section */}
             <div className="w-2/3 flex flex-col gap-4">
                 <h2 className="text-2xl font-semibold">
-                    Customer Reviews
+                    {type === "review" ? "Customer Reviews" : "Comments"}
                 </h2>
-                {role === "tourist" && myReview === null && purchased && !rated &&
+                {role === "tourist" && myReview === null && purchased &&
                     <>
-                        <div>
-                            <label className="text-base font-medium">
-                                Overall rating
-                                <div className="mt-1">
-                                    <StarRatingForm size={21} onRatingChange={setRating} rating={rating} />
-                                </div>
-                            </label>
-                            {error && <p className="text-red-500 text-[13px] mt-1">{error}</p>}
-                        </div>
-
-                        <label className="text-base font-medium">
-                            Write a review
-                            <Textarea
-                                placeholder="Type here..."
-                                className="resize-none mt-1"
-                                rows={4}
-                                value={comment}
-                                onChange={(e) => setComment(e.target.value)}
-                            />
-                        </label>
-                        <Button className="w-max self-end" onClick={handleSubmit}>
-                            Submit
-                        </Button>
+                        {type === "review" && !rated &&
+                            <div>
+                                <label className="text-base font-medium">
+                                    Overall rating
+                                    <div className="mt-1">
+                                        <StarRatingForm size={21} onRatingChange={setRating} rating={rating} />
+                                    </div>
+                                </label>
+                                {error && <p className="text-red-500 text-[13px] mt-1">{error}</p>}
+                            </div>
+                        }
+                        {(type === "comment" || (type === "review" && !rated && myReview === null)) &&
+                            <>
+                                <label className="text-base font-medium">
+                                    Write a {type}
+                                    <Textarea
+                                        placeholder="Type here..."
+                                        className="resize-none mt-1"
+                                        rows={4}
+                                        value={comment}
+                                        onChange={(e) => setComment(e.target.value)}
+                                    />
+                                </label>
+                                <Button className="w-max self-end" onClick={handleSubmit}>
+                                    Submit
+                                </Button>
+                            </>
+                        }
                     </>
                 }
 
-                {data.reviews?.length > 0 ?
+                {type === "review" && data.reviews?.length > 0 ?
                     <div className="flex flex-col-reverse gap-7">
                         {data.reviews?.map((review) => (
                             <div key={review.username}>
@@ -153,14 +192,22 @@ function RatingReview({ data, totalRatings, fetchData }) {
                             </div>
                         ))}
                     </div>
-                    :
-                    <p className="text-neutral-400 text-sm italic">
-                        No reviews yet.
-                    </p>
+                    : type === "comment" && data.comments?.length > 0 ?
+                        <div className="flex flex-col-reverse gap-7">
+                            {data.comments?.map((comment) => (
+                                <div key={comment.userId}>
+                                    <Comment comment={comment} />
+                                </div>
+                            ))}
+                        </div>
+                        :
+                        <p className="text-neutral-400 text-sm italic">
+                            No {type}s yet.
+                        </p>
                 }
             </div>
         </div>
     );
 }
 
-export default RatingReview;
+export default RatingComment;

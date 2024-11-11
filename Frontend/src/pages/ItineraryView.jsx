@@ -24,7 +24,7 @@ import {
     cancelBooking,
 } from "@/services/ItineraryApiHandler";
 import StarRating from "@/components/custom/StarRating";
-import RatingReview from "@/components/custom/RatingReview";
+import RatingComment from "@/components/custom/RatingComment";
 import { useToast } from "@/hooks/use-toast";
 
 import { useUser, useCurrency } from "@/state management/userInfo";
@@ -518,7 +518,7 @@ const Itinerary = () => {
                 </div>
             </div>
             <hr className="border-neutral-300 border w-full mt-1.5" />
-            <RatingReview
+            <RatingComment
                 data={itinerary}
                 totalRatings={totalRatings}
                 type="comment"
