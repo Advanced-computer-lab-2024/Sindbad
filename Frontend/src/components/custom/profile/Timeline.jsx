@@ -17,6 +17,18 @@ function Timeline({ userData, profileId, id, profileRole, cardData, fetchCardDat
 		return profileId === id;
 	}
 
+	const filteredCardData = role === "admin" && profileRole === "tourGuide"
+		? cardData.filter((card) => card.isActive === true) // admins can see all tour guides' active itineraries
+		: role === "admin" && profileRole === "advertiser"
+			? cardData // admins can see all advertisers' activities
+			: profileRole === "tourGuide" && id !== profileId
+				? cardData.filter((card) => card.isActive === true && card.isInappropriate === false) // non-admins can only see active itineraries that are not inappropriate
+				: profileRole === "advertiser" && id !== profileId
+					? cardData.filter((card) => card.isInappropriate === false) // non-admins can only see activities that are not inappropriate
+					: profileRole === "seller" && id !== profileId
+						? cardData.filter((card) => card.isArchived === false) // admins and non-admins can only see products that are not archived
+						: cardData; // otherwise, all cards are displayed
+
 	return (
 		<div className="flex flex-col gap-6">
 			<div className="flex items-center gap-6">
@@ -61,7 +73,7 @@ function Timeline({ userData, profileId, id, profileRole, cardData, fetchCardDat
 					cardList={
 						profileRole === "tourist"
 							? userData?.bookmarks || []
-							: cardData
+							: filteredCardData
 					}
 					cardType={
 						profileRole === "tourist"
@@ -84,7 +96,7 @@ function Timeline({ userData, profileId, id, profileRole, cardData, fetchCardDat
 							</p>
 						)}
 
-					{profileRole === "tourGuide" && cardData.length === 0 && (
+					{profileRole === "tourGuide" && filteredCardData.length === 0 && (
 						<p className="text-neutral-400 text-sm italic">
 							{profileId !== id
 								? "No itineraries to show."
@@ -96,7 +108,7 @@ function Timeline({ userData, profileId, id, profileRole, cardData, fetchCardDat
 						</p>
 					)}
 
-					{(profileRole === "seller" || profileRole === "admin") && cardData.length === 0 && (
+					{(profileRole === "seller" || profileRole === "admin") && filteredCardData.length === 0 && (
 						<p className="text-neutral-400 text-sm italic">
 							{profileId !== id
 								? "No products to show."
@@ -108,7 +120,7 @@ function Timeline({ userData, profileId, id, profileRole, cardData, fetchCardDat
 						</p>
 					)}
 
-					{profileRole === "advertiser" && cardData.length === 0 && (
+					{profileRole === "advertiser" && filteredCardData.length === 0 && (
 						<p className="text-neutral-400 text-sm italic">
 							{profileId !== id
 								? "No activities to show."
@@ -120,7 +132,7 @@ function Timeline({ userData, profileId, id, profileRole, cardData, fetchCardDat
 						</p>
 					)}
 
-					{profileRole === "tourismGovernor" && cardData.length === 0 && (
+					{profileRole === "tourismGovernor" && filteredCardData.length === 0 && (
 						<p className="text-neutral-400 text-sm italic">
 							{profileId !== id
 								? "No historical places or museums to show."
