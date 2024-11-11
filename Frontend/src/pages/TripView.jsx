@@ -6,6 +6,7 @@ import GoogleMapRead from "@/components/custom/maps/GoogleMapRead";
 import ImagePlaceholder from "@/components/custom/ImagePlaceholder";
 import { useToast } from "@/hooks/use-toast";
 import { useUser, useCurrency } from "@/state management/userInfo";
+import { Convert } from "easy-currencies";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -33,6 +34,8 @@ function Trip() {
   const [trip, setTrip] = useState(null);
   const [creator, setCreator] = useState(null);
   const [error, setError] = useState(false);
+  const [convertedPrice, setConvertedPrice] = useState(null);
+  const currency = useCurrency();
   const { id, role } = useUser();
   const { toast } = useToast();
 
@@ -67,6 +70,26 @@ function Trip() {
       getCreator();
     }
   }, [trip]);
+
+  useEffect(() => {
+    const fetchConversionRate = async () => {
+      try {
+        const convert = await Convert().from("USD").fetch();
+
+        if (trip.price) {
+          const price = await convert.amount(trip.price).to(currency);
+          setConvertedPrice(price);
+        }
+      } catch (error) {
+        console.error("Error fetching conversion rate:", error);
+        setConvertedPrice(null); // Reset on error
+      }
+    };
+
+    if (trip) {
+      fetchConversionRate();
+    }
+  }, [currency, trip]);
 
   if (!trip) {
     return (
@@ -204,8 +227,8 @@ function Trip() {
 
           <div className="text-end">
             <p className="text-3xl font-semibold text-primary-950">
-              {trip.price.toFixed(2)}
-              <span className="text-xl font-medium text-gray-700"> EGP</span>
+              {convertedPrice && convertedPrice.toFixed(2)}
+              <span className="text-xl font-medium text-gray-700"> {currency}</span>
             </p>
 
             {trip.discounts && trip.discounts > 0 && (
