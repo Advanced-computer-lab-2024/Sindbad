@@ -307,14 +307,14 @@ function Activity() {
                 </div>
             </div>
             <hr className="border-neutral-300 border w-full mt-1.5" />
-            {/* <RatingComment
+            <RatingComment
                 data={activity}
                 totalRatings={totalRatings}
-                type="comment"
                 fetchData={getActivity}
                 addComment={addActivityComment}
                 addRating={addActivityRating}
-            /> */}
+                type="activity"
+            />
         </div>
     );
 }

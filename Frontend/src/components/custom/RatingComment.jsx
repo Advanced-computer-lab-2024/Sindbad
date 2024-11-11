@@ -56,6 +56,12 @@ function RatingComment({ data, totalRatings, fetchData, addComment, addRating, t
                         new Date(itinerary.dateBooked) < new Date()
                     )
                 ));
+            } else if (type === "activity") {
+                const paid = user.bookedEvents.activities.some(
+                    (activity) => activity.activityId === data._id
+                );
+                const attended = new Date(data.dateTime) < new Date();
+                setPurchased(paid && attended);
             }
         }
     }

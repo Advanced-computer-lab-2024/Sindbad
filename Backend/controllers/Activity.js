@@ -348,6 +348,7 @@ const getActivities = async (req, res) => {
     const filter = {
       // Default filter to show only non-inappropriate activities
       isInappropriate: false,
+      dateTime: { $gte: new Date() }, // Only include activities with dateTime in the future
     };
 
     // Budget filter
