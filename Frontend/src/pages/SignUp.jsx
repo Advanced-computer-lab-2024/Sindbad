@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 import { userSignUp } from "@/services/UserApiHandler";
 
@@ -29,6 +30,8 @@ function SignUp() {
     const [error, setError] = useState(null);
     const [accepted, setAccepted] = useState(false);
     const [tags, setTags] = useState([]);
+    const [termsOpen, setTermsOpen] = useState(false);
+    const [policyOpen, setPolicyOpen] = useState(false);
     const navigate = useNavigate();
 
     const handleRegisterTypeChange = (value) => {
@@ -76,9 +79,9 @@ function SignUp() {
 
     const tourGuideFormSchema = z.object({
         certificateImage: z
-              .instanceof(FileList)
-              .refine((file) => file?.length == 1, 'File is required.')
-            ,
+            .instanceof(FileList)
+            .refine((file) => file?.length == 1, 'File is required.')
+        ,
         idCardImage: z
             .instanceof(FileList)
             .refine((file) => file?.length == 1, 'File is required.')
@@ -87,13 +90,13 @@ function SignUp() {
 
     const sellerFormSchema = z.object({
         idCardImage: z
-        .instanceof(FileList)
-        .refine((file) => file?.length == 1, 'File is required.')
-    ,
+            .instanceof(FileList)
+            .refine((file) => file?.length == 1, 'File is required.')
+        ,
         taxationRegistryCardImage: z
-        .instanceof(FileList)
-        .refine((file) => file?.length == 1, 'File is required.')
-    ,
+            .instanceof(FileList)
+            .refine((file) => file?.length == 1, 'File is required.')
+        ,
     })
 
     const commonDefaultValues = {
@@ -146,12 +149,13 @@ function SignUp() {
 
     const taxationRegistryCardImageRef = sellerForm.register('taxationRegistryCardImage');
     const idCardImageRefSeller = sellerForm.register('idCardImage');
-    
+
     const handleCommonFormSubmit = (data) => {
         if (!accepted) {
             setError("Please accept the terms of service and privacy policy");
             return;
         }
+        setError("");
         setFormValues((prev) => ({ ...prev, ...data }));  // Store Step 1 data
         setCurrentStep(2);
     };
@@ -161,10 +165,10 @@ function SignUp() {
     };
 
     const submitForm = async (values) => {
-        
+
         setLoading(true);
         const signUpValues = {}
-        
+
         for (const key in values) {
             if (key !== "idCardImage" && key !== "certificateImage" && key !== "taxationRegistryCardImage") {
                 signUpValues[key] = values[key];
@@ -180,7 +184,7 @@ function SignUp() {
                 const tourguideAddedDocs = await updateTourGuideFiles(response.user._id, values);
             }
         }
-        if (registerType === "Seller") { 
+        if (registerType === "Seller") {
             if (response.error) {
                 setCurrentStep(1);
                 setError(response.display);
@@ -311,15 +315,15 @@ function SignUp() {
                     </FormItem>
                 )}
             />
-            <FormField 
-                key="preferences" 
-                control={touristForm.control} 
-                name="preferences" 
+            <FormField
+                key="preferences"
+                control={touristForm.control}
+                name="preferences"
                 render={({ field }) => (
-                    <MultiSelectField 
-                        name="preferences" 
-                        control={touristForm.control} 
-                        label="Preferences" 
+                    <MultiSelectField
+                        name="preferences"
+                        control={touristForm.control}
+                        label="Preferences"
                         options={Array.from(tags)}
                     />
                 )}
@@ -337,11 +341,11 @@ function SignUp() {
                     <FormItem>
                         <FormLabel htmlFor="certificateImage">Certificate Image</FormLabel>
                         <FormControl>
-                            <Input id="certificateImage" type="file" name="certificateImage" 
-                            {...certificateImageRef} 
-                            onChange={(event) => {
-                                field.onChange(event.target?.files?.[0] ?? undefined);
-                              }}
+                            <Input id="certificateImage" type="file" name="certificateImage"
+                                {...certificateImageRef}
+                                onChange={(event) => {
+                                    field.onChange(event.target?.files?.[0] ?? undefined);
+                                }}
                             />
                         </FormControl>
                         <FormMessage />
@@ -357,10 +361,10 @@ function SignUp() {
                         <FormLabel htmlFor="idCardImage">ID Card Image</FormLabel>
                         <FormControl>
                             <Input id="idCardImage" type="file" name="idCardImage"
-                            {...idCardImageRef} 
-                            onChange={(event) => {
-                                field.onChange(event.target?.files?.[0] ?? undefined);
-                              }}
+                                {...idCardImageRef}
+                                onChange={(event) => {
+                                    field.onChange(event.target?.files?.[0] ?? undefined);
+                                }}
                             />
                         </FormControl>
                         <FormMessage />
@@ -381,10 +385,10 @@ function SignUp() {
                         <FormLabel htmlFor="idCardImage">ID Card Image</FormLabel>
                         <FormControl>
                             <Input id="idCardImage" type="file" name="idCardImage"
-                            {...idCardImageRefSeller}
-                            onChange={(event) => {
-                                field.onChange(event.target?.files?.[0] ?? undefined);
-                              }}
+                                {...idCardImageRefSeller}
+                                onChange={(event) => {
+                                    field.onChange(event.target?.files?.[0] ?? undefined);
+                                }}
                             />
                         </FormControl>
                         <FormMessage />
@@ -400,10 +404,10 @@ function SignUp() {
                         <FormLabel htmlFor="taxationRegistryCardImage">Taxation Registry Card Image</FormLabel>
                         <FormControl>
                             <Input id="taxationRegistryCardImage" type="file" name="taxationRegistryCardImage"
-                            {...taxationRegistryCardImageRef} 
-                            onChange={(event) => {
-                                field.onChange(event.target?.files?.[0] ?? undefined);
-                              }}
+                                {...taxationRegistryCardImageRef}
+                                onChange={(event) => {
+                                    field.onChange(event.target?.files?.[0] ?? undefined);
+                                }}
                             />
                         </FormControl>
                         <FormMessage />
@@ -459,17 +463,62 @@ function SignUp() {
                                     <Button type="submit" disabled={loading} className="bg-primary-700 justify-center w-full mt-4">
                                         {loading && error === false ? <SpinnerSVG /> : registerType == "Tourist" ? "Continue" : "Sign Up"}
                                     </Button>
-
-                                    <Input type="checkbox" id="accept" name="accept" onChange={() => setAccepted(!accepted)} />
-                                    <p className="text-center text-light/70 text-sm mt-5">
+                                    <p className="text-center text-neutral-700 text-sm mt-5">
+                                        <Input type="checkbox" id="accept" name="accept" onChange={() => setAccepted(!accepted)} checked={accepted} className="w-max h-max shadow-none inline mr-2 accent-secondary" />
                                         By creating an account you agree to our{" "}
-                                        <a href="#" className="text-secondary/90 hover:text-secondary hover:decoration-light/80 decoration-light/70 underline underline-offset-2">
-                                            Terms of Service
-                                        </a>{" "}
-                                        &{" "}
-                                        <a href="#" className="text-secondary/90 hover:text-secondary hover:decoration-light/80 decoration-light/70 underline underline-offset-2">
-                                            Privacy Policy
-                                        </a>.
+                                        <Dialog>
+                                            <DialogTrigger asChild>
+                                                <a
+                                                    href="#"
+                                                    className="text-indigo-700/90 hover:text-indigo-700 hover:decoration-light/80 decoration-dark/70 underline underline-offset-2"
+                                                >
+                                                    Terms of Service
+                                                </a>
+                                            </DialogTrigger>
+                                            <DialogContent className="overflow-y-scroll max-h-[50%]">
+                                                <DialogTitle>Terms of Service</DialogTitle>
+                                                <DialogHeader>
+                                                    <p>
+                                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce pharetra vestibulum consequat. Mauris ex dui, consectetur eget mollis ut, placerat nec lectus. Cras eget placerat ligula, vitae venenatis turpis. Fusce bibendum eget mauris quis laoreet. Praesent scelerisque maximus tortor in hendrerit. Donec ut lacus mollis, placerat leo facilisis, tincidunt dui. Integer egestas tincidunt ex, sed vestibulum nibh placerat in. Suspendisse vestibulum sagittis sollicitudin. Fusce porta diam quis massa gravida accumsan.
+                                                        <br /><br />
+                                                        Vivamus fermentum iaculis consectetur. Cras condimentum fringilla tristique. Cras vel molestie massa, sit amet lacinia magna. Praesent at dui a ligula dapibus sagittis ut ut elit. Vestibulum bibendum dolor sed mauris euismod finibus. Vestibulum at neque id augue pretium posuere. Integer commodo luctus lorem, quis fringilla arcu lobortis vitae. Suspendisse sed leo condimentum sem luctus venenatis nec sit amet nibh. Sed feugiat et nulla sed fringilla. Etiam a odio et ipsum euismod congue ut a elit. Vivamus nec arcu aliquet, sodales odio vel, placerat diam.
+                                                        <br /><br />
+                                                        Donec egestas tortor erat, sed tristique nisl ornare non. Phasellus interdum mi vel pulvinar euismod. Cras suscipit libero nec ex elementum ullamcorper eget quis quam. Suspendisse eget porttitor leo. Nullam sem mauris, sollicitudin eget erat vel, hendrerit commodo quam. Aenean quis leo semper, consectetur tellus id, hendrerit velit. Ut bibendum ex diam, a commodo augue lacinia at. Aliquam eu leo a tortor suscipit ultrices vitae a sapien. Mauris facilisis ornare volutpat. Duis mattis tempus augue, et pulvinar leo luctus nec. Aenean pellentesque quis tortor ac luctus. Vestibulum eget feugiat lorem. Curabitur quis metus eget leo faucibus laoreet at a nulla. Integer feugiat sapien ut magna sodales, non tristique mauris luctus. Nulla nec finibus ipsum, vel finibus ex.
+                                                        <br /><br />
+                                                        Nulla euismod leo vitae nibh congue suscipit. Nam sem arcu, eleifend id sapien vel, condimentum consequat ex. Proin vehicula eleifend augue ac mollis. Maecenas elit nulla, mollis id ornare et, sodales sit amet nulla. Sed imperdiet ultrices vehicula. Vestibulum ornare interdum auctor. Phasellus ornare viverra ante, porttitor elementum lacus venenatis ut. Integer ipsum est, viverra ut convallis eget, consectetur sed nibh.
+                                                        <br /><br />
+                                                        Praesent dignissim lacus et ligula auctor efficitur. Pellentesque rhoncus tortor ut enim elementum auctor. Vestibulum at eros vitae sem facilisis volutpat et gravida dui. Curabitur metus quam, accumsan et aliquam quis, volutpat sed lacus. In tempus nisl nec aliquet aliquam. Aenean suscipit, nibh blandit egestas accumsan, dolor velit interdum ante, in sodales justo ipsum quis lectus. Quisque rhoncus, tortor id porta scelerisque, sapien odio auctor elit, sit amet ultricies lorem nisi ut neque. In hac habitasse platea dictumst.
+                                                    </p>
+                                                </DialogHeader>
+                                            </DialogContent>
+                                        </Dialog>
+                                        {" "}&{" "}
+                                        <Dialog>
+                                            <DialogTrigger asChild>
+                                                <a
+                                                    href="#"
+                                                    className="text-indigo-700/90 hover:text-indigo-700 hover:decoration-light/80 decoration-dark/70 underline underline-offset-2"
+                                                >
+                                                    Privacy Policy
+                                                </a>
+                                            </DialogTrigger>
+                                            <DialogContent className="overflow-y-scroll max-h-[50%]">
+                                                <DialogTitle>Privacy Policy</DialogTitle>
+                                                <DialogHeader>
+                                                    <p>
+                                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras maximus fringilla erat, non luctus augue ornare at. Donec ut dui nibh. Sed eget felis venenatis, scelerisque erat vel, egestas nisi. Nulla euismod, elit a suscipit iaculis, arcu risus convallis lorem, quis viverra diam leo eu orci. Vivamus eu lorem congue, congue enim at, luctus lorem. Curabitur egestas sem eget eros porta sollicitudin. Donec in nisi sed mauris fermentum consequat non at turpis.
+                                                        <br /><br />
+                                                        Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Phasellus fringilla, dolor et condimentum facilisis, magna diam consectetur turpis, vitae euismod mi purus tempus turpis. Fusce ipsum diam, tristique id nisi rhoncus, accumsan euismod felis. Vivamus a nibh ante. Duis tristique ante a lorem gravida eleifend. Phasellus ipsum lorem, tempor sed arcu ac, molestie congue ligula. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas sed lectus at tellus mattis malesuada id quis tortor. Suspendisse lacinia, libero sit amet bibendum suscipit, est neque elementum purus, eu pharetra justo sapien quis leo. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.
+                                                        <br /><br />
+                                                        Phasellus sit amet suscipit dolor, et efficitur leo. Nam sit amet odio ipsum. Aliquam erat volutpat. Fusce volutpat ex a orci bibendum malesuada. Ut ullamcorper ligula eu lacus pharetra, id dapibus ex malesuada. Proin tincidunt quam vel scelerisque vulputate. Aenean sollicitudin ut felis vel consequat. Aenean malesuada ultrices eros non porta. Nulla quis auctor ante. Donec vel felis sodales, luctus mi at, aliquam eros. Vestibulum gravida felis quis nulla bibendum, at hendrerit est dictum. Pellentesque viverra faucibus leo, et condimentum urna rhoncus ac.
+                                                        <br /><br />
+                                                        Sed nunc ante, congue eu ipsum nec, pellentesque tempor nisl. Suspendisse rutrum ante nec iaculis accumsan. Proin sit amet erat at orci accumsan finibus. Mauris non varius lectus. Fusce nec tortor odio. Aliquam accumsan egestas turpis in tempor. In consectetur vitae lorem sit amet volutpat. Nulla eros risus, aliquet non porta ut, semper ac mauris. In vitae dolor magna. Nulla vitae dapibus nulla. Fusce turpis enim, eleifend id varius at, lobortis vitae neque. Nam mattis sollicitudin ex id euismod. Nunc commodo euismod felis, eu eleifend nisl luctus ut. Cras efficitur a risus id dictum. Nunc quis aliquam risus. Nullam in turpis finibus, dictum ex eu, placerat augue.
+                                                        <br /><br />
+                                                        Aenean sollicitudin ante lacus, vitae sagittis urna malesuada at. In sed velit sodales enim lobortis facilisis sed ac sem. Nam tempus blandit sem, in blandit arcu tincidunt et. Aliquam ac tellus interdum, ornare elit ultrices, ultrices diam. Nullam vitae blandit nunc. Donec auctor vehicula purus, at tincidunt nisl porttitor ut. Praesent in massa felis. Mauris malesuada ipsum eget orci volutpat malesuada. Duis facilisis eros sit amet augue malesuada aliquam. Donec dictum lectus non ipsum ullamcorper, in sollicitudin dolor pretium. Nullam sed finibus massa, ut condimentum ipsum.
+                                                    </p>
+                                                </DialogHeader>
+                                            </DialogContent>
+                                        </Dialog>.
                                     </p>
                                 </form>
                             </Form>
