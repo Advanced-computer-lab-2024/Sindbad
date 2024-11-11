@@ -64,23 +64,23 @@ export const confirmFlightPrice = async (data) => {
     }
 };
 
-export const bookFlight = async (id, data) => {
-    const accessToken = await getAccessToken();
+export const bookFlight = async (data) => {
+  const accessToken = await getAccessToken();
 
-    try {
-        const response = await axios.put(
-            `${baseURL}/flight/bookFlight`,
-            { data },
-            {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                    "Content-Type": "application/json",
-                },
-            }
-        );
-        return response.data;
-    } catch (error) {
-        console.error("Error booking flight:", error);
-        throw error;
-    }
+  try {
+    const response = await axios.put(
+      `${baseURL}/flight/bookFlight`,
+       data ,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error booking flight:", error);
+    throw error;
+  }
 };
