@@ -261,14 +261,14 @@ function Profile() {
             {profileRole === "tourGuide" && userData.isAccepted === true && editing === false && (
                 <>
                     <hr className="border-neutral-300 border w-full mt-8" />
-                    {/* <RatingComment
+                    <RatingComment
                         data={userData}
                         totalRatings={totalRatings}
-                        type="comment"
                         fetchData={() => getUserInfo(profileId)}
                         addComment={addTourGuideComment}
                         addRating={addTourGuideRating}
-                    /> */}
+                        type="tourGuide"
+                        />
                 </>
             )}
         </div>

@@ -8,6 +8,7 @@ import { Button } from "../ui/button";
 import { useToast } from "@/hooks/use-toast";
 
 import { getTouristById } from "@/services/TouristApiHandler";
+import { getMyItineraries } from "@/services/ItineraryApiHandler";
 
 import { useUser } from "@/state management/userInfo";
 
@@ -15,6 +16,7 @@ function RatingComment({ data, totalRatings, fetchData, addComment, addRating, t
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState("");
     const [user, setUser] = useState(null);
+    const [itineraries, setItineraries] = useState([]);
     const [rated, setRated] = useState(false);
     const [purchased, setPurchased] = useState(false);
 
@@ -47,8 +49,17 @@ function RatingComment({ data, totalRatings, fetchData, addComment, addRating, t
         getUser();
     }, [id]);
 
+    const getTourGuideItineraries = async () => {
+        const response = await getMyItineraries(data._id);
+        if (response.error) {
+            console.error(response.error);
+        } else {
+            setItineraries(response);
+        }
+    }
+
     const getPurchased = async () => {
-        if(user) {
+        if (user) {
             if (type === "itinerary") {
                 setPurchased(user.bookedEvents.itineraries.some(
                     (itinerary) => (
@@ -62,13 +73,33 @@ function RatingComment({ data, totalRatings, fetchData, addComment, addRating, t
                 );
                 const attended = new Date(data.dateTime) < new Date();
                 setPurchased(paid && attended);
+            } else if (type === "tourGuide") {
+                setPurchased(user.bookedEvents.itineraries.some(
+                    (itinerary) => (
+                        itineraries.some(
+                            (myItinerary) => (
+                                myItinerary._id === itinerary.itineraryId &&
+                                new Date(itinerary.dateBooked) < new Date()
+                            )
+                        )
+                    )
+                )
+                )
+                console.log(user.bookedEvents.itineraries);
+                console.log(itineraries);
             }
         }
     }
 
     useEffect(() => {
         getPurchased();
-    }, [data, user]);
+    }, [data, user, itineraries]);
+
+    useEffect(() => {
+        if (type === "tourGuide") {
+            getTourGuideItineraries();
+        }
+    }, [type]);
 
     const handleSubmit = async () => {
         const response = await addComment(data._id, { comment: comment, userId: id });
