@@ -4,6 +4,7 @@ import { getAllTrips, getMyTrips } from "@/services/TripApiHandler";
 import { Plus } from "lucide-react";
 import GenericForm from "@/components/custom/genericForm/genericForm";
 import { useUser } from "@/state management/userInfo";
+import { Dialog, DialogTrigger, DialogContent, DialogHeader } from "@/components/ui/dialog";
 
 function Trips() {
   // State for trips data, loading, and error
@@ -35,22 +36,34 @@ function Trips() {
   }, [id, role]);
 
   // Toggle the form visibility when the button is clicked
-  const toggleForm = () => {
-    setShowForm((prevState) => !prevState);
-  };
+  // const toggleForm = () => {
+  //   setShowForm((prevState) => !prevState);
+  // };
 
   return (
     <div className="py-8 px-24 max-w-[1200px] flex flex-col gap-4 mx-auto">
       <div className="flex items-center gap-4 mb-6">
         <h1 className="text-3xl font-extrabold">Trips</h1>
-        {role === "advertiser" && (
-          <button
-            onClick={toggleForm} // Toggle the form visibility
-            className="p-1 rounded-full hover:bg-neutral-200 transition-colors"
-          >
-            <Plus className="w-5 h-5 text-neutral-500" />
-          </button>
-        )}
+        <Dialog>
+						<DialogTrigger className="shrink-0 mt-1.5 text-neutral-400 hover:text-neutral-600 transition-all">
+            {role === "advertiser" && (
+              <button
+                className="p-1 rounded-full hover:bg-neutral-200 transition-colors"
+              >
+                <Plus className="w-5 h-5 text-neutral-500" />
+              </button>
+            )}
+						</DialogTrigger>
+						<DialogContent className="overflow-y-scroll max-h-[50%]">
+							<DialogHeader>
+								<GenericForm
+									type="trip"
+									id={id}
+								/>
+							</DialogHeader>
+						</DialogContent>
+					</Dialog>
+        
         <hr className="border-neutral-300 border w-full mt-1.5" />
       </div>
 

@@ -59,6 +59,12 @@ export const trip = {
       ],
     },
     {
+      name: "imageUris",
+      type: "array",
+      label: "Image URLs",
+      required: true,
+    },
+    {
       name: "price",
       type: "number",
       label: "Price",
@@ -76,12 +82,6 @@ export const trip = {
       name: "isBookingOpen",
       type: "checkbox",
       label: "Booking Status",
-    },
-    {
-      name: "imageUris",
-      type: "array",
-      label: "Image URLs",
-      required: true,
     },
     {
       name: "capacity",
