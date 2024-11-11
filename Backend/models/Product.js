@@ -47,8 +47,8 @@ const productSchema = mongoose.Schema(
 			type: [mongoose.Schema.Types.ObjectId],
 			ref: "User",
 			default: [],
-		  },
-		  reviews: [
+		},
+		reviews: [
 			{
 				userId: {
 					type: String,

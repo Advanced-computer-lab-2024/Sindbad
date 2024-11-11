@@ -6,10 +6,11 @@ import StarRating from "@/components/custom/StarRating";
 
 import { Button } from "@/components/ui/button";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { useToast } from "@/hooks/use-toast";
 
 import { ShoppingCart } from "lucide-react";
 
-import { getProductById } from "@/services/ProductApiHandler";
+import { getProductById, buyProduct } from "@/services/ProductApiHandler";
 import RatingReview from "@/components/custom/RatingReview";
 import { useUser, useCurrency } from "@/state management/userInfo";
 import { Convert } from "easy-currencies";
@@ -22,6 +23,7 @@ function ProductView() {
 	const { role, id } = useUser();
 	const currency = useCurrency();
 	const [convertedPrice, setConvertedPrice] = useState(null);
+	const { toast } = useToast();
 
 	const getProduct = async (productId) => {
 		const response = await getProductById(productId);
@@ -37,6 +39,18 @@ function ProductView() {
 			);
 		}
 	};
+
+	const handleBuyProduct = async () => {
+		const response = await buyProduct(productId, id);
+
+		if (response.error) {
+			console.error(response.message);
+		} else {
+			toast({
+				description: "Product purchased successfully.",
+			});
+		}
+	}
 
 	useEffect(() => {
 		if (productId) {
@@ -136,9 +150,9 @@ function ProductView() {
 					</div>
 
 					<div>
-						<Button>
+						<Button onClick={() => handleBuyProduct()}>
 							<p>
-								Add to cart
+								Buy product
 							</p>
 							<ShoppingCart size={24} className="shrink-0" />
 						</Button>

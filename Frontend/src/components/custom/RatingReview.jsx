@@ -10,14 +10,15 @@ import { useToast } from "@/hooks/use-toast";
 
 import { useUser } from "@/state management/userInfo";
 
-import { addProductRating, addProductReview } from "@/services/ProductApiHandler";
-import { getTouristById } from "@/services/TouristApiHandler";
+import { addProductRating, addProductReview, productSalesDetails } from "@/services/ProductApiHandler";
 
 function RatingReview({ data, totalRatings, type, fetchData, addComment, addRating }) {
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState("");
     const [user, setUser] = useState({});
     const [myReview, setMyReview] = useState(null);
+    const [rated, setRated] = useState(false);
+    const [purchased, setPurchased] = useState(false);
     const [error, setError] = useState("");
 
     const { id, role } = useUser();
@@ -28,24 +29,35 @@ function RatingReview({ data, totalRatings, type, fetchData, addComment, addRati
         return ((count / totalRatings) * 100).toFixed(1); // Rounded to 1 decimal place
     };
 
-    const getTourist = async (touristId) => {
-        const response = await getTouristById(touristId);
-        if (response.error) {
-            console.error(response.message);
-        } else {
-            setUser(response);
-        }
-    }
-
     useEffect(() => {
-        getTourist(id);
         if (data.reviews) {
-            const review = data.reviews.find((review) => review.username === user.username);
+            const review = data.reviews.find((review) => review.userId === id);
             if (review) {
                 setMyReview(review);
             }
         }
-    }, [id, data.reviews, user.username]);
+    }, [id, data.reviews]);
+
+    useEffect(() => {
+        if (data.userRatings) {
+            setRated(data.userRatings.includes(id));
+        }
+    }, [id, data.userRatings]);
+
+    const getSalesDetails = async () => {
+        const response = await productSalesDetails(data._id);
+        if (response.error) {
+            console.error(response.error);
+        } else {
+            const sales = response.productSales;
+            const hasPurchased = sales.some(sale => sale.buyerId === id && sale.productId === data._id);
+            setPurchased(hasPurchased);
+        }
+    }
+
+    useEffect(() => {
+        getSalesDetails();
+    }, [data]);
 
     const handleSubmit = async () => {
         if (type === "review") {
@@ -56,7 +68,7 @@ function RatingReview({ data, totalRatings, type, fetchData, addComment, addRati
 
             const response = comment === ""
                 ? await addProductRating(data._id, { rating: rating, userId: id })
-                : await addProductReview(data._id, { rating: rating, comment: comment, userId: id, username: user.username });
+                : await addProductReview(data._id, { rating: rating, comment: comment, userId: id });
             if (response.error) {
                 console.error(response.error);
                 toast({ description: "An error occurred, please try again later" });
@@ -125,7 +137,7 @@ function RatingReview({ data, totalRatings, type, fetchData, addComment, addRati
                         </div>
                     ))}
                 </div>
-                {role === "tourist" &&
+                {role === "tourist" && type === "comment" && !rated && purchased &&
                     <label className="text-base font-medium mt-4">
                         Leave a rating
                         <div className="mt-1">
@@ -140,9 +152,9 @@ function RatingReview({ data, totalRatings, type, fetchData, addComment, addRati
                 <h2 className="text-2xl font-semibold">
                     {type === "review" ? "Customer Reviews" : "Comments"}
                 </h2>
-                {role === "tourist" && myReview === null &&
+                {role === "tourist" && myReview === null && purchased &&
                     <>
-                        {type === "review" &&
+                        {type === "review" && !rated &&
                             <div>
                                 <label className="text-base font-medium">
                                     Overall rating
@@ -153,19 +165,23 @@ function RatingReview({ data, totalRatings, type, fetchData, addComment, addRati
                                 {error && <p className="text-red-500 text-[13px] mt-1">{error}</p>}
                             </div>
                         }
-                        <label className="text-base font-medium">
-                            Write a {type}
-                            <Textarea
-                                placeholder="Type here..."
-                                className="resize-none mt-1"
-                                rows={4}
-                                value={comment}
-                                onChange={(e) => setComment(e.target.value)}
-                            />
-                        </label>
-                        <Button className="w-max self-end" onClick={handleSubmit}>
-                            Submit
-                        </Button>
+                        {(type === "comment" || (type === "review" && !rated && myReview === null)) &&
+                            <>
+                                <label className="text-base font-medium">
+                                    Write a {type}
+                                    <Textarea
+                                        placeholder="Type here..."
+                                        className="resize-none mt-1"
+                                        rows={4}
+                                        value={comment}
+                                        onChange={(e) => setComment(e.target.value)}
+                                    />
+                                </label>
+                                <Button className="w-max self-end" onClick={handleSubmit}>
+                                    Submit
+                                </Button>
+                            </>
+                        }
                     </>
                 }
 

@@ -10,6 +10,7 @@ const {
 	addRating,
 	getProductSalesDetails,
 	getProductsByCreatorId,
+	buyProduct
 } = require("../controllers/Product");
 
 const router = express.Router();
@@ -27,6 +28,8 @@ router
 	.post(addRating);
 
 router.route("/:id/review").post(addReview);
+
+router.route("/:id/buy").post(buyProduct);
 
 router.route("/sales-details/:id").get(getProductSalesDetails);
 
