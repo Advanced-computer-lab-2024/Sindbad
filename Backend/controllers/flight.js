@@ -13,6 +13,8 @@ const amadeus = new Amadeus({
 //test: originLocationCode: 'JFK', destinationLocationCode: 'LAX', departureDate: '2024-12-01',adults: '1'
 const searchFlights = async (req, res) => {
     const { origin, destination, date, adults } = req.query;
+
+    console.log(req.query);
     try {
         const response = await amadeus.shopping.flightOffersSearch.get({
           originLocationCode: origin,
