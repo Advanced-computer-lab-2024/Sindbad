@@ -14,6 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { userSignUp } from "@/services/UserApiHandler";
 
 import SpinnerSVG from '@/SVGs/Spinner.jsx';
+import LogoSVG from "@/SVGs/Logo";
 import { ArrowLeft } from "lucide-react";
 import { updateTourGuideFiles } from "@/services/TourGuideApiHandler";
 import { updateSellerFiles } from "@/services/SellerApiHandler";
@@ -30,8 +31,6 @@ function SignUp() {
     const [error, setError] = useState(null);
     const [accepted, setAccepted] = useState(false);
     const [tags, setTags] = useState([]);
-    const [termsOpen, setTermsOpen] = useState(false);
-    const [policyOpen, setPolicyOpen] = useState(false);
     const navigate = useNavigate();
 
     const handleRegisterTypeChange = (value) => {
@@ -569,20 +568,25 @@ function SignUp() {
 
     return (
         <div className="w-full min-h-screen grid grid-cols-2">
-            <div className="bg-primary-700">
-                <div className="flex flex-col justify-center items-center h-full">
-                    <Button onClick={() => navigate(`/app/itineraries`, { replace: true })} variant="link">
-                        Back to browsing
-                    </Button>
+            <div className="bg-primary-800 relative overflow-clip shadow-2xl">
+                <div className="flex flex-col justify-center items-center h-full relative z-10">
+                    <h1 className="font-bold text-3xl text-light">Welcome to Sindbad</h1>
+                    <h4 className="text-light text-lg mb-4">Let the stars guide you.</h4>
+                    <p className="text-xs text-light">
+                        Got an account?{" "}
+                        <Button onClick={() => setLogInRedirect(true)} variant="link" className="p-0 text-xs font-normal text-secondary/90 hover:text-secondary">
+                            Log in
+                        </Button>
+                        {logInRedirect ? <Navigate to="/login" /> : null}
+                        {" "}or{" "}
+                        <Button onClick={() => navigate(`/app/itineraries`, { replace: true })} variant="link" className="p-0 text-xs font-normal text-secondary/90 hover:text-secondary">
+                            continue as guest
+                        </Button>
+                    </p>
                 </div>
+                <LogoSVG className="w-11/12 h-11/12 absolute -bottom-40 -left-40 opacity-10" />
             </div>
-            <div className="bg-primary-900 flex flex-col shadow-2xl">
-                <div className="text-right p-8 absolute right-0">
-                    <Button onClick={() => setLogInRedirect(true)} variant="link">
-                        Log In
-                    </Button>
-                    {logInRedirect ? <Navigate to="/login" /> : null}
-                </div>
+            <div className="bg-primary-200 flex flex-col">
                 <div className="flex flex-col flex-grow justify-center items-center">
                     <h1 className="font-bold text-2xl mb-4">
                         {currentStep == 1 ? "Create an account" : "One more step!"}
@@ -610,23 +614,20 @@ function SignUp() {
                             <Form {...commonForm}>
                                 <form onSubmit={commonForm.handleSubmit(handleCommonFormSubmit)} className="gap-2 flex flex-col">
                                     {renderCommonFields()}
-                                    {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-                                    <Button type="submit" disabled={loading} className="bg-primary-700 justify-center w-full mt-4">
-                                        {loading && error === false ? <SpinnerSVG /> : registerType == "Tourist" ? "Continue" : "Sign Up"}
-                                    </Button>
-                                    <p className="text-center text-neutral-700 text-sm mt-5">
-                                        <Input type="checkbox" id="accept" name="accept" onChange={() => setAccepted(!accepted)} checked={accepted} className="w-max h-max shadow-none inline mr-2 accent-secondary" />
+                                    {error && <p className="text-red-500 text-xs text-center">{error}</p>}
+                                    <p className="text-center text-neutral-700 text-sm mt-2">
+                                        <Input type="checkbox" id="accept" name="accept" onChange={() => setAccepted(!accepted)} checked={accepted} className="w-max h-max shadow-none inline mr-2 accent-primary-700 cursor-pointer" />
                                         By creating an account you agree to our{" "}
                                         <Dialog>
                                             <DialogTrigger asChild>
                                                 <a
                                                     href="#"
-                                                    className="text-indigo-700/90 hover:text-indigo-700 hover:decoration-light/80 decoration-dark/70 underline underline-offset-2"
+                                                    className="text-primary-700/90 hover:text-primary-700 hover:decoration-primary-700 decoration-primary-700/70 underline underline-offset-2"
                                                 >
                                                     Terms of Service
                                                 </a>
                                             </DialogTrigger>
-                                            <DialogContent className="overflow-y-scroll max-h-[50%]">
+                                            <DialogContent className="overflow-y-scroll max-h-[50%]" onOpenAutoFocus={(e) => e.preventDefault()}>
                                                 <DialogTitle>Terms of Service</DialogTitle>
                                                 <DialogHeader>
                                                     <p>
@@ -648,12 +649,12 @@ function SignUp() {
                                             <DialogTrigger asChild>
                                                 <a
                                                     href="#"
-                                                    className="text-indigo-700/90 hover:text-indigo-700 hover:decoration-light/80 decoration-dark/70 underline underline-offset-2"
+                                                    className="text-primary-700/90 hover:text-primary-700 hover:decoration-primary-700 decoration-primary-700/70 underline underline-offset-2"
                                                 >
                                                     Privacy Policy
                                                 </a>
                                             </DialogTrigger>
-                                            <DialogContent className="overflow-y-scroll max-h-[50%]">
+                                            <DialogContent className="overflow-y-scroll max-h-[50%]" onOpenAutoFocus={(e) => e.preventDefault()}>
                                                 <DialogTitle>Privacy Policy</DialogTitle>
                                                 <DialogHeader>
                                                     <p>
@@ -671,6 +672,9 @@ function SignUp() {
                                             </DialogContent>
                                         </Dialog>.
                                     </p>
+                                    <Button type="submit" disabled={loading} className="w-1/2 justify-center h-max mt-2">
+                                        {loading && error === false ? <SpinnerSVG /> : "Continue"}
+                                    </Button>
                                 </form>
                             </Form>
                         }
@@ -680,12 +684,12 @@ function SignUp() {
                             <Form {...touristForm}>
                                 <form onSubmit={touristForm.handleSubmit(handleTouristFormSubmit)} className="gap-2 flex flex-col">
                                     {renderTouristFields()}
-                                    {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-                                    <Button type="submit" disabled={loading} className="bg-primary-700 justify-center w-full mt-4">
+                                    {error && <p className="text-red-500 text-xs text-center">{error}</p>}
+                                    <Button type="submit" disabled={loading} className="w-1/2 justify-center h-max mt-2">
                                         {loading ? <SpinnerSVG /> : "Sign Up"}
                                     </Button>
-                                    <Button onClick={() => setCurrentStep(1)} variant="link" className="text-center -mt-1 flex gap-2 self-center">
-                                        <ArrowLeft size={12} />
+                                    <Button onClick={() => setCurrentStep(1)} variant="link" className="text-center -mt-1 flex gap-2 self-center text-xs">
+                                        <ArrowLeft size={10} />
                                         Back
                                     </Button>
                                 </form>
@@ -696,7 +700,7 @@ function SignUp() {
                             <Form {...tourGuideForm} enctype="multipart/form-data">
                                 <form onSubmit={tourGuideForm.handleSubmit(handleTouristFormSubmit)} className="gap-2 flex flex-col">
                                     {renderTourGuideFields()}
-                                    {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+                                    {error && <p className="text-red-500 text-xs text-center">{error}</p>}
                                     <Button type="submit" disabled={loading} className="bg-primary-700 justify-center w-full mt-4">
                                         {loading ? <SpinnerSVG /> : "Sign Up"}
                                     </Button>
@@ -712,7 +716,7 @@ function SignUp() {
                             <Form {...sellerForm} enctype="multipart/form-data">
                                 <form onSubmit={sellerForm.handleSubmit(handleTouristFormSubmit)} className="gap-2 flex flex-col">
                                     {renderSellerFields()}
-                                    {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+                                    {error && <p className="text-red-500 text-xs text-center">{error}</p>}
                                     <Button type="submit" disabled={loading} className="bg-primary-700 justify-center w-full mt-4">
                                         {loading ? <SpinnerSVG /> : "Sign Up"}
                                     </Button>
@@ -728,7 +732,7 @@ function SignUp() {
                             <Form {...advertiserForm} enctype="multipart/form-data">
                                 <form onSubmit={advertiserForm.handleSubmit(handleTouristFormSubmit)} className="gap-2 flex flex-col">
                                     {renderAdvertiserFields()}
-                                    {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+                                    {error && <p className="text-red-500 text-xs text-center">{error}</p>}
                                     <Button type="submit" disabled={loading} className="bg-primary-700 justify-center w-full mt-4">
                                         {loading ? <SpinnerSVG /> : "Sign Up"}
                                     </Button>
