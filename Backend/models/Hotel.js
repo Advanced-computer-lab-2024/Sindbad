@@ -7,7 +7,7 @@ const hotelSchema = new Schema({
     type: String,
     required: true,
   },
-  travelerID: {
+  travelerId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Tourist",
     required: true,
@@ -22,7 +22,7 @@ const hotelSchema = new Schema({
   checkOutDate: {
     type: Date,
   },
-  totalPrice: {
+  price: {
     type: String,
   },
   hotelName: {

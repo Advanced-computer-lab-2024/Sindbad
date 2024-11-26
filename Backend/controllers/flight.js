@@ -180,7 +180,7 @@ const bookFlight = async (req, res) => {
       type: "Flight",
       itemId: flight._id,
       buyerId: travelerID,
-      totalPrice: flightDataResponse.price.total,
+      totalPrice: flight.price,
     });
     return res.status(200).json(flight);
   } catch (err) {

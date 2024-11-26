@@ -55,7 +55,7 @@ const getHotelOffers = async (req, res) => {
 
 
 const bookHotel = async (req, res) => {
-	const { bookingData, id, travelerID } = req.body;
+	const { bookingData, id, travelerId } = req.body;
 
 	bookingData.type = "hotel-order";
 	let tidCounter = 1;
@@ -84,28 +84,35 @@ const bookHotel = async (req, res) => {
 	request.data = bookingData;
 
 	try {
-		const response = await amadeus.booking.hotelOrders.post(
-			JSON.stringify(request)
-		);
+    const response = await amadeus.booking.hotelOrders.post(
+      JSON.stringify(request)
+    );
 
-        const hotelBookingResponse = response.result.data
+	
+    const hotelBookingResponse = response.result.data;
 
-        //   const flightData = {
-        //     BookingNumber: flightDataResponse.id,
-        //     FlightNumber: flightNumbers,
-        //     Duration: durations,
-        //     DepartureLocation: departureLocations,
-        //     ArrivalLocation: arrivalLocations,
-        //     DepartureDateTime: departureTimes,
-        //     ArrivalDateTime: arrivalTimes,
-        //     price: flightDataResponse.price.total,
-        //     travelerID: travelerID,
-        //   };
+	console.log(travelerId);
 
-        console.log(response.result.data);
+	const flightData = {
+    bookingId: hotelBookingResponse.id,
+    travelerId: travelerId,
+    bookingStatus: hotelBookingResponse.hotelBookings[0].bookingStatus,
+    checkInDate: hotelBookingResponse.hotelBookings[0].hotelOffer.checkInDate,
+    checkOutDate: hotelBookingResponse.hotelBookings[0].hotelOffer.checkOutDate,
+    price: hotelBookingResponse.hotelBookings[0].hotelOffer.price.sellingTotal,
+    hotelName: hotelBookingResponse.hotelBookings[0].hotel.name,
+  };
 
-		res.json(response.result.data);
-	} catch (error) {
+	const hotel = await Hotel.create(flightData);
+	await Sale.create({
+    type: "Hotel",
+    itemId: hotel._id,
+    buyerId: travelerID,
+	totalPrice: hotel.price,
+  	});
+
+    res.json(response.result.data);
+  } catch (error) {
 		console.error("Error booking hotel:", error);
 		res.status(500).send("Error booking hotel");
 	}
