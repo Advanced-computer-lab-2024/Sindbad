@@ -21,6 +21,8 @@ import { updateSellerFiles } from "@/services/SellerApiHandler";
 import { updateAdvertiserFiles } from "@/services/AdvertiserApiHandler";
 import { getAllTags } from "@/services/AdminApiHandler";
 import { MultiSelectField } from "@/components/custom/genericForm/input-fields/MultiSelectField";
+import ReactSelect from "@/components/ui/react-select";
+import { nationalities } from "@/utilities/getNationalities";
 
 function SignUp() {
     const [registerType, setRegisterType] = useState("Tourist");
@@ -39,9 +41,13 @@ function SignUp() {
 
     const fetchTags = async () => {
         const reqtags = await getAllTags();
-        setTags(reqtags.data);
-        console.log(reqtags);
+        const formattedTags = reqtags.data.map(tag => ({
+            value: tag._id,
+            label: tag.name
+        }));
+        setTags(formattedTags);
     };
+
     useEffect(() => {
         fetchTags();
     }, []);
@@ -199,7 +205,7 @@ function SignUp() {
         setCurrentStep(2);
     };
 
-    const handleTouristFormSubmit = (data) => {
+    const handleSecondFormSubmit = (data) => {
         let finalData = {};
         if (registerType === "Advertiser") {
             finalData.companyProfile = {};
@@ -331,7 +337,11 @@ function SignUp() {
                     <FormItem>
                         <FormLabel htmlFor="nationality">Nationality</FormLabel>
                         <FormControl>
-                            <Input id="nationality" {...field} />
+                            <ReactSelect
+                                multi={false}
+                                options={nationalities}
+                                onChange={(e) => field.onChange(e.value)}
+                            />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -370,12 +380,25 @@ function SignUp() {
                 control={touristForm.control}
                 name="preferences"
                 render={({ field }) => (
-                    <MultiSelectField
-                        name="preferences"
-                        control={touristForm.control}
-                        label="Preferences"
-                        options={Array.from(tags)}
-                    />
+                    // <MultiSelectField
+                    //     name="preferences"
+                    //     control={touristForm.control}
+                    //     label="Preferences"
+                    //     options={Array.from(tags)}
+                    // />
+                    <FormItem>
+                        <FormLabel htmlFor="preferences">Preferences</FormLabel>
+                        <FormControl>
+                            <ReactSelect
+                                multi={true}
+                                options={Array.from(tags)}
+                                onChange={(e) => {
+                                    field.onChange(e.map((tag) => tag.value));
+                                }}
+                            />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
                 )}
             />
         </div>
@@ -578,10 +601,6 @@ function SignUp() {
                             Log in
                         </Button>
                         {logInRedirect ? <Navigate to="/login" /> : null}
-                        {" "}or{" "}
-                        <Button onClick={() => navigate(`/app/itineraries`, { replace: true })} variant="link" className="p-0 text-xs font-normal text-secondary/90 hover:text-secondary">
-                            continue as guest
-                        </Button>
                     </p>
                 </div>
                 <LogoSVG className="w-11/12 h-11/12 absolute -bottom-40 -left-40 opacity-10" />
@@ -682,7 +701,7 @@ function SignUp() {
                         {/* form step 2 */}
                         {currentStep === 2 && registerType === "Tourist" &&
                             <Form {...touristForm}>
-                                <form onSubmit={touristForm.handleSubmit(handleTouristFormSubmit)} className="gap-2 flex flex-col">
+                                <form onSubmit={touristForm.handleSubmit(handleSecondFormSubmit)} className="gap-2 flex flex-col">
                                     {renderTouristFields()}
                                     {error && <p className="text-red-500 text-xs text-center">{error}</p>}
                                     <Button type="submit" disabled={loading} className="w-1/2 justify-center h-max mt-2">
@@ -698,7 +717,7 @@ function SignUp() {
 
                         {currentStep === 2 && registerType === "TourGuide" &&
                             <Form {...tourGuideForm} enctype="multipart/form-data">
-                                <form onSubmit={tourGuideForm.handleSubmit(handleTouristFormSubmit)} className="gap-2 flex flex-col">
+                                <form onSubmit={tourGuideForm.handleSubmit(handleSecondFormSubmit)} className="gap-2 flex flex-col">
                                     {renderTourGuideFields()}
                                     {error && <p className="text-red-500 text-xs text-center">{error}</p>}
                                     <Button type="submit" disabled={loading} className="bg-primary-700 justify-center w-full mt-4">
@@ -714,7 +733,7 @@ function SignUp() {
 
                         {currentStep === 2 && registerType === "Seller" &&
                             <Form {...sellerForm} enctype="multipart/form-data">
-                                <form onSubmit={sellerForm.handleSubmit(handleTouristFormSubmit)} className="gap-2 flex flex-col">
+                                <form onSubmit={sellerForm.handleSubmit(handleSecondFormSubmit)} className="gap-2 flex flex-col">
                                     {renderSellerFields()}
                                     {error && <p className="text-red-500 text-xs text-center">{error}</p>}
                                     <Button type="submit" disabled={loading} className="bg-primary-700 justify-center w-full mt-4">
@@ -730,7 +749,7 @@ function SignUp() {
 
                         {currentStep === 2 && registerType === "Advertiser" &&
                             <Form {...advertiserForm} enctype="multipart/form-data">
-                                <form onSubmit={advertiserForm.handleSubmit(handleTouristFormSubmit)} className="gap-2 flex flex-col">
+                                <form onSubmit={advertiserForm.handleSubmit(handleSecondFormSubmit)} className="gap-2 flex flex-col">
                                     {renderAdvertiserFields()}
                                     {error && <p className="text-red-500 text-xs text-center">{error}</p>}
                                     <Button type="submit" disabled={loading} className="bg-primary-700 justify-center w-full mt-4">
