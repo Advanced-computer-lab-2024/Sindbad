@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const ProductSalesSchema = new mongoose.Schema(
+const ProductSaleSchema = new mongoose.Schema(
 	{
 		productId: {
 			type: mongoose.Schema.Types.ObjectId,
@@ -26,6 +26,6 @@ const ProductSalesSchema = new mongoose.Schema(
 	{ timestamps: true }
 );
 
-const ProductSales = mongoose.model("ProductSales", ProductSalesSchema);
+const ProductSale = mongoose.model("ProductSale", ProductSaleSchema);
 
-module.exports = ProductSales;
+module.exports = ProductSale;
