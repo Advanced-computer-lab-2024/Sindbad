@@ -1,4 +1,5 @@
 const Tourist = require("../models/Tourist");
+const Product = require("../models/Product");
 const mongoose = require("mongoose");
 
 /**
@@ -174,6 +175,134 @@ const redeemPoints = async (req, res) => {
   }
 };
 
+
+const addProductToWishlist = async (req, res) => {
+  const { id: touristId } = req.params; // Tourist ID from URL params
+  const { productID } = req.body; // Product ID from request body
+
+  // Ensure the productID is provided
+  if (!productID) {
+    return res.status(400).json({ message: "Product ID is required" });
+  }
+
+  try {
+    // Find the tourist by ID
+    const tourist = await Tourist.findById(touristId);
+
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found" });
+    }
+
+    const product = await Product.findById(productID);
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    // Check if the product is already in the wishlist
+    const alreadyInWishlist = tourist.wishlist.some(
+      (item) => item.productID.toString() === productID
+    );
+
+    if (alreadyInWishlist) {
+      return res.status(400).json({ message: "Product already in wishlist" });
+    }
+
+    // Add the product to the wishlist
+    tourist.wishlist.push({ productID });
+    await tourist.save();
+
+    res.status(200).json({
+      message: "Product added to wishlist",
+      wishlist: tourist.wishlist,
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: "Error adding product to wishlist",
+      error: err.message,
+    });
+  }
+};
+
+
+const getWishlistProducts = async (req, res) => {
+  try {
+    // Extract tourist ID from params
+    const touristId = req.params.id;
+
+    // Find the tourist by ID and ensure wishlist exists
+    const tourist = await Tourist.findById(touristId);
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found" });
+    }
+
+    // Get product IDs from the wishlist (only the productID field)
+    const wishlistProductIds = tourist.wishlist.map(item => item.productID);
+
+    // Fetch product details from the database
+    const products = await Product.find({ _id: { $in: wishlistProductIds } });
+
+    // Check if there are any products found
+    if (products.length === 0) {
+      return res.status(404).json({ message: "No products found in wishlist" });
+    }
+
+    // Return the list of product models
+    res.status(200).json(products);
+  } catch (error) {
+    res.status(500).json({
+      message: "Error fetching wishlist products",
+      error: error.message,
+    });
+  }
+};
+
+
+const removeFromWishlist = async (req, res) => {
+  try {
+    const { id } = req.params; // Tourist ID
+    const { productID } = req.body; // Product ID to be removed
+
+    if (!productID) {
+      return res.status(400).json({ message: "Product ID is required" });
+    }
+
+    // Find the tourist by ID
+    const tourist = await Tourist.findById(id);
+
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found" });
+    }
+
+    // Find the index of the product in the wishlist using the productID
+    const productIndex = tourist.wishlist.findIndex((item) =>
+      item.productID.toString() === productID.toString() // Compare productID field inside the object
+    );
+
+    if (productIndex === -1) {
+      return res.status(404).json({ message: "Product not found in wishlist" });
+    }
+
+    // Remove the product from the wishlist
+    tourist.wishlist.splice(productIndex, 1);
+
+    // Save the updated tourist
+    await tourist.save();
+
+    res.status(200).json({
+      message: "Product removed from wishlist successfully",
+      wishlist: tourist.wishlist,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error removing product from wishlist",
+      error: error.message,
+    });
+  }
+};
+
+
+
 module.exports = {
   getAllTourists,
   getTouristById,
@@ -182,6 +311,9 @@ module.exports = {
   updateTourist,
   deleteTourist,
   redeemPoints,
+  addProductToWishlist,
+  getWishlistProducts,
+  removeFromWishlist,
 };
 
 /*

@@ -82,7 +82,14 @@ const TouristSchema = new mongoose.Schema(
       default: false,
     },
     wishlist: {
-      type: [String], // Array of item IDs or details
+      type: [
+        {
+          productID: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Product", // Reference to the Product model
+          },
+        },
+      ],
       default: [],
     },
     cart: {
