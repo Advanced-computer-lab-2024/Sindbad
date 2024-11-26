@@ -62,7 +62,14 @@ const TouristSchema = new mongoose.Schema(
       default: "USD",
     },
     bookmarks: {
-      type: [String], // Array of bookmark IDs or URLs
+      type: [
+        {
+          productID: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Activity",
+          },
+        },
+      ],
       default: [],
     },
     loyaltyPoints: {
@@ -82,7 +89,14 @@ const TouristSchema = new mongoose.Schema(
       default: false,
     },
     wishlist: {
-      type: [String], // Array of item IDs or details
+      type: [
+        {
+          productID: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Product", // Reference to the Product model
+          },
+        },
+      ],
       default: [],
     },
     cart: {
