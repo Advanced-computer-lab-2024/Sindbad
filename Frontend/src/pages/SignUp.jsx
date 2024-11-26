@@ -607,14 +607,14 @@ function SignUp() {
             </div>
             <div className="bg-primary-200 flex flex-col">
                 <div className="flex flex-col flex-grow justify-center items-center">
-                    <h1 className="font-bold text-2xl mb-4">
+                    <h1 className="font-bold text-2xl mb-6">
                         {currentStep == 1 ? "Create an account" : "One more step!"}
                     </h1>
                     <div className="w-2/5 flex flex-col gap-4">
                         {currentStep === 1 && (
-                            <div className="flex items-center justify-center gap-4 my-2">
-                                <h1 className="font-semibold text-nowrap">I am a...</h1>
-                                <Select onValueChange={handleRegisterTypeChange} value={registerType}>
+                            <div className="flex items-center justify-center gap-4">
+                                <h1 className="font-medium text-nowrap text-sm">I am a...</h1>
+                                {/* <Select onValueChange={handleRegisterTypeChange} value={registerType}>
                                     <SelectTrigger>
                                         <SelectValue className="text-center" />
                                     </SelectTrigger>
@@ -624,7 +624,20 @@ function SignUp() {
                                         <SelectItem value="Advertiser">Advertiser</SelectItem>
                                         <SelectItem value="Seller">Seller</SelectItem>
                                     </SelectContent>
-                                </Select>
+                                </Select> */}
+                                <div className="w-full">
+                                <ReactSelect
+                                    multi={false}
+                                    options={[
+                                        { value: "Tourist", label: "Tourist" },
+                                        { value: "TourGuide", label: "Tour Guide" },
+                                        { value: "Advertiser", label: "Advertiser" },
+                                        { value: "Seller", label: "Seller" },
+                                    ]}
+                                    onChange={(e) => handleRegisterTypeChange(e.value)}
+                                    defaultValue={{ value: "Tourist", label: "Tourist" }}
+                                />
+                                </div>
                             </div>
                         )}
 
@@ -708,7 +721,7 @@ function SignUp() {
                                         {loading ? <SpinnerSVG /> : "Sign Up"}
                                     </Button>
                                     <Button onClick={() => setCurrentStep(1)} variant="link" className="text-center -mt-1 flex gap-2 self-center text-xs">
-                                        <ArrowLeft size={10} />
+                                        <ArrowLeft size={8} />
                                         Back
                                     </Button>
                                 </form>
@@ -720,11 +733,11 @@ function SignUp() {
                                 <form onSubmit={tourGuideForm.handleSubmit(handleSecondFormSubmit)} className="gap-2 flex flex-col">
                                     {renderTourGuideFields()}
                                     {error && <p className="text-red-500 text-xs text-center">{error}</p>}
-                                    <Button type="submit" disabled={loading} className="bg-primary-700 justify-center w-full mt-4">
+                                    <Button type="submit" disabled={loading} className="w-1/2 justify-center h-max mt-2">
                                         {loading ? <SpinnerSVG /> : "Sign Up"}
                                     </Button>
-                                    <Button onClick={() => setCurrentStep(1)} variant="link" className="text-center -mt-1 flex gap-2 self-center">
-                                        <ArrowLeft size={12} />
+                                    <Button onClick={() => setCurrentStep(1)} variant="link" className="text-center -mt-1 flex gap-2 self-center text-xs">
+                                        <ArrowLeft size={8} />
                                         Back
                                     </Button>
                                 </form>
@@ -736,11 +749,11 @@ function SignUp() {
                                 <form onSubmit={sellerForm.handleSubmit(handleSecondFormSubmit)} className="gap-2 flex flex-col">
                                     {renderSellerFields()}
                                     {error && <p className="text-red-500 text-xs text-center">{error}</p>}
-                                    <Button type="submit" disabled={loading} className="bg-primary-700 justify-center w-full mt-4">
+                                    <Button type="submit" disabled={loading} className="w-1/2 justify-center h-max mt-2">
                                         {loading ? <SpinnerSVG /> : "Sign Up"}
                                     </Button>
-                                    <Button onClick={() => setCurrentStep(1)} variant="link" className="text-center -mt-1 flex gap-2 self-center">
-                                        <ArrowLeft size={12} />
+                                    <Button onClick={() => setCurrentStep(1)} variant="link" className="text-center -mt-1 flex gap-2 self-center text-xs">
+                                        <ArrowLeft size={8} />
                                         Back
                                     </Button>
                                 </form>
@@ -752,11 +765,11 @@ function SignUp() {
                                 <form onSubmit={advertiserForm.handleSubmit(handleSecondFormSubmit)} className="gap-2 flex flex-col">
                                     {renderAdvertiserFields()}
                                     {error && <p className="text-red-500 text-xs text-center">{error}</p>}
-                                    <Button type="submit" disabled={loading} className="bg-primary-700 justify-center w-full mt-4">
+                                    <Button type="submit" disabled={loading} className="w-1/2 justify-center h-max mt-2">
                                         {loading ? <SpinnerSVG /> : "Sign Up"}
                                     </Button>
-                                    <Button onClick={() => setCurrentStep(1)} variant="link" className="text-center -mt-1 flex gap-2 self-center">
-                                        <ArrowLeft size={12} />
+                                    <Button onClick={() => setCurrentStep(1)} variant="link" className="text-center -mt-1 flex gap-2 self-center text-xs">
+                                        <ArrowLeft size={8} />
                                         Back
                                     </Button>
                                 </form>

@@ -1,7 +1,7 @@
 import React from 'react';
 import Select from 'react-select';
 
-function ReactSelect({ options, onChange, multi }) {
+function ReactSelect({ options, onChange, multi, defaultValue }) {
     const filterStyles = {
         control: (styles, state) => ({
             ...styles,
@@ -198,6 +198,7 @@ function ReactSelect({ options, onChange, multi }) {
                     classNamePrefix="select"
                     styles={defaultStyles}
                     onChange={onChange}
+                    defaultValue={defaultValue || 'Select'}
                     menuPlacement="auto"
                 />
             }
