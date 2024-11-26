@@ -72,6 +72,10 @@
     @apply absolute cursor-pointer top-2 right-2 opacity-0 group-hover:opacity-100 transition-all bg-white drop-shadow-sm backdrop-blur-md text-dark p-1.5 rounded-full;
   }
 
+  .form-label {
+    @apply mb-2
+  }
+
   input[type="number"]::-webkit-inner-spin-button,
   input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;

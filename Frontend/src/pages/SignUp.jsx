@@ -14,12 +14,15 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { userSignUp } from "@/services/UserApiHandler";
 
 import SpinnerSVG from '@/SVGs/Spinner.jsx';
+import LogoSVG from "@/SVGs/Logo";
 import { ArrowLeft } from "lucide-react";
 import { updateTourGuideFiles } from "@/services/TourGuideApiHandler";
 import { updateSellerFiles } from "@/services/SellerApiHandler";
 import { updateAdvertiserFiles } from "@/services/AdvertiserApiHandler";
 import { getAllTags } from "@/services/AdminApiHandler";
 import { MultiSelectField } from "@/components/custom/genericForm/input-fields/MultiSelectField";
+import ReactSelect from "@/components/ui/react-select";
+import { nationalities } from "@/utilities/getNationalities";
 
 function SignUp() {
     const [registerType, setRegisterType] = useState("Tourist");
@@ -30,8 +33,6 @@ function SignUp() {
     const [error, setError] = useState(null);
     const [accepted, setAccepted] = useState(false);
     const [tags, setTags] = useState([]);
-    const [termsOpen, setTermsOpen] = useState(false);
-    const [policyOpen, setPolicyOpen] = useState(false);
     const navigate = useNavigate();
 
     const handleRegisterTypeChange = (value) => {
@@ -40,9 +41,13 @@ function SignUp() {
 
     const fetchTags = async () => {
         const reqtags = await getAllTags();
-        setTags(reqtags.data);
-        console.log(reqtags);
+        const formattedTags = reqtags.data.map(tag => ({
+            value: tag._id,
+            label: tag.name
+        }));
+        setTags(formattedTags);
     };
+
     useEffect(() => {
         fetchTags();
     }, []);
@@ -200,7 +205,7 @@ function SignUp() {
         setCurrentStep(2);
     };
 
-    const handleTouristFormSubmit = (data) => {
+    const handleSecondFormSubmit = (data) => {
         let finalData = {};
         if (registerType === "Advertiser") {
             finalData.companyProfile = {};
@@ -332,7 +337,11 @@ function SignUp() {
                     <FormItem>
                         <FormLabel htmlFor="nationality">Nationality</FormLabel>
                         <FormControl>
-                            <Input id="nationality" {...field} />
+                            <ReactSelect
+                                multi={false}
+                                options={nationalities}
+                                onChange={(e) => field.onChange(e.value)}
+                            />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -371,12 +380,25 @@ function SignUp() {
                 control={touristForm.control}
                 name="preferences"
                 render={({ field }) => (
-                    <MultiSelectField
-                        name="preferences"
-                        control={touristForm.control}
-                        label="Preferences"
-                        options={Array.from(tags)}
-                    />
+                    // <MultiSelectField
+                    //     name="preferences"
+                    //     control={touristForm.control}
+                    //     label="Preferences"
+                    //     options={Array.from(tags)}
+                    // />
+                    <FormItem>
+                        <FormLabel htmlFor="preferences">Preferences</FormLabel>
+                        <FormControl>
+                            <ReactSelect
+                                multi={true}
+                                options={Array.from(tags)}
+                                onChange={(e) => {
+                                    field.onChange(e.map((tag) => tag.value));
+                                }}
+                            />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
                 )}
             />
         </div>
@@ -569,29 +591,30 @@ function SignUp() {
 
     return (
         <div className="w-full min-h-screen grid grid-cols-2">
-            <div className="bg-primary-700">
-                <div className="flex flex-col justify-center items-center h-full">
-                    <Button onClick={() => navigate(`/app/itineraries`, { replace: true })} variant="link">
-                        Back to browsing
-                    </Button>
+            <div className="bg-primary-800 relative overflow-clip shadow-2xl">
+                <div className="flex flex-col justify-center items-center h-full relative z-10">
+                    <h1 className="font-bold text-3xl text-light">Welcome to Sindbad</h1>
+                    <h4 className="text-light text-lg mb-4">Let the stars guide you.</h4>
+                    <p className="text-xs text-light">
+                        Got an account?{" "}
+                        <Button onClick={() => setLogInRedirect(true)} variant="link" className="p-0 text-xs font-normal text-secondary/90 hover:text-secondary">
+                            Log in
+                        </Button>
+                        {logInRedirect ? <Navigate to="/login" /> : null}
+                    </p>
                 </div>
+                <LogoSVG className="w-11/12 h-11/12 absolute -bottom-40 -left-40 opacity-10" />
             </div>
-            <div className="bg-primary-900 flex flex-col shadow-2xl">
-                <div className="text-right p-8 absolute right-0">
-                    <Button onClick={() => setLogInRedirect(true)} variant="link">
-                        Log In
-                    </Button>
-                    {logInRedirect ? <Navigate to="/login" /> : null}
-                </div>
+            <div className="bg-primary-200 flex flex-col">
                 <div className="flex flex-col flex-grow justify-center items-center">
-                    <h1 className="font-bold text-2xl mb-4">
+                    <h1 className="font-bold text-2xl mb-6">
                         {currentStep == 1 ? "Create an account" : "One more step!"}
                     </h1>
                     <div className="w-2/5 flex flex-col gap-4">
                         {currentStep === 1 && (
-                            <div className="flex items-center justify-center gap-4 my-2">
-                                <h1 className="font-semibold text-nowrap">I am a...</h1>
-                                <Select onValueChange={handleRegisterTypeChange} value={registerType}>
+                            <div className="flex items-center justify-center gap-4">
+                                <h1 className="font-medium text-nowrap text-sm">I am a...</h1>
+                                {/* <Select onValueChange={handleRegisterTypeChange} value={registerType}>
                                     <SelectTrigger>
                                         <SelectValue className="text-center" />
                                     </SelectTrigger>
@@ -601,7 +624,20 @@ function SignUp() {
                                         <SelectItem value="Advertiser">Advertiser</SelectItem>
                                         <SelectItem value="Seller">Seller</SelectItem>
                                     </SelectContent>
-                                </Select>
+                                </Select> */}
+                                <div className="w-full">
+                                <ReactSelect
+                                    multi={false}
+                                    options={[
+                                        { value: "Tourist", label: "Tourist" },
+                                        { value: "TourGuide", label: "Tour Guide" },
+                                        { value: "Advertiser", label: "Advertiser" },
+                                        { value: "Seller", label: "Seller" },
+                                    ]}
+                                    onChange={(e) => handleRegisterTypeChange(e.value)}
+                                    defaultValue={{ value: "Tourist", label: "Tourist" }}
+                                />
+                                </div>
                             </div>
                         )}
 
@@ -610,23 +646,20 @@ function SignUp() {
                             <Form {...commonForm}>
                                 <form onSubmit={commonForm.handleSubmit(handleCommonFormSubmit)} className="gap-2 flex flex-col">
                                     {renderCommonFields()}
-                                    {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-                                    <Button type="submit" disabled={loading} className="bg-primary-700 justify-center w-full mt-4">
-                                        {loading && error === false ? <SpinnerSVG /> : registerType == "Tourist" ? "Continue" : "Sign Up"}
-                                    </Button>
-                                    <p className="text-center text-neutral-700 text-sm mt-5">
-                                        <Input type="checkbox" id="accept" name="accept" onChange={() => setAccepted(!accepted)} checked={accepted} className="w-max h-max shadow-none inline mr-2 accent-secondary" />
+                                    {error && <p className="text-red-500 text-xs text-center">{error}</p>}
+                                    <p className="text-center text-neutral-700 text-sm mt-2">
+                                        <Input type="checkbox" id="accept" name="accept" onChange={() => setAccepted(!accepted)} checked={accepted} className="w-max h-max shadow-none inline mr-2 accent-primary-700 cursor-pointer" />
                                         By creating an account you agree to our{" "}
                                         <Dialog>
                                             <DialogTrigger asChild>
                                                 <a
                                                     href="#"
-                                                    className="text-indigo-700/90 hover:text-indigo-700 hover:decoration-light/80 decoration-dark/70 underline underline-offset-2"
+                                                    className="text-primary-700/90 hover:text-primary-700 hover:decoration-primary-700 decoration-primary-700/70 underline underline-offset-2"
                                                 >
                                                     Terms of Service
                                                 </a>
                                             </DialogTrigger>
-                                            <DialogContent className="overflow-y-scroll max-h-[50%]">
+                                            <DialogContent className="overflow-y-scroll max-h-[50%]" onOpenAutoFocus={(e) => e.preventDefault()}>
                                                 <DialogTitle>Terms of Service</DialogTitle>
                                                 <DialogHeader>
                                                     <p>
@@ -648,12 +681,12 @@ function SignUp() {
                                             <DialogTrigger asChild>
                                                 <a
                                                     href="#"
-                                                    className="text-indigo-700/90 hover:text-indigo-700 hover:decoration-light/80 decoration-dark/70 underline underline-offset-2"
+                                                    className="text-primary-700/90 hover:text-primary-700 hover:decoration-primary-700 decoration-primary-700/70 underline underline-offset-2"
                                                 >
                                                     Privacy Policy
                                                 </a>
                                             </DialogTrigger>
-                                            <DialogContent className="overflow-y-scroll max-h-[50%]">
+                                            <DialogContent className="overflow-y-scroll max-h-[50%]" onOpenAutoFocus={(e) => e.preventDefault()}>
                                                 <DialogTitle>Privacy Policy</DialogTitle>
                                                 <DialogHeader>
                                                     <p>
@@ -671,6 +704,9 @@ function SignUp() {
                                             </DialogContent>
                                         </Dialog>.
                                     </p>
+                                    <Button type="submit" disabled={loading} className="w-1/2 justify-center h-max mt-2">
+                                        {loading && error === false ? <SpinnerSVG /> : "Continue"}
+                                    </Button>
                                 </form>
                             </Form>
                         }
@@ -678,14 +714,14 @@ function SignUp() {
                         {/* form step 2 */}
                         {currentStep === 2 && registerType === "Tourist" &&
                             <Form {...touristForm}>
-                                <form onSubmit={touristForm.handleSubmit(handleTouristFormSubmit)} className="gap-2 flex flex-col">
+                                <form onSubmit={touristForm.handleSubmit(handleSecondFormSubmit)} className="gap-2 flex flex-col">
                                     {renderTouristFields()}
-                                    {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-                                    <Button type="submit" disabled={loading} className="bg-primary-700 justify-center w-full mt-4">
+                                    {error && <p className="text-red-500 text-xs text-center">{error}</p>}
+                                    <Button type="submit" disabled={loading} className="w-1/2 justify-center h-max mt-2">
                                         {loading ? <SpinnerSVG /> : "Sign Up"}
                                     </Button>
-                                    <Button onClick={() => setCurrentStep(1)} variant="link" className="text-center -mt-1 flex gap-2 self-center">
-                                        <ArrowLeft size={12} />
+                                    <Button onClick={() => setCurrentStep(1)} variant="link" className="text-center -mt-1 flex gap-2 self-center text-xs">
+                                        <ArrowLeft size={8} />
                                         Back
                                     </Button>
                                 </form>
@@ -694,14 +730,14 @@ function SignUp() {
 
                         {currentStep === 2 && registerType === "TourGuide" &&
                             <Form {...tourGuideForm} enctype="multipart/form-data">
-                                <form onSubmit={tourGuideForm.handleSubmit(handleTouristFormSubmit)} className="gap-2 flex flex-col">
+                                <form onSubmit={tourGuideForm.handleSubmit(handleSecondFormSubmit)} className="gap-2 flex flex-col">
                                     {renderTourGuideFields()}
-                                    {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-                                    <Button type="submit" disabled={loading} className="bg-primary-700 justify-center w-full mt-4">
+                                    {error && <p className="text-red-500 text-xs text-center">{error}</p>}
+                                    <Button type="submit" disabled={loading} className="w-1/2 justify-center h-max mt-2">
                                         {loading ? <SpinnerSVG /> : "Sign Up"}
                                     </Button>
-                                    <Button onClick={() => setCurrentStep(1)} variant="link" className="text-center -mt-1 flex gap-2 self-center">
-                                        <ArrowLeft size={12} />
+                                    <Button onClick={() => setCurrentStep(1)} variant="link" className="text-center -mt-1 flex gap-2 self-center text-xs">
+                                        <ArrowLeft size={8} />
                                         Back
                                     </Button>
                                 </form>
@@ -710,14 +746,14 @@ function SignUp() {
 
                         {currentStep === 2 && registerType === "Seller" &&
                             <Form {...sellerForm} enctype="multipart/form-data">
-                                <form onSubmit={sellerForm.handleSubmit(handleTouristFormSubmit)} className="gap-2 flex flex-col">
+                                <form onSubmit={sellerForm.handleSubmit(handleSecondFormSubmit)} className="gap-2 flex flex-col">
                                     {renderSellerFields()}
-                                    {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-                                    <Button type="submit" disabled={loading} className="bg-primary-700 justify-center w-full mt-4">
+                                    {error && <p className="text-red-500 text-xs text-center">{error}</p>}
+                                    <Button type="submit" disabled={loading} className="w-1/2 justify-center h-max mt-2">
                                         {loading ? <SpinnerSVG /> : "Sign Up"}
                                     </Button>
-                                    <Button onClick={() => setCurrentStep(1)} variant="link" className="text-center -mt-1 flex gap-2 self-center">
-                                        <ArrowLeft size={12} />
+                                    <Button onClick={() => setCurrentStep(1)} variant="link" className="text-center -mt-1 flex gap-2 self-center text-xs">
+                                        <ArrowLeft size={8} />
                                         Back
                                     </Button>
                                 </form>
@@ -726,14 +762,14 @@ function SignUp() {
 
                         {currentStep === 2 && registerType === "Advertiser" &&
                             <Form {...advertiserForm} enctype="multipart/form-data">
-                                <form onSubmit={advertiserForm.handleSubmit(handleTouristFormSubmit)} className="gap-2 flex flex-col">
+                                <form onSubmit={advertiserForm.handleSubmit(handleSecondFormSubmit)} className="gap-2 flex flex-col">
                                     {renderAdvertiserFields()}
-                                    {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-                                    <Button type="submit" disabled={loading} className="bg-primary-700 justify-center w-full mt-4">
+                                    {error && <p className="text-red-500 text-xs text-center">{error}</p>}
+                                    <Button type="submit" disabled={loading} className="w-1/2 justify-center h-max mt-2">
                                         {loading ? <SpinnerSVG /> : "Sign Up"}
                                     </Button>
-                                    <Button onClick={() => setCurrentStep(1)} variant="link" className="text-center -mt-1 flex gap-2 self-center">
-                                        <ArrowLeft size={12} />
+                                    <Button onClick={() => setCurrentStep(1)} variant="link" className="text-center -mt-1 flex gap-2 self-center text-xs">
+                                        <ArrowLeft size={8} />
                                         Back
                                     </Button>
                                 </form>

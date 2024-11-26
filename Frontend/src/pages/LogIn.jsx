@@ -16,6 +16,7 @@ import { getTouristById } from "@/services/TouristApiHandler";
 import { getTourGuide } from "@/services/TourGuideApiHandler";
 import { getSeller } from "@/services/SellerApiHandler";
 import { getAdvertiser } from "@/services/AdvertiserApiHandler";
+import LogoSVG from "@/SVGs/Logo";
 
 function LogIn() {
     const dispatch = useDispatch();
@@ -127,11 +128,15 @@ function LogIn() {
                 name="username"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Username</FormLabel>
+                        <FormLabel>
+                            <p className="form-label">
+                                Username
+                            </p>
+                        </FormLabel>
                         <FormControl>
                             <Input {...field} />
                         </FormControl>
-                        <FormMessage className="text-secondary/90" />
+                        <FormMessage className="text-destructive text-xs" />
                     </FormItem>
                 )}
             />
@@ -141,11 +146,15 @@ function LogIn() {
                 name="password"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Password</FormLabel>
+                        <FormLabel>
+                            <p className="form-label">
+                                Password
+                            </p>
+                        </FormLabel>
                         <FormControl>
                             <Input {...field} type="password" />
                         </FormControl>
-                        <FormMessage className="text-secondary/90" />
+                        <FormMessage className="text-xs" />
                     </FormItem>
                 )}
             />
@@ -154,27 +163,32 @@ function LogIn() {
 
     return (
         <div className="w-screen h-screen grid grid-cols-2">
-            <div className="bg-primary-700">
-                <div className="flex flex-col justify-center items-center h-full">
-                    <Button onClick={() => navigate(`/app/itineraries`, { replace: true })} variant="link">
-                        Back to browsing
-                    </Button>
+            <div className="bg-primary-800 relative overflow-clip shadow-2xl">
+                <div className="flex flex-col justify-center items-center h-full relative z-10">
+                    <h1 className="font-bold text-3xl text-light">Welcome to Sindbad</h1>
+                    <h4 className="text-light text-lg mb-4">Let the stars guide you.</h4>
+                    <p className="text-xs text-light">
+                        New user?{" "}
+                        <Button onClick={() => setSignUpRedirect(true)} variant="link" className="p-0 text-xs font-normal text-secondary/90 hover:text-secondary">
+                            Sign up
+                        </Button>
+                        {signUpRedirect ? <Navigate to="/signup" /> : null}
+                        {" "}or{" "}
+                        <Button onClick={() => navigate(`/app/itineraries`, { replace: true })} variant="link" className="p-0 text-xs font-normal text-secondary/90 hover:text-secondary">
+                            continue as guest
+                        </Button>
+                    </p>
                 </div>
+                <LogoSVG className="w-11/12 h-11/12 absolute -bottom-40 -left-40 opacity-10" />
             </div>
-            <div className="bg-primary-900 flex flex-col shadow-2xl">
-                <div className="text-right p-8 absolute right-0">
-                    <Button onClick={() => setSignUpRedirect(true)} className="">
-                        Sign Up
-                    </Button>
-                    {signUpRedirect ? <Navigate to="/signup" /> : null}
-                </div>
+            <div className="bg-primary-200 flex flex-col">
                 <div className="flex flex-col flex-grow justify-center items-center">
-                    <h1 className="font-extrabold text-3xl mb-4">Log In</h1>
+                    <h1 className="font-bold text-2xl mb-4">Log In</h1>
                     <div className="w-2/5 flex flex-col gap-4">
                         <Form {...form}>
-                            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 flex flex-col">
+                            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
                                 {renderCommonFields()}
-                                <Button type="submit" className="flex gap-1 items-center self-center bg-primary-700 w-max py-2 rounded-md group transition-all hover:ring-1 hover:ring-secondary px-10">
+                                <Button type="submit" className="w-1/2 justify-center h-max mt-2">
                                     Continue
                                 </Button>
                             </form>
