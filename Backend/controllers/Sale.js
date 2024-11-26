@@ -1,10 +1,11 @@
 const mongoose = require("mongoose");
-const ProductSales = require("../models/ProductSale");
-const ItinerarySales = require("../models/ItinerarySale");
-const ActivitySales = require("../models/ActivitySale");
+const ProductSales = require("../models/Sales/ProductSale");
+const ItinerarySales = require("../models/Sales/ItinerarySale");
+const ActivitySales = require("../models/Sales/ActivitySale");
 const Product = require("../models/Product");
 const Itinerary = require("../models/Itinerary");
 const Activity = require("../models/Activity");
+const Admin = require("../models/Admin"); // Add this line to import the Admin model
 
 const getAllSales = async (req, res) => {
   try {
@@ -12,10 +13,29 @@ const getAllSales = async (req, res) => {
     const itinerarySales = await ItinerarySales.find();
     const activitySales = await ActivitySales.find();
 
+    const updatedProductSales = await Promise.all(
+      productSales.map(async (sale) => {
+        const product = await Product.findById(sale.productId);
+        const isAdmin = await Admin.exists({ _id: product.creatorId });
+        const revenue = isAdmin ? 0 : sale.totalPrice * 0.1;
+        return { ...sale.toObject(), revenue };
+      })
+    );
+
+    const updatedItinerarySales = itinerarySales.map((sale) => ({
+      ...sale.toObject(),
+      revenue: sale.totalPrice * 0.1,
+    }));
+
+    const updatedActivitySales = activitySales.map((sale) => ({
+      ...sale.toObject(),
+      revenue: sale.totalPrice * 0.1,
+    }));
+
     res.status(200).json({
-      productSales,
-      itinerarySales,
-      activitySales,
+      productSales: updatedProductSales,
+      itinerarySales: updatedItinerarySales,
+      activitySales: updatedActivitySales,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -26,24 +46,17 @@ const getMyActivitySales = async (req, res) => {
   try {
     const { creatorId } = req.params;
 
-    const activitySales = await ActivitySales.aggregate([
-      {
-        $lookup: {
-          from: "activities",
-          localField: "activityId",
-          foreignField: "_id",
-          as: "activity",
-        },
-      },
-      {
-        $unwind: "$activity",
-      },
-      {
-        $match: {
-          "activity.creatorId": mongoose.Types.ObjectId(creatorId),
-        },
-      },
-    ]);
+    // Step 1: Get activity IDs for the given creator
+    const activities = await Activity.find(
+      { creatorId: new mongoose.Types.ObjectId(creatorId) },
+      { _id: 1 }
+    );
+    const activityIds = activities.map((activity) => activity._id);
+
+    // Step 2: Get sales for the fetched activity IDs
+    const activitySales = await ActivitySales.find({
+      activityId: { $in: activityIds },
+    });
 
     res.status(200).json(activitySales);
   } catch (error) {
@@ -55,24 +68,17 @@ const getMyItinerarySales = async (req, res) => {
   try {
     const { creatorId } = req.params;
 
-    const itinerarySales = await ItinerarySales.aggregate([
-      {
-        $lookup: {
-          from: "itineraries",
-          localField: "itineraryId",
-          foreignField: "_id",
-          as: "itinerary",
-        },
-      },
-      {
-        $unwind: "$itinerary",
-      },
-      {
-        $match: {
-          "itinerary.creatorId": mongoose.Types.ObjectId(creatorId),
-        },
-      },
-    ]);
+    // Step 1: Get itinerary IDs for the given creator
+    const itineraries = await Itinerary.find(
+      { creatorId: new mongoose.Types.ObjectId(creatorId) },
+      { _id: 1 }
+    );
+    const itineraryIds = itineraries.map((itinerary) => itinerary._id);
+
+    // Step 2: Get sales for the fetched itinerary IDs
+    const itinerarySales = await ItinerarySales.find({
+      itineraryId: { $in: itineraryIds },
+    });
 
     res.status(200).json(itinerarySales);
   } catch (error) {
@@ -84,24 +90,17 @@ const getMyProductSales = async (req, res) => {
   try {
     const { creatorId } = req.params;
 
-    const productSales = await ProductSales.aggregate([
-      {
-        $lookup: {
-          from: "products",
-          localField: "productId",
-          foreignField: "_id",
-          as: "product",
-        },
-      },
-      {
-        $unwind: "$product",
-      },
-      {
-        $match: {
-          "product.creatorId": mongoose.Types.ObjectId(creatorId),
-        },
-      },
-    ]);
+    // Step 1: Get product IDs for the given creator
+    const products = await Product.find(
+      { creatorId: new mongoose.Types.ObjectId(creatorId) },
+      { _id: 1 }
+    );
+    const productIds = products.map((product) => product._id);
+
+    // Step 2: Get sales for the fetched product IDs
+    const productSales = await ProductSales.find({
+      productId: { $in: productIds },
+    });
 
     res.status(200).json(productSales);
   } catch (error) {

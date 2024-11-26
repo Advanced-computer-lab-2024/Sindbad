@@ -1,5 +1,5 @@
 const Product = require("../models/Product");
-const ProductSales = require("../models/ProductSale");
+const ProductSales = require("../models/Sales/ProductSale");
 const Tourist = require("../models/Tourist");
 /**
  * Gets a product by ID
@@ -162,11 +162,9 @@ const addRating = async (req, res) => {
     });
 
     if (!purchaseRecord) {
-      return res
-        .status(403)
-        .json({
-          message: "User has not purchased this product and cannot rate it.",
-        });
+      return res.status(403).json({
+        message: "User has not purchased this product and cannot rate it.",
+      });
     }
 
     const product = await Product.findById(id);
@@ -223,11 +221,9 @@ const addReview = async (req, res) => {
     });
 
     if (!purchaseRecord) {
-      return res
-        .status(403)
-        .json({
-          message: "User has not purchased this product and cannot review it.",
-        });
+      return res.status(403).json({
+        message: "User has not purchased this product and cannot review it.",
+      });
     }
 
     if (!rating && !comment) {
@@ -247,12 +243,10 @@ const addReview = async (req, res) => {
       const existingReview = product.reviews[existingReviewIndex];
 
       if (rating && existingReview.rating !== undefined) {
-        return res
-          .status(403)
-          .json({
-            message:
-              "Rating cannot be updated once set. Only comments can be updated.",
-          });
+        return res.status(403).json({
+          message:
+            "Rating cannot be updated once set. Only comments can be updated.",
+        });
       }
 
       // Update the comment if provided
@@ -324,12 +318,10 @@ const addReview = async (req, res) => {
       : "Review added successfully";
     res.status(201).json({ message: responseMessage, product });
   } catch (error) {
-    return res
-      .status(500)
-      .json({
-        message: "Error adding or updating review",
-        error: error.message,
-      });
+    return res.status(500).json({
+      message: "Error adding or updating review",
+      error: error.message,
+    });
   }
 };
 

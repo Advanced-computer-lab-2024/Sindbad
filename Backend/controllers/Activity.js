@@ -2,6 +2,7 @@ const Activity = require("../models/Activity");
 const Tag = require("../models/Tag");
 const Category = require("../models/Category");
 const Tourist = require("../models/Tourist");
+const ActivitySale = require("../models/Sales/ActivitySale");
 
 /**
  * Gets an activity by ID
@@ -522,6 +523,13 @@ const bookActivity = async (req, res) => {
     tourist.level = level;
     await tourist.save();
 
+    // Record the activity sale
+    await ActivitySale.create({
+      activityId: activity._id,
+      buyerId: tourist._id,
+      totalPrice: priceCharged,
+    });
+
     res.status(200).json({
       message: "Activity booked successfully",
       activity,
@@ -606,6 +614,13 @@ const cancelBooking = async (req, res) => {
     );
 
     await tourist.save();
+
+    // Record the negative activity sale
+    await ActivitySale.create({
+      activityId: activity._id,
+      buyerId: tourist._id,
+      totalPrice: -priceCharged,
+    });
 
     res.status(200).json({ message: "Activity cancelled successfully" });
   } catch (error) {
