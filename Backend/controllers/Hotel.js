@@ -1,4 +1,5 @@
 const Amadeus = require('amadeus');
+const { Hotel } = require('../models/Hotel');
 const clientId = process.env.VITE_AMADEUS_CLIENT_ID;
 const clientSecret = process.env.VITE_AMADEUS_CLIENT_SECRET;
 
@@ -52,8 +53,9 @@ const getHotelOffers = async (req, res) => {
 	}
 };
 
+
 const bookHotel = async (req, res) => {
-	const { bookingData, id } = req.body;
+	const { bookingData, id, travelerID } = req.body;
 
 	bookingData.type = "hotel-order";
 	let tidCounter = 1;
@@ -85,6 +87,23 @@ const bookHotel = async (req, res) => {
 		const response = await amadeus.booking.hotelOrders.post(
 			JSON.stringify(request)
 		);
+
+        const hotelBookingResponse = response.result.data
+
+        //   const flightData = {
+        //     BookingNumber: flightDataResponse.id,
+        //     FlightNumber: flightNumbers,
+        //     Duration: durations,
+        //     DepartureLocation: departureLocations,
+        //     ArrivalLocation: arrivalLocations,
+        //     DepartureDateTime: departureTimes,
+        //     ArrivalDateTime: arrivalTimes,
+        //     price: flightDataResponse.price.total,
+        //     travelerID: travelerID,
+        //   };
+
+        console.log(response.result.data);
+
 		res.json(response.result.data);
 	} catch (error) {
 		console.error("Error booking hotel:", error);

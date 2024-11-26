@@ -4,7 +4,7 @@ const SaleSchema = new mongoose.Schema(
   {
     type: {
       type: String,
-      enum: ["Product", "Activity", "Itinerary"],
+      enum: ["Product", "Activity", "Itinerary", "Flight", "Hotel", "Trip"],
       required: true,
     },
     itemId: {

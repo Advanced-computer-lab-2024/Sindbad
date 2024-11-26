@@ -7,60 +7,26 @@ const hotelSchema = new Schema({
     type: String,
     required: true,
   },
+  travelerID: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Tourist",
+    required: true,
+  },
   bookingStatus: {
     type: String,
     required: true,
   },
-  hotelProviderInformation: [
-    {
-      hotelProviderCode: {
-        type: String,
-      },
-      confirmationNumber: {
-        type: String,
-      },
-    },
-  ],
-  hotelOffer: {
-    id: {
-      type: String,
-    },
-    type: {
-      type: String,
-    },
-    checkInDate: {
-      type: Date,
-    },
-    checkOutDate: {
-      type: Date,
-    },
-    guests: {
-      adults: {
-        type: Number,
-      },
-    },
-    price: {
-      base: {
-        type: String,
-      },
-      total: {
-        type: String,
-      },
-      currency: {
-        type: String,
-      },
-    },
+  checkInDate: {
+    type: Date,
   },
-  hotel: {
-    hotelId: {
-      type: String,
-    },
-    chainCode: {
-      type: String,
-    },
-    name: {
-      type: String,
-    },
+  checkOutDate: {
+    type: Date,
+  },
+  totalPrice: {
+    type: String,
+  },
+  hotelName: {
+    type: String,
   },
 });
 

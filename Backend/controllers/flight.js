@@ -176,6 +176,12 @@ const bookFlight = async (req, res) => {
 
   try {
     const flight = await Flight.create(flightData);
+    await Sale.create({
+      type: "Flight",
+      itemId: flight._id,
+      buyerId: travelerID,
+      totalPrice: flightDataResponse.price.total,
+    });
     return res.status(200).json(flight);
   } catch (err) {
     console.error("Error saving flight data:", err);
