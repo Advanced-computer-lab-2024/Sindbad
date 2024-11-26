@@ -1,7 +1,7 @@
 const Itinerary = require("../models/Itinerary");
 const mongoose = require("mongoose");
 const Tourist = require("../models/Tourist");
-const ItinerarySale = require("../models/Sales/ItinerarySale");
+const Sale = require("../models/Sale");
 
 /**
  * @route GET /itinerary/:id
@@ -546,9 +546,10 @@ const bookItinerary = async (req, res) => {
 
     await itinerary.save();
 
-    // Create a record in the ItinerarySale document
-    await ItinerarySale.create({
-      itineraryId: itineraryId,
+    // Create a record in the Sale document
+    await Sale.create({
+      type: "Itinerary",
+      itemId: itineraryId,
       buyerId: userId,
       totalPrice: priceCharged,
     });
@@ -650,8 +651,8 @@ const cancelBooking = async (req, res) => {
 
     tourist.wallet += priceCharged;
 
-    // Create a record in the ItinerarySale document with a negative totalPrice
-    await ItinerarySale.create({
+    // Create a record in the Sale document with a negative totalPrice
+    await Sale.create({
       itineraryId: itineraryId,
       buyerId: userId,
       totalPrice: -priceCharged,

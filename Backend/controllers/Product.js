@@ -1,5 +1,6 @@
 const Product = require("../models/Product");
-const ProductSales = require("../models/Sales/ProductSale");
+// const ProductSales = require("../models/Sales/ProductSale");
+const Sale = require("../models/Sale");
 const Tourist = require("../models/Tourist");
 /**
  * Gets a product by ID
@@ -156,8 +157,8 @@ const addRating = async (req, res) => {
     }
 
     // Check if the user has purchased this product before
-    const purchaseRecord = await ProductSales.findOne({
-      productId: id,
+    const purchaseRecord = await Sale.findOne({
+      itemId: id,
       buyerId: userId,
     });
 
@@ -215,8 +216,8 @@ const addReview = async (req, res) => {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    const purchaseRecord = await ProductSales.findOne({
-      productId: product,
+    const purchaseRecord = await Sale.findOne({
+      itemId: product,
       buyerId: userId,
     });
 
@@ -352,8 +353,9 @@ const buyProduct = async (req, res) => {
     const totalPrice = product.price;
 
     // Create a new entry in the ProductSales collection
-    const productSale = new ProductSales({
-      productId,
+    const productSale = new Sale({
+      itemId: productId,
+	  type: "Product",
       buyerId: userId,
       quantity,
       totalPrice,

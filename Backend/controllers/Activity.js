@@ -2,7 +2,7 @@ const Activity = require("../models/Activity");
 const Tag = require("../models/Tag");
 const Category = require("../models/Category");
 const Tourist = require("../models/Tourist");
-const ActivitySale = require("../models/Sales/ActivitySale");
+const Sale = require("../models/Sale");
 
 /**
  * Gets an activity by ID
@@ -524,8 +524,9 @@ const bookActivity = async (req, res) => {
     await tourist.save();
 
     // Record the activity sale
-    await ActivitySale.create({
-      activityId: activity._id,
+    await Sale.create({
+      type: "Activity",
+      itemId: activity._id,
       buyerId: tourist._id,
       totalPrice: priceCharged,
     });
@@ -616,8 +617,9 @@ const cancelBooking = async (req, res) => {
     await tourist.save();
 
     // Record the negative activity sale
-    await ActivitySale.create({
-      activityId: activity._id,
+    await Sale.create({
+      type: "Activity",
+      itemId: activity._id,
       buyerId: tourist._id,
       totalPrice: -priceCharged,
     });
