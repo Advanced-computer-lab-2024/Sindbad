@@ -62,7 +62,14 @@ const TouristSchema = new mongoose.Schema(
       default: "USD",
     },
     bookmarks: {
-      type: [String], // Array of bookmark IDs or URLs
+      type: [
+        {
+          productID: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Activity",
+          },
+        },
+      ],
       default: [],
     },
     loyaltyPoints: {

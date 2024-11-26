@@ -1,5 +1,6 @@
 const Tourist = require("../models/Tourist");
 const Product = require("../models/Product");
+const Activity = require("../models/Activity");
 const mongoose = require("mongoose");
 
 /**
@@ -303,6 +304,119 @@ const removeFromWishlist = async (req, res) => {
 
 
 
+const addActivityToBookmarks = async (req, res) => {
+  const { id: touristId } = req.params; // Tourist ID from URL params
+  const { activityID } = req.body; // Activity ID from request body
+
+  // Ensure the activityID is provided
+  if (!activityID) {
+    return res.status(400).json({ message: "Activity ID is required" });
+  }
+
+  try {
+    // Find the tourist by ID
+    const tourist = await Tourist.findById(touristId);
+
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found" });
+    }
+
+    const activity = await Activity.findById(activityID);
+
+    if (!activity) {
+      return res.status(404).json({ message: "Activity not found" });
+    }
+
+    // Check if the activity is already in the bookmarks
+    const alreadyInBookmarks = tourist.bookmarks.some(
+      (item) => item.productID.toString() === activityID
+    );
+
+    if (alreadyInBookmarks) {
+      return res.status(400).json({ message: "Activity already in bookmarks" });
+    }
+
+    // Add the activity to the bookmarks
+    tourist.bookmarks.push({ productID: activityID });
+    await tourist.save();
+
+    res.status(200).json({
+      message: "Activity added to bookmarks",
+      bookmarks: tourist.bookmarks,
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: "Error adding activity to bookmarks",
+      error: err.message,
+    });
+  }
+};
+
+const getBookmarkedActivities = async (req, res) => {
+  try {
+    const touristId = req.params.id; // Extract tourist ID from params
+
+    // Find the tourist by ID and ensure bookmarks exist
+    const tourist = await Tourist.findById(touristId).populate('bookmarks.productID'); // Populate the bookmarks to get activity details
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found" });
+    }
+
+    // Return the list of bookmarked activities
+    res.status(200).json(tourist.bookmarks.map(bookmark => bookmark.productID));
+  } catch (error) {
+    res.status(500).json({
+      message: "Error fetching bookmarked activities",
+      error: error.message,
+    });
+  }
+};
+
+
+const removeFromBookmarks = async (req, res) => {
+  try {
+    const { id } = req.params; // Tourist ID
+    const { activityID } = req.body; // Activity ID to be removed
+
+    if (!activityID) {
+      return res.status(400).json({ message: "Activity ID is required" });
+    }
+
+    // Find the tourist by ID
+    const tourist = await Tourist.findById(id);
+
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found" });
+    }
+
+    // Find the index of the activity in the bookmarks
+    const activityIndex = tourist.bookmarks.findIndex((item) =>
+      item.productID.toString() === activityID.toString()
+    );
+
+    if (activityIndex === -1) {
+      return res.status(404).json({ message: "Activity not found in bookmarks" });
+    }
+
+    // Remove the activity from the bookmarks
+    tourist.bookmarks.splice(activityIndex, 1);
+
+    // Save the updated tourist
+    await tourist.save();
+
+    res.status(200).json({
+      message: "Activity removed from bookmarks successfully",
+      bookmarks: tourist.bookmarks,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error removing activity from bookmarks",
+      error: error.message,
+    });
+  }
+};
+
+
 module.exports = {
   getAllTourists,
   getTouristById,
@@ -314,6 +428,9 @@ module.exports = {
   addProductToWishlist,
   getWishlistProducts,
   removeFromWishlist,
+  addActivityToBookmarks,
+  removeFromBookmarks,
+  getBookmarkedActivities
 };
 
 /*

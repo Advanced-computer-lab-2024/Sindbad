@@ -11,6 +11,9 @@ const {
   addProductToWishlist,
   getWishlistProducts, 
   removeFromWishlist,
+  addActivityToBookmarks,
+  removeFromBookmarks,
+  getBookmarkedActivities,
 } = require("../controllers/Tourist");
 
 router.route("/").get(getAllTourists);
@@ -28,6 +31,13 @@ router
   .route("/:id/wishlist")
   .post(addProductToWishlist)
   .delete(removeFromWishlist);
+
+router
+  .route("/:id/bookmark")
+  .post(addActivityToBookmarks)
+  .get(getBookmarkedActivities)
+  .delete(removeFromBookmarks);
+  
 
 router.route("/:id/wishlist/products").get(getWishlistProducts);
 
