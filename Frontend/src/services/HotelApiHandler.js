@@ -42,11 +42,15 @@ const getHotelOffers = async (hotelId) => {
 	}
 };
 
-const bookHotel = async (bookingData, id) => {
+const bookHotel = async (bookingValues, bookingId, travelerId) => {
 	const endpoint = `${baseURL}/hotel/book`;
 
 	try {
-		const response = await axios.post(endpoint, { bookingData, id });
+		const response = await axios.post(endpoint, {
+      bookingValues,
+      bookingId,
+      travelerId,
+    });
 		console.log("Hotel booked:", response);
 		return response.data;
 	} catch (error) {

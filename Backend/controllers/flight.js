@@ -1,5 +1,6 @@
 const Amadeus = require('amadeus');
 const Flight = require('../models/Flight');
+const Sale = require('../models/Sale');
 require('dotenv').config();
 
 // Initialize the Amadeus client

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { useUser } from "@/state management/userInfo";
 import {
 	Dialog,
 	DialogContent,
@@ -15,7 +16,7 @@ import { getHotelOffers } from "@/services/HotelApiHandler";
 
 function HotelView() {
 	const { hotelId } = useParams();
-	const user = useParams();
+	const { id } = useUser();
 	const [data, setData] = useState(null);
 	const [error, setError] = useState(false);
 
@@ -86,8 +87,8 @@ function HotelView() {
               </DialogHeader>
               <GenericForm
                 type="hotelBooking"
-                //data={data.offers[0].id}
-                id={data.offers[0].id}
+                data={data.offers[0].id}
+                id={id}
               />
             </DialogContent>
           </Dialog>

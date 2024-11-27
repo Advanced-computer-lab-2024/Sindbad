@@ -1,9 +1,9 @@
 import { bookHotel } from "@/services/HotelApiHandler";
 import { confirmationResponse } from "@/state management/confirmationResponse";
 
-export const hotelBookingSubmit = async (values, id, navigate, dispatch) => {
+export const hotelBookingSubmit = async (values, id, data, navigate, dispatch) => {
     console.log("Hotel booking values:", values);
-    confirmationResponse.data = await bookHotel(values, id);
+    confirmationResponse.data = await bookHotel(values, data, id);
     console.log(confirmationResponse)
     confirmationResponse.success = true;
     confirmationResponse.message = "Hotel booking successful!";
