@@ -1,3 +1,4 @@
+const Sale = require("../models/Sale");
 const Trip = require("../models/Trip");
 
 // Create a new trip
@@ -83,6 +84,12 @@ async function bookTrip(req, res) {
     trip.participants.push(userId);
 
     await trip.save();
+    await Sale.create({
+      type: "Trip",
+      itemId: trip._id,
+      buyerId: userId,
+      totalPrice: trip.price,
+    });
     res.status(200).json({ message: "Trip booked successfully", trip });
   } catch (error) {
     res.status(500).json({ message: error.message });

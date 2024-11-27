@@ -1,5 +1,6 @@
 const Amadeus = require('amadeus');
 const Flight = require('../models/Flight');
+const Sale = require('../models/Sale');
 require('dotenv').config();
 
 // Initialize the Amadeus client
@@ -176,6 +177,12 @@ const bookFlight = async (req, res) => {
 
   try {
     const flight = await Flight.create(flightData);
+    await Sale.create({
+      type: "Flight",
+      itemId: flight._id,
+      buyerId: travelerID,
+      totalPrice: flight.price,
+    });
     return res.status(200).json(flight);
   } catch (err) {
     console.error("Error saving flight data:", err);
@@ -183,9 +190,26 @@ const bookFlight = async (req, res) => {
   }
 };
 
+const getFlightByTouristId = async (req, res) => {
+  let flights;
+  try {
+    flights = await Flight.find({ travelerID: req.params.id });
+    if (flights == null) {
+      return res.status(404).json({ message: "No Booked Flights for that tourist" });
+    }
+  } catch (err) {
+    return res.status(500).json({
+      message: "Error finding Flight",
+      error: err.message,
+    });
+  }
+  return res.json(flights);
+};
+
 
 module.exports = {
     searchFlights,
     confirmFlightPrice,
     bookFlight,
+    getFlightByTouristId,
 };
