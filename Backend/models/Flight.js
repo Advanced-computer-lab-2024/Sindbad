@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-// Define the schema for the Tourist model
+// Define the schema for the Flight model
 const FlightSchema = new mongoose.Schema(
     {
         BookingNumber: {
@@ -44,7 +44,7 @@ const FlightSchema = new mongoose.Schema(
     { timestamps: true }
   );
   
-  // Create the Tourist model
+  // Create the Flight model
   const Flight = mongoose.model("Flight", FlightSchema);
   
   module.exports = Flight;
