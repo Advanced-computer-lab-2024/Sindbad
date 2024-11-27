@@ -1,5 +1,6 @@
 const Amadeus = require('amadeus');
 const Flight = require('../models/Flight');
+const Sale = require('../models/Sale');
 require('dotenv').config();
 
 // Initialize the Amadeus client
@@ -176,6 +177,12 @@ const bookFlight = async (req, res) => {
 
   try {
     const flight = await Flight.create(flightData);
+    await Sale.create({
+      type: "Flight",
+      itemId: flight._id,
+      buyerId: travelerID,
+      totalPrice: flight.price,
+    });
     return res.status(200).json(flight);
   } catch (err) {
     console.error("Error saving flight data:", err);

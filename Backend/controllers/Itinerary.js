@@ -1,6 +1,7 @@
 const Itinerary = require("../models/Itinerary");
 const mongoose = require("mongoose");
 const Tourist = require("../models/Tourist");
+const Sale = require("../models/Sale");
 
 /**
  * @route GET /itinerary/:id
@@ -210,9 +211,9 @@ const getAllItineraries = async (req, res) => {
     if (date.start || date.end) {
       filter.availableDatesTimes = {
         $elemMatch: {
-          ...(date.start && { "dateTime": { $gte: new Date(date.start) } }),
+          ...(date.start && { dateTime: { $gte: new Date(date.start) } }),
           ...(date.end && {
-            "dateTime": {
+            dateTime: {
               $lte: new Date(new Date(date.end).setHours(23, 59, 59, 999)), // End of the day
             },
           }),
@@ -545,6 +546,14 @@ const bookItinerary = async (req, res) => {
 
     await itinerary.save();
 
+    // Create a record in the Sale document
+    await Sale.create({
+      type: "Itinerary",
+      itemId: itineraryId,
+      buyerId: userId,
+      totalPrice: priceCharged,
+    });
+
     tourist.wallet -= priceCharged;
 
     tourist.bookedEvents.itineraries.push({
@@ -641,6 +650,13 @@ const cancelBooking = async (req, res) => {
     await itinerary.save();
 
     tourist.wallet += priceCharged;
+
+    // Create a record in the Sale document with a negative totalPrice
+    await Sale.create({
+      itineraryId: itineraryId,
+      buyerId: userId,
+      totalPrice: -priceCharged,
+    });
 
     let loyaltyPoints = tourist.loyaltyPoints;
     switch (tourist.level) {
