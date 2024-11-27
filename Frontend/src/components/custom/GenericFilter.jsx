@@ -45,9 +45,15 @@ const GenericFilter = ({ formFields, setActiveFilters, activeFilters }) => {
 			// 	))}
 			// </select>
 			<ReactSelect
-				multi={false}
-				options={options}
+				options={options.map((option) => ({
+					value: option,
+					label: option,
+				}))}
 				onChange={onChange}
+				value={{
+					value: value,
+					label: value,
+				}}
 			/>
 		);
 	};
@@ -120,7 +126,6 @@ const GenericFilter = ({ formFields, setActiveFilters, activeFilters }) => {
 						</div>
 					);
 				}
-
 				// Render the date range input
 				if (field.type === "date") {
 					const defaultFilterValues = activeFilters[key];
@@ -159,7 +164,13 @@ const GenericFilter = ({ formFields, setActiveFilters, activeFilters }) => {
 							</h2>
 							<Select
 								options={field.options}
-								onChange={field.onChange}
+								value={activeFilters[key].selected}
+								onChange={(e) =>
+									handleChange(key, {
+										...activeFilters[key],
+										selected: e.value, // Spread the existing values
+									})
+								}
 							/>
 						</div>
 					);

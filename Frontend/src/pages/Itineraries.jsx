@@ -63,20 +63,7 @@ function Itineraries() {
 		tag: {
 			type: "select",
 			label: "Tag",
-			options:
-				tags.map((tag) => ({
-					value: tag.name,
-					label: tag.name,
-				})),
-			onChange: (selected) => {
-				setActiveFilters((prev) => ({
-					...prev,
-					tag: {
-						selected: selected.value,
-					},
-				}));
-				console.log("Selected tag:", selected.value);
-			},
+			options: tagNames,
 		},
 		rating: {
 			type: "range",
