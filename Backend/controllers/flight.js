@@ -190,9 +190,26 @@ const bookFlight = async (req, res) => {
   }
 };
 
+const getFlightByTouristId = async (req, res) => {
+  let flights;
+  try {
+    flights = await Flight.find({ travelerID: req.params.id });
+    if (flights == null) {
+      return res.status(404).json({ message: "No Booked Flights for that tourist" });
+    }
+  } catch (err) {
+    return res.status(500).json({
+      message: "Error finding Flight",
+      error: err.message,
+    });
+  }
+  return res.json(flights);
+};
+
 
 module.exports = {
     searchFlights,
     confirmFlightPrice,
     bookFlight,
+    getFlightByTouristId,
 };

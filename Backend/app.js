@@ -17,6 +17,7 @@ const userRoutes = require("./routes/User");
 const advertiserRoutes = require("./routes/Advertiser");
 const touristRoutes = require("./routes/Tourist");
 const tourGuideRoutes = require("./routes/TourGuide");
+const PromoCodeRoutes = require("./routes/PromoCode");
 const tourismGovernorRoutes = require("./routes/TourismGovernor");
 const productRoutes = require("./routes/Product");
 const sellerRoutes = require("./routes/Seller");
@@ -133,11 +134,15 @@ app.use("/flight", flightRoutes);
 // Trip routes
 app.use("/trip", tripRoutes);
 
+// PromoCode routes
+app.use("/PromoCode", PromoCodeRoutes);
+
 // Sale routes
 app.use("/sale", saleRoutes);
 
 // Hotel routes
 app.use("/hotel", hotelRoutes);
+
 
 //To work with pictures
 
