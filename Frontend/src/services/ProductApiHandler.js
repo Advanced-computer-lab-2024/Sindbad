@@ -103,7 +103,7 @@ export const buyProduct = async (productId, userId) => {
 
 export const productSalesDetails = async (productId) => {
 	try {
-		const response = await axiosInstance.get(`/product/sales-details/${productId}`);
+		const response = await axiosInstance.get(`/sale/sales-details/${productId}`);
 		return response.data;
 	} catch (error) {
 		return error;
