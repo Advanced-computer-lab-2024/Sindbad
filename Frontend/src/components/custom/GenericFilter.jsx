@@ -1,6 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { SliderFilter } from "@/components/ui/slider-filter";
 import { useEffect } from "react";
+import ReactSelect from "../ui/react-select";
 
 const GenericFilter = ({ formFields, setActiveFilters, activeFilters }) => {
 	// Function to handle changes and update the filter object
@@ -30,19 +31,24 @@ const GenericFilter = ({ formFields, setActiveFilters, activeFilters }) => {
 
 	const Select = ({ options, value, onChange }) => {
 		return (
-			<select
-				style={{ backgroundColor: "rgb(17, 17, 17)" }} // Added this line because idk the color of the background
-				className="border rounded p-2 text-white"
-				value={value}
+			// <select
+			// 	style={{ backgroundColor: "rgb(17, 17, 17)" }} // Added this line because idk the color of the background
+			// 	className="border rounded p-2 text-white"
+			// 	value={value}
+			// 	onChange={onChange}
+			// >
+			// 	<option value="">Select...</option>
+			// 	{options.map((option, index) => (
+			// 		<option key={index} value={option}>
+			// 			{option}
+			// 		</option>
+			// 	))}
+			// </select>
+			<ReactSelect
+				multi={false}
+				options={options}
 				onChange={onChange}
-			>
-				<option value="">Select...</option>
-				{options.map((option, index) => (
-					<option key={index} value={option}>
-						{option}
-					</option>
-				))}
-			</select>
+			/>
 		);
 	};
 
@@ -114,6 +120,7 @@ const GenericFilter = ({ formFields, setActiveFilters, activeFilters }) => {
 						</div>
 					);
 				}
+
 				// Render the date range input
 				if (field.type === "date") {
 					const defaultFilterValues = activeFilters[key];
@@ -152,13 +159,7 @@ const GenericFilter = ({ formFields, setActiveFilters, activeFilters }) => {
 							</h2>
 							<Select
 								options={field.options}
-								value={activeFilters[key].selected}
-								onChange={(e) =>
-									handleChange(key, {
-										...activeFilters[key],
-										selected: e.target.value, // Spread the existing values
-									})
-								}
+								onChange={field.onChange}
 							/>
 						</div>
 					);
