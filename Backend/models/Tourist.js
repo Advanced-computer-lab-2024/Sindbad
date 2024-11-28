@@ -100,7 +100,18 @@ const TouristSchema = new mongoose.Schema(
       default: [],
     },
     cart: {
-      type: [String], // Array of item IDs in the cart
+      type: [
+        {
+          productID: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Product", // Reference to the Product model
+          },
+          quantity: {
+            type: Number,
+            required: true,
+          },
+        }
+      ],
       default: [],
     },
     addresses: [

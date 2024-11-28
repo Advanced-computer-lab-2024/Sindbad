@@ -14,6 +14,11 @@ const {
   addActivityToBookmarks,
   removeFromBookmarks,
   getBookmarkedActivities,
+  getCart,
+  addToCart,
+  updateCart,
+  removeFromCart
+
 } = require("../controllers/Tourist");
 
 router.route("/").get(getAllTourists);
@@ -37,7 +42,13 @@ router
   .post(addActivityToBookmarks)
   .get(getBookmarkedActivities)
   .delete(removeFromBookmarks);
-  
+
+router
+  .route("/:id/cart")
+  .get(getCart)
+  .post(addToCart)
+  .put(updateCart)
+  .delete(removeFromCart);  
 
 router.route("/:id/wishlist/products").get(getWishlistProducts);
 
