@@ -9,14 +9,28 @@ import {
 } from "@/components/ui/table";
 import { useEffect, useState } from "react";
 import { getCart, removeItemFromCart, updateCart } from "@/services/TouristApiHandler";
-import { useUser } from "@/state management/userInfo";
+import { useCurrency, useUser } from "@/state management/userInfo";
 import { BadgeX } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Convert } from "easy-currencies";
 
 export const Cart = () => {
     const [cart, setCart] = useState([]);
+    const currency = useCurrency();
     const { id } = useUser();
+    const [conversionRate, setConversionRate] = useState(null);
+    const [convertedPrices, setConvertedPrices] = useState({});
     const [debounceTimeouts, setDebounceTimeouts] = useState({});
+
+    const fetchConversionRate = async () => {
+        try {
+            const convert = await Convert().from("USD").fetch();
+            setConversionRate(convert);
+        } catch (error) {
+            console.error("Error fetching conversion rate:", error);
+            setConversionRate(null);
+        }
+    };
 
     const fetchCart = async () => {
         try {
@@ -27,9 +41,24 @@ export const Cart = () => {
         }
     };
 
+    const calculateConvertedPrices = async (cartItems) => {
+        if (!conversionRate) return;
+        const updatedPrices = {};
+        for (const item of cartItems) {
+            const totalPrice = item.productID.price * item.quantity;
+            updatedPrices[item.productID._id] = await conversionRate.amount(totalPrice).to(currency);
+        }
+        setConvertedPrices(updatedPrices);
+    };
+
     useEffect(() => {
+        fetchConversionRate();
         if (id) fetchCart();
     }, [id]);
+
+    useEffect(() => {
+        calculateConvertedPrices(cart);
+    }, [cart, conversionRate]);
 
     // Handle quantity change with debounce
     const handleQuantityChange = (productId, newQuantity) => {
@@ -101,7 +130,9 @@ export const Cart = () => {
                                 </button>
                             </TableCell>
                             <TableCell>
-                                {(item.productID.price * item.quantity).toFixed(2)}
+                                {convertedPrices[item.productID._id] !== undefined
+                                    ? convertedPrices[item.productID._id].toFixed(2)
+                                    : "Loading..."}
                             </TableCell>
                             <TableCell className="text-right pr-5">
                                 <BadgeX
@@ -128,14 +159,11 @@ export const Cart = () => {
             </Table>
             <div>
                 <h2 className="text-right mt-4">
-                    Total: $
-                    {cart
-                        .reduce(
-                            (total, item) =>
-                                total + item.productID.price * item.quantity,
-                            0
-                        )
-                        .toFixed(2)}
+                    Total:{" "}
+                    {Object.values(convertedPrices).length
+                        ? Object.values(convertedPrices).reduce((total, price) => total + price, 0).toFixed(2)
+                        : "Loading..."}
+                    {" " + currency}          
                 </h2>
                 <Button
                     className="mt-4 ml-auto max-w-[200px] w-full text-center justify-center"
