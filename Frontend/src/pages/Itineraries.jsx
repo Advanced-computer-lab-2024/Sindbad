@@ -37,8 +37,7 @@ function Itineraries() {
 			max: 5,
 		},
 		language: "",
-		sortBy: "",
-		sortOrder: "",
+		sortBy: ""
 	});
 
 	const formFields = {
@@ -81,12 +80,7 @@ function Itineraries() {
 		sortBy: {
 			type: "select",
 			label: "Sort By",
-			options: ["price", "rating"],
-		},
-		sortOrder: {
-			type: "select",
-			label: "Sort Order",
-			options: ["asc", "desc"],
+			options: ["Price: Low to High", "Price: High to Low", "Rating: Low to High", "Rating: High to Low"],
 		},
 	};
 
@@ -103,6 +97,9 @@ function Itineraries() {
 		const convertedMax = activeFilters.price.max / converter.rates[currency];
 		const convertedPrice = { min: convertedMin, max: convertedMax };
 
+		const sortBy = activeFilters.sortBy.selected?.split(": ")[0].toLowerCase();
+		const sortOrder = activeFilters.sortBy.selected?.split(": ")[1].toLowerCase() === "low to high" ? "asc" : "desc";
+
 		const response = await getAllItineraries(
 			activeFilters.name,
 			convertedPrice,
@@ -110,8 +107,8 @@ function Itineraries() {
 			tagToSend,
 			activeFilters.rating,
 			activeFilters.language.selected,
-			activeFilters.sortBy.selected,
-			activeFilters.sortOrder.selected
+			sortBy,
+			sortOrder
 		);
 		if (!response.error && response) {
 			const updatedItineraries = response.map((itinerary) => ({
