@@ -18,6 +18,7 @@ const rolePermissions = {
     "store",
     "booking",
     "trips",
+    "cart",
   ],
   tourGuide: ["profile"],
   tourismGovernor: ["profile"],

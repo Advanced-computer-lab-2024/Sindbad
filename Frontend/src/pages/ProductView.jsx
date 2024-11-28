@@ -15,6 +15,7 @@ import RatingReview from "@/components/custom/RatingReview";
 import { useUser, useCurrency } from "@/state management/userInfo";
 import { Convert } from "easy-currencies";
 import { useNavigate } from "react-router-dom";
+import { addItemToCart } from "@/services/TouristApiHandler";
 
 function ProductView() {
 	const { productId } = useParams();
@@ -43,7 +44,7 @@ function ProductView() {
 	};
 
 	const handleBuyProduct = async () => {
-		const response = await buyProduct(productId, id);
+		const response = await addItemToCart(id, productId, 1);
 
 		if (response.error) {
 			console.error(response.message);
@@ -153,7 +154,7 @@ function ProductView() {
 					<div>
 						<Button onClick={() => handleBuyProduct()}>
 							<p>
-								Buy product
+								Add Product to Cart
 							</p>
 							<ShoppingCart size={24} className="shrink-0" />
 						</Button>
