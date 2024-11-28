@@ -4,12 +4,12 @@ import { useSelector, shallowEqual } from "react-redux";
 const userSlice = createSlice({
     name: "user",
     initialState: {
-        // role: "admin",
-        // id: "672537b565d46abdbd520858",
+        role: "admin",
+        id: "672537b565d46abdbd520858",
         // role: "tourist",
         // id: "672faf6be3120c5df6679670",
-        role: "tourGuide",
-        id: "6725031bd5a2d7588e2ce42a",
+        // role: "tourGuide",
+        // id: "6725031bd5a2d7588e2ce42a",
         // role: "seller",
         // id: "67252de1d5a2d7588e2ce7fe",
         // role: "advertiser",

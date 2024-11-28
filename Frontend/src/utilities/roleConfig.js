@@ -8,6 +8,7 @@ const rolePermissions = {
     "store",
     "management",
     "trips",
+    "revenue",
   ],
   guest: ["itineraries", "activities", "sites", "trips"],
   tourist: [
@@ -20,10 +21,10 @@ const rolePermissions = {
     "trips",
     "cart",
   ],
-  tourGuide: ["profile"],
-  tourismGovernor: ["profile"],
-  seller: ["profile", "store"],
-  advertiser: ["profile", "trips"],
+  tourGuide: ["profile", "revenue"],
+  tourismGovernor: ["profile", "revenue"],
+  seller: ["profile", "store", "revenue"],
+  advertiser: ["profile", "trips", "revenue"],
 };
 // Desc: Function to get the pages that a role is allowed to access, based on the rolePermissions map
 export function getRolePermissions(role) {
