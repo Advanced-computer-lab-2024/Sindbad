@@ -40,3 +40,47 @@ export const redeemPoints = async (touristId) => {
     return error;
   }
 };
+
+export const addItemToCart = async (touristId, itemId, amount) => {
+  try {
+    const response = await axiosInstance.post(`/tourist/${touristId}/cart`, {
+      productID: itemId,
+      quantity: amount,
+    });
+    return response.data;
+  } catch (error) {
+    return error;
+  }
+}
+
+export const removeItemFromCart = async (touristId, itemId) => {
+  try {
+    const response = await axiosInstance.delete(`/tourist/${touristId}/cart`, {
+      productID: itemId,
+    });
+    return response.data;
+  } catch (error) {
+    return error;
+  }
+}
+
+export const getCart = async (touristId) => {
+  try {
+    const response = await axiosInstance.get(`/tourist/${touristId}/cart`);
+    return response.data;
+  } catch (error) {
+    return error;
+  }
+}
+
+export const updateCart = async (touristId, itemId, amount) => {
+  try {
+    const response = await axiosInstance.put(`/tourist/${touristId}/cart`, {
+      productID: itemId,
+      quantity: amount,
+    });
+    return response.data;
+  } catch (error) {
+    return error;
+  }
+}
