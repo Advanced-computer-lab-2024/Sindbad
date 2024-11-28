@@ -529,8 +529,7 @@ const updateCart = async (req, res) => {
 
 const removeFromCart = async (req, res) => {
   try {
-    const { id } = req.params; // Tourist ID
-    const { productID } = req.body; // Product ID to be removed
+    const { id, productID } = req.params; // Tourist ID
 
     if (!productID) {
       return res.status(400).json({ message: "Product ID is required" });

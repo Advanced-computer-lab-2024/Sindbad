@@ -48,7 +48,7 @@ router
   .get(getCart)
   .post(addToCart)
   .put(updateCart)
-  .delete(removeFromCart);  
+router.route("/:id/cart/:productID").delete(removeFromCart); 
 
 router.route("/:id/wishlist/products").get(getWishlistProducts);
 

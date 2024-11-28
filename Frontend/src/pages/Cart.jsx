@@ -10,6 +10,8 @@ import {
 import { useEffect, useState } from "react";
 import { getCart } from "@/services/TouristApiHandler";
 import { useUser } from "@/state management/userInfo";
+import { BadgeX } from "lucide-react";
+import { removeItemFromCart } from "@/services/TouristApiHandler";
 
 export const Cart = () => {
 
@@ -30,7 +32,7 @@ export const Cart = () => {
     }, [id]);
 
     return (
-        <div>
+        <div className="py-8 px-24 max-w-[1200px] mx-auto bg-gradient-to-b from-neutral-200/60 to-light border border-neutral-300 rounded-md">
             <Table>
                 {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
                 <TableHeader>
@@ -48,7 +50,20 @@ export const Cart = () => {
                                     <TableCell className="font-medium">{item.productID.name}</TableCell>
                                     <TableCell>{item.quantity}</TableCell>
                                     <TableCell>{item.productID.price * item.quantity}</TableCell>
-                                    <TableCell className="text-right">Remove</TableCell>
+                                    <TableCell className="text-right pr-5">
+                                        <BadgeX className="ml-auto"
+                                         
+                                        onClick={
+                                            async () => {
+                                                try {
+                                                    const response = await removeItemFromCart(id, item.productID._id); 
+                                                    fetchCart();
+                                                } catch (error) {
+                                                    console.error("Error removing item from cart:", error);
+                                                }
+                                            }
+                                        }/>
+                                    </TableCell>
                                 </TableRow>
                             );
                         })

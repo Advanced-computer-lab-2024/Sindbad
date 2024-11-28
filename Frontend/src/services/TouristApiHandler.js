@@ -55,9 +55,7 @@ export const addItemToCart = async (touristId, itemId, amount) => {
 
 export const removeItemFromCart = async (touristId, itemId) => {
   try {
-    const response = await axiosInstance.delete(`/tourist/${touristId}/cart`, {
-      productID: itemId,
-    });
+    const response = await axiosInstance.delete(`/tourist/${touristId}/cart/${itemId}`);
     return response.data;
   } catch (error) {
     return error;
