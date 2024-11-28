@@ -8,6 +8,7 @@ import { getAllTags } from "@/services/AdminApiHandler";
 
 import { useCurrency } from "@/state management/userInfo";
 import { Convert } from "easy-currencies";
+import { languages } from "@/utilities/getLanguages";
 
 function Itineraries() {
 	const [loading, setLoading] = useState(true);
@@ -30,9 +31,7 @@ function Itineraries() {
 			start: "",
 			end: "",
 		},
-		tag: {
-			selected: "",
-		},
+		tag: "",
 		rating: {
 			min: 0,
 			max: 5,
@@ -75,8 +74,9 @@ function Itineraries() {
 			step: 1,
 		},
 		language: {
-			type: "search",
+			type: "select",
 			label: "Language",
+			options: languages.map((language) => language.label),
 		},
 		sortBy: {
 			type: "select",
@@ -109,7 +109,7 @@ function Itineraries() {
 			activeFilters.date,
 			tagToSend,
 			activeFilters.rating,
-			activeFilters.language,
+			activeFilters.language.selected,
 			activeFilters.sortBy.selected,
 			activeFilters.sortOrder.selected
 		);

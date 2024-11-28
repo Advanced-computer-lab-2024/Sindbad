@@ -11,6 +11,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 const GenericFilter = ({ formFields, setActiveFilters, activeFilters }) => {
 	// Function to handle changes and update the filter object
 	const handleChange = (key, value) => {
+		console.log("KEY: ", key, "VALUE: ", value);
 		// Check if value is an object or a direct value
 		if (typeof value === "object" && value !== null) {
 			setActiveFilters((prev) => ({
