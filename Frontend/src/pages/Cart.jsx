@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { getCart, removeItemFromCart, updateCart } from "@/services/TouristApiHandler";
 import { useUser } from "@/state management/userInfo";
 import { BadgeX } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export const Cart = () => {
     const [cart, setCart] = useState([]);
@@ -125,6 +126,24 @@ export const Cart = () => {
                     ))}
                 </TableBody>
             </Table>
+            <div>
+                <h2 className="text-right mt-4">
+                    Total: $
+                    {cart
+                        .reduce(
+                            (total, item) =>
+                                total + item.productID.price * item.quantity,
+                            0
+                        )
+                        .toFixed(2)}
+                </h2>
+                <Button
+                    className="mt-4 ml-auto max-w-[200px] w-full text-center justify-center"
+                    onClick={() => alert("Checkout")}
+                >
+                    Checkout
+                </Button>
+            </div>
         </div>
     );
 };
