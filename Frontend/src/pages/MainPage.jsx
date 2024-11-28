@@ -4,7 +4,7 @@ import { Outlet } from "react-router-dom/dist";
 import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, navigationMenuTriggerStyle } from "@/components/ui/navigation-menu";
 
 import LogoSVG from "@/SVGs/Logo";
-import { CircleUserRound } from "lucide-react";
+import { CircleUserRound, ShoppingCart } from "lucide-react";
 
 import { getRolePermissions } from "@/utilities/roleConfig";
 
@@ -67,13 +67,20 @@ function MainPage() {
                         </NavigationMenu>
                     </div>
                     <div className="flex gap-4 items-center">
+                        {renderedFields.includes("cart") &&
+                            <button
+                            onClick={() => navigate(`/app/cart`, { replace: true })}
+                            >
+                            <ShoppingCart size={24} />
+                        </button>
+                        }
                         {renderedFields.includes("profile") &&
                             <button
                                 onClick={() => navigate(`/app/profile`, { replace: true })}
                             >
                                 <CircleUserRound size={24} />
                             </button>
-                        }
+                        }            
                         <NavigationMenu className="list-none">
                             <NavigationMenuList className={navigationMenuTriggerStyle()}>
                                 <NavigationMenuItem>
