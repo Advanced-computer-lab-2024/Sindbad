@@ -81,7 +81,12 @@ const GenericFilter = ({ formFields, setActiveFilters, activeFilters }) => {
 			<div className="grid gap-2">
 				<Popover
 					open={isPopoverOpen}
-					onOpenChange={setIsPopoverOpen} // Manages the open state
+					onOpenChange={(isOpen) => {
+						if (!isOpen) {
+							setDate(selected?.from, selected?.to || null); // Apply selection when popover closes
+						}
+						setIsPopoverOpen(isOpen);
+					}} // Manages the open state
 				>
 					<PopoverTrigger asChild>
 						<Button
