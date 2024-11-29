@@ -17,6 +17,12 @@ import { BadgeX } from "lucide-react";
 import { getTouristById } from '@/services/TouristApiHandler';
 import GenericForm from '@/components/custom/genericForm/genericForm';
 import { Input } from '@/components/ui/input';
+import { Form } from '@/components/ui/form';
+import { Button } from '@/components/ui/button';
+import { forms } from '@/components/custom/genericForm/forms';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 export const Checkout = () => {
 
@@ -29,6 +35,15 @@ export const Checkout = () => {
     const [addresses, setAddresses] = useState([]);
     const [chosenAddress, setChosenAddress] = useState(null);
     const [addNewAddress, setAddNewAddress] = useState(false);
+
+    const formObject = forms["touristAddress"];
+	const onSubmit = formObject.onSubmit;
+	const formSchema = z.object(formObject.zodSchema);
+    const defaultValues = structuredClone(formObject.defaultValues);
+    const form = useForm({
+		resolver: zodResolver(formSchema),
+		defaultValues: defaultValues,
+	});
 
     const fetchConversionRate = async () => {
         try {
@@ -74,13 +89,17 @@ export const Checkout = () => {
             fetchCart();
             fetchAddress();
         }
-        console.log(addresses);
     }, [id]);
 
     useEffect(() => {
         calculateConvertedPrices(cart);
     }, [cart, conversionRate]);
 
+    const handleSubmit = (values) => {
+        onSubmit(values, id, null, null);
+        setAddNewAddress(false);
+        fetchAddress();
+    }
 
     return (
         <div className="max-w-[1200px] mx-auto">
@@ -130,25 +149,45 @@ export const Checkout = () => {
                             </div>
                             {
                                 addNewAddress && 
-                                <div 
-                                    className="bg-gray-100 p-4 rounded-md hover:bg-gray-200 transition-colors mt-4 group flex flex-col gap-2"
-                                >
-                                    <div className='mb-2 font-semibold'>
-                                            <Input className=' focus:border-0 bg-transparent transition-colors inline w-max border-0 focus:bg-white' placeholder='Label' />
-                                    </div>
-                                    <div>
-                                        <Input className='focus:border-0 bg-transparent transition-colors inline w-max border-0 focus:bg-white' placeholder='Street' />
-                                    </div>
-                                    <div>
-                                        <Input className='focus:border-0 bg-transparent transition-colors inline w-max border-0 focus:bg-white' placeholder='City' />
-                                    </div>
-                                    <div>
-                                        <Input className='focus:border-0 bg-transparent transition-colors inline w-max border-0 focus:bg-white' placeholder='State' />
-                                        {" , "} 
-                                        <Input className='focus:border-0 bg-transparent transition-colors inline w-max border-0 focus:bg-white' placeholder='Country' />
-                                    </div>
-                                    <Input className='focus:border-0 bg-transparent transition-colors inline w-max border-0 focus:bg-white' placeholder='Zip' />
-                                </div>
+                                <Form {...form}>
+                                    <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
+                                        <div 
+                                            className="bg-gray-100 p-4 rounded-md hover:bg-gray-200 transition-colors mt-4 group flex flex-col gap-2"
+                                        >
+                                            <div className='mb-2 font-semibold'>
+                                                    <Input
+                                                    {...form.register("label")}
+                                                    className=' focus:border-0 bg-transparent transition-colors inline w-max border-0 focus:bg-white' placeholder='Label' />
+                                            </div>
+                                            <div>
+                                                <Input
+                                                {...form.register("street")}
+                                                className='focus:border-0 bg-transparent transition-colors inline w-max border-0 focus:bg-white' placeholder='Street' />
+                                            </div>
+                                            <div>
+                                                <Input
+                                                {...form.register("city")}
+                                                className='focus:border-0 bg-transparent transition-colors inline w-max border-0 focus:bg-white' placeholder='City' />
+                                            </div>
+                                            <div>
+                                                <Input 
+                                                {...form.register("state")}
+                                                className='focus:border-0 bg-transparent transition-colors inline w-max border-0 focus:bg-white' placeholder='State' />
+                                                {" , "} 
+                                                <Input 
+                                                {...form.register("country")}
+                                                className='focus:border-0 bg-transparent transition-colors inline w-max border-0 focus:bg-white' placeholder='Country' />
+                                            </div>
+                                            <Input 
+                                            {...form.register("zip")}
+                                            className='focus:border-0 bg-transparent transition-colors inline w-max border-0 focus:bg-white' placeholder='Zip' />
+                                            <Button type="submit" className="bg-dark text-white w-max">
+                                                Submit
+                                            </Button>
+                                        </div>
+                                        
+                                    </form>
+                                </Form>
                             }
                             <a 
                             className='block mt-4 text-base hover:text-yellow-400 cursor-pointer w-max'
