@@ -38,7 +38,6 @@ function Activities() {
 			max: 5,
 		},
 		sortBy: "",
-		sortOrder: "",
 	});
 
 	const formFields = {
@@ -76,12 +75,7 @@ function Activities() {
 		sortBy: {
 			type: "select",
 			label: "Sort By",
-			options: ["price", "rating"],
-		},
-		sortOrder: {
-			type: "select",
-			label: "Sort Order",
-			options: ["asc", "desc"],
+			options: ["Price: Low to High", "Price: High to Low", "Rating: Low to High", "Rating: High to Low"],
 		},
 	};
 
@@ -100,14 +94,17 @@ function Activities() {
 		const convertedMax = activeFilters.price.max / converter.rates[currency];
 		const convertedPrice = { min: convertedMin, max: convertedMax };
 
+		const sortBy = activeFilters.sortBy.selected?.split(": ")[0].toLowerCase();
+		const sortOrder = activeFilters.sortBy.selected?.split(": ")[1].toLowerCase() === "low to high" ? "asc" : "high to low" ? "desc" : null;
+
 		const response = await getAllActivities(
 			activeFilters.name,
 			convertedPrice,
 			activeFilters.date, // Pass start and end separately
 			categoryToSend, // Send the category ID
 			activeFilters.rating,
-			activeFilters.sortBy.selected,
-			activeFilters.sortOrder.selected
+			sortBy,
+			sortOrder
 		);
 		if (!response.error) {
 			setActivities(response);
@@ -178,7 +175,7 @@ function Activities() {
 				<hr className="border-neutral-300 border w-full mt-1.5" />
 			</div>
 			<div className="flex gap-10">
-				<div className="w-[280px] shrink-0">
+				<div className="w-[220px] shrink-0">
 					<GenericFilter
 						formFields={formFields}
 						activeFilters={activeFilters}

@@ -34,24 +34,34 @@ function EditProfile({ userType, id, userData }) {
             updateUserPassword(body.id, body.role, body.passwordHash);
         }
     }
-    
+
     return (
         <div>
+            <div className="flex items-center gap-6 mb-3">
+                <h1 className="text-xl font-bold">General</h1>
+                <hr className="border-neutral-300 border w-full mt-1.5" />
+            </div>
             <GenericForm type={userType} id={id} data={userData} />
             <h1 className="text-2xl font-semibold my-4">Change Password</h1>
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                    <FormLabel>Old Password</FormLabel>
+                <form onSubmit={form.handleSubmit(onSubmit)}>
+                    <div className="form-label">
+                        <FormLabel>Old Password</FormLabel>
+                    </div>
                     <Input
                         label="Old Password"
                         type="password"
                         {...form.register("oldPassword")}
+                        className="mb-4"
                     />
-                    <FormLabel>New Password</FormLabel>
+                    <div className="form-label">
+                        <FormLabel>New Password</FormLabel>
+                    </div>
                     <Input
                         label="New Password"
                         type="password"
                         {...form.register("newPassword")}
+                        className="mb-4"
                     />
                     <Button type="submit" className="bg-dark text-white">
                         Submit

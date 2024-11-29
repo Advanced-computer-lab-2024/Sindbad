@@ -1,7 +1,7 @@
 import React from 'react';
 import Select from 'react-select';
 
-function ReactSelect({ options, onChange, multi, defaultValue }) {
+function ReactSelect({ options, onChange, multi, defaultValue, value }) {
     const filterStyles = {
         control: (styles, state) => ({
             ...styles,
@@ -9,7 +9,7 @@ function ReactSelect({ options, onChange, multi, defaultValue }) {
             minHeight: '32px',
             margin: 0,
             fontSize: 12,
-            backgroundColor: '#f3f4f6',
+            backgroundColor: '#ffffff',
             borderRadius: "calc(0.5rem - 2px)",
             color: "#ff1111",
             border: "1px solid #e4e4e7",
@@ -29,16 +29,16 @@ function ReactSelect({ options, onChange, multi, defaultValue }) {
             fontSize: 12,
             width: "100%",
             height: '32px',
-            backgroundColor: state.isFocused ? "#e3e3e3" : "#eeeeee",
+            backgroundColor: state.isFocused ? "#eeeeee" : "#ffffff",
             ':active': {
-                backgroundColor: "#e3e3e3"
+                backgroundColor: "#eeeeee"
             },
             color: "#111111",
         }),
         menu: (provided) => ({
             ...provided,
             overflow: 'clip',
-            backgroundColor: "#eeeeee",
+            backgroundColor: "#ffffff",
             borderRadius: "calc(0.5rem - 2px)"
         }),
         valueContainer: (provided, state) => ({
@@ -111,7 +111,7 @@ function ReactSelect({ options, onChange, multi, defaultValue }) {
             margin: 0,
             marginLeft: 0,
             fontSize: 12,
-            backgroundColor: '#f3f4f6',
+            backgroundColor: '#ffffff',
             borderRadius: "calc(0.5rem - 2px)",
             color: "#ff1111",
             border: "1px solid #e4e4e7",
@@ -131,16 +131,16 @@ function ReactSelect({ options, onChange, multi, defaultValue }) {
             fontSize: 12,
             width: "100%",
             height: '32px',
-            backgroundColor: state.isFocused ? "#e3e3e3" : "#eeeeee",
+            backgroundColor: state.isFocused ? "#eeeeee" : "#ffffff",
             ':active': {
-                backgroundColor: "#e3e3e3"
+                backgroundColor: "#eeeeee"
             },
             color: "#111111",
         }),
         menu: (provided) => ({
             ...provided,
             overflow: 'clip',
-            backgroundColor: "#eeeeee",
+            backgroundColor: "#ffffff",
             borderRadius: "calc(0.5rem - 2px)"
         }),
         valueContainer: (provided, state) => ({
@@ -176,6 +176,15 @@ function ReactSelect({ options, onChange, multi, defaultValue }) {
             fontSize: 12,
             height: '32px',
         }),
+        clearIndicator: (styles) => ({
+            ...styles,
+            color: "#a3a3a3",
+            width: '32px',
+            cursor: "pointer",
+            "&:hover": {
+                color: "#a3a3a3",
+            }
+        }),
     }
 
     return (
@@ -191,16 +200,27 @@ function ReactSelect({ options, onChange, multi, defaultValue }) {
                     onChange={onChange}
                     menuPlacement="auto"
                 />
-                :
-                <Select
-                    name="colors"
-                    options={options}
-                    classNamePrefix="select"
-                    styles={defaultStyles}
-                    onChange={onChange}
-                    defaultValue={defaultValue || 'Select'}
-                    menuPlacement="auto"
-                />
+                : value ?
+                    <Select
+                        name="colors"
+                        options={options}
+                        classNamePrefix="select"
+                        styles={defaultStyles}
+                        onChange={onChange}
+                        defaultValue={defaultValue || 'Select'}
+                        menuPlacement="auto"
+                        value={value?.value ? value : null}
+                    />
+                    :
+                    <Select
+                        name="colors"
+                        options={options}
+                        classNamePrefix="select"
+                        styles={defaultStyles}
+                        onChange={onChange}
+                        defaultValue={defaultValue || 'Select'}
+                        menuPlacement="auto"
+                    />
             }
         </>
     )
