@@ -29,6 +29,8 @@ const TourGuideController = require("./controllers/TourGuide");
 const tripRoutes = require("./routes/Trip");
 const saleRoutes = require("./routes/Sale");
 const hotelRoutes = require("./routes/Hotel");
+const authRoutes = require("./routes/Auth");
+const verifyJWT = require("./middlewares/verifyJWT");
 
 //Set memory preference to be RAM
 const upload = multer({ storage: multer.memoryStorage() });
@@ -59,6 +61,9 @@ if (process.env.NODE_ENV !== "test") {
     });
 }
 
+// Auth routes
+app.use("/auth", authRoutes);
+
 app.post(
   "/advertiser/upload/:id",
   upload.fields([
@@ -88,6 +93,8 @@ app.post(
 
 //User routes
 app.use("/user", userRoutes);
+
+app.use(verifyJWT);
 
 //Advertiser routes
 app.use("/advertiser", advertiserRoutes);
@@ -142,7 +149,6 @@ app.use("/sale", saleRoutes);
 
 // Hotel routes
 app.use("/hotel", hotelRoutes);
-
 
 //To work with pictures
 

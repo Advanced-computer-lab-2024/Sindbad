@@ -9,382 +9,380 @@ const Seller = require("../models/Seller");
 const Admin = require("../models/Admin");
 const TourismGovernor = require("../models/TourismGovernor");
 
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
+
 const models = {
-	tourist: Tourist,
-	tourguide: TourGuide,
-	tourismgovernor: TourismGovernor,
-	advertiser: Advertiser,
-	seller: Seller,
-	admin: Admin,
+  tourist: Tourist,
+  tourguide: TourGuide,
+  tourismgovernor: TourismGovernor,
+  advertiser: Advertiser,
+  seller: Seller,
+  admin: Admin,
 };
 
 const isAcceptedmodels = {
-	tourguide: TourGuide,
-	advertiser: Advertiser,
-	seller: Seller,
+  tourguide: TourGuide,
+  advertiser: Advertiser,
+  seller: Seller,
 };
 
 const defaultFields = {
-	tourist: {
-		wallet: 0,
-		bookmarks: [],
-		loyaltyPoints: 0,
-		level: 1,
-		xpPoints: 0,
-		isReceiveNotifications: false,
-		wishlist: [],
-		cart: [],
-		addresses: [],
-		preferences: [],
-		isRequestedAccountDeletion: false,
-	},
-	advertiser: {
-		isAccepted: null,
-		createdActivities: [],
-		createdIterinaries: [],
-		createdHistoricalPlaces: [],
-		isRequestedAccountDeletion: false,
-	},
-	seller: {
-		isAccepted: null,
-		products: [],
-		isRequestedAccountDeletion: false,
-	},
-	tourguide: {
-		isAccepted: null,
-		isRequestedAccountDeletion: false,
-	},
-	admin: {},
-	tourismgovernor: {},
+  tourist: {
+    wallet: 0,
+    bookmarks: [],
+    loyaltyPoints: 0,
+    level: 1,
+    xpPoints: 0,
+    isReceiveNotifications: false,
+    wishlist: [],
+    cart: [],
+    addresses: [],
+    preferences: [],
+    isRequestedAccountDeletion: false,
+  },
+  advertiser: {
+    isAccepted: null,
+    createdActivities: [],
+    createdIterinaries: [],
+    createdHistoricalPlaces: [],
+    isRequestedAccountDeletion: false,
+  },
+  seller: {
+    isAccepted: null,
+    products: [],
+    isRequestedAccountDeletion: false,
+  },
+  tourguide: {
+    isAccepted: null,
+    isRequestedAccountDeletion: false,
+  },
+  admin: {},
+  tourismgovernor: {},
 };
 
 const UserController = {
-	signUp: async (req, res) => {
-		try {
-			const { email, username, passwordHash, role, ...userData } =
-				req.body;
+  signUp: async (req, res) => {
+    try {
+      const { email, username, password, role, ...userData } = req.body;
 
-			if (!role) {
-				throw new Error("Role is required");
-			}
+      if (!role) {
+        throw new Error("Role is required");
+      }
 
-			// Check for unique email and username
-			const isUnique = await UserController.isUniqueUsername(username);
-			if (!isUnique) {
-				throw new Error("Username already exists");
-			}
+      // Check for unique email and username
+      const isUnique = await UserController.isUniqueUsername(username);
+      if (!isUnique) {
+        throw new Error("Username already exists");
+      }
 
-			// Get the model based on role
-			const Model = models[role.toLowerCase()];
-			if (!Model) {
-				throw new Error("Invalid role");
-			}
+      // Get the model based on role
+      const Model = models[role.toLowerCase()];
+      if (!Model) {
+        throw new Error("Invalid role");
+      }
 
-			// Combine user-provided data with default fields for the role
-			const roleSpecificData = {
-				...defaultFields[role.toLowerCase()],
-				...userData,
-			};
+      // Combine user-provided data with default fields for the role
+      const roleSpecificData = {
+        ...defaultFields[role.toLowerCase()],
+        ...userData,
+      };
 
-			// Create a new user instance and save it
-			const user = new Model({
-				email,
-				username,
-				passwordHash,
-				...roleSpecificData,
-			});
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-			await user.save();
+      // Create a new user instance and save it
+      const user = new Model({
+        email,
+        username,
+        passwordHash: hashedPassword,
+        ...roleSpecificData,
+      });
 
-			return res
-				.status(201)
-				.json({ message: "User created successfully", user });
-		} catch (error) {
-			return res
-				.status(400)
-				.json({ message: "Sign up failed", error: error.message });
-		}
-	},
+      await user.save();
 
-	getUserRole: async (req, res) => {
-		try {
-			const { id } = req.params;
+      return res
+        .status(201)
+        .json({ message: "User created successfully", user });
+    } catch (error) {
+      return res
+        .status(400)
+        .json({ message: "Sign up failed", error: error.message });
+    }
+  },
 
-			if (!id) {
-				throw new Error("ID is required");
-			}
+  getUserRole: async (req, res) => {
+    try {
+      const { id } = req.params;
 
-			// Loop through models to find the user by ID
-			for (const [role, model] of Object.entries(models)) {
-				const user = await model.findById(id);
-				if (user) {
-					if (role === "tourguide") {
-						return res.status(200).json({ role: "tourGuide" });
-					} else if (role === "tourismgovernor") {
-						return res
-							.status(200)
-							.json({ role: "tourismGovernor" });
-					} else {
-						return res.status(200).json({ role });
-					}
-				}
-			}
+      if (!id) {
+        throw new Error("ID is required");
+      }
 
-			return res.status(404).json({ message: "User not found" });
-		} catch (error) {
-			return res.status(400).json({
-				message: "Failed to get user type",
-				error: error.message,
-			});
-		}
-	},
+      // Loop through models to find the user by ID
+      for (const [role, model] of Object.entries(models)) {
+        const user = await model.findById(id);
+        if (user) {
+          if (role === "tourguide") {
+            return res.status(200).json({ role: "tourGuide" });
+          } else if (role === "tourismgovernor") {
+            return res.status(200).json({ role: "tourismGovernor" });
+          } else {
+            return res.status(200).json({ role });
+          }
+        }
+      }
 
-	isUniqueUsername: async (username) => {
-		// Check all models for unique username
-		for (let model in models) {
-			const existingUser = await models[model]
-				.findOne({ username })
-				.exec();
-			if (existingUser) {
-				return false;
-			}
-		}
-		return true;
-	},
+      return res.status(404).json({ message: "User not found" });
+    } catch (error) {
+      return res.status(400).json({
+        message: "Failed to get user type",
+        error: error.message,
+      });
+    }
+  },
 
-	getAllUsers: async (req, res) => {
-		try {
-			const results = await Promise.all(
-				Object.entries(models).map(async ([role, model]) => {
-					const users = await model.find({
-						$or: [
-							{ isAccepted: { $exists: false } },
-							{ isAccepted: { $ne: null } }
-						]
-					});
-					return users.map((user) => ({ ...user._doc, role }));
-				})
-			);
+  isUniqueUsername: async (username) => {
+    // Check all models for unique username
+    for (let model in models) {
+      const existingUser = await models[model].findOne({ username }).exec();
+      if (existingUser) {
+        return false;
+      }
+    }
+    return true;
+  },
 
-			const combinedUsers = results.flat();
-			return res.status(200).json(combinedUsers);
-		} catch (error) {
-			console.log(error);
-			return res.status(500).json({ message: error.message });
-		}
-	},
+  getAllUsers: async (req, res) => {
+    try {
+      const results = await Promise.all(
+        Object.entries(models).map(async ([role, model]) => {
+          const users = await model.find({
+            $or: [
+              { isAccepted: { $exists: false } },
+              { isAccepted: { $ne: null } },
+            ],
+          });
+          return users.map((user) => ({ ...user._doc, role }));
+        })
+      );
 
-	getAllPendingUsers: async (req, res) => {
-		try {
-			const results = await Promise.all(
-				Object.entries(isAcceptedmodels).map(async ([role, model]) => {
-					const users = await model.find({ isAccepted: null });
-					r =
-						role === "tourguide"
-							? "Tour Guide"
-							: role.charAt(0).toUpperCase() + role.slice(1);
-					return users.map((user) => ({ ...user._doc, role: r }));
-				})
-			);
+      const combinedUsers = results.flat();
+      return res.status(200).json(combinedUsers);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ message: error.message });
+    }
+  },
 
-			const combinedUsers = results.flat();
-			return res.status(200).json(combinedUsers);
-		} catch (error) {
-			console.log(error);
-			return res.status(500).json({ message: error.message });
-		}
-	},
-	checkDeletion: async (req, res) => {
-		try {
-			const { id } = req.params;
-			const { role } = req.body;
+  getAllPendingUsers: async (req, res) => {
+    try {
+      const results = await Promise.all(
+        Object.entries(isAcceptedmodels).map(async ([role, model]) => {
+          const users = await model.find({ isAccepted: null });
+          r =
+            role === "tourguide"
+              ? "Tour Guide"
+              : role.charAt(0).toUpperCase() + role.slice(1);
+          return users.map((user) => ({ ...user._doc, role: r }));
+        })
+      );
 
-			if (role.toLowerCase() == "advertiser") {
-				const currentDate = new Date();
+      const combinedUsers = results.flat();
+      return res.status(200).json(combinedUsers);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ message: error.message });
+    }
+  },
+  checkDeletion: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { role } = req.body;
 
-				//get number of future actvities which head count ! = 0
-				const activityCount = await Activities.countDocuments({
-					creatorId: id,
-					headCount: { $ne: 0 }, // Only count activities where headCount is not equal to 0
-					dateTime: { $gt: currentDate }, // Only future activities
-				});
+      if (role.toLowerCase() == "advertiser") {
+        const currentDate = new Date();
 
-				if (activityCount != 0) {
-					return res.status(404).json({
-						canDelete: false,
-						message: "Activity has bookings.",
-					});
-				}
+        //get number of future actvities which head count ! = 0
+        const activityCount = await Activities.countDocuments({
+          creatorId: id,
+          headCount: { $ne: 0 }, // Only count activities where headCount is not equal to 0
+          dateTime: { $gt: currentDate }, // Only future activities
+        });
 
-				// All activities are deletable
-				return res.status(200).json({ canDelete: true });
-			} else if (role.toLowerCase() == "tourguide") {
-				//check if itenirary is still running aka ana b3d el start date bas abl el end date, can i delete?
-				const currentDate = new Date();
+        if (activityCount != 0) {
+          return res.status(404).json({
+            canDelete: false,
+            message: "Activity has bookings.",
+          });
+        }
 
-				const itineraries = await Itinerary.find({
-					creatorId: id,
-				});
-				if (!itineraries) {
-					return res.status(200).json({ canDelete: true });
-				}
-				for (const itinerary of itineraries) {
-					const totalHeadCount = itinerary.availableDatesTimes.reduce(
-						(sum, date) => {
-							return date.dateTime >= currentDate
-								? sum + date.headCount
-								: sum;
-						},
-						0
-					);
+        // All activities are deletable
+        return res.status(200).json({ canDelete: true });
+      } else if (role.toLowerCase() == "tourguide") {
+        //check if itenirary is still running aka ana b3d el start date bas abl el end date, can i delete?
+        const currentDate = new Date();
 
-					if (totalHeadCount > 0) {
-						// Activity found, return success response or perform the deletion if needed
-						return res.status(403).json({
-							canDelete: false,
-							message: "itinerary has bookings.",
-						});
-					}
-				}
-				return res.status(200).json({ canDelete: true });
-			} else {
-				return res.status(200).json({ canDelete: true });
-			}
-		} catch (error) {
-			console.error(error);
-			return res.status(500).json({
-				message:
-					"An error occurred while checking if an account can be deleted.",
-			});
-		}
-	},
+        const itineraries = await Itinerary.find({
+          creatorId: id,
+        });
+        if (!itineraries) {
+          return res.status(200).json({ canDelete: true });
+        }
+        for (const itinerary of itineraries) {
+          const totalHeadCount = itinerary.availableDatesTimes.reduce(
+            (sum, date) => {
+              return date.dateTime >= currentDate ? sum + date.headCount : sum;
+            },
+            0
+          );
 
-	deleteUser: async (req, res) => {
-		const { id } = req.params;
-		const { role } = req.body;
+          if (totalHeadCount > 0) {
+            // Activity found, return success response or perform the deletion if needed
+            return res.status(403).json({
+              canDelete: false,
+              message: "itinerary has bookings.",
+            });
+          }
+        }
+        return res.status(200).json({ canDelete: true });
+      } else {
+        return res.status(200).json({ canDelete: true });
+      }
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        message:
+          "An error occurred while checking if an account can be deleted.",
+      });
+    }
+  },
 
-		console.log(req.body);
+  deleteUser: async (req, res) => {
+    const { id } = req.params;
+    const { role } = req.body;
 
-		if (!role) {
-			return res.status(400).json({ message: "Role is required" });
-		}
+    console.log(req.body);
 
-		try {
-			const Model = models[role.toLowerCase()];
-			if (!Model) {
-				throw new Error("Invalid role");
-			}
+    if (!role) {
+      return res.status(400).json({ message: "Role is required" });
+    }
 
-			let deletionResult;
+    try {
+      const Model = models[role.toLowerCase()];
+      if (!Model) {
+        throw new Error("Invalid role");
+      }
 
-			if (role.toLowerCase() == "advertiser") {
-				deletionResult = await Activities.deleteMany({ creatorId: id });
-			} else if (role.toLowerCase() == "tourguide") {
-				deletionResult = await Itinerary.deleteMany({ creatorId: id });
-			} else if (role.toLowerCase() == "seller") {
-				deletionResult = await Products.deleteMany({ seller: id });
-			} else if (role.toLowerCase() == "tourist") {
-				deletionResult = await Complaint.deleteMany({ creatorId: id });
-			}
-			const userDeletionResult = await Model.findByIdAndDelete(id);
+      let deletionResult;
 
-			return res.status(200).json({
-				message: "User deleted successfully",
-				deletedCount: deletionResult ? deletionResult.deletedCount : 0, // Include the count of deleted documents
-				userDeleted: userDeletionResult ? true : false, // Indicate if the user was deleted
-			});
-		} catch (error) {
-			return res.status(500).json({ message: error.message });
-		}
-	},
+      if (role.toLowerCase() == "advertiser") {
+        deletionResult = await Activities.deleteMany({ creatorId: id });
+      } else if (role.toLowerCase() == "tourguide") {
+        deletionResult = await Itinerary.deleteMany({ creatorId: id });
+      } else if (role.toLowerCase() == "seller") {
+        deletionResult = await Products.deleteMany({ seller: id });
+      } else if (role.toLowerCase() == "tourist") {
+        deletionResult = await Complaint.deleteMany({ creatorId: id });
+      }
+      const userDeletionResult = await Model.findByIdAndDelete(id);
 
-	updateUserPassword: async (req, res) => {
-		const { id } = req.params;
-		const { role, passwordHash } = req.body;
-		console.log(req.body);
-		console.log(req.params)
+      return res.status(200).json({
+        message: "User deleted successfully",
+        deletedCount: deletionResult ? deletionResult.deletedCount : 0, // Include the count of deleted documents
+        userDeleted: userDeletionResult ? true : false, // Indicate if the user was deleted
+      });
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  },
 
-		if (!role) {
-			return res.status(400).json({ message: "Role is required" });
-		}
-		if (!passwordHash) {
-			return res.status(400).json({ message: "Password is required" });
-		}
+  updateUserPassword: async (req, res) => {
+    const { id } = req.params;
+    const { role, passwordHash } = req.body;
+    console.log(req.body);
+    console.log(req.params);
 
-		try {
-			const Model = models[role.toLowerCase()];
-			if (!Model) {
-				throw new Error("Invalid role");
-			}
+    if (!role) {
+      return res.status(400).json({ message: "Role is required" });
+    }
+    if (!passwordHash) {
+      return res.status(400).json({ message: "Password is required" });
+    }
 
-			const user = await Model.findById(id);
+    try {
+      const Model = models[role.toLowerCase()];
+      if (!Model) {
+        throw new Error("Invalid role");
+      }
 
-			if (!user) {
-				return res.status(404).json({ message: "User not found" });
-			}
+      const user = await Model.findById(id);
 
-			user.passwordHash = passwordHash;
-			await user.save();
-			res.json(user);
-		} catch (error) {
-			return res.status(500).json({ message: error.message });
-		}
-	},
-	updateUserAcceptance: async (req, res) => {
-		const { id } = req.params;
-		const { role, isAccepted } = req.body;
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
 
-		if (!role) {
-			return res.status(400).json({ message: "Role is required" });
-		}
+      user.passwordHash = passwordHash;
+      await user.save();
+      res.json(user);
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  },
+  updateUserAcceptance: async (req, res) => {
+    const { id } = req.params;
+    const { role, isAccepted } = req.body;
 
-		try {
-			const Model = isAcceptedmodels[role.toLowerCase()];
-			if (!Model) {
-				throw new Error("Invalid role");
-			}
+    if (!role) {
+      return res.status(400).json({ message: "Role is required" });
+    }
 
-			const user = await Model.findById(id);
+    try {
+      const Model = isAcceptedmodels[role.toLowerCase()];
+      if (!Model) {
+        throw new Error("Invalid role");
+      }
 
-			if (!user) {
-				return res.status(404).json({ message: "User not found" });
-			}
+      const user = await Model.findById(id);
 
-			user.isAccepted = isAccepted;
-			await user.save();
-			res.json(user);
-		} catch (error) {
-			return res.status(500).json({ message: error.message });
-		}
-	},
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
 
-	requestAccountDeletion: async (req, res) => {
-		const { id } = req.params;
-		const { role, isRequestedAccountDeletion = true } = req.body; // Make the default value true
+      user.isAccepted = isAccepted;
+      await user.save();
+      res.json(user);
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  },
 
-		if (!role) {
-			return res.status(400).json({ message: "Role is required" });
-		}
+  requestAccountDeletion: async (req, res) => {
+    const { id } = req.params;
+    const { role, isRequestedAccountDeletion = true } = req.body; // Make the default value true
 
-		try {
-			const Model = models[role.toLowerCase()];
-			if (!Model) {
-				throw new Error("Invalid role");
-			}
+    if (!role) {
+      return res.status(400).json({ message: "Role is required" });
+    }
 
-			const user = await Model.findById(id);
+    try {
+      const Model = models[role.toLowerCase()];
+      if (!Model) {
+        throw new Error("Invalid role");
+      }
 
-			if (!user) {
-				return res.status(404).json({ message: "User not found" });
-			}
+      const user = await Model.findById(id);
 
-			user.isRequestedAccountDeletion = isRequestedAccountDeletion;
-			await user.save();
-			res.json(user);
-		} catch (error) {
-			return res.status(500).json({ message: error.message });
-		}
-	},
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      user.isRequestedAccountDeletion = isRequestedAccountDeletion;
+      await user.save();
+      res.json(user);
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  },
 };
 
 module.exports = UserController;

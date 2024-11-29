@@ -1,34 +1,40 @@
 const express = require("express");
 const router = express.Router();
 const {
-	signUp,
-	getUserRole,
-	deleteUser,
-	getAllUsers,
-	updateUserPassword,
-	getAllPendingUsers,
-	updateUserAcceptance,
-	checkDeletion,
-	requestAccountDeletion,
+  signUp,
+  getUserRole,
+  deleteUser,
+  getAllUsers,
+  updateUserPassword,
+  getAllPendingUsers,
+  updateUserAcceptance,
+  checkDeletion,
+  requestAccountDeletion,
 } = require("../controllers/User");
+const verifyJWT = require("../middlewares/verifyJWT");
 
-// Sign up route
-router.post("/changePassword/:id", updateUserPassword);
-
-router.post("/changeAcceptance/:id", updateUserAcceptance);
-
+// Public routes (No authentication required)
 router.post("/signup", signUp);
 
-router.get("/get-user-role/:id", getUserRole);
+// Protected routes (Require JWT authentication)
+router.post("/changePassword/:id", verifyJWT, updateUserPassword);
 
-router.get("/getPendingUsers", getAllPendingUsers);
+router.post("/changeAcceptance/:id", verifyJWT, updateUserAcceptance);
 
-router.get("/canDelete/:id", checkDeletion);
+router.get("/get-user-role/:id", verifyJWT, getUserRole);
 
-router.get("/", getAllUsers);
+router.get("/getPendingUsers", verifyJWT, getAllPendingUsers);
 
-router.delete("/:id", deleteUser);
+router.get("/canDelete/:id", verifyJWT, checkDeletion);
 
-router.patch("/request-account-deletion/:id", requestAccountDeletion);
+router.get("/", verifyJWT, getAllUsers);
+
+router.delete("/:id", verifyJWT, deleteUser);
+
+router.patch(
+  "/request-account-deletion/:id",
+  verifyJWT,
+  requestAccountDeletion
+);
 
 module.exports = router;
