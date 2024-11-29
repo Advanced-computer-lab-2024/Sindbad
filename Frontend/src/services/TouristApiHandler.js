@@ -82,3 +82,12 @@ export const updateCart = async (touristId, itemId, amount) => {
     return error;
   }
 }
+
+export const addAddress = async (touristId, address) => {
+  try {
+    const response = await axiosInstance.post(`/tourist/${touristId}/address`, address);
+    return response.data;
+  } catch (error) {
+    return error;
+  }
+}

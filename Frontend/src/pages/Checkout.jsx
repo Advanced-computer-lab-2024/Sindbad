@@ -14,6 +14,8 @@ import {
 import { getCart } from "@/services/TouristApiHandler";
 import { useCurrency } from "@/state management/userInfo";
 import { BadgeX } from "lucide-react";
+import { getTouristById } from '@/services/TouristApiHandler';
+import GenericForm from '@/components/custom/genericForm/genericForm';
 
 export const Checkout = () => {
 
@@ -23,6 +25,8 @@ export const Checkout = () => {
     const [conversionRate, setConversionRate] = useState(null);
     const [convertedPrices, setConvertedPrices] = useState({});
     const navigate = useNavigate();
+    const [addresses, setAddresses] = useState([]);
+    const [chosenAddress, setChosenAddress] = useState(null);
 
     const fetchConversionRate = async () => {
         try {
@@ -33,6 +37,15 @@ export const Checkout = () => {
             setConversionRate(null);
         }
     };
+
+    const fetchAddress = async () => {
+        try {
+            const response = await getTouristById(id);
+            setAddresses(response.addresses || []);
+        } catch (error) {
+            console.error("Error fetching address:", error);
+        }
+    }
 
     const fetchCart = async () => {
         try {
@@ -55,7 +68,11 @@ export const Checkout = () => {
 
     useEffect(() => {
         fetchConversionRate();
-        if (id) fetchCart();
+        if (id) {
+            fetchCart();
+            fetchAddress();
+        }
+        console.log(addresses);
     }, [id]);
 
     useEffect(() => {
@@ -72,7 +89,45 @@ export const Checkout = () => {
             </h1>
             <div className="grid grid-cols-3 grid-flow-col gap-4 items-start">
                 <div className="col-span-2 bg-white rounded-md p-6">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia cum eum est omnis ab! Consequuntur in maiores a distinctio tempora corrupti iure temporibus, reiciendis rem culpa provident placeat eveniet ducimus illo sed modi excepturi voluptas voluptatem nemo. Non dignissimos nobis mollitia autem, aliquam reiciendis deserunt et? Ipsum corporis quae ad distinctio exercitationem quis at magni maxime accusantium iste facere commodi cupiditate eos, quos autem atque sunt quaerat expedita, consequatur labore natus aliquid? Asperiores ipsa modi voluptatem? Possimus error quisquam reprehenderit excepturi aliquid! Corporis error ex, ad voluptates, ipsa sapiente sequi laboriosam, eveniet modi eum repudiandae nobis officiis a ea. At ab enim, corporis, amet, delectus similique repellendus suscipit voluptas sunt placeat deserunt laborum vel quibusdam eius impedit. Optio quod iste praesentium vitae quaerat eos maxime et autem veritatis reiciendis sequi, mollitia assumenda necessitatibus doloremque repellat distinctio cum nisi. Ducimus temporibus aliquid nobis nulla natus, odio est veniam delectus quibusdam illum?
+                    {
+                        addresses.length < 1 
+                        ? 
+                        (<div>
+                            <h2 className='text-lg font-bold mb-4'>
+                                It seems you havent added an address yet. Please add an address to continue.
+                            </h2>
+                            <GenericForm type={"touristAddress"} id={id} fetcher={fetchAddress}/>
+                        </div>) 
+                        :
+                        (<div>
+                            <h2 className='text-lg font-bold mb-4'>
+                                Choose an Address to Deliver to
+                            </h2>
+                            <div className="grid gap-4">
+                                {addresses.map((item) => (
+                                    <div 
+                                    key={item[0]._id} 
+                                    className="bg-gray-100 p-4 rounded-md text-sm cursor-pointer hover:bg-gray-200 transition-colors"
+                                    onClick={() => setChosenAddress(item[0])}
+                                    >
+                                        <div className='mb-2 font-semibold'>
+                                            {item[0].label}
+                                        </div>
+                                        <div>
+                                            {item[0].street}
+                                        </div>
+                                        <div>
+                                            {item[0].city}
+                                        </div>
+                                        <div>
+                                            {item[0].state}{","} {item[0].country}
+                                        </div>
+                                        {item[0].zip}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>)
+                    }
                 </div>
                 <div className="col-span-1 bg-white rounded-md p-6">
                     <h2 className='text-lg font-bold mb-4'>
@@ -113,8 +168,6 @@ export const Checkout = () => {
                             }, 0).toFixed(2)}
                         </span>
                     </div>
-
-
                 </div>
             </div>
         </div>
