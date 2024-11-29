@@ -37,19 +37,6 @@ const GenericFilter = ({ formFields, setActiveFilters, activeFilters }) => {
 
 	const Select = ({ options, value, onChange }) => {
 		return (
-			// <select
-			// 	style={{ backgroundColor: "rgb(17, 17, 17)" }} // Added this line because idk the color of the background
-			// 	className="border rounded p-2 text-white"
-			// 	value={value}
-			// 	onChange={onChange}
-			// >
-			// 	<option value="">Select...</option>
-			// 	{options.map((option, index) => (
-			// 		<option key={index} value={option}>
-			// 			{option}
-			// 		</option>
-			// 	))}
-			// </select>
 			<ReactSelect
 				options={options.map((option) => ({
 					value: option,
@@ -93,8 +80,9 @@ const GenericFilter = ({ formFields, setActiveFilters, activeFilters }) => {
 						<Button
 							id="date"
 							variant="outline"
-							className={`w-full justify-start text-left font-normal ${!selected?.from && !selected?.to && "text-muted-foreground"
-								}`}
+							className={`w-full justify-start text-left font-normal h-8 pl-2
+								${!selected?.from && !selected?.to && "text-neutral-400"}
+								${isPopoverOpen && "ring-1 ring-secondary"}`}
 						>
 							<CalendarIcon />
 							{selected?.from ? (
@@ -133,6 +121,7 @@ const GenericFilter = ({ formFields, setActiveFilters, activeFilters }) => {
 							</Button>
 							<Button
 								size="sm"
+								className="bg-primary-300"
 								onClick={() => {
 									setDate(selected?.from, selected?.to || null);
 									setIsPopoverOpen(false);
