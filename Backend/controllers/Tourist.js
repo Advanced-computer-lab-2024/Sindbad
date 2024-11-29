@@ -438,6 +438,159 @@ const removeFromBookmarks = async (req, res) => {
   }
 };
 
+const getCart = async (req, res) => {
+  try {
+    const touristId = req.params.id; // Extract tourist ID from params
+
+    // Find the tourist by ID and ensure cart exists
+    const tourist = await Tourist.findById(touristId).populate('cart.productID'); // Populate the cart to get product details
+
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found" });
+    }
+
+    // Return the list of cart items
+    res.status(200).json(tourist.cart);
+  } catch (error) {
+    res.status(500).json({
+      message: "Error fetching cart items",
+      error: error.message,
+    });
+  }
+}
+
+const addToCart = async (req, res) => {
+  const { id: touristId } = req.params; // Tourist ID from URL params
+  const { productID, quantity } = req.body; // Product ID and quantity from request body
+
+  // Ensure the productID and quantity are provided
+  if (!productID || !quantity) {
+    return res.status(400).json({ message: "Product ID and quantity are required" });
+  }
+
+  try {
+    // Find the tourist by ID
+    const tourist = await Tourist.findById(touristId);
+
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found" });
+    }
+
+    const product = await Product.findById(productID);
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    // Check if the product is already in the cart
+    const alreadyInCart = tourist.cart.some(
+      (item) => item.productID.toString() === productID
+    );
+
+    if (alreadyInCart) {
+      tourist.cart.find((item) => item.productID.toString() === productID).quantity += quantity;
+    }
+    else {
+      tourist.cart.push({ productID, quantity });
+    }
+
+    await tourist.save();
+
+    res.status(200).json({
+      message: "Product added to cart",
+      cart: tourist.cart,
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: "Error adding product to cart",
+      error: err.message,
+    });
+  }
+}
+const updateCart = async (req, res) => {
+  try {
+    const { id } = req.params; // Tourist ID
+    const { productID, quantity } = req.body; // Product ID to be removed
+
+    if (!productID) {
+      return res.status(400).json({ message: "Product ID is required" });
+    }
+
+    // Find the tourist by ID
+    const tourist = await Tourist.findById(id);
+
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found" });
+    }
+
+    // Find the index of the product in the cart using the productID
+    const productIndex = tourist.cart.findIndex((item) =>
+      item.productID.toString() === productID.toString()
+    );
+
+    if (productIndex === -1) {
+      return res.status(404).json({ message: "Product not found in cart" });
+    }
+
+    tourist.cart[productIndex].quantity = quantity;
+
+    // Save the updated tourist
+    await tourist.save();
+
+    res.status(200).json({
+      message: "Product updated from cart successfully",
+      cart: tourist.cart,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error updating product in cart",
+      error: error.message,
+    });
+  }
+}
+
+const removeFromCart = async (req, res) => {
+  try {
+    const { id, productID } = req.params; // Tourist ID
+
+    if (!productID) {
+      return res.status(400).json({ message: "Product ID is required" });
+    }
+
+    // Find the tourist by ID
+    const tourist = await Tourist.findById(id);
+
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found" });
+    }
+
+    // Find the index of the product in the cart using the productID
+    const productIndex = tourist.cart.findIndex((item) =>
+      item.productID.toString() === productID.toString()
+    );
+
+    if (productIndex === -1) {
+      return res.status(404).json({ message: "Product not found in cart" });
+    }
+
+    // Remove the product from the cart
+    tourist.cart.splice(productIndex, 1);
+
+    // Save the updated tourist
+    await tourist.save();
+
+    res.status(200).json({
+      message: "Product removed from cart successfully",
+      cart: tourist.cart,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error removing product from cart",
+      error: error.message,
+    });
+  }
+}
+
 
 //Sending an email
 const transporter = nodemailer.createTransport({
@@ -552,6 +705,10 @@ module.exports = {
   addActivityToBookmarks,
   removeFromBookmarks,
   getBookmarkedActivities,
+  getCart,
+  addToCart,
+  updateCart,
+  removeFromCart
 };
 
 /*
