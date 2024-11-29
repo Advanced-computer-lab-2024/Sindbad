@@ -4,8 +4,6 @@ import { useCurrency } from "@/state management/userInfo";
 import TotalRevenue from "@/components/custom/revenue/TotalRevenue";
 import RevenuePerItem from "@/components/custom/revenue/RevenuePerItem";
 import RevenuePerTime from "@/components/custom/revenue/RevenuePerTime";
-import { DataTable } from "@/components/custom/revenue/data-table";
-import { columns } from "@/components/custom/revenue/columns";
 
 import { getAllSales, getMySales } from "@/services/SaleApiHandler";
 import RevenueLedger from "@/components/custom/revenue/RevenueLedger";
@@ -40,9 +38,8 @@ function RevenueReport() {
 
     return (
       <div className="py-8 px-24 max-w-[1200px] mx-auto flex flex-col gap-4">
-        <div className="flex justify-center gap-4">
+        <div className="flex justify-center w-full gap-4">
           <TotalRevenue data={data} />
-          <RevenuePerItem data={data} />
           <RevenuePerTime data={data} />
         </div>
         <RevenueLedger loading={loading} data={data} />
