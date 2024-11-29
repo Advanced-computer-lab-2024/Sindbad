@@ -16,6 +16,7 @@ import { useCurrency } from "@/state management/userInfo";
 import { BadgeX } from "lucide-react";
 import { getTouristById } from '@/services/TouristApiHandler';
 import GenericForm from '@/components/custom/genericForm/genericForm';
+import { Input } from '@/components/ui/input';
 
 export const Checkout = () => {
 
@@ -27,6 +28,7 @@ export const Checkout = () => {
     const navigate = useNavigate();
     const [addresses, setAddresses] = useState([]);
     const [chosenAddress, setChosenAddress] = useState(null);
+    const [addNewAddress, setAddNewAddress] = useState(false);
 
     const fetchConversionRate = async () => {
         try {
@@ -126,6 +128,36 @@ export const Checkout = () => {
                                     </div>
                                 ))}
                             </div>
+                            {
+                                addNewAddress && 
+                                <div 
+                                    className="bg-gray-100 p-4 rounded-md hover:bg-gray-200 transition-colors mt-4 group flex flex-col gap-2"
+                                >
+                                    <div className='mb-2 font-semibold'>
+                                            <Input className=' focus:border-0 bg-transparent transition-colors inline w-max border-0 focus:bg-white' placeholder='Label' />
+                                    </div>
+                                    <div>
+                                        <Input className='focus:border-0 bg-transparent transition-colors inline w-max border-0 focus:bg-white' placeholder='Street' />
+                                    </div>
+                                    <div>
+                                        <Input className='focus:border-0 bg-transparent transition-colors inline w-max border-0 focus:bg-white' placeholder='City' />
+                                    </div>
+                                    <div>
+                                        <Input className='focus:border-0 bg-transparent transition-colors inline w-max border-0 focus:bg-white' placeholder='State' />
+                                        {" , "} 
+                                        <Input className='focus:border-0 bg-transparent transition-colors inline w-max border-0 focus:bg-white' placeholder='Country' />
+                                    </div>
+                                    <Input className='focus:border-0 bg-transparent transition-colors inline w-max border-0 focus:bg-white' placeholder='Zip' />
+                                </div>
+                            }
+                            <a 
+                            className='block mt-4 text-base hover:text-yellow-400 cursor-pointer w-max'
+                            onClick={() => {
+                                setAddNewAddress(true);
+                            }}
+                            >
+                                Add an address
+                            </a>
                         </div>)
                     }
                 </div>
