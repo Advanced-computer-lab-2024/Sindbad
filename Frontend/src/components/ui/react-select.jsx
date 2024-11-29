@@ -176,6 +176,15 @@ function ReactSelect({ options, onChange, multi, defaultValue, value }) {
             fontSize: 12,
             height: '32px',
         }),
+        clearIndicator: (styles) => ({
+            ...styles,
+            color: "#a3a3a3",
+            width: '32px',
+            cursor: "pointer",
+            "&:hover": {
+                color: "#a3a3a3",
+            }
+        }),
     }
 
     return (

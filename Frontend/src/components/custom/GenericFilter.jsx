@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import ReactSelect from "../ui/react-select";
 import { format } from "date-fns"
 import { Calendar as CalendarIcon } from "lucide-react"
+import { X } from "lucide-react";
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
@@ -11,7 +12,6 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 const GenericFilter = ({ formFields, setActiveFilters, activeFilters }) => {
 	// Function to handle changes and update the filter object
 	const handleChange = (key, value) => {
-		console.log("KEY: ", key, "VALUE: ", value);
 		// Check if value is an object or a direct value
 		if (typeof value === "object" && value !== null) {
 			setActiveFilters((prev) => ({
@@ -80,7 +80,7 @@ const GenericFilter = ({ formFields, setActiveFilters, activeFilters }) => {
 						<Button
 							id="date"
 							variant="outline"
-							className={`w-full justify-start text-left font-normal h-8 pl-2
+							className={`w-full justify-start text-left font-normal h-8 pl-2 shadow-none
 								${!selected?.from && !selected?.to && "text-neutral-400"}
 								${isPopoverOpen && "ring-1 ring-secondary"}`}
 						>
@@ -146,7 +146,7 @@ const GenericFilter = ({ formFields, setActiveFilters, activeFilters }) => {
 				if (field.type === "search") {
 					return (
 						<div key={key}>
-							<h2 className="text-md font-semibold mb-2">
+							<h2 className="text-sm font-semibold mb-2">
 								{field.label}
 							</h2>
 							<Input
@@ -189,7 +189,7 @@ const GenericFilter = ({ formFields, setActiveFilters, activeFilters }) => {
 
 					return (
 						<div key={key}>
-							<h2 className="text-md font-semibold mb-2">
+							<h2 className="text-sm font-semibold mb-2">
 								{field.label}
 							</h2>
 							<DateRange
@@ -210,19 +210,34 @@ const GenericFilter = ({ formFields, setActiveFilters, activeFilters }) => {
 				if (field.type === "select") {
 					return (
 						<div key={key}>
-							<h2 className="text-md font-semibold mb-2">
+							<h2 className="text-sm font-semibold mb-2">
 								{field.label}
 							</h2>
-							<Select
-								options={field.options}
-								value={activeFilters[key].selected}
-								onChange={(e) =>
-									handleChange(key, {
-										...activeFilters[key],
-										selected: e.value, // Spread the existing values
-									})
+							<div className="relative">
+								<Select
+									options={field.options}
+									value={activeFilters[key].selected}
+									onChange={(e) =>
+										handleChange(key, {
+											...activeFilters[key],
+											selected: e.value, // Spread the existing values
+										})
+									}
+								/>
+								{key in activeFilters && activeFilters[key].selected && // Render the clear button only if a selection is made
+									<X
+										size={14}
+										strokeWidth={3}
+										className="absolute top-[10px] right-9 text-neutral-400 cursor-pointer"
+										onClick={() =>
+											handleChange(key, {
+												...activeFilters[key],
+												selected: null, // Clear the selection
+											})
+										}
+									/>
 								}
-							/>
+							</div>
 						</div>
 					);
 				}
