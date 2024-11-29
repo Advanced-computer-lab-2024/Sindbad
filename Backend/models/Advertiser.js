@@ -92,6 +92,23 @@ const AdvertiserSchema = new mongoose.Schema(
 			type: Boolean,
 			default: false,
 		},
+		Notifications:{
+			type:[
+			  {
+				title: {
+				  type: String,
+				},
+				Body:{
+				  type:String,
+				},
+				isSeen:{
+				  Type: Boolean,
+				},
+			  }
+			],
+			default:[],
+		},
+	  
 	},
 	{ timestamps: true }
 );

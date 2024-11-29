@@ -2,6 +2,21 @@ const Product = require("../models/Product");
 // const ProductSales = require("../models/Sales/ProductSale");
 const Sale = require("../models/Sale");
 const Tourist = require("../models/Tourist");
+const Admin = require("../models/Admin");
+const Seller = require("../models/Seller");
+const nodemailer = require("nodemailer");
+require("dotenv").config();
+
+
+//Email prefrences
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+      user: process.env.GMAIL, // Your Gmail address
+      pass: process.env.GMAILPASSWORD    // Your Gmail App Password
+  }
+});
+
 /**
  * Gets a product by ID
  */
@@ -342,6 +357,17 @@ const buyProduct = async (req, res) => {
       return res.status(404).json({ message: "Product not found" });
     }
 
+    // Determine if the user is an admin or seller
+    let user = await Seller.findById(product.creatorId); // Check if user is an admin
+
+    if (!user) {
+      user = await Admin.findById(product.creatorId); // Check if user is a seller
+    }
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found or unauthorized" });
+    }
+
     // Check if the product has sufficient quantity
     // if (product.quantity < quantity) {
     //     return res.status(400).json({ message: "Insufficient quantity available" });
@@ -355,7 +381,7 @@ const buyProduct = async (req, res) => {
     // Create a new entry in the ProductSales collection
     const productSale = new Sale({
       itemId: productId,
-	  type: "Product",
+	    type: "Product",
       buyerId: userId,
       quantity,
       totalPrice,
@@ -366,6 +392,24 @@ const buyProduct = async (req, res) => {
     // Update the product's numSales and quantity
     product.numSales += quantity;
     product.quantity -= quantity;
+
+  
+    if(product.quantity == 0){
+      //send an email
+      const mailOptions = {
+        from: process.env.GMAIL,
+        to: user.email,
+        subject: 'Product out of stock',
+        text: 'Your Product '+ product.name+ ' is out of stock.'
+      };
+
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            return res.status(500).send(error.toString());
+        }
+        res.status(200).send(`Email sent: ${info.response}`);
+      });
+    }
 
     await product.save();
 
