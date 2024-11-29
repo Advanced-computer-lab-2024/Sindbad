@@ -33,7 +33,7 @@ export const Checkout = () => {
     const [convertedPrices, setConvertedPrices] = useState({});
     const navigate = useNavigate();
     const [addresses, setAddresses] = useState([]);
-    const [chosenAddress, setChosenAddress] = useState(null);
+    const [chosenAddress, setChosenAddress] = useState("null");
     const [addNewAddress, setAddNewAddress] = useState(false);
 
     const formObject = forms["touristAddress"];
@@ -98,7 +98,10 @@ export const Checkout = () => {
     const handleSubmit = (values) => {
         onSubmit(values, id, null, null);
         setAddNewAddress(false);
-        fetchAddress();
+        setTimeout(() => {
+            fetchAddress();
+        },
+        150)
     }
 
     return (
@@ -110,94 +113,98 @@ export const Checkout = () => {
             </h1>
             <div className="grid grid-cols-3 grid-flow-col gap-4 items-start">
                 <div className="col-span-2 bg-white rounded-md p-6">
-                    {
-                        addresses.length < 1 
-                        ? 
-                        (<div>
-                            <h2 className='text-lg font-bold mb-4'>
-                                It seems you havent added an address yet. Please add an address to continue.
-                            </h2>
-                            <GenericForm type={"touristAddress"} id={id} fetcher={fetchAddress}/>
-                        </div>) 
-                        :
-                        (<div>
-                            <h2 className='text-lg font-bold mb-4'>
-                                Choose an Address to Deliver to
-                            </h2>
-                            <div className="grid gap-4">
-                                {addresses.map((item) => (
-                                    <div 
-                                    key={item[0]._id} 
-                                    className="bg-gray-100 p-4 rounded-md text-sm cursor-pointer hover:bg-gray-200 transition-colors"
-                                    onClick={() => setChosenAddress(item[0])}
-                                    >
-                                        <div className='mb-2 font-semibold'>
-                                            {item[0].label}
-                                        </div>
-                                        <div>
-                                            {item[0].street}
-                                        </div>
-                                        <div>
-                                            {item[0].city}
-                                        </div>
-                                        <div>
-                                            {item[0].state}{","} {item[0].country}
-                                        </div>
-                                        {item[0].zip}
-                                    </div>
-                                ))}
-                            </div>
+                    {chosenAddress === "null" &&
+                        <div>
                             {
-                                addNewAddress && 
-                                <Form {...form}>
-                                    <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
-                                        <div 
-                                            className="bg-gray-100 p-4 rounded-md hover:bg-gray-200 transition-colors mt-4 group flex flex-col gap-2"
-                                        >
-                                            <div className='mb-2 font-semibold'>
-                                                    <Input
-                                                    {...form.register("label")}
-                                                    className=' focus:border-0 bg-transparent transition-colors inline w-max border-0 focus:bg-white' placeholder='Label' />
+                                addresses.length < 1
+                                ? 
+                                (<div>
+                                    <h2 className='text-lg font-bold mb-4'>
+                                        It seems you havent added an address yet. Please add an address to continue.
+                                    </h2>
+                                    <GenericForm type={"touristAddress"} id={id} fetcher={fetchAddress}/>
+                                </div>) 
+                                :
+                                (<div>
+                                    <h2 className='text-lg font-bold mb-4'>
+                                        Choose an Address to Deliver to
+                                    </h2>
+                                    <div className="grid gap-4">
+                                        {addresses.map((item) => (
+                                            <div 
+                                            key={item[0]._id} 
+                                            className="bg-gray-100 p-4 rounded-md text-sm cursor-pointer hover:bg-gray-200 transition-colors"
+                                            onClick={() => setChosenAddress(item[0])}
+                                            >
+                                                <div className='mb-2 font-semibold'>
+                                                    {item[0].label}
+                                                </div>
+                                                <div>
+                                                    {item[0].street}
+                                                </div>
+                                                <div>
+                                                    {item[0].city}
+                                                </div>
+                                                <div>
+                                                    {item[0].state}{","} {item[0].country}
+                                                </div>
+                                                {item[0].zip}
                                             </div>
-                                            <div>
-                                                <Input
-                                                {...form.register("street")}
-                                                className='focus:border-0 bg-transparent transition-colors inline w-max border-0 focus:bg-white' placeholder='Street' />
-                                            </div>
-                                            <div>
-                                                <Input
-                                                {...form.register("city")}
-                                                className='focus:border-0 bg-transparent transition-colors inline w-max border-0 focus:bg-white' placeholder='City' />
-                                            </div>
-                                            <div>
-                                                <Input 
-                                                {...form.register("state")}
-                                                className='focus:border-0 bg-transparent transition-colors inline w-max border-0 focus:bg-white' placeholder='State' />
-                                                {" , "} 
-                                                <Input 
-                                                {...form.register("country")}
-                                                className='focus:border-0 bg-transparent transition-colors inline w-max border-0 focus:bg-white' placeholder='Country' />
-                                            </div>
-                                            <Input 
-                                            {...form.register("zip")}
-                                            className='focus:border-0 bg-transparent transition-colors inline w-max border-0 focus:bg-white' placeholder='Zip' />
-                                            <Button type="submit" className="bg-dark text-white w-max">
-                                                Submit
-                                            </Button>
-                                        </div>
-                                        
-                                    </form>
-                                </Form>
+                                        ))}
+                                    </div>
+                                    {
+                                        addNewAddress && 
+                                        <Form {...form}>
+                                            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
+                                                <div 
+                                                    className="bg-gray-100 p-4 rounded-md hover:bg-gray-200 transition-colors mt-4 group flex flex-col gap-2"
+                                                >
+                                                    <div className='mb-2 font-semibold'>
+                                                            <Input
+                                                            {...form.register("label")}
+                                                            className=' focus:border-0 bg-transparent transition-colors inline w-max border-0 focus:bg-white' placeholder='Label' />
+                                                    </div>
+                                                    <div>
+                                                        <Input
+                                                        {...form.register("street")}
+                                                        className='focus:border-0 bg-transparent transition-colors inline w-max border-0 focus:bg-white' placeholder='Street' />
+                                                    </div>
+                                                    <div>
+                                                        <Input
+                                                        {...form.register("city")}
+                                                        className='focus:border-0 bg-transparent transition-colors inline w-max border-0 focus:bg-white' placeholder='City' />
+                                                    </div>
+                                                    <div>
+                                                        <Input 
+                                                        {...form.register("state")}
+                                                        className='focus:border-0 bg-transparent transition-colors inline w-max border-0 focus:bg-white' placeholder='State' />
+                                                        {" , "} 
+                                                        <Input 
+                                                        {...form.register("country")}
+                                                        className='focus:border-0 bg-transparent transition-colors inline w-max border-0 focus:bg-white' placeholder='Country' />
+                                                    </div>
+                                                    <Input 
+                                                    {...form.register("zip")}
+                                                    className='focus:border-0 bg-transparent transition-colors inline w-max border-0 focus:bg-white' placeholder='Zip' />
+                                                    <Button type="submit" className="bg-dark text-white w-max">
+                                                        Submit
+                                                    </Button>
+                                                </div>
+                                                
+                                            </form>
+                                        </Form>
+                                    }
+                                    <a 
+                                    className='block mt-4 text-base hover:text-yellow-400 cursor-pointer w-max'
+                                    onClick={() => {
+                                        setAddNewAddress(true);
+                                    }}
+                                    >
+                                        Add an address
+                                    </a>
+                                </div>)
                             }
-                            <a 
-                            className='block mt-4 text-base hover:text-yellow-400 cursor-pointer w-max'
-                            onClick={() => {
-                                setAddNewAddress(true);
-                            }}
-                            >
-                                Add an address
-                            </a>
-                        </div>)
+                        </div>
                     }
                 </div>
                 <div className="col-span-1 bg-white rounded-md p-6">
