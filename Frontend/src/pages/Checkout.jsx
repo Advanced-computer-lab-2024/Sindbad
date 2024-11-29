@@ -105,6 +105,16 @@ export const Checkout = () => {
         150)
     }
 
+    const payWithWallet = async () => {
+
+    }
+    const payWithStripe = async () => {
+
+    }
+    const payWithCOD = async () => {
+
+    }
+
     return (
         <div className="max-w-[1200px] mx-auto">
             <h1
@@ -243,30 +253,49 @@ export const Checkout = () => {
                     {chosenAddress !== "null" &&
                     <div className="bg-white rounded-md p-6 mt-4">
                         <h2 className='text-lg font-bold mb-4'>Please Choose a Payment Method</h2>
-                    <Tabs defaultValue="account" className="w-[400px] mx-auto">
-                        <TabsList>
-                            <TabsTrigger value="credit">
-                                <img className="h-6"src="https://taxidermyplanet.com/wp-content/uploads/2018/10/transparent-logos-credit-card-1.png" />
-                            </TabsTrigger>
-                            <TabsTrigger value="cod">Cash On Delivery</TabsTrigger>
-                            <TabsTrigger value="wallet">Sindbad Wallet</TabsTrigger>
-                        </TabsList>
+                    <Tabs defaultValue="account" className="w-full mx-auto">
+                        <div className='flex justify-center'>
+                            <TabsList className="mx-auto">
+                                <TabsTrigger value="credit">
+                                    <img className="h-6"src="https://taxidermyplanet.com/wp-content/uploads/2018/10/transparent-logos-credit-card-1.png" />
+                                </TabsTrigger>
+                                <TabsTrigger value="cod">Cash On Delivery</TabsTrigger>
+                                <TabsTrigger value="wallet">Sindbad Wallet</TabsTrigger>
+                            </TabsList>
+                        </div>
                         <div className='mt-4'>
                             <TabsContent value="credit">
                                 <h3 className='text-sm text-center'>
                                     Pay with your Credit Card through our partner vendor, Stripe.
                                 </h3>
-
+                                <Button 
+                                className="w-max mt-4 ml-auto"
+                                onClick={() => payWithStripe()}
+                                >
+                                    <span className='text-base text-white'>Pay with Stripe</span>
+                                </Button>
                             </TabsContent>
                             <TabsContent value="cod">
                                 <h3 className='text-sm text-center'>
                                     Pay the delivery person when they arrive with your order.
                                 </h3>
+                                <Button 
+                                className="w-max mt-4 ml-auto"
+                                onClick={() => payWithCOD()}
+                                >
+                                    <span className='text-base text-white'>Confirm Order</span>
+                                </Button>
                             </TabsContent>
                             <TabsContent value="wallet">
                                 <h3 className='text-sm text-center'>
                                     Pay with your Sindbad Wallet.
                                 </h3>
+                                <Button
+                                className="w-max mt-4 ml-auto"
+                                onClick={() => payWithWallet()}
+                                >
+                                    <span className='text-base text-white'>Pay with Wallet</span>
+                                </Button>
                             </TabsContent>
                         </div>
                     </Tabs>
