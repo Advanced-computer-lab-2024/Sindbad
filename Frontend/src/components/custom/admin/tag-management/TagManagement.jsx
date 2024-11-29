@@ -25,6 +25,7 @@ export default function TagManagement() {
 			const result = await getAllTags();
 			if (result && result.data) {
 				setData(result.data);
+				console.log(result.data);
 			} else {
 				setMessage({ type: "error", text: "No tags available." });
 			}

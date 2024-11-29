@@ -1,63 +1,51 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useCurrency } from "@/state management/userInfo";
+import TotalRevenue from "@/components/custom/revenue/TotalRevenue";
+import RevenuePerItem from "@/components/custom/revenue/RevenuePerItem";
+import RevenuePerTime from "@/components/custom/revenue/RevenuePerTime";
+import { DataTable } from "@/components/custom/revenue/data-table";
+import { columns } from "@/components/custom/revenue/columns";
 
-
+import { getAllSales, getMySales } from "@/services/SaleApiHandler";
+import RevenueLedger from "@/components/custom/revenue/RevenueLedger";
 
 function RevenueReport() {
 
-    const chartData = [
-      { month: "January", desktop: 186 },
-      { month: "February", desktop: 305 },
-      { month: "March", desktop: 237 },
-      { month: "April", desktop: 73 },
-      { month: "May", desktop: 209 },
-      { month: "June", desktop: 214 },
-    ];
-
+    const [data, setData] = useState(null);
+    const [loading, setLoading] = useState(true);
     const currency = useCurrency();
     const [convertedPrice, setConvertedPrice] = useState(null);
 
-    return (
-      <div className="py-8 px-24 max-w-[1200px] mx-auto">
-        <div className="flex justify-center gap-4">
-          <Card >
-            <CardHeader>
-              <CardTitle>Total Revenue</CardTitle>
-              <CardDescription>
-                Deploy your new project in one-click.
-              </CardDescription>
-            </CardHeader>
-            <CardContent></CardContent>
-          </Card>
-          <Card >
-            <CardHeader>
-              <CardTitle>Activity Revenue</CardTitle>
-              <CardDescription>
-                Deploy your new project in one-click.
-              </CardDescription>
-            </CardHeader>
-            <CardContent></CardContent>
-          </Card>
-          <Card >
-            <CardHeader>
-              <CardTitle>Month Revenue</CardTitle>
-              <CardDescription>
-                Deploy your new project in one-click.
-              </CardDescription>
-            </CardHeader>
-            <CardContent></CardContent>
-          </Card>
-        </div>
+    	useEffect(() => {
+        fetchData();
+      }, []);
 
+      	const fetchData = async () => {
+          setLoading(true);
+          try {
+            const result = await getAllSales();
+            if (result) {
+              setData(result);
+            } else {
+              //setMessage({ type: "error", text: "No tags available." });
+            }
+          } catch (error) {
+            console.error("Failed to load data:", error);
+            //setMessage({ type: "error", text: "Failed to load tag data." });
+          } finally {
+            setLoading(false);
+          }
+        };
+
+    return (
+      <div className="py-8 px-24 max-w-[1200px] mx-auto flex flex-col gap-4">
+        <div className="flex justify-center gap-4">
+          <TotalRevenue data={data} />
+          <RevenuePerItem data={data} />
+          <RevenuePerTime data={data} />
+        </div>
+        <RevenueLedger loading={loading} data={data} />
       </div>
     );
 }

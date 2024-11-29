@@ -8,7 +8,7 @@ const Hotel = require("../models/Hotel");
 const Trip = require("../models/Trip");
 const Admin = require("../models/Admin");
 
-const getItemName = async (type, itemId) => {
+const getItemName = async (type, itemId, price) => {
   let item, itemName;
   switch (type) {
     case "Product":
@@ -16,7 +16,7 @@ const getItemName = async (type, itemId) => {
     case "Activity":
     case "Trip":
       item = await eval(`${type}`).findById(itemId);
-      itemName = item.name;
+      itemName = price > 0 ? `${item.name} Sale` : `${item.name} Cancellation`;
       break;
     case "Flight":
       item = await Flight.findById(itemId);
@@ -38,7 +38,7 @@ const getAllSales = async (req, res) => {
     const updatedSales = await Promise.all(
       sales.map(async (sale) => {
         let item,
-          itemName = await getItemName(sale.type, sale.itemId),
+          itemName = await getItemName(sale.type, sale.itemId, sale.totalPrice),
           revenue = sale.totalPrice * 0.1;
         if (sale.type === "Product") {
           item = await Product.findById(sale.itemId);
@@ -84,7 +84,8 @@ const getMySales = async (req, res) => {
     const updatedSales = await Promise.all(
       sales.map(async (sale) => ({
         ...sale.toObject(),
-        itemName: await getItemName(sale.type, sale.itemId),
+        revenue: sale.totalPrice,
+        itemName: await getItemName(sale.type, sale.itemId, sale.totalPrice),
       }))
     );
 
