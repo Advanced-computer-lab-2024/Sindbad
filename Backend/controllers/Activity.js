@@ -289,7 +289,29 @@ const updateActivity = async (req, res) => {
       },
       { new: true, runValidators: true } // Return the updated document and run validators
     );
+    if(isBookingOpen){
+      // Find tourists who have bookmarked this activity
+      const tourists = await Tourist.find({
+        "bookmarks.productID": id,
+      });
 
+      if (tourists.length > 0) {
+        // Add notifications to each tourist
+        const notificationPromises = tourists.map((tourist) => {
+          const notification = {
+            title: "Booking Opened",
+            Body: `The activity "${updatedActivity.name}" has opened its bookings!`,
+            isSeen: false,
+          };
+
+          tourist.Notifications.push(notification);
+          return tourist.save();
+        });
+
+        // Wait for all notifications to be saved
+        await Promise.all(notificationPromises);
+      }
+    }
     if (!updatedActivity) {
       return res.status(404).json({ message: "Activity not found" });
     }

@@ -360,9 +360,9 @@ const buyProduct = async (req, res) => {
     // Determine if the user is an admin or seller
     let user = await Seller.findById(product.creatorId); // Check if user is an admin
 
-    /*if (!user) {
+    if (!user) {
       user = await Admin.findById(product.creatorId); // Check if user is a seller
-    }*/
+    }
 
     if (!user) {
       return res.status(404).json({ message: "User not found or unauthorized" });
