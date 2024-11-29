@@ -84,9 +84,21 @@ const TouristSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    isReceiveNotifications: {
-      type: Boolean,
-      default: false,
+    Notifications:{
+      type:[
+        {
+          title: {
+            type: String,
+          },
+          Body:{
+            type:String,
+          },
+          isSeen:{
+            Type: Boolean,
+          },
+        }
+      ],
+      default:[],
     },
     wishlist: {
       type: [

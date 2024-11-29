@@ -2,6 +2,11 @@ const Tourist = require("../models/Tourist");
 const Product = require("../models/Product");
 const Activity = require("../models/Activity");
 const mongoose = require("mongoose");
+const nodemailer = require("nodemailer");
+const moment = require("moment");
+require("dotenv").config();
+
+
 
 /**
  * Retrieves a tourist by its ID
@@ -416,6 +421,102 @@ const removeFromBookmarks = async (req, res) => {
   }
 };
 
+/*
+//Sending an email
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+      user: process.env.GMAIL, // Your Gmail address
+      pass: process.env.GMAILPASSWORD    // Your Gmail App Password
+  }
+});
+
+
+const sendEmail = async (email, subject, body) => {
+  const mailOptions = {
+    from: process.env.GMAIL,
+    to: email,
+    subject,
+    text: body,
+  };
+  await transporter.sendMail(mailOptions);
+};
+
+
+const sendNotifications = async () => {
+  try {
+    // Fetch all tourists and replace the activityId and itineraryId with the actual Activity and Itinerary
+    const tourists = await Tourist.find().populate([
+      {
+        path: "bookedEvents.activities.activityId",
+        model: "Activity",
+      },
+      {
+        path: "bookedEvents.itineraries.itineraryId",
+        model: "Itinerary",
+      },
+    ]);
+
+    const now = moment();
+    const oneDayLater = now.clone().add(1, "days");
+
+    for (const tourist of tourists) {
+      const notifications = [];
+
+      // Check booked activities
+      for (const activity of tourist.bookedEvents.activities) {
+        const activityDate = moment(activity.activityId.dateTime);
+        if (activityDate.isBetween(now, oneDayLater)) {
+          notifications.push({
+            title: `Upcoming Activity: ${activity.activityId.name}`,
+            Body: `Reminder: Your activity "${activity.activityId.name}" is scheduled for ${activityDate.format(
+              "MMMM Do YYYY, h:mm a"
+            )}.`,
+            isSeen: false,
+          });
+          await sendEmail(
+            tourist.email,
+            "Activity Reminder",
+            `Your activity "${activity.activityId.name}" is scheduled for ${activityDate.format(
+              "MMMM Do YYYY, h:mm a"
+            )}.`
+          );
+        }
+      }
+
+      // Check booked itineraries
+      for (const itinerary of tourist.bookedEvents.itineraries) {
+        const itineraryDate = moment(itinerary.dateBooked); // Assuming `dateBooked` is the itinerary date
+        if (itineraryDate.isBetween(now, oneDayLater)) {
+          notifications.push({
+            title: `Upcoming Itinerary: ${itinerary.itineraryId.name}`,
+            Body: `Reminder: Your itinerary "${itinerary.itineraryId.name}" is scheduled for ${itineraryDate.format(
+              "MMMM Do YYYY, h:mm a"
+            )}.`,
+            isSeen: false,
+          });
+          await sendEmail(
+            tourist.email,
+            "Itinerary Reminder",
+            `Your itinerary "${itinerary.itineraryId.name}" is scheduled for ${itineraryDate.format(
+              "MMMM Do YYYY, h:mm a"
+            )}.`
+          );
+        }
+      }
+
+      // Add notifications to the tourist's record
+      tourist.Notifications.push(...notifications);
+      await tourist.save();
+      
+    }
+  } catch (error) {
+    console.error("Error sending notifications:", error);
+  }
+};
+
+// Schedule the notification task to run daily at midnight
+cron.schedule("0 0 * * *", sendNotifications);*/
 
 module.exports = {
   getAllTourists,
@@ -430,7 +531,7 @@ module.exports = {
   removeFromWishlist,
   addActivityToBookmarks,
   removeFromBookmarks,
-  getBookmarkedActivities
+  getBookmarkedActivities,
 };
 
 /*

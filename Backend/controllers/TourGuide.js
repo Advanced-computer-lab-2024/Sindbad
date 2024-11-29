@@ -18,6 +18,7 @@ const getAllTourGuides = async (req, res) => {
 	}
 };
 
+
 /**
  * Retrieves a tourGuide by its ID
  *
@@ -41,6 +42,7 @@ const getTourGuide = async (req, res) => {
 
 	res.status(200).json(tourGuide);
 };
+
 
 /**
  * Updates a tourGuide's profile
@@ -379,6 +381,9 @@ const addTourGuideDocuments = async (req, res) => {
 	}
 };
 
+
+const notificationSeen = async (req, res) => {
+};
 module.exports = {
 	getAllTourGuides,
 	getTourGuide,

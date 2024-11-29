@@ -1,8 +1,21 @@
 const Activity = require("../models/Activity");
 const Tag = require("../models/Tag");
 const Category = require("../models/Category");
+const Advertiser = require("../models/Advertiser");
 const Tourist = require("../models/Tourist");
 const Sale = require("../models/Sale");
+const nodemailer = require("nodemailer");
+require("dotenv").config();
+
+
+//Email prefrences
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+      user: process.env.GMAIL, // Your Gmail address
+      pass: process.env.GMAILPASSWORD    // Your Gmail App Password
+  }
+});
 
 /**
  * Gets an activity by ID
@@ -635,22 +648,57 @@ const cancelBooking = async (req, res) => {
 
 const setIsInappropriate = async (req, res) => {
   try {
+   
     const activityId = req.params.id;
     const { isInappropriate } = req.body;
 
     const activity = await Activity.findById(activityId);
-
-    // console.log("Activity:", activity);
-    // console.log("Available dates:", activity.availableDatesTimes);
-
     if (!activity) {
       return res.status(404).json({ message: "Activity not found" });
     }
 
-    activity.isInappropriate = isInappropriate;
+    // Find the advertiser associated with the itinerary
+    const advertiser = await Advertiser.findById(activity.creatorId);
+    if (!advertiser) {
+      return res.status(404).json({ message: "advertiser not found" });
+    }
 
+
+    activity.isInappropriate = isInappropriate;
     await activity.save();
+
+    // Create a new notification
+    if(isInappropriate){
+      const notification = {
+        title: "Activity Flagged",
+        Body: `Your activity "${activity.name}" has been flagged as inappropriate.`,
+        isSeen: false,
+      };
+      advertiser.Notifications.push(notification);
+      await advertiser.save();
+
+      //send an email
+      const mailOptions = {
+        from: process.env.GMAIL,
+        to: advertiser.email,
+        subject: 'Activity Flagged',
+        text: 'Your activity '+ activity.name+ ' has been flagged as inappropriate.'
+      };
+
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            return res.status(500).send(error.toString());
+        }
+        res.status(200).send(`Email sent: ${info.response}`);
+      });
+    }
+
+    
+
+    //return activity
     res.status(200).json(activity);
+
+
   } catch (error) {
     return res.status(500).json({
       message: "Error flagging activity as inappropriate",
