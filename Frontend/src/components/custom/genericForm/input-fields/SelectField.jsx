@@ -28,16 +28,18 @@ export const SelectField = ({ name, control, label, options = [], defaultValue }
             </SelectContent>
           </Select>
         </div> */}
-        <ReactSelect
-          options={options.map((option) => ({ label: option, value: option }))}
-          onChange={(selectedOption) => field.onChange(selectedOption.value)}
-          defaultValue={() =>
-            options.find((option) => option === defaultValue)
-              ? { label: defaultValue, value: defaultValue }
-              : null
-          }
-          placeholder="Select Currency"
-        />
+        <div className="w-[300px]">
+          <ReactSelect
+            options={options.map((option) => ({ label: option, value: option }))}
+            onChange={(selectedOption) => field.onChange(selectedOption.value)}
+            defaultValue={() =>
+              options.find((option) => option === defaultValue)
+                ? { label: defaultValue, value: defaultValue }
+                : null
+            }
+            placeholder="Select Currency"
+          />
+        </div>
       </FormControl>
       <FormMessage />
     </FormItem>
