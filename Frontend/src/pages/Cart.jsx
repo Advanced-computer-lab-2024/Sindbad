@@ -13,6 +13,7 @@ import { useCurrency, useUser } from "@/state management/userInfo";
 import { BadgeX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Convert } from "easy-currencies";
+import { useNavigate } from "react-router-dom";
 
 export const Cart = () => {
     const [cart, setCart] = useState([]);
@@ -21,6 +22,7 @@ export const Cart = () => {
     const [conversionRate, setConversionRate] = useState(null);
     const [convertedPrices, setConvertedPrices] = useState({});
     const [debounceTimeouts, setDebounceTimeouts] = useState({});
+    const navigate = useNavigate();
 
     const fetchConversionRate = async () => {
         try {
@@ -167,7 +169,7 @@ export const Cart = () => {
                 </h2>
                 <Button
                     className="mt-4 ml-auto max-w-[200px] w-full text-center justify-center"
-                    onClick={() => alert("Checkout")}
+                    onClick={() => navigate("/checkout")}
                 >
                     Checkout
                 </Button>

@@ -29,6 +29,7 @@ import DeletionRequests from "./components/custom/admin/deletion-requests/deleti
 import { Cart } from "./pages/Cart";
 import Trips from "./pages/Trips";
 import TripView from "./pages/TripView";
+import { Checkout } from "./pages/Checkout";
 import { useUser } from "@/state management/userInfo";
 
 function App() {
@@ -73,6 +74,7 @@ function App() {
           <Route path="trip/:tripId" element={<TripView />} />
           <Route path="complaints/:creatorId" element={<ComplaintView />} />
         </Route>
+        <Route path="/checkout" element={<Checkout/>} />
         <Route path="/login" element={<LogIn />} />
         <Route path="/signup" element={<SignUp />} />
 
