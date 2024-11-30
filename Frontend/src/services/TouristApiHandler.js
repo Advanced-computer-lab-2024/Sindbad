@@ -91,3 +91,27 @@ export const addAddress = async (touristId, address) => {
     return error;
   }
 }
+
+export const checkoutWithStripe = async (id, cart) => {
+  try {
+    const response = await fetch('http://localhost:3000/checkout/stripe', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        cart: cart
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to create Stripe session.');
+    }
+
+    const { url } = await response.json();
+    window.location.href = url; // Redirect to Stripe Checkout
+  } catch (error) {
+    console.error('Error:', error.message);
+    alert('Something went wrong. Please try again later.');
+  }
+}

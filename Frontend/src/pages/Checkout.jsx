@@ -11,7 +11,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { getCart } from "@/services/TouristApiHandler";
+import { checkoutWithStripe, getCart } from "@/services/TouristApiHandler";
 import { useCurrency } from "@/state management/userInfo";
 import { BadgeX } from "lucide-react";
 import { getTouristById } from '@/services/TouristApiHandler';
@@ -109,7 +109,7 @@ export const Checkout = () => {
 
     }
     const payWithStripe = async () => {
-
+        checkoutWithStripe(id, cart);
     }
     const payWithCOD = async () => {
 
@@ -276,9 +276,9 @@ export const Checkout = () => {
                                 </Button>
                             </TabsContent>
                             <TabsContent value="cod">
-                                <h3 className='text-sm text-center'>
-                                    Pay the delivery person when they arrive with your order.
-                                </h3>
+                                    <h3 className='text-sm text-center'>
+                                        Pay the delivery person when they arrive with your order.
+                                    </h3>
                                 <Button 
                                 className="w-max mt-4 ml-auto"
                                 onClick={() => payWithCOD()}

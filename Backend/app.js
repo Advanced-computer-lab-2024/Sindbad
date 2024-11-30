@@ -29,6 +29,7 @@ const TourGuideController = require("./controllers/TourGuide");
 const tripRoutes = require("./routes/Trip");
 const saleRoutes = require("./routes/Sale");
 const hotelRoutes = require("./routes/Hotel");
+const checkoutRoutes = require("./routes/Checkout");
 
 //Set memory preference to be RAM
 const upload = multer({ storage: multer.memoryStorage() });
@@ -142,6 +143,8 @@ app.use("/sale", saleRoutes);
 
 // Hotel routes
 app.use("/hotel", hotelRoutes);
+
+app.use("/checkout", checkoutRoutes);
 
 
 //To work with pictures

@@ -2,6 +2,7 @@ const Product = require("../models/Product");
 // const ProductSales = require("../models/Sales/ProductSale");
 const Sale = require("../models/Sale");
 const Tourist = require("../models/Tourist");
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 /**
  * Gets a product by ID
  */
@@ -88,6 +89,18 @@ const createProduct = async (req, res) => {
           ["5", 0],
         ]),
     };
+
+    const stripeProduct = await stripe.products.create({
+      name: productData.name,
+    });
+    
+    const price = await stripe.prices.create({
+      unit_amount: productData.price * 100, // Price in cents (2000 = $20.00)
+      currency: 'usd',
+      product: stripeProduct.id, // Use the product ID from the previous step
+    });
+
+    productData.priceId = price.id;
 
     const product = await Product.create(productData);
 
@@ -355,7 +368,7 @@ const buyProduct = async (req, res) => {
     // Create a new entry in the ProductSales collection
     const productSale = new Sale({
       itemId: productId,
-	  type: "Product",
+	    type: "Product",
       buyerId: userId,
       quantity,
       totalPrice,
@@ -434,6 +447,37 @@ const getProductsByCreatorId = async (req, res) => {
   }
 };
 
+const registerAllProductsStripe = async (req, res) => {
+  try {
+    console.log("Registering all products with Stripe...");
+    const products = await Product.find();
+
+    for (const product of products) {
+      if (!product.priceId) {
+        const stripeProduct = await stripe.products.create({
+          name: product.name,
+        });
+
+        const price = await stripe.prices.create({
+          unit_amount: product.price * 100, // Price in cents (2000 = $20.00)
+          currency: "usd",
+          product: stripeProduct.id, // Use the product ID from the previous step
+        });
+
+        product.priceId = price.id;
+        await product.save();
+      }
+    }
+
+    res.status(200).json({ message: "All products registered successfully" });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error registering products",
+      error: "error.message",
+    });
+  }
+}
+
 module.exports = {
   createProduct,
   updateProduct,
@@ -443,6 +487,7 @@ module.exports = {
   addReview,
   getMinMaxPrices,
   addRating,
+  registerAllProductsStripe,
 
   // Export getProductsByCreatorId function
   getProductsByCreatorId,
