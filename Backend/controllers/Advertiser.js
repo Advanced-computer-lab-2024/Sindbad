@@ -16,6 +16,7 @@ const getAdvertiserById = async (req, res) => {
 	}
 };
 
+
 // Controller to get all advertiser profiles
 const getAllAdvertisers = async (req, res) => {
 	try {

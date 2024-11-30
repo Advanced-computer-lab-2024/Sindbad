@@ -160,6 +160,7 @@ export function GenericForm({ type, data, id, fetcher }) {
 						control={form.control}
 						label={field.label || field.name.toUpperCase()}
 						options={field.options}
+						defaultValue={defaultValues[fullPath]}
 					/>
 				);
 
@@ -193,7 +194,7 @@ export function GenericForm({ type, data, id, fetcher }) {
 	return (
 		<div>
 			<Form {...form}>
-				<form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
+				<form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
 					{formFields.map((field) => renderField(field))}
 					<Button type="submit" className="bg-dark text-white">
 						Submit

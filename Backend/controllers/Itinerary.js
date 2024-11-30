@@ -1,8 +1,20 @@
 const Itinerary = require("../models/Itinerary");
 const mongoose = require("mongoose");
 const Tourist = require("../models/Tourist");
+const TourGuide = require("../models/TourGuide");
 const Sale = require("../models/Sale");
+const nodemailer = require("nodemailer");
+require("dotenv").config();
 
+
+//Email prefrences
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+      user: process.env.GMAIL, // Your Gmail address
+      pass: process.env.GMAILPASSWORD    // Your Gmail App Password
+  }
+});
 /**
  * @route GET /itinerary/:id
  * @description Retrieve a specific itinerary by ID
@@ -705,17 +717,45 @@ const setIsInappropriate = async (req, res) => {
     const { isInappropriate } = req.body;
 
     const itinerary = await Itinerary.findById(itineraryId);
-
-    // console.log("Itinerary:", itinerary);
-    // console.log("Available dates:", itinerary.availableDatesTimes);
-
     if (!itinerary) {
       return res.status(404).json({ message: "Itinerary not found" });
     }
 
-    itinerary.isInappropriate = isInappropriate;
+    // Find the tour guide associated with the itinerary
+    const tourguide = await TourGuide.findById(itinerary.creatorId);
+    if (!tourguide) {
+      return res.status(404).json({ message: "Tour guide not found" });
+    }
 
+    itinerary.isInappropriate = isInappropriate;
     await itinerary.save();
+    if(isInappropriate){
+      // Create a new notification
+      const notification = {
+        title: "Itinerary Flagged",
+        Body: `Your itinerary "${itinerary.name}" has been flagged as inappropriate.`,
+        isSeen: false,
+      };
+      tourguide.Notifications.push(notification);
+      await tourguide.save();
+
+      //send an email
+      const mailOptions = {
+        from: process.env.GMAIL,
+        to: tourguide.email,
+        subject: 'Itinerary Flagged',
+        text: 'Your Itinerary '+ itinerary.name+ ' has been flagged as inappropriate.'
+      };
+
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            return res.status(500).send(error.toString());
+        }
+        res.status(200).send(`Email sent: ${info.response}`);
+      });
+    }
+
+
     return res.status(200).json(itinerary);
   } catch (error) {
     return res.status(500).json({

@@ -6,14 +6,14 @@ export function SliderFilter({ min, max, range, step, label, setMin, setMax }) {
 
 	return (
 		<div className="">
-			<h4 className="text-md font-medium mb-2">
+			<h4 className="text-sm font-medium mb-2">
 				{label || "Range"}
 			</h4>
 			<div className="flex items-center gap-4 justify-between mb-4">
 				<div className="grid gap-2">
 					<label
 						htmlFor="min"
-						className="text-sm text-neutral-400 font-medium"
+						className="text-xs text-neutral-600 font-medium"
 					>
 						Min
 					</label>
@@ -24,14 +24,13 @@ export function SliderFilter({ min, max, range, step, label, setMin, setMax }) {
 						onChange={(e) =>
 							setMin(Number(e.target.value))
 						}
-						className="w-16 h-8 p-2"
 					/>
 				</div>
-				<hr className="border-neutral-700 border w-full mt-7" />
+				<hr className="border-neutral-300 border w-full mt-7" />
 				<div className="grid gap-2">
 					<label
 						htmlFor="max"
-						className="text-sm text-neutral-400 font-medium"
+						className="text-xs text-neutral-600 font-medium"
 					>
 						Max
 					</label>
@@ -42,7 +41,6 @@ export function SliderFilter({ min, max, range, step, label, setMin, setMax }) {
 						onChange={(e) =>
 							setMax(Number(e.target.value))
 						}
-						className="w-16 h-8 p-2"
 					/>
 				</div>
 			</div>

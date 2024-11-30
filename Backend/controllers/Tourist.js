@@ -2,6 +2,12 @@ const Tourist = require("../models/Tourist");
 const Product = require("../models/Product");
 const Activity = require("../models/Activity");
 const mongoose = require("mongoose");
+const nodemailer = require("nodemailer");
+const moment = require("moment");
+const cron = require('node-cron');
+require("dotenv").config();
+
+
 
 /**
  * Retrieves a tourist by its ID
@@ -111,6 +117,22 @@ const updateTourist = async (req, res) => {
   if (req.body.preferredCurrency != undefined) {
     res.tourist.preferredCurrency = req.body.preferredCurrency;
   }
+    /*res.tourist.bookedEvents = {
+      activities: [
+        {
+          activityId: "67251731d5a2d7588e2ce62d", // Activity ID
+          priceCharged: 30, // Activity Price
+        },
+      ],
+      itineraries: [
+        {
+          itineraryId: "67251ee8d5a2d7588e2ce707", // Itinerary ID
+          ticketsBooked: 1, // Number of tickets booked
+          dateBooked: new Date("2024-11-30T00:00:00.000+00:00"), // Booking Date
+        },
+      ],
+    };*/
+  
 
   try {
     const updatedTourist = await res.tourist.save();
@@ -605,6 +627,105 @@ const addAddress = async (req, res) => {
   }
 }
 
+
+//Sending an email
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+      user: process.env.GMAIL, // Your Gmail address
+      pass: process.env.GMAILPASSWORD    // Your Gmail App Password
+  }
+});
+
+
+const sendEmail = async (email, subject, body) => {
+  const mailOptions = {
+    from: process.env.GMAIL,
+    to: email,
+    subject,
+    text: body,
+  };
+  await transporter.sendMail(mailOptions);
+};
+
+
+const sendNotifications = async () => {
+  try {
+    // Fetch all tourists and populate necessary fields
+    const tourists = await Tourist.find().populate([
+      {
+        path: "bookedEvents.activities.activityId",
+        model: "Activity",
+      },
+      {
+        path: "bookedEvents.itineraries.itineraryId",
+        model: "Itinerary",
+      },
+    ]);
+
+    const now = moment();
+    const oneDayLater = now.clone().add(1, "days");
+
+    for (const tourist of tourists) {
+      const notifications = [];
+
+      // Check booked activities
+      for (const activity of tourist.bookedEvents.activities) {
+        const activityDate = moment(activity.activityId.dateTime);
+        if (activityDate.isBetween(now, oneDayLater)) {
+          notifications.push({
+            title: `Upcoming Activity: ${activity.activityId.name}`,
+            body: `Reminder: Your activity "${activity.activityId.name}" is scheduled for ${activityDate.format(
+              "MMMM Do YYYY, h:mm a"
+            )}.`,
+            isSeen: false,
+          });
+
+          // Send email notification for the activity
+          await sendEmail(
+            tourist.email,
+            "Activity Reminder",
+            `Your activity "${activity.activityId.name}" is scheduled for ${activityDate.format(
+              "MMMM Do YYYY, h:mm a"
+            )}.`
+          );
+        }
+      }
+
+      // Check booked itineraries
+      for (const itinerary of tourist.bookedEvents.itineraries) {
+        const itineraryDate = moment(itinerary.dateBooked); // Use `dateBooked` for the itinerary
+        if (itineraryDate.isBetween(now, oneDayLater)) {
+          notifications.push({
+            title: `Upcoming Itinerary: ${itinerary.itineraryId.name}`,
+            body: `Reminder: Your itinerary "${itinerary.itineraryId.name}" is scheduled for ${itineraryDate.format(
+              "MMMM Do YYYY, h:mm a"
+            )}.`,
+            isSeen: false,
+          });
+
+          // Send email notification for the itinerary
+          await sendEmail(
+            tourist.email,
+            "Itinerary Reminder",
+            `Your itinerary "${itinerary.itineraryId.name}" is scheduled for ${itineraryDate.format(
+              "MMMM Do YYYY, h:mm a"
+            )}.`
+          );
+        }
+      }
+
+      // Add notifications to the tourist's record
+      tourist.Notifications.push(...notifications);
+      await tourist.save();
+    }
+  } catch (error) {
+    console.error("Error sending notifications:", error);
+  }
+};
+
+// Schedule the notification task to run daily at midnight
+cron.schedule("0 0 * * *", sendNotifications);
 
 module.exports = {
   getAllTourists,

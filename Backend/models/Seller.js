@@ -56,13 +56,30 @@ const SellerSchema = new mongoose.Schema(
 		},
 		isAccepted: {
 			type: Boolean,
-			default: null, // Default to null indicating the tour guide is not accepted yet
+			default: null, // Default to null indicating the Seller is not accepted yet
 		},
 		products: [{}],
 		isRequestedAccountDeletion: {
 			type: Boolean,
 			default: false,
 		},
+		Notifications:{
+			type:[
+			  {
+				title: {
+				  type: String,
+				},
+				Body:{
+				  type:String,
+				},
+				isSeen:{
+				  Type: Boolean,
+				},
+			  }
+			],
+			default:[],
+		},
+	  
 	},
 	{ timestamps: true }
 );
