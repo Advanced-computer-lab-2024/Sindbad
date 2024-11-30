@@ -6,13 +6,13 @@ export const tourGuide = {
     { name: "mobileNumber", type: "text", label: "Mobile Number" },
     {
       name: "profileImageUri",
-      type: "text",
+      type: "file",
       label: "Profile Image",
       required: true,
     },
     {
       name: "bannerImageUri",
-      type: "text",
+      type: "file",
       label: "Banner Image",
       required: true,
     },

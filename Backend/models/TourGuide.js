@@ -36,10 +36,24 @@ const TourGuideSchema = new mongoose.Schema(
 			default: null,
 		},
 		profileImageUri: {
-			type: String,
+			public_id: {
+				type: String,
+				required: true,
+			},
+			url: {
+				type: String,
+				required: true,
+			},
 		},
 		bannerImageUri: {
-			type: String,
+			public_id: {
+				type: String,
+				required: true,
+			},
+			url: {
+				type: String,
+				required: true,
+			},
 		},
 		preferredCurrency: {
 			type: String,

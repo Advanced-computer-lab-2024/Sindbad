@@ -59,6 +59,15 @@ if (process.env.NODE_ENV !== "test") {
     });
 }
 
+app.put(
+  "/tourGuide/:id",
+  upload.fields([
+    { name: "profileImageUri", maxCount: 1 },
+    { name: "bannerImageUri", maxCount: 1 },
+  ]),
+  TourGuideController.updateTourGuide
+);
+
 app.post(
   "/advertiser/upload/:id",
   upload.fields([
@@ -170,4 +179,4 @@ const server = app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
-module.exports = { app, server };
+module.exports = { app, server, upload };

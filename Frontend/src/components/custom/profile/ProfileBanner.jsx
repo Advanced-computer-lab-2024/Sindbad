@@ -55,7 +55,7 @@ function ProfileBanner({ userData, profileId, id, profileRole, setEditing }) {
                 {/* header image */}
                 {userData.bannerImageUri ? (
                     <img
-                        src={userData.bannerImageUri}
+                        src={profileRole === "tourGuide" ? userData.bannerImageUri.url : userData.bannerImageUri}
                         alt="banner"
                         className="w-full h-full object-cover"
                     />
@@ -89,7 +89,9 @@ function ProfileBanner({ userData, profileId, id, profileRole, setEditing }) {
                                 src={
                                     profileRole === "seller" || profileRole === "advertiser"
                                         ? userData.logoImageUri
-                                        : userData.profileImageUri
+                                        : profileRole === "tourGuide" ?
+                                            userData.profileImageUri.url
+                                            : userData.profileImageUri
                                 }
                                 alt="profile"
                                 className="rounded-full h-full w-full object-cover"
