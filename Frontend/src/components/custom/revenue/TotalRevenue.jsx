@@ -45,6 +45,7 @@ function TotalRevenue({ data }) {
   const chartConfig = {
     revenue: {
       label: "Revenue",
+      color: "hsl(var(--chart-1))",
     },
   };
 
@@ -98,7 +99,7 @@ function TotalRevenue({ data }) {
             />
             <ChartTooltip
               cursor={false}
-              content={<ChartTooltipContent indicator="line" />}
+              content={<ChartTooltipContent hideLabel />}
             />
             <Area dataKey="revenue" />
           </AreaChart>

@@ -68,3 +68,31 @@ export const calculateRevenueTrend = (data) => {
   trend = trend.toFixed(2);
   return trend;
 };
+
+export const groupByItemAndSumRevenue = (data, limit = null) => {
+  if (!data) return [];
+
+  const groupedData = {};
+
+  // Iterate through data to group by itemId and calculate revenue and count
+  data.forEach((item) => {
+    if (!groupedData[item.itemId]) {
+      groupedData[item.itemId] = { revenue: 0, count: 0 };
+    }
+    groupedData[item.itemId].revenue += item.revenue; // Sum up revenue
+    groupedData[item.itemId].count += 1; // Increment count
+  });
+
+  // Convert the grouped data into an array and sort it by revenue
+  let sortedData = Object.entries(groupedData)
+    .map(([itemId, { revenue, count }]) => ({ itemId, revenue, count }))
+    .sort((a, b) => b.revenue - a.revenue); // Sort by revenue in descending order
+
+  // Apply the limit if specified
+  if (limit !== null) {
+    sortedData = sortedData.slice(0, limit);
+  }
+
+  return sortedData;
+};
+
