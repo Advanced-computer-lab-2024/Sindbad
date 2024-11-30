@@ -7,56 +7,37 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+import { useCurrency } from "@/state management/userInfo";
+
 import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent,
 } from "@/components/ui/chart";
 
-import { Bar, BarChart } from "recharts";
+import { Bar, BarChart, Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 
-import { TrendingUp } from "lucide-react";
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
-import { ChartLegend, ChartLegendContent } from "@/components/ui/chart";
+import { TrendingUp, TrendingDown } from "lucide-react";
 
-function groupByDay(data) {
-  if (!data) return [];
+import {
+  groupByDay,
+  calculateTotalSum,
+  calculateRevenueTrend,
+} from "@/services/SaleApiHandler";
 
-  // Create an object to store daily revenues
-  const groupedData = {};
-
-  // Iterate through the data
-  data.forEach((item) => {
-    // Extract the year, month, and day from the date
-    const date = new Date(item.date);
-    const yearDay = date.toISOString().split("T")[0]; // e.g., "2024-11-26"
-
-    // Add revenue to the corresponding day
-    if (!groupedData[yearDay]) {
-      groupedData[yearDay] = 0; // Initialize if not already present
-    }
-    groupedData[yearDay] += item.revenue;
-  });
-
-  // Convert the grouped data into an array with timestamps as the date and revenue
-  return Object.entries(groupedData).map(([date, revenue]) => ({
-    // Convert the date to timestamp
-    date: new Date(date).getTime(),
-    revenue,
-  }));
-}
-
-
-
-function TotalRevenue({data}) {
-
+function TotalRevenue({ data }) {
   console.log(data);
+  const currency = useCurrency();
 
   let chartData = data?.map((item) => ({
-    date: new Date(item.createdAt).getTime(), // Convert the date to a timestamp
+    date: new Date(item.createdAt).getTime(),
     revenue: item.revenue,
   }));
 
+  let totalSum = calculateTotalSum(chartData);
+  let trend = calculateRevenueTrend(chartData);
   chartData = groupByDay(chartData);
 
   console.log(chartData);
@@ -64,7 +45,7 @@ function TotalRevenue({data}) {
   const chartConfig = {
     revenue: {
       label: "Revenue",
-    }
+    },
   };
 
   return (
@@ -72,6 +53,23 @@ function TotalRevenue({data}) {
       <CardHeader>
         <CardTitle>Total Revenue</CardTitle>
       </CardHeader>
+      <CardDescription className="px-9">
+        <p className="text-3xl font-semibold">
+          {totalSum}
+          <span className="text-xl font-medium"> {currency}</span>
+        </p>
+        <p className={`inline-flex items-center ${trend >= 0 ? "text-green-500" : "text-red-500"}`}>
+          {trend >= 0 ? (
+            <TrendingUp size={16} className="mr-1" />
+          ) : (
+            <TrendingDown size={16} className="mr-1" />
+          )}
+          {trend > 0 ? "+" : ""}
+          {trend}
+          {currency}
+          &nbsp;from last year
+        </p>
+      </CardDescription>
       <CardContent>
         <ChartContainer config={chartConfig} className="min-h-[200px]">
           <AreaChart
