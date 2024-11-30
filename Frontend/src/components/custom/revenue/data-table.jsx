@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -11,18 +11,24 @@ import { Button } from "@/components/ui/button";
 import {
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 import { ArrowRight, ArrowLeft } from "lucide-react";
 
-export function DataTable({ columns, data,}) {
+export function DataTable({ columns, data, search}) {
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
   });
+
+  useEffect(() => {
+    table.getColumn("itemName").setFilterValue(search);
+  }, [search, table]);
 
   console.log(data)
 

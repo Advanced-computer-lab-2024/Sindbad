@@ -53,12 +53,12 @@ function TotalRevenue({ data }) {
       <CardHeader>
         <CardTitle>Total Revenue</CardTitle>
       </CardHeader>
-      <CardDescription className="px-9">
+      <CardDescription className="px-9 text-black">
         <p className="text-3xl font-semibold">
           {totalSum}
           <span className="text-xl font-medium"> {currency}</span>
         </p>
-        <p className={`inline-flex items-center ${trend >= 0 ? "text-green-500" : "text-red-500"}`}>
+        <p className={`inline-flex items-center`}>
           {trend >= 0 ? (
             <TrendingUp size={16} className="mr-1" />
           ) : (

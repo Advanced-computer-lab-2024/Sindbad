@@ -1,4 +1,4 @@
-export const columns = () => [
+export const columns = (currency) => [
   {
     accessorKey: "type",
     header: "Type",
@@ -6,13 +6,16 @@ export const columns = () => [
   {
     accessorKey: "itemName",
     header: "Item",
+    filterFn: "includesString",
   },
   {
     accessorKey: "revenue",
-    header: "Revenue",
+    header: `Revenue (${currency})`,
+    cell: ({ getValue }) => `${parseFloat(getValue()).toFixed(2)} `,
   },
   {
     accessorKey: "createdAt",
     header: "Date",
+    cell: ({ getValue }) => new Date(getValue()).toLocaleDateString(),
   },
 ];
