@@ -2,6 +2,7 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const express = require('express');
 const Tourist = require("../models/Tourist");
 const Product = require("../models/Product");
+const Sale = require("../models/Sale");
 const crypto = require('crypto');
 const app = express();
 app.use(express.json());
@@ -50,29 +51,32 @@ function hashCart(cart) {
         }
 
         //MAKE ORDER HERE!
+        const userOrder = {};
+        const saleIds = [];
+
+        for (const item of user.cart) {
+
+            const product = item.productID;
+
+            const sale = new Sale({
+                type: 'Product',
+                itemId: product._id,
+                buyerId: userId,
+                quantity: item.quantity,
+                totalPrice: product.price * item.quantity
+            });
+
+            const savedSale = await sale.save();
+            saleIds.push(savedSale._id);
+        }
+
+        userOrder.sales = saleIds;
+        userOrder.cart = JSON.parse(JSON.stringify(user.cart));
+        user.orders.push(userOrder);
 
         user.cart = [];
 
         await user.save();
-
-
-        // Access the metadata field from the session
-        
-        
-    //   // Now you can retrieve the cart details from your database using the cartId
-    //   const cart = await getCartFromDatabase(cartId);  // Fetch the cart from your database using the cart ID
-        
-    //   // You can now log the order or store it in your backend database
-    //   const order = {
-    //     cart,
-    //     paymentStatus: session.payment_status,
-    //     amount: session.amount_total,
-    //     paymentIntentId: session.payment_intent,
-    //     // other relevant details
-    //   };
-        
-    //   // Store the order in your database
-    //   await saveOrderToDatabase(order);
     }
     
     res.status(200).send('Webhook received');

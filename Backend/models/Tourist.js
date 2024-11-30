@@ -175,6 +175,28 @@ const TouristSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    orders: [
+      {
+        sales: [
+          {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Sale",
+          },
+        ],
+        cart: [
+          {
+            productID: {
+              type: mongoose.Schema.Types.ObjectId,
+              ref: "Product",
+            },
+            quantity: {
+              type: Number,
+              required: true,
+            },
+          },
+        ],
+      },
+    ]
   },
   { timestamps: true }
 );
