@@ -15,9 +15,13 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import {
-  groupByItemAndSumRevenue,
+  filterAndGroupSalesByItem,
   getAllSales,
 } from "@/services/SaleApiHandler";
+import { DatePicker } from "../DatePicker";
+
+
+
 
 // Define color mapping for different types
 const typeColorMap = {
@@ -41,11 +45,12 @@ const chartConfig = {
 
 function UsersPerItem() {
   const [chartData, setChartData] = useState([]);
+  const [dateRange, setDateRange] = useState({ from: null, to: null });
 
   useEffect(() => {
     const fetchData = async () => {
       const salesData = await getAllSales();
-      const groupedData = groupByItemAndSumRevenue(salesData, 5);
+      const groupedData = filterAndGroupSalesByItem(salesData, 5, dateRange.from, dateRange.to);
       const dataWithNames = groupedData.map((item) => {
         const matchingSale = salesData.find(
           (sale) => sale.itemId === item.itemId
@@ -59,12 +64,21 @@ function UsersPerItem() {
       setChartData(dataWithNames);
     };
     fetchData();
-  }, []);
+  }, [dateRange]);
+
+  console.log("dateRange", dateRange);
 
   return (
-    <Card>
+    <Card className="w-full">
       <CardHeader>
-        <CardTitle>Item Popularity</CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle>Item Popularity</CardTitle>
+          <DatePicker
+            startDate={dateRange.from}
+            endDate={dateRange.to}
+            setDate={(range) => setDateRange(range)} // Update setDate to accept an object
+          />
+        </div>
       </CardHeader>
       <CardContent className="h-full">
         <ChartContainer config={chartConfig} className="h-3/4">
@@ -83,13 +97,6 @@ function UsersPerItem() {
               cursor={false}
               content={<ChartTooltipContent indicator="line" />}
             />
-            {/* <Bar dataKey="revenue" layout="vertical" radius={4}>
-              {chartData.map((entry, index) => {
-                const fillColor =
-                  typeColorMap[entry.itemType] || typeColorMap.DEFAULT;
-                return <Cell key={`cell-${index}`} fill={fillColor} />;
-              })}
-            </Bar> */}
             <Bar dataKey="count" layout="vertical" radius={4}>
               {chartData.map((entry, index) => {
                 const fillColor =

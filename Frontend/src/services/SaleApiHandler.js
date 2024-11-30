@@ -69,30 +69,35 @@ export const calculateRevenueTrend = (data) => {
   return trend;
 };
 
-export const groupByItemAndSumRevenue = (data, limit = null) => {
-  if (!data) return [];
-
-  const groupedData = {};
-
-  // Iterate through data to group by itemId and calculate revenue and count
-  data.forEach((item) => {
-    if (!groupedData[item.itemId]) {
-      groupedData[item.itemId] = { revenue: 0, count: 0 };
-    }
-    groupedData[item.itemId].revenue += item.revenue; // Sum up revenue
-    groupedData[item.itemId].count += 1; // Increment count
+export const filterAndGroupSalesByItem = (salesData, limit, from = null, to = null) => {
+  console.log("salesData", salesData);
+  console.log("limit", limit);
+  console.log("from", from);
+  console.log("to", to);
+  // Filter sales data based on the date range
+  const filteredSalesData = salesData.filter((sale) => {
+    const saleDate = new Date(sale.createdAt);
+    return (
+      (!from || saleDate >= new Date(from)) &&
+      (!to || saleDate <= new Date(to))
+    );
   });
 
-  // Convert the grouped data into an array and sort it by revenue
-  let sortedData = Object.entries(groupedData)
-    .map(([itemId, { revenue, count }]) => ({ itemId, revenue, count }))
-    .sort((a, b) => b.revenue - a.revenue); // Sort by revenue in descending order
+  // Group by item and sum revenue
+  const groupedData = filteredSalesData.reduce((acc, sale) => {
+    const existingItem = acc.find((item) => item.itemId === sale.itemId);
+    if (existingItem) {
+      existingItem.revenue += sale.revenue;
+      existingItem.count += 1;
+    } else {
+      acc.push({ itemId: sale.itemId, revenue: sale.revenue, count: 1 });
+    }
+    return acc;
+  }, []);
 
-  // Apply the limit if specified
-  if (limit !== null) {
-    sortedData = sortedData.slice(0, limit);
-  }
-
-  return sortedData;
+  // Sort and limit the results
+  return groupedData
+    .sort((a, b) => b.count - a.count)
+    .slice(0, limit);
 };
 

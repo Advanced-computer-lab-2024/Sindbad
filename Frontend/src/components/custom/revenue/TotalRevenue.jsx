@@ -50,7 +50,7 @@ function TotalRevenue({ data }) {
   };
 
   return (
-    <Card>
+    <Card className="w-full">
       <CardHeader>
         <CardTitle>Total Revenue</CardTitle>
       </CardHeader>
