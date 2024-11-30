@@ -106,16 +106,25 @@ export const Checkout = () => {
     }
 
     const payWithWallet = async () => {
-        const response = checkoutWithWallet(id, cart);
-        console.log(response);
-
+        try {
+            const response = checkoutWithWallet(id, cart);
+            navigate("/checkout/success");
+        }
+        catch (error) {
+            console.error("Error paying with wallet:", error);
+        }
     }
     const payWithStripe = async () => {
         checkoutWithStripe(id, cart);
     }
     const payWithCOD = async () => {
-        const response = checkoutWithCod(id, cart);
-        console.log(response);
+        try {
+            const response = checkoutWithCod(id, cart);
+            navigate("/checkout/success");
+        }
+        catch (error) {
+            console.error("Error paying with COD:", error);
+        }
     }
 
     return (
