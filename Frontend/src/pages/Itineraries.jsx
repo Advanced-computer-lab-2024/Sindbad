@@ -8,6 +8,7 @@ import { getAllTags } from "@/services/AdminApiHandler";
 
 import { useCurrency } from "@/state management/userInfo";
 import { Convert } from "easy-currencies";
+import { languages } from "@/utilities/getLanguages";
 
 function Itineraries() {
 	const [loading, setLoading] = useState(true);
@@ -30,16 +31,13 @@ function Itineraries() {
 			start: "",
 			end: "",
 		},
-		tag: {
-			selected: "",
-		},
+		tag: "",
 		rating: {
 			min: 0,
 			max: 5,
 		},
 		language: "",
-		sortBy: "",
-		sortOrder: "",
+		sortBy: ""
 	});
 
 	const formFields = {
@@ -75,18 +73,14 @@ function Itineraries() {
 			step: 1,
 		},
 		language: {
-			type: "search",
+			type: "select",
 			label: "Language",
+			options: languages.map((language) => language.label),
 		},
 		sortBy: {
 			type: "select",
 			label: "Sort By",
-			options: ["price", "rating"],
-		},
-		sortOrder: {
-			type: "select",
-			label: "Sort Order",
-			options: ["asc", "desc"],
+			options: ["Price: Low to High", "Price: High to Low", "Rating: Low to High", "Rating: High to Low"],
 		},
 	};
 
@@ -103,15 +97,18 @@ function Itineraries() {
 		const convertedMax = activeFilters.price.max / converter.rates[currency];
 		const convertedPrice = { min: convertedMin, max: convertedMax };
 
+		const sortBy = activeFilters.sortBy.selected?.split(": ")[0].toLowerCase();
+		const sortOrder = activeFilters.sortBy.selected?.split(": ")[1].toLowerCase() === "low to high" ? "asc" : "desc";
+
 		const response = await getAllItineraries(
 			activeFilters.name,
 			convertedPrice,
 			activeFilters.date,
 			tagToSend,
 			activeFilters.rating,
-			activeFilters.language,
-			activeFilters.sortBy.selected,
-			activeFilters.sortOrder.selected
+			activeFilters.language.selected,
+			sortBy,
+			sortOrder
 		);
 		if (!response.error && response) {
 			const updatedItineraries = response.map((itinerary) => ({
@@ -182,7 +179,7 @@ function Itineraries() {
 				<hr className="border-neutral-300 border w-full mt-1.5" />
 			</div>
 			<div className="flex gap-10">
-				<div className="w-[280px] shrink-0">
+				<div className="w-[220px] shrink-0">
 					<GenericFilter
 						formFields={formFields}
 						activeFilters={activeFilters}

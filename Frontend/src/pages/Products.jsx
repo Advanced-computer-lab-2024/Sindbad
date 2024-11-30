@@ -143,7 +143,7 @@ function ShoppingPage() {
 				)} */}
 			</div>
 			<div className="flex gap-10">
-				<div className="flex flex-col gap-7 w-[280px] shrink-0">
+				<div className="flex flex-col gap-7 w-[220px] shrink-0">
 					<GenericFilter
 						formFields={formFields}
 						activeFilters={activeFilters}
