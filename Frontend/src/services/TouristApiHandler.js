@@ -128,3 +128,15 @@ export const checkoutWithWallet = async (touristId, cart) => {
     return error;
   }
 }
+
+export const checkoutWithCod = async (touristId, cart) => {
+  try {
+    const response = await axiosInstance.post(`/checkout/cod`, {
+      userId: touristId,
+      cart: cart
+    });
+    return response.data;
+  } catch (error) {
+    return error;
+  }
+}
