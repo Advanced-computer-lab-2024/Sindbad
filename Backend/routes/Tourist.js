@@ -16,6 +16,7 @@ const {
   getBookmarkedActivities,
   getCart,
   addToCart,
+  addToCartFromWishlist,
   updateCart,
   removeFromCart
 
@@ -50,6 +51,7 @@ router
   .put(updateCart)
 router.route("/:id/cart/:productID").delete(removeFromCart); 
 
+router.route("/:id/cart/wishlist").post(addToCartFromWishlist);
 router.route("/:id/wishlist/products").get(getWishlistProducts);
 
 module.exports = router;
