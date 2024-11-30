@@ -30,6 +30,7 @@ const tripRoutes = require("./routes/Trip");
 const saleRoutes = require("./routes/Sale");
 const hotelRoutes = require("./routes/Hotel");
 const checkoutRoutes = require("./routes/Checkout");
+const webhookRoutes = require("./routes/Webhook");
 
 //Set memory preference to be RAM
 const upload = multer({ storage: multer.memoryStorage() });
@@ -146,6 +147,7 @@ app.use("/hotel", hotelRoutes);
 
 app.use("/checkout", checkoutRoutes);
 
+app.use("/webhook", webhookRoutes);
 
 //To work with pictures
 

@@ -100,6 +100,7 @@ export const checkoutWithStripe = async (id, cart) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        userId: id,
         cart: cart
       }),
     });

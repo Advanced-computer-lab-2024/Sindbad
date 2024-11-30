@@ -1,5 +1,6 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const express = require('express');
+const crypto = require('crypto');
 const app = express();
 app.use(express.json());
 const router = express.Router();
@@ -7,9 +8,14 @@ const router = express.Router();
 const YOUR_DOMAIN = process.env.FRONTEND_DOMAIN;
 const BACKEND_DOMAIN = process.env.BACKEND_DOMAIN;
 
+function hashCart(cart) {
+  const cartString = JSON.stringify(cart);  
+  return crypto.createHash('sha256').update(cartString).digest('hex'); 
+}
+
 router.post('/stripe', async (req, res) => {
   try {
-    const { cart } = req.body;
+    const { cart, userId } = req.body;
 
     if (!Array.isArray(cart) || cart.length === 0) {
       return res.status(400).json({ error: 'Cart is invalid or empty.' });
@@ -31,6 +37,10 @@ router.post('/stripe', async (req, res) => {
       mode: 'payment',
       success_url: `${YOUR_DOMAIN}?success=true`,
       cancel_url: `${YOUR_DOMAIN}?canceled=true`,
+      metadata: {
+        userId,
+        cartHash: hashCart(cart),
+      },
     });
 
     res.status(200).json({ url: session.url });
