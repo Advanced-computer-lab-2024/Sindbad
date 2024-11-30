@@ -591,6 +591,42 @@ const removeFromCart = async (req, res) => {
   }
 }
 
+const addAddress = async (req, res) => {
+  try {
+    const { id } = req.params; // Tourist ID
+    const { label, street, city, state, zip, country } = req.body; // Address details
+
+    console.log(req.body);
+    console.log(req.params);
+    if (!label || !street || !city || !state || !zip || !country) {
+      return res.status(400).json({ message: "Label and address are required" });
+    }
+
+    // Find the tourist by ID
+    const tourist = await Tourist.findById(id);
+
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found" });
+    }
+
+    // Add the address to the list
+    tourist.addresses.push({ label, street, city, state, zip, country });
+
+    // Save the updated tourist
+    await tourist.save();
+
+    res.status(200).json({
+      message: "Address added successfully",
+      addresses: tourist.addresses,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error adding address",
+      error: error.message,
+    });
+  }
+}
+
 
 //Sending an email
 const transporter = nodemailer.createTransport({
@@ -708,7 +744,8 @@ module.exports = {
   getCart,
   addToCart,
   updateCart,
-  removeFromCart
+  removeFromCart,
+  addAddress
 };
 
 /*
