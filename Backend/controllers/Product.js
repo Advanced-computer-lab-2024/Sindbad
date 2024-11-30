@@ -449,11 +449,11 @@ const getProductsByCreatorId = async (req, res) => {
 
 const registerAllProductsStripe = async (req, res) => {
   try {
-    console.log("Registering all products with Stripe...");
     const products = await Product.find();
 
     for (const product of products) {
-      if (!product.priceId) {
+      product.priceId = "";
+      if (product.priceId === "") {
         const stripeProduct = await stripe.products.create({
           name: product.name,
         });

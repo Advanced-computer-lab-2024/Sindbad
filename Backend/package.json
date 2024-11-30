@@ -4,9 +4,10 @@
 	"description": "Node.js server for Sindbad",
 	"main": "app.js",
 	"scripts": {
-		"test": "jest",
 		"start": "node app.js",
-		"watch": "nodemon app.js"
+		"watch": "nodemon app.js",
+		"stripe-cli": "stripe listen --forward-to localhost:3000/webhook",
+		"dev": "concurrently \"npm run watch\" \"npm run stripe-cli\""
 	},
 	"author": "",
 	"license": "ISC",
@@ -24,6 +25,7 @@
 		"stripe": "^17.4.0"
 	},
 	"devDependencies": {
+		"concurrently": "^9.1.0",
 		"jest": "^29.7.0",
 		"mongodb-memory-server": "^10.0.1",
 		"nodemon": "^3.1.7",

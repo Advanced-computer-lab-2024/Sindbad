@@ -4,7 +4,8 @@ const app = express();
 app.use(express.json());
 const router = express.Router();
 
-const YOUR_DOMAIN = process.env.YOUR_DOMAIN || 'http://localhost:5173';
+const YOUR_DOMAIN = process.env.FRONTEND_DOMAIN;
+const BACKEND_DOMAIN = process.env.BACKEND_DOMAIN;
 
 router.post('/stripe', async (req, res) => {
   try {
