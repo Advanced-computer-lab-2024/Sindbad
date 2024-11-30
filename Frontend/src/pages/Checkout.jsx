@@ -11,7 +11,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { checkoutWithStripe, getCart } from "@/services/TouristApiHandler";
+import { checkoutWithStripe, checkoutWithWallet, getCart } from "@/services/TouristApiHandler";
 import { useCurrency } from "@/state management/userInfo";
 import { BadgeX } from "lucide-react";
 import { getTouristById } from '@/services/TouristApiHandler';
@@ -106,6 +106,8 @@ export const Checkout = () => {
     }
 
     const payWithWallet = async () => {
+        const response = checkoutWithWallet(id, cart);
+        console.log(response);
 
     }
     const payWithStripe = async () => {

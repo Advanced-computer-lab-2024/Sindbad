@@ -116,3 +116,15 @@ export const checkoutWithStripe = async (id, cart) => {
     alert('Something went wrong. Please try again later.');
   }
 }
+
+export const checkoutWithWallet = async (touristId, cart) => {
+  try {
+    const response = await axiosInstance.post(`/checkout/wallet`, {
+      userId: touristId,
+      cart: cart
+    });
+    return response.data;
+  } catch (error) {
+    return error;
+  }
+}
