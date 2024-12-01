@@ -7,13 +7,13 @@ export const tourismGovernor = {
         },
         {
             name: "profileImageUri",
-            type: "text",
+            type: "file",
             label: "Profile Image",
             required: true,
         },
         {
             name: "bannerImageUri",
-            type: "text",
+            type: "file",
             label: "Banner Image",
             required: true,
         },

@@ -15,19 +15,23 @@ export const getTourGuide = async (tourGuideId) => {
 	}
 };
 
-export const updateTourGuide = async (tourGuideId, updatedValues) => {
+export const updateTourGuide = async (tourGuideId, formData) => {
 	try {
-		const response = axiosInstance.put(
+		const response = await axiosInstance.put(
 			`/tourGuide/${tourGuideId}`,
-			updatedValues,
+			formData, // Pass FormData here
 			{
+				headers: {
+					"Content-Type": "multipart/form-data", // Explicitly set for FormData
+				},
 				resourceName: "Tour guide",
 			}
 		);
 
 		return response.data;
 	} catch (error) {
-		return error;
+		console.error("Error updating tour guide:", error);
+		throw error;
 	}
 };
 

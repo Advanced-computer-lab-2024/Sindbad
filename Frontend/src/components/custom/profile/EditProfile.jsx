@@ -41,7 +41,9 @@ function EditProfile({ userType, id, userData }) {
                 <h1 className="text-xl font-bold">General</h1>
                 <hr className="border-neutral-300 border w-full mt-1.5" />
             </div>
-            <GenericForm type={userType} id={id} data={userData} />
+            <GenericForm type={userType} id={id} data={
+                Object.fromEntries(Object.entries(userData).filter(([key, value]) => key !== "profileImageUri" && key !== "bannerImageUri"))
+            } />
             <h1 className="text-2xl font-semibold my-4">Change Password</h1>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>

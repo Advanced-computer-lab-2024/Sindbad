@@ -9,6 +9,7 @@ import { CheckboxField } from "./input-fields/CheckboxField";
 import { CoordinatesField } from "./input-fields/CoordinatesField";
 import { TextField } from "./input-fields/TextField";
 import { TextArea } from './input-fields/TextArea';
+import { FileUpload } from './input-fields/FileUploadField';
 import { forms } from "./forms";
 import { SelectField } from "./input-fields/SelectField";
 import { useNavigate } from "react-router-dom";
@@ -67,7 +68,7 @@ export function GenericForm({ type, data, id, fetcher }) {
 	const dispatch = useDispatch();
 	const { toast } = useToast();
 	const handleSubmit = (values) => {
-		try{
+		try {
 			if (typeof onSubmit === "function") {
 				if (onSubmit.length === 4) {
 					onSubmit(values, id, navigate, dispatch);
@@ -79,7 +80,7 @@ export function GenericForm({ type, data, id, fetcher }) {
 				}
 				//toast({ description: "Submitted" });
 			}
-		}catch(e){
+		} catch (e) {
 			toast({ description: `Error occured on submission: ${e.message}` });
 		}
 	};
@@ -177,7 +178,7 @@ export function GenericForm({ type, data, id, fetcher }) {
 					/>
 				);
 			case 'textArea':
-				return(
+				return (
 					<TextArea
 						key={fullPath}
 						name={fullPath}
@@ -185,7 +186,17 @@ export function GenericForm({ type, data, id, fetcher }) {
 						type={field.type}
 						label={field.label || field.name.toUpperCase()}
 					/>
-			 	)
+				);
+			case 'file':
+				return (
+					<FileUpload
+						key={fullPath}
+						name={fullPath}
+						control={form.control}
+						type={field.type}
+						label={field.label || field.name.toUpperCase()}
+					/>
+				);
 			default:
 				return null;
 		}

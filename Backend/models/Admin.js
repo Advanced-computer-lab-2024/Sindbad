@@ -28,28 +28,42 @@ const AdminSchema = new Schema(
 			required: true,
 		},
 		profileImageUri: {
-			type: String,
+			public_id: {
+				type: String,
+				required: true,
+			},
+			url: {
+				type: String,
+				required: true,
+			},
 		},
 		bannerImageUri: {
-			type: String,
+			public_id: {
+				type: String,
+				required: true,
+			},
+			url: {
+				type: String,
+				required: true,
+			},
 		},
-		Notifications:{
-			type:[
-			  {
-				title: {
-				  type: String,
-				},
-				Body:{
-				  type:String,
-				},
-				isSeen:{
-				  Type: Boolean,
-				},
-			  }
+		Notifications: {
+			type: [
+				{
+					title: {
+						type: String,
+					},
+					Body: {
+						type: String,
+					},
+					isSeen: {
+						Type: Boolean,
+					},
+				}
 			],
-			default:[],
+			default: [],
 		},
-	  
+
 	},
 	{ timestamps: true }
 );

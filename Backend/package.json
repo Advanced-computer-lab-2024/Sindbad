@@ -13,8 +13,10 @@
 	"license": "ISC",
 	"dependencies": {
 		"amadeus": "^11.0.0",
+		"cloudinary": "^2.5.1",
 		"cors": "^2.8.5",
 		"crypto": "^1.0.1",
+		"datauri": "^4.1.0",
 		"dotenv": "^16.4.5",
 		"express": "^4.21.0",
 		"express-session": "^1.18.0",

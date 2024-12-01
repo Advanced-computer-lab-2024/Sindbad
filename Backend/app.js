@@ -26,6 +26,9 @@ const flightRoutes = require("./routes/flight");
 const AdvertiserController = require("./controllers/Advertiser");
 const SellerController = require("./controllers/Seller");
 const TourGuideController = require("./controllers/TourGuide");
+const TourismGovernorController = require("./controllers/TourismGovernor");
+const AdminController = require("./controllers/Admin");
+const TouristController = require("./controllers/Tourist");
 const tripRoutes = require("./routes/Trip");
 const saleRoutes = require("./routes/Sale");
 const hotelRoutes = require("./routes/Hotel");
@@ -39,11 +42,11 @@ const app = express();
 
 
 app.use(
-  cors({
-    origin: "http://localhost:5173",
-    methods: "GET,POST,PUT,DELETE,PATCH",
-    credentials: true,
-  })
+    cors({
+        origin: "http://localhost:5173",
+        methods: "GET,POST,PUT,DELETE,PATCH",
+        credentials: true,
+    })
 );
 
 // Middleware to parse JSON and URL-encoded data
@@ -52,41 +55,95 @@ app.use(express.urlencoded({ extended: true }));
 
 // Connect to MongoDB, and prevent connecting to the database during testing
 if (process.env.NODE_ENV !== "test") {
-  mongoose
-    .connect(process.env.MONGO_URI)
-    .then(() => {
-      console.log("Connected to MongoDB");
-    })
-    .catch((err) => {
-      console.error("Database connection error:", err);
-    });
+    mongoose
+        .connect(process.env.MONGO_URI)
+        .then(() => {
+            console.log("Connected to MongoDB");
+        })
+        .catch((err) => {
+            console.error("Database connection error:", err);
+        });
 }
 
-app.post(
-  "/advertiser/upload/:id",
-  upload.fields([
-    { name: "idCardImage", maxCount: 1 },
-    { name: "taxationRegistryCardImage", maxCount: 1 },
-  ]),
-  AdvertiserController.addAdvertiserDocuments
+app.put(
+    "/tourGuide/:id",
+    upload.fields([
+        { name: "profileImageUri", maxCount: 1 },
+        { name: "bannerImageUri", maxCount: 1 },
+    ]),
+    TourGuideController.updateTourGuide
+);
+
+app.put(
+    "/seller/:id",
+    upload.fields([
+        { name: "profileImageUri", maxCount: 1 },
+        { name: "bannerImageUri", maxCount: 1 },
+    ]),
+    SellerController.updateSeller
+);
+
+app.put(
+    "/advertiser/:id",
+    upload.fields([
+        { name: "profileImageUri", maxCount: 1 },
+        { name: "bannerImageUri", maxCount: 1 },
+    ]),
+    AdvertiserController.updateAdveriser
+);
+
+app.put(
+    "/tourism-governor/:id",
+    upload.fields([
+        { name: "profileImageUri", maxCount: 1 },
+        { name: "bannerImageUri", maxCount: 1 },
+    ]),
+    TourismGovernorController.updateTourismGovernor
+);
+
+app.put(
+    "/admin/:id",
+    upload.fields([
+        { name: "profileImageUri", maxCount: 1 },
+        { name: "bannerImageUri", maxCount: 1 },
+    ]),
+    AdminController.updateAdmin
+);
+
+app.put(
+    "/tourist/:id",
+    upload.fields([
+        { name: "profileImageUri", maxCount: 1 },
+        { name: "bannerImageUri", maxCount: 1 },
+    ]),
+    TouristController.updateTourist
 );
 
 app.post(
-  "/seller/upload/:id",
-  upload.fields([
-    { name: "idCardImage", maxCount: 1 },
-    { name: "taxationRegistryCardImage", maxCount: 1 },
-  ]),
-  SellerController.addSellerDocuments
+    "/advertiser/upload/:id",
+    upload.fields([
+        { name: "idCardImage", maxCount: 1 },
+        { name: "taxationRegistryCardImage", maxCount: 1 },
+    ]),
+    AdvertiserController.addAdvertiserDocuments
 );
 
 app.post(
-  "/tourGuide/upload/:id",
-  upload.fields([
-    { name: "idCardImage", maxCount: 1 },
-    { name: "certificateImage", maxCount: 1 },
-  ]),
-  TourGuideController.addTourGuideDocuments
+    "/seller/upload/:id",
+    upload.fields([
+        { name: "idCardImage", maxCount: 1 },
+        { name: "taxationRegistryCardImage", maxCount: 1 },
+    ]),
+    SellerController.addSellerDocuments
+);
+
+app.post(
+    "/tourGuide/upload/:id",
+    upload.fields([
+        { name: "idCardImage", maxCount: 1 },
+        { name: "certificateImage", maxCount: 1 },
+    ]),
+    TourGuideController.addTourGuideDocuments
 );
 
 //User routes
@@ -154,26 +211,26 @@ app.use("/webhook", webhookRoutes);
 
 // Fallback route for unknown endpoints
 app.use((req, res, next) => {
-  res.status(404).json({ message: "Endpoint not found" });
+    res.status(404).json({ message: "Endpoint not found" });
 });
 
 // Global error handler
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({
-    message: "Something went wrong",
-    error: err.message,
-  });
+    console.error(err.stack);
+    res.status(500).json({
+        message: "Something went wrong",
+        error: err.message,
+    });
 });
 
 // Start the server
 let PORT = process.env.PORT || 3000;
 if (process.env.NODE_ENV === "test") {
-  PORT = 0; // Finds first available port, to prevent conflicts when running test suites in parallel
+    PORT = 0; // Finds first available port, to prevent conflicts when running test suites in parallel
 }
 
 const server = app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
 
-module.exports = { app, server };
+module.exports = { app, server, upload };

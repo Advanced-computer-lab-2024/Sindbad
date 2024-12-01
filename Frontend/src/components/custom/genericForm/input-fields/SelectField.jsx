@@ -8,7 +8,6 @@ export const SelectField = ({ name, control, label, options = [], defaultValue }
     control,
     name,
   });
-  console.log(options.find((option) => option === defaultValue))
   return (
     <FormItem>
       <FormLabel>{label || name.toUpperCase()}</FormLabel>
@@ -28,16 +27,18 @@ export const SelectField = ({ name, control, label, options = [], defaultValue }
             </SelectContent>
           </Select>
         </div> */}
-        <ReactSelect
-          options={options.map((option) => ({ label: option, value: option }))}
-          onChange={(selectedOption) => field.onChange(selectedOption.value)}
-          defaultValue={() =>
-            options.find((option) => option === defaultValue)
-              ? { label: defaultValue, value: defaultValue }
-              : null
-          }
-          placeholder="Select Currency"
-        />
+        <div className="">
+          <ReactSelect
+            options={options.map((option) => ({ label: option, value: option }))}
+            onChange={(selectedOption) => field.onChange(selectedOption.value)}
+            defaultValue={() =>
+              options.find((option) => option === defaultValue)
+                ? { label: defaultValue, value: defaultValue }
+                : null
+            }
+            placeholder="Select Currency"
+          />
+        </div>
       </FormControl>
       <FormMessage />
     </FormItem>
