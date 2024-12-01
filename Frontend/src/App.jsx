@@ -36,73 +36,81 @@ import { Checkout } from "./pages/Checkout";
 import { useUser } from "@/state management/userInfo";
 import { CheckoutSuccess } from "./pages/CheckoutSuccess";
 import { CheckoutOutlet } from "./pages/CheckoutOutlet";
+import { Wishlist } from "./pages/Wishlist";
 
 function App() {
-    const { id } = useUser();
+  const { id } = useUser();
 
-    return (
-        <main className="bg-light text-dark font-inter min-h-screen h-max">
-            <Routes>
-                <Route path="/app" element={<MainPage />}>
-                    <Route
-                        path="profile"
-                        element={<Navigate to={`/app/profile/${id}`} replace />}
-                    />
-                    <Route path="profile/:profileId" element={<Profile />} />
-                    <Route path="cart" element={<Cart />} />
-                    <Route path="activities" element={<ActivitiesPage />} />
-                    <Route path="sites" element={<SitesPage />} />
-                    <Route path="itineraries" element={<ItinerariesPage />} />
-                    <Route path="store" element={<ShoppingPage />} />
-                    <Route path="trips" element={<Trips />} />
-                    <Route path="product/:productId" element={<ProductView />} />
-                    <Route path="revenue" element={<RevenueReport />} />
-                    <Route path="management" element={<AdminManagementView />}>
-                        <Route path="" element={<Navigate to="users" replace />} />
-                        <Route path="users" element={<UserManagement />} />
-                        <Route path="verification" element={<UserVerification />} />
-                        <Route path="complaints" element={<ComplaintManagement />} />
-                        <Route path="tagcategories" element={<TagCategoryManagement />} />
-                        <Route path="deletion-requests" element={<DeletionRequests />} />
-                        <Route path="promocodes" element={<PromoCodes />} />
-                    </Route>
-                    <Route path="booking" element={<Booking />}>
-                        <Route path="" element={<Navigate to="hotel" replace />} />
-                        <Route path="flight" element={<FlightBooking />} />
-                        <Route path="hotel" element={<HotelBooking />} />
-                    </Route>
-                    <Route path="hotel/:hotelId" element={<HotelView />} />
-                    <Route path="flight/:flightId" element={<FlightView />} />
-                    <Route path="hotel/confirmation" element={<HotelConfirmation />} />
-                    <Route path="flight/confirmation" element={<FlightConfirmation />} />
-                    <Route path="itinerary/:itineraryId" element={<Itinerary />} />
-                    <Route path="activity/:activityId" element={<Activity />} />
-                    <Route path="site/:siteId" element={<Site />} />
-                    <Route path="trip/:tripId" element={<TripView />} />
-                    <Route path="complaints/:creatorId" element={<ComplaintView />} />
-                    <Route
-                        path=":cardType/:cardId/edit"
-                        element={<FormPage />}
-                        loader={({ params }) => {
-                            const validCardTypes = ["itinerary", "activity", "site", "product", "trip"];
-                            if (!validCardTypes.includes(params.cardType)) {
-                                throw new Error("Invalid card type"); // Replace with error handling or redirection
-                            }
-                            return params;
-                        }}
-                    />
-                </Route>
-                <Route path="/checkout" element={<CheckoutOutlet />} >
-                    <Route path="" element={<Checkout />} />
-                    <Route path="success" element={<CheckoutSuccess />} />
-                </Route>
-                <Route path="/login" element={<LogIn />} />
-                <Route path="/signup" element={<SignUp />} />
+  return (
+    <main className="bg-light text-dark font-inter min-h-screen h-max">
+      <Routes>
+        <Route path="/app" element={<MainPage />}>
+          <Route
+            path="profile"
+            element={<Navigate to={`/app/profile/${id}`} replace />}
+          />
+          <Route path="profile/:profileId" element={<Profile />} />
+          <Route path="cart" element={<Cart />} />
+          <Route path="wishlist" element={<Wishlist />} />
+          <Route path="activities" element={<ActivitiesPage />} />
+          <Route path="sites" element={<SitesPage />} />
+          <Route path="itineraries" element={<ItinerariesPage />} />
+          <Route path="store" element={<ShoppingPage />} />
+          <Route path="trips" element={<Trips />} />
+          <Route path="product/:productId" element={<ProductView />} />
+          <Route path="revenue" element={<RevenueReport />} />
+          <Route path="management" element={<AdminManagementView />}>
+            <Route path="" element={<Navigate to="users" replace />} />
+            <Route path="users" element={<UserManagement />} />
+            <Route path="verification" element={<UserVerification />} />
+            <Route path="complaints" element={<ComplaintManagement />} />
+            <Route path="tagcategories" element={<TagCategoryManagement />} />
+            <Route path="deletion-requests" element={<DeletionRequests />} />
+            <Route path="promocodes" element={<PromoCodes />} />
+          </Route>
+          <Route path="booking" element={<Booking />}>
+            <Route path="" element={<Navigate to="hotel" replace />} />
+            <Route path="flight" element={<FlightBooking />} />
+            <Route path="hotel" element={<HotelBooking />} />
+          </Route>
+          <Route path="hotel/:hotelId" element={<HotelView />} />
+          <Route path="flight/:flightId" element={<FlightView />} />
+          <Route path="hotel/confirmation" element={<HotelConfirmation />} />
+          <Route path="flight/confirmation" element={<FlightConfirmation />} />
+          <Route path="itinerary/:itineraryId" element={<Itinerary />} />
+          <Route path="activity/:activityId" element={<Activity />} />
+          <Route path="site/:siteId" element={<Site />} />
+          <Route path="trip/:tripId" element={<TripView />} />
+          <Route path="complaints/:creatorId" element={<ComplaintView />} />
+          <Route
+            path=":cardType/:cardId/edit"
+            element={<FormPage />}
+            loader={({ params }) => {
+              const validCardTypes = [
+                "itinerary",
+                "activity",
+                "site",
+                "product",
+                "trip",
+              ];
+              if (!validCardTypes.includes(params.cardType)) {
+                throw new Error("Invalid card type"); // Replace with error handling or redirection
+              }
+              return params;
+            }}
+          />
+        </Route>
+        <Route path="/checkout" element={<CheckoutOutlet />}>
+          <Route path="" element={<Checkout />} />
+          <Route path="success" element={<CheckoutSuccess />} />
+        </Route>
+        <Route path="/login" element={<LogIn />} />
+        <Route path="/signup" element={<SignUp />} />
 
-                <Route path="/" element={<Navigate to="/app" replace />} />
-            </Routes>
-        </main>
-    );
+        <Route path="/" element={<Navigate to="/app" replace />} />
+      </Routes>
+    </main>
+  );
 }
 
 export default App;

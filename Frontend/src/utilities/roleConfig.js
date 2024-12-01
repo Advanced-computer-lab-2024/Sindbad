@@ -20,7 +20,7 @@ const rolePermissions = {
     "booking",
     "trips",
     "cart",
-    "heart",
+    "wishlist",
   ],
   tourGuide: ["itineraries", "activities", "sites", "profile", "revenue"],
   tourismGovernor: ["itineraries", "activities", "sites", "profile", "revenue"],

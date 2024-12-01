@@ -82,8 +82,10 @@ function MainPage() {
             </NavigationMenu>
           </div>
           <div className="flex gap-4 items-center">
-            {renderedFields.includes("heart") && (
-              <button onClick={() => navigate(`/app/cart`, { replace: true })}>
+            {renderedFields.includes("wishlist") && (
+              <button
+                onClick={() => navigate(`/app/wishlist`, { replace: true })}
+              >
                 <Heart size={24} />
               </button>
             )}
