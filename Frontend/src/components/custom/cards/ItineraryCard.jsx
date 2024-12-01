@@ -16,7 +16,7 @@ const cardConfig = {
     edit: [],
     delete: [],
     deactivate: [],
-    bookmark: ["tourist"],
+    // bookmark: ["tourist"],
     flagAsInappropriate: ["admin"],
   },
 };
