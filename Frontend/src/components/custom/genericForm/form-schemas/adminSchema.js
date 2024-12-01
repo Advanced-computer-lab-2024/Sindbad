@@ -9,12 +9,20 @@ export const adminSchema = {
 	profileImageUri: z
 		.any()
 		.optional()
-		.refine((files) => files === undefined || files instanceof FileList,
-			{ message: "Invalid file type!" }),
+		.refine(
+			(files) =>
+				files === undefined ||
+				(files instanceof FileList && Array.from(files).every(file => ['image/png', 'image/jpeg'].includes(file.type))),
+			{ message: "profileImageUri must be a PNG or JPG file" }
+		),
 
 	bannerImageUri: z
 		.any()
 		.optional()
-		.refine((files) => files === undefined || files instanceof FileList,
-			{ message: "Invalid file type!" }),
+		.refine(
+			(files) =>
+				files === undefined ||
+				(files instanceof FileList && Array.from(files).every(file => ['image/png', 'image/jpeg'].includes(file.type))),
+			{ message: "profileImageUri must be a PNG or JPG file" }
+		),
 };

@@ -14,10 +14,21 @@ export const advertiserSchema = {
 		.min(1, { message: "Mobile number is required!" }),
 	profileImageUri: z
 		.any()
-		.refine((files) => files instanceof FileList && files.length === 1, 'File is required.'),
+		.refine(
+			(files) =>
+				files === undefined ||
+				(files instanceof FileList && Array.from(files).every(file => ['image/png', 'image/jpeg'].includes(file.type))),
+			{ message: "profileImageUri must be a PNG or JPG file" }
+		),
 
 	bannerImageUri: z
 		.any()
-		.refine((files) => files instanceof FileList && files.length === 1, 'File is required.'),
+		.refine(
+			(files) =>
+				files === undefined ||
+				(files instanceof FileList && Array.from(files).every(file => ['image/png', 'image/jpeg'].includes(file.type))),
+			{ message: "profileImageUri must be a PNG or JPG file" }
+		),
+		
 	preferredCurrency: z.string(),
 };

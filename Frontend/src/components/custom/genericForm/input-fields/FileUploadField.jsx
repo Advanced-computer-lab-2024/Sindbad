@@ -14,6 +14,7 @@ export const FileUpload = ({ name, control, type = 'file', label }) => {
                     <FormControl>
                         <Input
                             type={type}
+                            accept=".png, .jpg, .jpeg"
                             onChange={(e) => {
                                 const files = e.target.files;
                                 field.onChange(files); // Pass the FileList to the form state
