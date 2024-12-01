@@ -75,7 +75,7 @@ export function GenericForm({ type, data, id, fetcher }) {
 				} else {
 					onSubmit(values, id, data, navigate, dispatch);
 				}
-				if (typeof fetcher === "function"){
+				if (typeof fetcher === "function") {
 					fetcher();
 				}
 				//toast({ description: "Submitted" });
@@ -207,7 +207,7 @@ export function GenericForm({ type, data, id, fetcher }) {
 			<Form {...form}>
 				<form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
 					{formFields.map((field) => renderField(field))}
-					<Button type="submit" className="bg-dark text-white">
+					<Button type="submit" className="mt-2 w-max">
 						Submit
 					</Button>
 				</form>

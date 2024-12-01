@@ -35,7 +35,7 @@ function DeleteForm({ type, data }) {
   };
   return (
     <div>
-      <Button onClick={handleButtonClick} className="bg-destructive">
+      <Button onClick={handleButtonClick} className="bg-destructive w-max">
         <p className="text-xs text-white">Delete</p>
       </Button>
     </div>
