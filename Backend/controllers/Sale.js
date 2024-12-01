@@ -85,7 +85,7 @@ const getMySales = async (req, res) => {
     const updatedSales = await Promise.all(
       sales.map(async (sale) => ({
         ...sale.toObject(),
-        revenue: sale.totalPrice,
+        revenue: 0.9 * sale.totalPrice,
         itemName: await getItemName(sale.type, sale.itemId, sale.totalPrice),
       }))
     );
