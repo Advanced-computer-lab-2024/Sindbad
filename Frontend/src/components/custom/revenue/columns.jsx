@@ -45,7 +45,6 @@ export const columns = (currency) => [
     header: "Date",
     cell: ({ getValue }) => new Date(getValue()).toLocaleDateString(),
     filterFn: (row, columnId, filterValue) => {
-      console.log("filterValue", filterValue);
       const date = new Date(row.getValue(columnId));
       const fromDate = filterValue?.from
         ? new Date(filterValue.from).setHours(0, 0, 0, 0)
