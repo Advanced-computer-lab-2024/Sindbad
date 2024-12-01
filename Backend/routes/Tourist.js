@@ -34,10 +34,6 @@ router
   .delete(deleteTourist)
   .post(redeemPoints);
 
-router.route("/:id/upcomingActivities").get(getUpcomingBookedActivities);
-
-router.route("/:id/upcomingItineraries").get(getUpcomingBookedItineraries);
-
 router
   .route("/:id/wishlist")
   .post(addProductToWishlist)

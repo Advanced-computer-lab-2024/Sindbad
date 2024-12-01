@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/navigation-menu";
 
 import LogoSVG from "@/SVGs/Logo";
-import { CircleUserRound, ShoppingCart } from "lucide-react";
+import { CircleUserRound, ShoppingCart, Heart } from "lucide-react";
 
 import { getRolePermissions } from "@/utilities/roleConfig";
 
@@ -82,6 +82,11 @@ function MainPage() {
             </NavigationMenu>
           </div>
           <div className="flex gap-4 items-center">
+            {renderedFields.includes("heart") && (
+              <button onClick={() => navigate(`/app/cart`, { replace: true })}>
+                <Heart size={24} />
+              </button>
+            )}
             {renderedFields.includes("cart") && (
               <button onClick={() => navigate(`/app/cart`, { replace: true })}>
                 <ShoppingCart size={24} />
