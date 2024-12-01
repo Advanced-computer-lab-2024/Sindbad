@@ -119,9 +119,18 @@ export const getAdmin = async (id) => {
 	}
 }
 
-export const updateAdmin = async (id, data) => {
+export const updateAdmin = async (id, formData) => {
 	try {
-		let admin = await axiosInstance.put(`/admin/${id}`, data);
+		let admin = await axiosInstance.put(
+			`/admin/${id}`,
+			formData,
+			{
+				headers: {
+					"Content-Type": "multipart/form-data", // Explicitly set for FormData
+				},
+				resourceName: "Admin",
+			}
+		);
 		return admin.data;
 	} catch (error) {
 		console.error("Error editing admin: ", error);

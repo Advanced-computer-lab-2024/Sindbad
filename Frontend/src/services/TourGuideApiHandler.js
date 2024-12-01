@@ -24,6 +24,7 @@ export const updateTourGuide = async (tourGuideId, formData) => {
 				headers: {
 					"Content-Type": "multipart/form-data", // Explicitly set for FormData
 				},
+				resourceName: "Tour guide",
 			}
 		);
 

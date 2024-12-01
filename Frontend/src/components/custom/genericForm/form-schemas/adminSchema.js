@@ -8,9 +8,13 @@ export const adminSchema = {
 
 	profileImageUri: z
 		.any()
-		.refine((files) => files instanceof FileList && files.length === 1, 'File is required.'),
+		.optional()
+		.refine((files) => files === undefined || files instanceof FileList,
+			{ message: "Invalid file type!" }),
 
 	bannerImageUri: z
 		.any()
-		.refine((files) => files instanceof FileList && files.length === 1, 'File is required.'),
+		.optional()
+		.refine((files) => files === undefined || files instanceof FileList,
+			{ message: "Invalid file type!" }),
 };
