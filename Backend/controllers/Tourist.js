@@ -793,7 +793,7 @@ const sendNotifications = async () => {
 
 
 const viewOrders = async (req, res) => {
-  const { touristID} = req.params;
+  const { id: touristID} = req.params;
   const { isDelivered } = req.body;
 
   if (isDelivered === undefined) {
@@ -801,10 +801,7 @@ const viewOrders = async (req, res) => {
   }
 
   try {
-    const tourist = await Tourist.findById(touristID).populate({
-      path: "orders.cart.productID",
-      model: "Product",
-    });
+    const tourist = await Tourist.findById(touristID);
 
     if (!tourist) {
       return res.status(404).json({ message: "Tourist not found" });
@@ -819,13 +816,10 @@ const viewOrders = async (req, res) => {
 
 
 const viewOrderDetails = async (req, res) => {
-  const { touristID, orderIndex } = req.params;
+  const { id: touristID, orderIndex } = req.params;
 
   try {
-    const tourist = await Tourist.findById(touristID).populate({
-      path: "orders.cart.productID",
-      model: "Product",
-    });
+    const tourist = await Tourist.findById(touristID);
 
     if (!tourist) {
       return res.status(404).json({ message: "Tourist not found" });
