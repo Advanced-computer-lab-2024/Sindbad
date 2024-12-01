@@ -99,42 +99,42 @@ const updateTourist = async (req, res) => {
     }
 
     if (req.files.profileImageUri) {
-		const profileImage = req.files.profileImageUri[0];
-		const parser = new DatauriParser();
-		const extName = path.extname(profileImage.originalname);
-		const file64 = parser.format(extName, profileImage.buffer);
-		const profileUpload = await cloudinary.uploader.upload(
-			file64.content,
-			{
-				folder: "profileImages",
-				resource_type: "image",
-			}
-		);
-		// Update schema
-		tourist.profileImageUri = {
-			public_id: profileUpload.public_id,
-			url: profileUpload.secure_url,
-		};
-	}
+        const profileImage = req.files.profileImageUri[0];
+        const parser = new DatauriParser();
+        const extName = path.extname(profileImage.originalname);
+        const file64 = parser.format(extName, profileImage.buffer);
+        const profileUpload = await cloudinary.uploader.upload(
+            file64.content,
+            {
+                folder: "profileImages",
+                resource_type: "image",
+            }
+        );
+        // Update schema
+        tourist.profileImageUri = {
+            public_id: profileUpload.public_id,
+            url: profileUpload.secure_url,
+        };
+    }
 
     if (req.files.bannerImageUri) {
-		const bannerImage = req.files.bannerImageUri[0];
-		const parser = new DatauriParser();
-		const extName = path.extname(bannerImage.originalname);
-		const file64 = parser.format(extName, bannerImage.buffer);
-		const bannerUpload = await cloudinary.uploader.upload(
-			file64.content,
-			{
-				folder: "bannerImages",
-				resource_type: "image",
-			}
-		);
-		// Update schema
-		tourist.bannerImageUri = {
-			public_id: bannerUpload.public_id,
-			url: bannerUpload.secure_url,
-		};
-	}
+        const bannerImage = req.files.bannerImageUri[0];
+        const parser = new DatauriParser();
+        const extName = path.extname(bannerImage.originalname);
+        const file64 = parser.format(extName, bannerImage.buffer);
+        const bannerUpload = await cloudinary.uploader.upload(
+            file64.content,
+            {
+                folder: "bannerImages",
+                resource_type: "image",
+            }
+        );
+        // Update schema
+        tourist.bannerImageUri = {
+            public_id: bannerUpload.public_id,
+            url: bannerUpload.secure_url,
+        };
+    }
 
     if (req.body.email != null) {
         res.tourist.email = req.body.email;
@@ -834,6 +834,55 @@ const sendNotifications = async () => {
     }
 };
 
+
+const viewOrders = async (req, res) => {
+    const { id: touristID } = req.params;
+    const { isDelivered } = req.body;
+
+    if (isDelivered === undefined) {
+        return res.status(400).json({ message: "isDelivered parameter is required" });
+    }
+
+    try {
+        const tourist = await Tourist.findById(touristID);
+
+        if (!tourist) {
+            return res.status(404).json({ message: "Tourist not found" });
+        }
+
+        const orders = tourist.orders.filter(order => order.isDelivered === (isDelivered === "true"));
+        res.status(200).json(orders);
+    } catch (err) {
+        res.status(500).json({ message: "Error retrieving orders", error: err.message });
+    }
+};
+
+
+const viewOrderDetails = async (req, res) => {
+    const { id: touristID, orderID } = req.params;
+
+    try {
+        // Find the tourist by ID
+        const tourist = await Tourist.findById(touristID);
+
+        if (!tourist) {
+            return res.status(404).json({ message: "Tourist not found" });
+        }
+
+        // Find the specific order by orderID
+        const order = tourist.orders.find(order => order._id.toString() === orderID);
+
+        if (!order) {
+            return res.status(404).json({ message: "Order not found" });
+        }
+
+        res.status(200).json(order);
+    } catch (err) {
+        res.status(500).json({ message: "Error retrieving order details", error: err.message });
+    }
+};
+
+
 // Schedule the notification task to run daily at midnight
 cron.schedule("0 0 * * *", sendNotifications);
 
@@ -856,7 +905,9 @@ module.exports = {
     updateCart,
     removeFromCart,
     addAddress,
-    addToCartFromWishlist
+    addToCartFromWishlist,
+    viewOrderDetails,
+    viewOrders
 };
 
 /*

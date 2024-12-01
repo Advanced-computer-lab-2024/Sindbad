@@ -28,25 +28,25 @@ const TouristSchema = new mongoose.Schema(
             required: true,
         },
         profileImageUri: {
-			public_id: {
-				type: String,
-				required: true,
-			},
-			url: {
-				type: String,
-				required: true,
-			},
-		},
-		bannerImageUri: {
-			public_id: {
-				type: String,
-				required: true,
-			},
-			url: {
-				type: String,
-				required: true,
-			},
-		},
+            public_id: {
+                type: String,
+                required: true,
+            },
+            url: {
+                type: String,
+                required: true,
+            },
+        },
+        bannerImageUri: {
+            public_id: {
+                type: String,
+                required: true,
+            },
+            url: {
+                type: String,
+                required: true,
+            },
+        },
         mobileNumber: {
             type: String,
             required: true,
@@ -221,6 +221,11 @@ const TouristSchema = new mongoose.Schema(
                         },
                     },
                 ],
+                isDelivered: {
+                    type: Boolean,
+                    required: true,
+                    default: false, // Assuming new orders are not delivered by default
+                },
             },
         ]
     },

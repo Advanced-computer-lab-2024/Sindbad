@@ -30,29 +30,21 @@ const AdminSchema = new Schema(
 		profileImageUri: {
 			public_id: {
 				type: String,
-				required: function () {
-					return this.profileImageUri != undefined;
-				},
+				required: true,
 			},
 			url: {
 				type: String,
-				required: function () {
-					return this.profileImageUri != undefined;
-				  },
+				required: true,
 			},
 		},
 		bannerImageUri: {
 			public_id: {
 				type: String,
-				required: function () {
-					return this.bannerImageUri != undefined;
-				},
+				required: true,
 			},
 			url: {
 				type: String,
-				required: function () {
-					return this.bannerImageUri != undefined;
-				},
+				required: true,
 			},
 		},
 		Notifications: {
