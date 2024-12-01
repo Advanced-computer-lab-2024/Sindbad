@@ -5,8 +5,12 @@ export const adminSchema = {
 		.string()
 		.email({ message: "Invalid email address!" })
 		.min(1, { message: "Email is required!" }),
-		
-	profileImageUri: z.string(),
 
-	bannerImageUri: z.string(),
+	profileImageUri: z
+		.any()
+		.refine((files) => files instanceof FileList && files.length === 1, 'File is required.'),
+
+	bannerImageUri: z
+		.any()
+		.refine((files) => files instanceof FileList && files.length === 1, 'File is required.'),
 };

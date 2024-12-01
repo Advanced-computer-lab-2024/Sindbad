@@ -16,6 +16,6 @@ router.get(
 	getAllRequestedAccountDeletionUsers
 );
 
-router.route("/:id").get(getAdminById).put(updateAdmin).delete(deleteAdmin);
+router.route("/:id").get(getAdminById).delete(deleteAdmin);
 
 module.exports = router;

@@ -114,7 +114,7 @@ const TourGuideSchema = new mongoose.Schema(
 			type: [mongoose.Schema.Types.ObjectId],
 			ref: "User",
 			default: [],
-		  },
+		},
 		comments: [
 			{
 				userId: {
@@ -135,21 +135,21 @@ const TourGuideSchema = new mongoose.Schema(
 		portfolioUrl: {
 			type: String,
 		},
-		Notifications:{
-			type:[
-			  {
-				title: {
-				  type: String,
-				},
-				Body:{
-				  type:String,
-				},
-				isSeen:{
-				  Type: Boolean,
-				},
-			  }
+		Notifications: {
+			type: [
+				{
+					title: {
+						type: String,
+					},
+					Body: {
+						type: String,
+					},
+					isSeen: {
+						Type: Boolean,
+					},
+				}
 			],
-			default:[],
+			default: [],
 		},
 	},
 	{ timestamps: true }

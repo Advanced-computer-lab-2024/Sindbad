@@ -67,10 +67,9 @@ const updateTourGuide = async (req, res) => {
 			error: err.message,
 		});
 	}
+
 	if (!tourGuide.isAccepted)
 		return res.status(404).send("TourGuide not accepted yet");
-
-	// console.log(req.files);
 
 	if (tourGuide.profileImageUri && tourGuide.profileImageUri.public_id && req.files.profileImageUri) {
 		await cloudinary.uploader.destroy(tourGuide.profileImageUri.public_id);
@@ -82,7 +81,6 @@ const updateTourGuide = async (req, res) => {
 
 	// Handle profileImage upload
 	if (req.files.profileImageUri) {
-		console.log(req.files.profileImageUri[0])
 		const profileImage = req.files.profileImageUri[0]; // Get the uploaded file
 		const parser = new DatauriParser();
 		const extName = path.extname(profileImage.originalname);
@@ -121,7 +119,8 @@ const updateTourGuide = async (req, res) => {
 		};
 	}
 
-	if (req.body.email != null) tourGuide.email = req.body.email;
+	if (req.body.email != null)
+		tourGuide.email = req.body.email;
 
 	if (req.body.mobileNumber != null)
 		tourGuide.mobileNumber = req.body.mobileNumber;

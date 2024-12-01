@@ -29,7 +29,6 @@ router.route("/user/:username").get(getTouristByUsername);
 router
   .route("/:id")
   .get(getTouristById)
-  .put(updateTourist)
   .delete(deleteTourist)
   .post(redeemPoints);
 

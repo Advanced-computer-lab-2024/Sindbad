@@ -13,9 +13,13 @@ export const sellerSchema = {
 
 	description: z.string().optional(),
 
-	logoImageUri: z.string(),
+	profileImageUri: z
+		.any()
+		.refine((files) => files instanceof FileList && files.length === 1, 'File is required.'),
 
-    bannerImageUri: z.string(),
+	bannerImageUri: z
+		.any()
+		.refine((files) => files instanceof FileList && files.length === 1, 'File is required.'),
 
 	preferredCurrency: z.string(),
 };
