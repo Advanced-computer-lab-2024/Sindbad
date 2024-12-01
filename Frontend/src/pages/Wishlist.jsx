@@ -9,11 +9,14 @@ import {
 } from "@/components/ui/table";
 import { useEffect, useState } from "react";
 import {
+  addItemToCart,
   getWishlistProducts,
   removeFromWishlist,
 } from "@/services/TouristApiHandler";
 import { useUser } from "@/state management/userInfo";
-import { BadgeX } from "lucide-react";
+import { BadgeX, ArrowRight } from "lucide-react";
+import { Cart } from "./Cart";
+import { Button } from "@/components/ui/button";
 
 export const Wishlist = () => {
   const [wishlist, setWishlist] = useState([]);
@@ -41,13 +44,15 @@ export const Wishlist = () => {
             <TableHead className="w-[100px]">Product</TableHead>
             <TableHead>Price</TableHead>
             <TableHead className="text-right">Remove</TableHead>
+            <TableHead className="text-right">Move to Cart</TableHead>
           </TableRow>
         </TableHeader>
 
         <TableBody>
           {wishlist.length === 0 ? (
             <TableRow>
-              <TableCell colSpan="3" className="text-center">
+              <TableCell colSpan="4" className="text-center">
+                {" "}
                 Your wishlist is empty.
               </TableCell>
             </TableRow>
@@ -61,6 +66,24 @@ export const Wishlist = () => {
                     className="ml-auto"
                     onClick={async () => {
                       try {
+                        await removeFromWishlist(id, item._id);
+                        fetchWishlist();
+                      } catch (error) {
+                        console.error(
+                          "Error removing item from wishlist:",
+                          error
+                        );
+                      }
+                    }}
+                  />
+                </TableCell>
+                {/* Move to Cart button */}
+                <TableCell className="text-right pr-5">
+                  <ArrowRight
+                    className="ml-auto"
+                    onClick={async () => {
+                      try {
+                        await addItemToCart(id, item._id, 1);
                         await removeFromWishlist(id, item._id);
                         fetchWishlist();
                       } catch (error) {
