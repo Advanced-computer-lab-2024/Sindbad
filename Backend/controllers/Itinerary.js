@@ -562,6 +562,7 @@ const bookItinerary = async (req, res) => {
     await Sale.create({
       type: "Itinerary",
       itemId: itineraryId,
+      quantity: adultTicketCount + childTicketCount,
       buyerId: userId,
       totalPrice: priceCharged,
     });
