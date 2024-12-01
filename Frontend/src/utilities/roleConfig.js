@@ -19,6 +19,7 @@ const rolePermissions = {
     "booking",
     "trips",
     "cart",
+    "heart",
   ],
   tourGuide: ["profile"],
   tourismGovernor: ["profile"],

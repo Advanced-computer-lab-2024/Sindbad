@@ -18,8 +18,6 @@ const {
   addToCart,
   updateCart,
   removeFromCart,
-  getUpcomingBookedActivities,
-  getUpcomingBookedItineraries,
 } = require("../controllers/Tourist");
 
 router.route("/").get(getAllTourists);
@@ -32,10 +30,6 @@ router
   .put(updateTourist)
   .delete(deleteTourist)
   .post(redeemPoints);
-
-router.route("/:id/upcomingActivities").get(getUpcomingBookedActivities);
-
-router.route("/:id/upcomingItineraries").get(getUpcomingBookedItineraries);
 
 router
   .route("/:id/wishlist")

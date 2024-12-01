@@ -574,96 +574,6 @@ const removeFromCart = async (req, res) => {
   }
 };
 
-const getUpcomingBookedActivities = async (req, res) => {
-  try {
-    const touristId = req.params.id; // Getting touristId from request params
-
-    // Fetch the tourist from the database by their ID and populate related activities
-    const tourist = await Tourist.findById(touristId).populate(
-      "bookedEvents.activities.activityId"
-    );
-
-    if (!tourist) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Tourist not found" });
-    }
-
-    // Get today's date for comparison
-    const today = new Date();
-
-    // Filter upcoming activities by comparing their date with today's date
-    const upcomingActivities = tourist.bookedEvents.activities.filter(
-      (activity) => {
-        const activityDate = activity.activityId.dateTime;
-        return new Date(activityDate) > today;
-      }
-    );
-
-    if (upcomingActivities.length === 0) {
-      return res
-        .status(200)
-        .json({ success: true, message: "No upcoming activities found." });
-    }
-
-    // Return the upcoming activities
-    return res.status(200).json(upcomingActivities);
-  } catch (error) {
-    console.error("Error fetching upcoming activities:", error);
-    return res.status(500).json({
-      success: false,
-      message: "An error occurred while fetching activities.",
-    });
-  }
-};
-
-const getUpcomingBookedItineraries = async (req, res) => {
-  try {
-    const touristId = req.params.id; // Get the touristId from the route parameter
-    console.log("Tourist ID:", touristId);
-
-    // Fetch the tourist from the database by their ID
-    const tourist = await Tourist.findById(touristId).populate(
-      "bookedEvents.itineraries.itineraryId"
-    );
-
-    if (!tourist) {
-      console.log("Tourist not found in the database.");
-      return res
-        .status(404)
-        .json({ success: false, message: "Tourist not found" });
-    }
-
-    console.log("Fetched Tourist:", tourist);
-
-    // Get today's date for comparison
-    const today = new Date();
-
-    // Filter the booked itineraries by comparing their booked date with today's date
-    const upcomingItineraries = tourist.bookedEvents.itineraries.filter(
-      (itinerary) => {
-        const itineraryDate = itinerary.dateBooked; // Assuming each itinerary has a `dateBooked` field
-        return new Date(itineraryDate) > today; // Only keep itineraries that are in the future
-      }
-    );
-
-    if (upcomingItineraries.length === 0) {
-      return res
-        .status(200)
-        .json({ success: true, message: "No upcoming itineraries found." });
-    }
-
-    // Return the upcoming itineraries
-    return res.status(200).json(upcomingItineraries);
-  } catch (error) {
-    console.error("Error fetching upcoming itineraries:", error);
-    return res.status(500).json({
-      success: false,
-      message: "An error occurred while fetching itineraries.",
-    });
-  }
-};
-
 module.exports = {
   getAllTourists,
   getTouristById,
@@ -682,8 +592,6 @@ module.exports = {
   addToCart,
   updateCart,
   removeFromCart,
-  getUpcomingBookedActivities,
-  getUpcomingBookedItineraries,
 };
 
 /*
