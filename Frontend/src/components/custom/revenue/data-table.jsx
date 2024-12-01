@@ -26,10 +26,12 @@ export function DataTable({ columns, data, search, dateRange }) {
     getFilteredRowModel: getFilteredRowModel(),
   });
 
+  console.log("Data: ", data);
 
  useEffect(() => {
    table.getColumn("createdAt").setFilterValue(dateRange);
- }, [dateRange, table]);
+   table.getColumn("itemName").setFilterValue(search);
+ }, [dateRange, table, search]);
 
   return (
     <div className="rounded-md border">
