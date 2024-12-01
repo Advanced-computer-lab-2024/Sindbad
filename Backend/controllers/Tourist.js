@@ -791,6 +791,58 @@ const sendNotifications = async () => {
   }
 };
 
+
+const viewOrders = async (req, res) => {
+  const { touristID} = req.params;
+  const { isDelivered } = req.body;
+
+  if (isDelivered === undefined) {
+    return res.status(400).json({ message: "isDelivered parameter is required" });
+  }
+
+  try {
+    const tourist = await Tourist.findById(touristID).populate({
+      path: "orders.cart.productID",
+      model: "Product",
+    });
+
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found" });
+    }
+
+    const orders = tourist.orders.filter(order => order.isDelivered === (isDelivered === "true"));
+    res.status(200).json(orders);
+  } catch (err) {
+    res.status(500).json({ message: "Error retrieving orders", error: err.message });
+  }
+};
+
+
+const viewOrderDetails = async (req, res) => {
+  const { touristID, orderIndex } = req.params;
+
+  try {
+    const tourist = await Tourist.findById(touristID).populate({
+      path: "orders.cart.productID",
+      model: "Product",
+    });
+
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found" });
+    }
+
+    if (!tourist.orders[orderIndex]) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    const order = tourist.orders[orderIndex];
+    res.status(200).json(order);
+  } catch (err) {
+    res.status(500).json({ message: "Error retrieving order details", error: err.message });
+  }
+};
+
+
 // Schedule the notification task to run daily at midnight
 cron.schedule("0 0 * * *", sendNotifications);
 
@@ -813,7 +865,9 @@ module.exports = {
   updateCart,
   removeFromCart,
   addAddress,
-  addToCartFromWishlist
+  addToCartFromWishlist,
+  viewOrderDetails,
+  viewOrders
 };
 
 /*
