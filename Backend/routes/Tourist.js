@@ -53,7 +53,7 @@ router
   .put(updateCart)
 router.route("/:id/cart/:productID").delete(removeFromCart);
 
-router.route("/:id/orders/:orderIndex").get(viewOrderDetails);
+router.route("/:id/orders/:orderID").get(viewOrderDetails);
 
 router.route("/:id/orders").get(viewOrders);
 

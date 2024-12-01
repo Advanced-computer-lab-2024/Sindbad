@@ -816,20 +816,23 @@ const viewOrders = async (req, res) => {
 
 
 const viewOrderDetails = async (req, res) => {
-  const { id: touristID, orderIndex } = req.params;
+  const { id: touristID, orderID } = req.params;
 
   try {
+    // Find the tourist by ID
     const tourist = await Tourist.findById(touristID);
 
     if (!tourist) {
       return res.status(404).json({ message: "Tourist not found" });
     }
 
-    if (!tourist.orders[orderIndex]) {
+    // Find the specific order by orderID
+    const order = tourist.orders.find(order => order._id.toString() === orderID);
+
+    if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    const order = tourist.orders[orderIndex];
     res.status(200).json(order);
   } catch (err) {
     res.status(500).json({ message: "Error retrieving order details", error: err.message });
