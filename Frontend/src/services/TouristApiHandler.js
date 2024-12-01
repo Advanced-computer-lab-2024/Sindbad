@@ -113,9 +113,34 @@ export const getWishlistProducts = async (touristId) => {
     const response = await axiosInstance.get(
       `/tourist/${touristId}/wishlist/products`
     );
-    return response.data || []; // Ensure it always returns an array
+    return response.data || [];
   } catch (error) {
-    console.error("Failed to fetch wishlist:", error.message);
-    return []; // Return empty array on failure
+    return error;
+  }
+};
+
+export const removeFromWishlist = async (touristId, productID) => {
+  try {
+    const response = await axiosInstance.delete(
+      `/tourist/${touristId}/wishlist`,
+      {
+        data: { productID },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const addProductToWishlist = async (touristId, productID) => {
+  try {
+    const response = await axiosInstance.post(
+      `/tourist/${touristId}/wishlist`,
+      { productID } // Send productID directly in the body
+    );
+    return response.data || [];
+  } catch (error) {
+    return error;
   }
 };

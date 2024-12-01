@@ -241,11 +241,6 @@ const getWishlistProducts = async (req, res) => {
     // Fetch product details from the database
     const products = await Product.find({ _id: { $in: wishlistProductIds } });
 
-    // Check if there are any products found
-    if (products.length === 0) {
-      return res.status(404).json({ message: "No products found in wishlist" });
-    }
-
     // Return the list of product models
     res.status(200).json(products);
   } catch (error) {
