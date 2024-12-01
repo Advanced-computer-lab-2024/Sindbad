@@ -34,7 +34,7 @@ export const DatePicker = ({ startDate, endDate, setDate }) => {
           <Button
             id="date"
             variant="outline"
-            className={`w-full justify-start text-left font-normal h-8 pl-2 shadow-none
+            className={`w-full justify-start text-left text-xs font-normal h-8 pl-2 py-1.5 shadow-none
 								${!selected?.from && !selected?.to && "text-neutral-400"}
 								${isPopoverOpen && "ring-1 ring-secondary"}`}
           >
@@ -49,7 +49,7 @@ export const DatePicker = ({ startDate, endDate, setDate }) => {
                 format(selected.from, "LLL dd, y")
               )
             ) : (
-              <span>Pick a date</span>
+              <span>Pick a date...</span>
             )}
           </Button>
         </PopoverTrigger>

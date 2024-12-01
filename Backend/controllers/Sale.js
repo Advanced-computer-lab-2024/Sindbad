@@ -63,6 +63,7 @@ const getMySales = async (req, res) => {
       product: Product,
       itinerary: Itinerary,
       activity: Activity,
+      trip: Trip,
     };
     const Model = modelMap[type];
 

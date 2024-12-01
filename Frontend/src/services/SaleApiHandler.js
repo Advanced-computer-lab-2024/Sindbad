@@ -13,9 +13,12 @@ export const getAllSales = async () => {
 
 export const getMySales = async (type, creatorId) => {
   try {
-    const response = await axiosInstance.get(`/sale/my-sales/${type}/${creatorId}`, {
-      resourceName: "Sale",
-    });
+    const response = await axiosInstance.get(
+      `/sale/my-sales/${type}/${creatorId}`,
+      {
+        resourceName: "Sale",
+      }
+    );
     return response.data;
   } catch (error) {
     return error;
@@ -69,17 +72,27 @@ export const calculateRevenueTrend = (data) => {
   return trend;
 };
 
-export const filterAndGroupSalesByItem = (salesData, limit, from = null, to = null) => {
-  console.log("salesData", salesData);
-  console.log("limit", limit);
-  console.log("from", from);
-  console.log("to", to);
-  // Filter sales data based on the date range
+export const filterAndGroupSalesByItem = (
+  salesData,
+  limit,
+  from = null,
+  to = null
+) => {
+  // Filter sales data based on the date range or exact date
   const filteredSalesData = salesData.filter((sale) => {
-    const saleDate = new Date(sale.createdAt);
+    const saleDate = new Date(sale.createdAt).setHours(0, 0, 0, 0); // Normalize sale date for comparison
+    const fromDate = from ? new Date(from).setHours(0, 0, 0, 0) : null;
+    const toDate = to ? new Date(to).setHours(23, 59, 59, 999) : null;
+
+    // Case 1: No filters (both from and to are null)
+    if (!fromDate && !toDate) return true;
+
+    // Case 2: Only fromDate is set (exact match for fromDate)
+    if (fromDate && !toDate) return saleDate === fromDate;
+
+    // Case 3: Both fromDate and toDate are set (date range filtering)
     return (
-      (!from || saleDate >= new Date(from)) &&
-      (!to || saleDate <= new Date(to))
+      (!fromDate || saleDate >= fromDate) && (!toDate || saleDate <= toDate)
     );
   });
 
@@ -88,7 +101,7 @@ export const filterAndGroupSalesByItem = (salesData, limit, from = null, to = nu
     const existingItem = acc.find((item) => item.itemId === sale.itemId);
     if (existingItem) {
       existingItem.revenue += sale.revenue;
-      existingItem.count += 1;
+      existingItem.count += existingItem.quantity || 1;
     } else {
       acc.push({ itemId: sale.itemId, revenue: sale.revenue, count: 1 });
     }
@@ -96,8 +109,5 @@ export const filterAndGroupSalesByItem = (salesData, limit, from = null, to = nu
   }, []);
 
   // Sort and limit the results
-  return groupedData
-    .sort((a, b) => b.count - a.count)
-    .slice(0, limit);
+  return groupedData.sort((a, b) => b.count - a.count).slice(0, limit);
 };
-

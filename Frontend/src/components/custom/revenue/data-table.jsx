@@ -17,7 +17,7 @@ import {
 } from "@tanstack/react-table";
 import { ArrowRight, ArrowLeft } from "lucide-react";
 
-export function DataTable({ columns, data, search}) {
+export function DataTable({ columns, data, search, dateRange }) {
   const table = useReactTable({
     data,
     columns,
@@ -26,11 +26,10 @@ export function DataTable({ columns, data, search}) {
     getFilteredRowModel: getFilteredRowModel(),
   });
 
-  useEffect(() => {
-    table.getColumn("itemName").setFilterValue(search);
-  }, [search, table]);
 
-  console.log(data)
+ useEffect(() => {
+   table.getColumn("createdAt").setFilterValue(dateRange);
+ }, [dateRange, table]);
 
   return (
     <div className="rounded-md border">

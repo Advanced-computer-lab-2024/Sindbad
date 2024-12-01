@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import { useCurrency } from "@/state management/userInfo";
+import { useCurrency, useUser } from "@/state management/userInfo";
 
 import {
   ChartContainer,
@@ -17,7 +17,7 @@ import {
   ChartLegendContent,
 } from "@/components/ui/chart";
 
-import { Bar, BarChart, Area, AreaChart, CartesianGrid, XAxis } from "recharts";
+import { Bar, BarChart, Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 import { TrendingUp, TrendingDown } from "lucide-react";
 

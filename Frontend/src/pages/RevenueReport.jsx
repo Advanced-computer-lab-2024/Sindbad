@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useCurrency } from "@/state management/userInfo";
+import { useCurrency, useUser } from "@/state management/userInfo";
 import { Convert } from "easy-currencies";
 import TotalRevenue from "@/components/custom/revenue/TotalRevenue";
 import UsersPerItem from "@/components/custom/revenue/UsersPerItem";
@@ -9,11 +9,8 @@ import RevenueLedger from "@/components/custom/revenue/RevenueLedger";
 
 async function convertToCurrency(data, currency) {
   try {
-    // Fetch conversion rates with USD as the base currency
     const convert = await Convert().from("USD").fetch();
-
-    // Convert the price to the user's preferred currency
-    const convertedData = await Promise.all(
+    return await Promise.all(
       data.map(async (item) => {
         const rate = await convert.amount(item.revenue).to(currency);
         return { ...item, revenue: rate };
@@ -21,35 +18,59 @@ async function convertToCurrency(data, currency) {
     );
   } catch (error) {
     console.error("Error fetching conversion rate:", error);
+    return data; // Fallback to original data if conversion fails
   }
 }
+
 
 function RevenueReport() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const currency = useCurrency();
+  const { role, id } = useUser();
 
   useEffect(() => {
-    fetchData();
-    convertToCurrency(data, currency);
-  }, []);
+    const fetchAndConvertData = async () => {
+      setLoading(true);
+      try {
+        let result = [];
+        switch (role) {
+          case "admin":
+            result = await getAllSales();
+            break;
+          case "tourGuide":
+            result = await getMySales("itinerary", id);
+            break;
+          case "seller":
+            result = await getMySales("product", id);
+            break;
+          case "advertiser": {
+            let activities = await getMySales("activity", id);
+            console.log("activities", activities);
+            let trips = await getMySales("trip", id);
+            console.log("trips", trips);
+            result = activities.concat(trips);
+            break;
+          }
+          default:
+            result = [];
+        }
 
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      const result = await getAllSales();
-      if (result) {
-        setData(result);
-      } else {
-        //setMessage({ type: "error", text: "No tags available." });
+        if (result && result.length > 0) {
+          const convertedData = await convertToCurrency(result, currency);
+          setData(convertedData); // Update state with converted data
+        } else {
+          setData([]);
+        }
+      } catch (error) {
+        console.error("Failed to load data:", error);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("Failed to load data:", error);
-      //setMessage({ type: "error", text: "Failed to load tag data." });
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+
+    fetchAndConvertData();
+  }, [role, id, currency]);
 
   return (
     <div className="py-8 px-24 max-w-[1200px] mx-auto flex flex-col gap-4">

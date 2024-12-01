@@ -19,6 +19,7 @@ import {
   getAllSales,
 } from "@/services/SaleApiHandler";
 import { DatePicker } from "../DatePicker";
+import { useUser } from "@/state management/userInfo";
 
 
 
@@ -43,14 +44,18 @@ const chartConfig = {
   },
 };
 
-function UsersPerItem() {
+function UsersPerItem({data}) {
   const [chartData, setChartData] = useState([]);
   const [dateRange, setDateRange] = useState({ from: null, to: null });
+    const { role } = useUser();
+    let slice = role === "admin" ? 5 : 9999;
 
   useEffect(() => {
-    const fetchData = async () => {
-      const salesData = await getAllSales();
-      const groupedData = filterAndGroupSalesByItem(salesData, 5, dateRange.from, dateRange.to);
+    const formatData = async () => {
+      const salesData = data;
+      console.log("salesData", salesData);
+      const groupedData = filterAndGroupSalesByItem(salesData, slice, dateRange.from, dateRange.to);
+      console.log("groupedData", groupedData);
       const dataWithNames = groupedData.map((item) => {
         const matchingSale = salesData.find(
           (sale) => sale.itemId === item.itemId
@@ -63,10 +68,9 @@ function UsersPerItem() {
       });
       setChartData(dataWithNames);
     };
-    fetchData();
-  }, [dateRange]);
+    formatData();
+  }, [dateRange, data, slice]);
 
-  console.log("dateRange", dateRange);
 
   return (
     <Card className="w-full">
@@ -92,7 +96,7 @@ function UsersPerItem() {
               axisLine={false}
               tickFormatter={(value) => value.slice(0, 12)}
             />
-            <XAxis dataKey="count" type="number" hide />
+            <XAxis dataKey="count" type="number" />
             <ChartTooltip
               cursor={false}
               content={<ChartTooltipContent indicator="line" />}
