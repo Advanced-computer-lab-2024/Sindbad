@@ -9,7 +9,7 @@ const {
   deleteTourist,
   redeemPoints,
   addProductToWishlist,
-  getWishlistProducts, 
+  getWishlistProducts,
   removeFromWishlist,
   addActivityToBookmarks,
   removeFromBookmarks,
@@ -21,7 +21,7 @@ const {
   removeFromCart,
   addAddress,
   viewOrderDetails,
-  viewOrders
+  viewOrders,
 } = require("../controllers/Tourist");
 
 router.route("/").get(getAllTourists);
@@ -34,6 +34,10 @@ router
   .delete(deleteTourist)
   .post(redeemPoints);
 
+router.route("/:id/upcomingActivities").get(getUpcomingBookedActivities);
+
+router.route("/:id/upcomingItineraries").get(getUpcomingBookedItineraries);
+
 router
   .route("/:id/wishlist")
   .post(addProductToWishlist)
@@ -45,11 +49,7 @@ router
   .get(getBookmarkedActivities)
   .delete(removeFromBookmarks);
 
-router
-  .route("/:id/cart")
-  .get(getCart)
-  .post(addToCart)
-  .put(updateCart)
+router.route("/:id/cart").get(getCart).post(addToCart).put(updateCart);
 router.route("/:id/cart/:productID").delete(removeFromCart);
 
 router.route("/:id/orders/:orderID").get(viewOrderDetails);
@@ -57,7 +57,6 @@ router.route("/:id/orders/:orderID").get(viewOrderDetails);
 router.route("/:id/orders").get(viewOrders);
 
 router.route("/:id/address").post(addAddress);
-
 
 router.route("/:id/cart/wishlist").post(addToCartFromWishlist);
 router.route("/:id/wishlist/products").get(getWishlistProducts);
