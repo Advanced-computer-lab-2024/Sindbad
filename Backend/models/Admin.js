@@ -33,6 +33,23 @@ const AdminSchema = new Schema(
 		bannerImageUri: {
 			type: String,
 		},
+		Notifications:{
+			type:[
+			  {
+				title: {
+				  type: String,
+				},
+				Body:{
+				  type:String,
+				},
+				isSeen:{
+				  Type: Boolean,
+				},
+			  }
+			],
+			default:[],
+		},
+	  
 	},
 	{ timestamps: true }
 );

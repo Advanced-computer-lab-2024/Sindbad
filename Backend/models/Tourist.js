@@ -84,9 +84,21 @@ const TouristSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    isReceiveNotifications: {
-      type: Boolean,
-      default: false,
+    Notifications:{
+      type:[
+        {
+          title: {
+            type: String,
+          },
+          Body:{
+            type:String,
+          },
+          isSeen:{
+            Type: Boolean,
+          },
+        }
+      ],
+      default:[],
     },
     wishlist: {
       type: [
@@ -175,6 +187,28 @@ const TouristSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    orders: [
+      {
+        sales: [
+          {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Sale",
+          },
+        ],
+        cart: [
+          {
+            productID: {
+              type: mongoose.Schema.Types.ObjectId,
+              ref: "Product",
+            },
+            quantity: {
+              type: Number,
+              required: true,
+            },
+          },
+        ],
+      },
+    ]
   },
   { timestamps: true }
 );

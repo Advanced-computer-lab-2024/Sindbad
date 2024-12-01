@@ -31,7 +31,7 @@ const defaultFields = {
 		loyaltyPoints: 0,
 		level: 1,
 		xpPoints: 0,
-		isReceiveNotifications: false,
+		Notifications: [],
 		wishlist: [],
 		cart: [],
 		addresses: [],

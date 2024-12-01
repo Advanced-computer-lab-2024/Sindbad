@@ -80,10 +80,15 @@ const productSchema = mongoose.Schema(
 			type: Number,
 			default: 0,
 		},
+		priceId: {
+			type: String,
+			required: [true, "Please add the Stripe price ID"],
+		},
 		isArchived: {
 			type: Boolean,
 			default: false,
 		},
+
 	},
 	{ timestamps: true }
 );

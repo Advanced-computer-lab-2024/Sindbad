@@ -2,6 +2,12 @@ const Tourist = require("../models/Tourist");
 const Product = require("../models/Product");
 const Activity = require("../models/Activity");
 const mongoose = require("mongoose");
+const nodemailer = require("nodemailer");
+const moment = require("moment");
+const cron = require('node-cron');
+require("dotenv").config();
+
+
 
 /**
  * Retrieves a tourist by its ID
@@ -111,6 +117,22 @@ const updateTourist = async (req, res) => {
   if (req.body.preferredCurrency != undefined) {
     res.tourist.preferredCurrency = req.body.preferredCurrency;
   }
+    /*res.tourist.bookedEvents = {
+      activities: [
+        {
+          activityId: "67251731d5a2d7588e2ce62d", // Activity ID
+          priceCharged: 30, // Activity Price
+        },
+      ],
+      itineraries: [
+        {
+          itineraryId: "67251ee8d5a2d7588e2ce707", // Itinerary ID
+          ticketsBooked: 1, // Number of tickets booked
+          dateBooked: new Date("2024-11-30T00:00:00.000+00:00"), // Booking Date
+        },
+      ],
+    };*/
+  
 
   try {
     const updatedTourist = await res.tourist.save();
@@ -485,6 +507,73 @@ const addToCart = async (req, res) => {
     });
   }
 }
+
+
+const addToCartFromWishlist = async (req, res) => {
+  const { id: touristId } = req.params; // Tourist ID from URL params
+  const { productID, quantity } = req.body; // Product ID and quantity from request body
+
+  if (!productID || !quantity) {
+    return res.status(400).json({ message: "Product ID and quantity are required" });
+  }
+
+  try {
+    // Find the tourist by ID
+    const tourist = await Tourist.findById(touristId);
+
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found" });
+    }
+
+    // Check if the product exists in the wishlist
+    const wishlistIndex = tourist.wishlist.findIndex(
+      (item) => item.productID.toString() === productID
+    );
+
+    if (wishlistIndex === -1) {
+      return res.status(404).json({ message: "Product not found in wishlist" });
+    }
+
+    const product = await Product.findById(productID);
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    // Add to cart
+    const cartItem = tourist.cart.find(
+      (item) => item.productID.toString() === productID
+    );
+
+    if (cartItem) {
+      cartItem.quantity += quantity;
+    } else {
+      tourist.cart.push({ productID, quantity });
+    }
+
+    // Remove from wishlist
+    tourist.wishlist.splice(wishlistIndex, 1);
+
+    // Save updates
+    await tourist.save();
+    
+    res.status(200).json({
+      message: "Product moved from wishlist to cart",
+      cart: tourist.cart,
+      wishlist: tourist.wishlist,
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: "Error moving product to cart",
+      error: err.message,
+    });
+  }
+};
+
+module.exports = { addToCartFromWishlist };
+
+
+
 const updateCart = async (req, res) => {
   try {
     const { id } = req.params; // Tourist ID
@@ -569,6 +658,141 @@ const removeFromCart = async (req, res) => {
   }
 }
 
+const addAddress = async (req, res) => {
+  try {
+    const { id } = req.params; // Tourist ID
+    const { label, street, city, state, zip, country } = req.body; // Address details
+
+    console.log(req.body);
+    console.log(req.params);
+    if (!label || !street || !city || !state || !zip || !country) {
+      return res.status(400).json({ message: "Label and address are required" });
+    }
+
+    // Find the tourist by ID
+    const tourist = await Tourist.findById(id);
+
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found" });
+    }
+
+    // Add the address to the list
+    tourist.addresses.push({ label, street, city, state, zip, country });
+
+    // Save the updated tourist
+    await tourist.save();
+
+    res.status(200).json({
+      message: "Address added successfully",
+      addresses: tourist.addresses,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error adding address",
+      error: error.message,
+    });
+  }
+}
+
+
+//Sending an email
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+      user: process.env.GMAIL, // Your Gmail address
+      pass: process.env.GMAILPASSWORD    // Your Gmail App Password
+  }
+});
+
+
+const sendEmail = async (email, subject, body) => {
+  const mailOptions = {
+    from: process.env.GMAIL,
+    to: email,
+    subject,
+    text: body,
+  };
+  await transporter.sendMail(mailOptions);
+};
+
+
+const sendNotifications = async () => {
+  try {
+    // Fetch all tourists and populate necessary fields
+    const tourists = await Tourist.find().populate([
+      {
+        path: "bookedEvents.activities.activityId",
+        model: "Activity",
+      },
+      {
+        path: "bookedEvents.itineraries.itineraryId",
+        model: "Itinerary",
+      },
+    ]);
+
+    const now = moment();
+    const oneDayLater = now.clone().add(1, "days");
+
+    for (const tourist of tourists) {
+      const notifications = [];
+
+      // Check booked activities
+      for (const activity of tourist.bookedEvents.activities) {
+        const activityDate = moment(activity.activityId.dateTime);
+        if (activityDate.isBetween(now, oneDayLater)) {
+          notifications.push({
+            title: `Upcoming Activity: ${activity.activityId.name}`,
+            body: `Reminder: Your activity "${activity.activityId.name}" is scheduled for ${activityDate.format(
+              "MMMM Do YYYY, h:mm a"
+            )}.`,
+            isSeen: false,
+          });
+
+          // Send email notification for the activity
+          await sendEmail(
+            tourist.email,
+            "Activity Reminder",
+            `Your activity "${activity.activityId.name}" is scheduled for ${activityDate.format(
+              "MMMM Do YYYY, h:mm a"
+            )}.`
+          );
+        }
+      }
+
+      // Check booked itineraries
+      for (const itinerary of tourist.bookedEvents.itineraries) {
+        const itineraryDate = moment(itinerary.dateBooked); // Use `dateBooked` for the itinerary
+        if (itineraryDate.isBetween(now, oneDayLater)) {
+          notifications.push({
+            title: `Upcoming Itinerary: ${itinerary.itineraryId.name}`,
+            body: `Reminder: Your itinerary "${itinerary.itineraryId.name}" is scheduled for ${itineraryDate.format(
+              "MMMM Do YYYY, h:mm a"
+            )}.`,
+            isSeen: false,
+          });
+
+          // Send email notification for the itinerary
+          await sendEmail(
+            tourist.email,
+            "Itinerary Reminder",
+            `Your itinerary "${itinerary.itineraryId.name}" is scheduled for ${itineraryDate.format(
+              "MMMM Do YYYY, h:mm a"
+            )}.`
+          );
+        }
+      }
+
+      // Add notifications to the tourist's record
+      tourist.Notifications.push(...notifications);
+      await tourist.save();
+    }
+  } catch (error) {
+    console.error("Error sending notifications:", error);
+  }
+};
+
+// Schedule the notification task to run daily at midnight
+cron.schedule("0 0 * * *", sendNotifications);
 
 module.exports = {
   getAllTourists,
@@ -587,7 +811,9 @@ module.exports = {
   getCart,
   addToCart,
   updateCart,
-  removeFromCart
+  removeFromCart,
+  addAddress,
+  addToCartFromWishlist
 };
 
 /*
