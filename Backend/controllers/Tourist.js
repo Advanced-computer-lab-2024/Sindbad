@@ -507,6 +507,73 @@ const addToCart = async (req, res) => {
     });
   }
 }
+
+
+const addToCartFromWishlist = async (req, res) => {
+  const { id: touristId } = req.params; // Tourist ID from URL params
+  const { productID, quantity } = req.body; // Product ID and quantity from request body
+
+  if (!productID || !quantity) {
+    return res.status(400).json({ message: "Product ID and quantity are required" });
+  }
+
+  try {
+    // Find the tourist by ID
+    const tourist = await Tourist.findById(touristId);
+
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found" });
+    }
+
+    // Check if the product exists in the wishlist
+    const wishlistIndex = tourist.wishlist.findIndex(
+      (item) => item.productID.toString() === productID
+    );
+
+    if (wishlistIndex === -1) {
+      return res.status(404).json({ message: "Product not found in wishlist" });
+    }
+
+    const product = await Product.findById(productID);
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    // Add to cart
+    const cartItem = tourist.cart.find(
+      (item) => item.productID.toString() === productID
+    );
+
+    if (cartItem) {
+      cartItem.quantity += quantity;
+    } else {
+      tourist.cart.push({ productID, quantity });
+    }
+
+    // Remove from wishlist
+    tourist.wishlist.splice(wishlistIndex, 1);
+
+    // Save updates
+    await tourist.save();
+    
+    res.status(200).json({
+      message: "Product moved from wishlist to cart",
+      cart: tourist.cart,
+      wishlist: tourist.wishlist,
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: "Error moving product to cart",
+      error: err.message,
+    });
+  }
+};
+
+module.exports = { addToCartFromWishlist };
+
+
+
 const updateCart = async (req, res) => {
   try {
     const { id } = req.params; // Tourist ID
@@ -586,6 +653,42 @@ const removeFromCart = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       message: "Error removing product from cart",
+      error: error.message,
+    });
+  }
+}
+
+const addAddress = async (req, res) => {
+  try {
+    const { id } = req.params; // Tourist ID
+    const { label, street, city, state, zip, country } = req.body; // Address details
+
+    console.log(req.body);
+    console.log(req.params);
+    if (!label || !street || !city || !state || !zip || !country) {
+      return res.status(400).json({ message: "Label and address are required" });
+    }
+
+    // Find the tourist by ID
+    const tourist = await Tourist.findById(id);
+
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found" });
+    }
+
+    // Add the address to the list
+    tourist.addresses.push({ label, street, city, state, zip, country });
+
+    // Save the updated tourist
+    await tourist.save();
+
+    res.status(200).json({
+      message: "Address added successfully",
+      addresses: tourist.addresses,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error adding address",
       error: error.message,
     });
   }
@@ -708,7 +811,9 @@ module.exports = {
   getCart,
   addToCart,
   updateCart,
-  removeFromCart
+  removeFromCart,
+  addAddress,
+  addToCartFromWishlist
 };
 
 /*

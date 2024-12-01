@@ -82,3 +82,61 @@ export const updateCart = async (touristId, itemId, amount) => {
     return error;
   }
 }
+
+export const addAddress = async (touristId, address) => {
+  try {
+    const response = await axiosInstance.post(`/tourist/${touristId}/address`, address);
+    return response.data;
+  } catch (error) {
+    return error;
+  }
+}
+
+export const checkoutWithStripe = async (id, cart) => {
+  try {
+    const response = await fetch('http://localhost:3000/checkout/stripe', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userId: id,
+        cart: cart
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to create Stripe session.');
+    }
+
+    const { url } = await response.json();
+    window.location.href = url; // Redirect to Stripe Checkout
+  } catch (error) {
+    console.error('Error:', error.message);
+    alert('Something went wrong. Please try again later.');
+  }
+}
+
+export const checkoutWithWallet = async (touristId, cart) => {
+  try {
+    const response = await axiosInstance.post(`/checkout/wallet`, {
+      userId: touristId,
+      cart: cart
+    });
+    return response.data;
+  } catch (error) {
+    return error;
+  }
+}
+
+export const checkoutWithCod = async (touristId, cart) => {
+  try {
+    const response = await axiosInstance.post(`/checkout/cod`, {
+      userId: touristId,
+      cart: cart
+    });
+    return response.data;
+  } catch (error) {
+    return error;
+  }
+}

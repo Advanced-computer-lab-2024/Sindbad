@@ -16,8 +16,7 @@ import { useDispatch } from "react-redux";
 import { useToast } from "@/hooks/use-toast";
 import { Star } from "lucide-react";
 
-export function GenericForm({ type, data, id }) {
-	console.log(data);
+export function GenericForm({ type, data, id, fetcher }) {
 	// If you need more information about how this component works, check out forms.js in the same folder.
 	const formObject = forms[type];
 	const onSubmit = formObject.onSubmit;
@@ -75,7 +74,9 @@ export function GenericForm({ type, data, id }) {
 				} else {
 					onSubmit(values, id, data, navigate, dispatch);
 				}
-				
+				if (typeof fetcher === "function"){
+					fetcher();
+				}
 				//toast({ description: "Submitted" });
 			}
 		}catch(e){

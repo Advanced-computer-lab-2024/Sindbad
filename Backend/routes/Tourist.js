@@ -16,9 +16,10 @@ const {
   getBookmarkedActivities,
   getCart,
   addToCart,
+  addToCartFromWishlist,
   updateCart,
-  removeFromCart
-
+  removeFromCart,
+  addAddress
 } = require("../controllers/Tourist");
 
 router.route("/").get(getAllTourists);
@@ -48,8 +49,12 @@ router
   .get(getCart)
   .post(addToCart)
   .put(updateCart)
-router.route("/:id/cart/:productID").delete(removeFromCart); 
+router.route("/:id/cart/:productID").delete(removeFromCart);
 
+router.route("/:id/address").post(addAddress)
+
+
+router.route("/:id/cart/wishlist").post(addToCartFromWishlist);
 router.route("/:id/wishlist/products").get(getWishlistProducts);
 
 module.exports = router;
