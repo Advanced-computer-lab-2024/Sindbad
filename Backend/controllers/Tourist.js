@@ -176,7 +176,6 @@ const redeemPoints = async (req, res) => {
   }
 };
 
-
 const addProductToWishlist = async (req, res) => {
   const { id: touristId } = req.params; // Tourist ID from URL params
   const { productID } = req.body; // Product ID from request body
@@ -225,7 +224,6 @@ const addProductToWishlist = async (req, res) => {
   }
 };
 
-
 const getWishlistProducts = async (req, res) => {
   try {
     // Extract tourist ID from params
@@ -238,7 +236,7 @@ const getWishlistProducts = async (req, res) => {
     }
 
     // Get product IDs from the wishlist (only the productID field)
-    const wishlistProductIds = tourist.wishlist.map(item => item.productID);
+    const wishlistProductIds = tourist.wishlist.map((item) => item.productID);
 
     // Fetch product details from the database
     const products = await Product.find({ _id: { $in: wishlistProductIds } });
@@ -258,7 +256,6 @@ const getWishlistProducts = async (req, res) => {
   }
 };
 
-
 const removeFromWishlist = async (req, res) => {
   try {
     const { id } = req.params; // Tourist ID
@@ -276,8 +273,8 @@ const removeFromWishlist = async (req, res) => {
     }
 
     // Find the index of the product in the wishlist using the productID
-    const productIndex = tourist.wishlist.findIndex((item) =>
-      item.productID.toString() === productID.toString() // Compare productID field inside the object
+    const productIndex = tourist.wishlist.findIndex(
+      (item) => item.productID.toString() === productID.toString() // Compare productID field inside the object
     );
 
     if (productIndex === -1) {
@@ -301,8 +298,6 @@ const removeFromWishlist = async (req, res) => {
     });
   }
 };
-
-
 
 const addActivityToBookmarks = async (req, res) => {
   const { id: touristId } = req.params; // Tourist ID from URL params
@@ -357,13 +352,17 @@ const getBookmarkedActivities = async (req, res) => {
     const touristId = req.params.id; // Extract tourist ID from params
 
     // Find the tourist by ID and ensure bookmarks exist
-    const tourist = await Tourist.findById(touristId).populate('bookmarks.productID'); // Populate the bookmarks to get activity details
+    const tourist = await Tourist.findById(touristId).populate(
+      "bookmarks.productID"
+    ); // Populate the bookmarks to get activity details
     if (!tourist) {
       return res.status(404).json({ message: "Tourist not found" });
     }
 
     // Return the list of bookmarked activities
-    res.status(200).json(tourist.bookmarks.map(bookmark => bookmark.productID));
+    res
+      .status(200)
+      .json(tourist.bookmarks.map((bookmark) => bookmark.productID));
   } catch (error) {
     res.status(500).json({
       message: "Error fetching bookmarked activities",
@@ -371,7 +370,6 @@ const getBookmarkedActivities = async (req, res) => {
     });
   }
 };
-
 
 const removeFromBookmarks = async (req, res) => {
   try {
@@ -390,12 +388,14 @@ const removeFromBookmarks = async (req, res) => {
     }
 
     // Find the index of the activity in the bookmarks
-    const activityIndex = tourist.bookmarks.findIndex((item) =>
-      item.productID.toString() === activityID.toString()
+    const activityIndex = tourist.bookmarks.findIndex(
+      (item) => item.productID.toString() === activityID.toString()
     );
 
     if (activityIndex === -1) {
-      return res.status(404).json({ message: "Activity not found in bookmarks" });
+      return res
+        .status(404)
+        .json({ message: "Activity not found in bookmarks" });
     }
 
     // Remove the activity from the bookmarks
@@ -421,7 +421,9 @@ const getCart = async (req, res) => {
     const touristId = req.params.id; // Extract tourist ID from params
 
     // Find the tourist by ID and ensure cart exists
-    const tourist = await Tourist.findById(touristId).populate('cart.productID'); // Populate the cart to get product details
+    const tourist = await Tourist.findById(touristId).populate(
+      "cart.productID"
+    ); // Populate the cart to get product details
 
     if (!tourist) {
       return res.status(404).json({ message: "Tourist not found" });
@@ -435,7 +437,7 @@ const getCart = async (req, res) => {
       error: error.message,
     });
   }
-}
+};
 
 const addToCart = async (req, res) => {
   const { id: touristId } = req.params; // Tourist ID from URL params
@@ -443,7 +445,9 @@ const addToCart = async (req, res) => {
 
   // Ensure the productID and quantity are provided
   if (!productID || !quantity) {
-    return res.status(400).json({ message: "Product ID and quantity are required" });
+    return res
+      .status(400)
+      .json({ message: "Product ID and quantity are required" });
   }
 
   try {
@@ -466,9 +470,10 @@ const addToCart = async (req, res) => {
     );
 
     if (alreadyInCart) {
-      tourist.cart.find((item) => item.productID.toString() === productID).quantity += quantity;
-    }
-    else {
+      tourist.cart.find(
+        (item) => item.productID.toString() === productID
+      ).quantity += quantity;
+    } else {
       tourist.cart.push({ productID, quantity });
     }
 
@@ -484,7 +489,7 @@ const addToCart = async (req, res) => {
       error: err.message,
     });
   }
-}
+};
 const updateCart = async (req, res) => {
   try {
     const { id } = req.params; // Tourist ID
@@ -502,8 +507,8 @@ const updateCart = async (req, res) => {
     }
 
     // Find the index of the product in the cart using the productID
-    const productIndex = tourist.cart.findIndex((item) =>
-      item.productID.toString() === productID.toString()
+    const productIndex = tourist.cart.findIndex(
+      (item) => item.productID.toString() === productID.toString()
     );
 
     if (productIndex === -1) {
@@ -525,7 +530,7 @@ const updateCart = async (req, res) => {
       error: error.message,
     });
   }
-}
+};
 
 const removeFromCart = async (req, res) => {
   try {
@@ -543,8 +548,8 @@ const removeFromCart = async (req, res) => {
     }
 
     // Find the index of the product in the cart using the productID
-    const productIndex = tourist.cart.findIndex((item) =>
-      item.productID.toString() === productID.toString()
+    const productIndex = tourist.cart.findIndex(
+      (item) => item.productID.toString() === productID.toString()
     );
 
     if (productIndex === -1) {
@@ -567,8 +572,97 @@ const removeFromCart = async (req, res) => {
       error: error.message,
     });
   }
-}
+};
 
+const getUpcomingBookedActivities = async (req, res) => {
+  try {
+    const touristId = req.params.id; // Getting touristId from request params
+
+    // Fetch the tourist from the database by their ID and populate related activities
+    const tourist = await Tourist.findById(touristId).populate(
+      "bookedEvents.activities.activityId"
+    );
+
+    if (!tourist) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Tourist not found" });
+    }
+
+    // Get today's date for comparison
+    const today = new Date();
+
+    // Filter upcoming activities by comparing their date with today's date
+    const upcomingActivities = tourist.bookedEvents.activities.filter(
+      (activity) => {
+        const activityDate = activity.activityId.dateTime;
+        return new Date(activityDate) > today;
+      }
+    );
+
+    if (upcomingActivities.length === 0) {
+      return res
+        .status(200)
+        .json({ success: true, message: "No upcoming activities found." });
+    }
+
+    // Return the upcoming activities
+    return res.status(200).json(upcomingActivities);
+  } catch (error) {
+    console.error("Error fetching upcoming activities:", error);
+    return res.status(500).json({
+      success: false,
+      message: "An error occurred while fetching activities.",
+    });
+  }
+};
+
+const getUpcomingBookedItineraries = async (req, res) => {
+  try {
+    const touristId = req.params.id; // Get the touristId from the route parameter
+    console.log("Tourist ID:", touristId);
+
+    // Fetch the tourist from the database by their ID
+    const tourist = await Tourist.findById(touristId).populate(
+      "bookedEvents.itineraries.itineraryId"
+    );
+
+    if (!tourist) {
+      console.log("Tourist not found in the database.");
+      return res
+        .status(404)
+        .json({ success: false, message: "Tourist not found" });
+    }
+
+    console.log("Fetched Tourist:", tourist);
+
+    // Get today's date for comparison
+    const today = new Date();
+
+    // Filter the booked itineraries by comparing their booked date with today's date
+    const upcomingItineraries = tourist.bookedEvents.itineraries.filter(
+      (itinerary) => {
+        const itineraryDate = itinerary.dateBooked; // Assuming each itinerary has a `dateBooked` field
+        return new Date(itineraryDate) > today; // Only keep itineraries that are in the future
+      }
+    );
+
+    if (upcomingItineraries.length === 0) {
+      return res
+        .status(200)
+        .json({ success: true, message: "No upcoming itineraries found." });
+    }
+
+    // Return the upcoming itineraries
+    return res.status(200).json(upcomingItineraries);
+  } catch (error) {
+    console.error("Error fetching upcoming itineraries:", error);
+    return res.status(500).json({
+      success: false,
+      message: "An error occurred while fetching itineraries.",
+    });
+  }
+};
 
 module.exports = {
   getAllTourists,
@@ -587,7 +681,9 @@ module.exports = {
   getCart,
   addToCart,
   updateCart,
-  removeFromCart
+  removeFromCart,
+  getUpcomingBookedActivities,
+  getUpcomingBookedItineraries,
 };
 
 /*

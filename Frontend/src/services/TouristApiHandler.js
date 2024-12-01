@@ -41,6 +41,29 @@ export const redeemPoints = async (touristId) => {
   }
 };
 
+export const addActivityToBookmarks = async (touristId, activityID) => {
+  try {
+    const response = await axiosInstance.post(
+      `/tourist/${touristId}/bookmark`,
+      {
+        activityID,
+      }
+    );
+    return response;
+  } catch (error) {
+    return error.message;
+  }
+};
+
+export const getBookmarkedActivities = async (touristId) => {
+  try {
+    const response = await axiosInstance.get(`/tourist/${touristId}/bookmark`);
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
+
 export const addItemToCart = async (touristId, itemId, amount) => {
   try {
     const response = await axiosInstance.post(`/tourist/${touristId}/cart`, {
@@ -51,16 +74,18 @@ export const addItemToCart = async (touristId, itemId, amount) => {
   } catch (error) {
     return error;
   }
-}
+};
 
 export const removeItemFromCart = async (touristId, itemId) => {
   try {
-    const response = await axiosInstance.delete(`/tourist/${touristId}/cart/${itemId}`);
+    const response = await axiosInstance.delete(
+      `/tourist/${touristId}/cart/${itemId}`
+    );
     return response.data;
   } catch (error) {
     return error;
   }
-}
+};
 
 export const getCart = async (touristId) => {
   try {
@@ -69,7 +94,7 @@ export const getCart = async (touristId) => {
   } catch (error) {
     return error;
   }
-}
+};
 
 export const updateCart = async (touristId, itemId, amount) => {
   try {
@@ -81,4 +106,4 @@ export const updateCart = async (touristId, itemId, amount) => {
   } catch (error) {
     return error;
   }
-}
+};
