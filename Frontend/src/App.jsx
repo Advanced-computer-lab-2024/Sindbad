@@ -30,6 +30,7 @@ import { Cart } from "./pages/Cart";
 import Trips from "./pages/Trips";
 import TripView from "./pages/TripView";
 import { useUser } from "@/state management/userInfo";
+import { Wishlist } from "./pages/Wishlist";
 
 function App() {
   const { id } = useUser();
@@ -43,7 +44,8 @@ function App() {
             element={<Navigate to={`/app/profile/${id}`} replace />}
           />
           <Route path="profile/:profileId" element={<Profile />} />
-          <Route path="cart" element={<Cart/>} />
+          <Route path="cart" element={<Cart />} />
+          <Route path="wishlist" element={<Wishlist />} />
           <Route path="activities" element={<ActivitiesPage />} />
           <Route path="sites" element={<SitesPage />} />
           <Route path="itineraries" element={<ItinerariesPage />} />

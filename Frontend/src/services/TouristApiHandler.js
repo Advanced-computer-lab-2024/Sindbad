@@ -107,3 +107,15 @@ export const updateCart = async (touristId, itemId, amount) => {
     return error;
   }
 };
+
+export const getWishlistProducts = async (touristId) => {
+  try {
+    const response = await axiosInstance.get(
+      `/tourist/${touristId}/wishlist/products`
+    );
+    return response.data || []; // Ensure it always returns an array
+  } catch (error) {
+    console.error("Failed to fetch wishlist:", error.message);
+    return []; // Return empty array on failure
+  }
+};
