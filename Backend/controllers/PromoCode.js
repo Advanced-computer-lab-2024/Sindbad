@@ -37,18 +37,21 @@ const createPromoCode = async (req, res) => {
  * @throws {500} - If there is an error fetching the promocode.
  */
 const usePromoCode = async (req, res) => {
-    const promoCode = req.body.promocode;
+    const { promocode } = req.body; // Promo code is passed in the body now
     const touristID = req.params.id;
-    try {
+    console.log("Tourist ID:", touristID);
+    console.log("Promo Code:", promocode);
 
+    try {
         // Fetch the tourist and promo code details
         const tourist = await Tourist.findById(touristID);
-        const promoCodeDiscount = await PromoCode.findOne({ promocode: promoCode });
+        const promoCodeDiscount = await PromoCode.findOne({ promocode });
         if (!tourist) {
-            return res.status(404).json({ message: "Tourist not found" });
+            console.log("tourist");
+            return res.status(404).json({ message: "Tourist not found" }); 
         }
-        if (promoCodeDiscount == null) 
-        {
+        if (promoCodeDiscount == null) {
+            console.log("discount");
             return res.status(404).json({ message: "Promo Code does not exist" });
         }
 
@@ -58,7 +61,7 @@ const usePromoCode = async (req, res) => {
         }
         
         // Special handling for "HAPPYBDAY" promo code: can redeem this code as long as it is their birthday
-        if (promoCode === "HAPPYBDAY") {
+        if (promocode === "HAPPYBDAY") {
             const today = new Date();
             const dob = new Date(tourist.DOB);
 
@@ -79,10 +82,9 @@ const usePromoCode = async (req, res) => {
             }
         }
 
-        //add the tourist to the redeemed list
+        // Add the tourist to the redeemed list and save
         promoCodeDiscount.usersWhoRedeemedIt.push(touristID);
         await promoCodeDiscount.save();
-
 
         return res.json({
             message: "Promo code applied.",
@@ -91,8 +93,8 @@ const usePromoCode = async (req, res) => {
 
     } catch (err) {
         return res.status(500).json({
-        message: "Error finding Promo Code",
-        error: err.message,
+            message: "Error finding Promo Code",
+            error: err.message,
         });
     }
 };
