@@ -33,7 +33,7 @@ import { useToast } from "@/hooks/use-toast";
 
 function Profile() {
     const { profileId } = useParams(); // id of the user whose profile is being viewed
-    const { role, id } = useUser(); // details of the logged in user
+    const { role, id, accessToken } = useUser(); // details of the logged in user
     const [profileRole, setProfileRole] = useState("guest"); // role of the user whose profile is being viewed
     const [userData, setUserData] = useState(null); // details of the user whose profile is being viewed
     const [cardData, setCardData] = useState([]); // data to be displayed in the timeline (activities, products, itineraries, sites)
@@ -42,8 +42,8 @@ function Profile() {
     const [editing, setEditing] = useState(false);
     const today = new Date();
     const testDate = new Date('2012-10-22');
-	const { toast } = useToast();
-    
+    const { toast } = useToast();
+
 
     const getUserInfo = async (profileId) => {
         let response;
@@ -130,7 +130,7 @@ function Profile() {
         if (profileId) {
             getUserInfo(profileId);
         }
-    }, [profileId]);
+    }, [profileId, accessToken]);
 
     // get the data to be displayed in the timeline (activities, products, itineraries, sites)
     useEffect(() => {
@@ -193,7 +193,7 @@ function Profile() {
             </div>
         );
     }
-   // Ensure dob is available and valid
+    // Ensure dob is available and valid
     const dob = userData?.DOB ? new Date(userData.DOB) : null;
     const isBirthday =
         dob && !isNaN(dob.getTime()) && today.getDate() === dob.getDate() && today.getMonth() === dob.getMonth();
@@ -232,25 +232,25 @@ function Profile() {
                     )}
                 </div>
                 <div className="w-full">
-                    { isBirthday && 
-                    (
-                        <div className="w-full py-5">
-                            <p className=" text-lg text-primary-950">Thank you for your support! To celebrate your birthday, here’s a special promo code just for you!</p>
-                            <p
-                                className="p-5 text-center font-semibold text-primary-900 text-2xl cursor-pointer hover:font-bold hover:text-primary-850"
-                                onClick={() => {
-                                    navigator.clipboard.writeText("HAPPYBDAY")
-                                    .then(() => {
-                                        // Ensure the toast is called with the correct message
-                                        toast({description:"Code copied to clipboard!"});
-                                    })
-                                }}
-                            >
-                                HAPPYBDAY
-                            </p>
+                    {isBirthday &&
+                        (
+                            <div className="w-full py-5">
+                                <p className=" text-lg text-primary-950">Thank you for your support! To celebrate your birthday, here’s a special promo code just for you!</p>
+                                <p
+                                    className="p-5 text-center font-semibold text-primary-900 text-2xl cursor-pointer hover:font-bold hover:text-primary-850"
+                                    onClick={() => {
+                                        navigator.clipboard.writeText("HAPPYBDAY")
+                                            .then(() => {
+                                                // Ensure the toast is called with the correct message
+                                                toast({ description: "Code copied to clipboard!" });
+                                            })
+                                    }}
+                                >
+                                    HAPPYBDAY
+                                </p>
 
-                        </div>
-                    )}
+                            </div>
+                        )}
                     {!editing ? (
                         <div className="w-full flex flex-col gap-12">
                             {profileRole === "advertiser" && (
@@ -303,7 +303,7 @@ function Profile() {
                         addComment={addTourGuideComment}
                         addRating={addTourGuideRating}
                         type="tourGuide"
-                        />
+                    />
                 </>
             )}
         </div>
