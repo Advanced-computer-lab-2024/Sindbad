@@ -5,6 +5,7 @@ export const itinerary = {
 	fields: [
 		{ name: "name", type: "text", label: "Itinerary Name" },
 		{ name: "description", type: "textArea", label: "Description" },
+		{ name: "cardImage", type: "file", label: "Photo" },
 		{ name: "activities", type: "array", label: "Activities", description: "URLs of the activities included in the itinerary" },
 		{ name: "locations", type: "array", label: "Locations", description: "List of locations to be visited in the itinerary" },
 		{ name: "timeline", type: "array", label: "Timeline", description: "A timeline for all the locations and activities" },
@@ -19,6 +20,7 @@ export const itinerary = {
 	defaultValues: {
 		name: "",
 		description: "",
+		cardImage: undefined,
 		activities: [],
 		locations: [],
 		timeline: [],

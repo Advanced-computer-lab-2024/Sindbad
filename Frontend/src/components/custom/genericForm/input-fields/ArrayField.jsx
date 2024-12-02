@@ -22,7 +22,7 @@ export const ArrayField = ({ name, control, initialValue, label, description }) 
                 </div>
                 <Button
                     type="button"
-                    onClick={() => append(initialValue === "number" ? 1 : initialValue === "date" ? new Date() : "string")}
+                    onClick={() => append(initialValue === "number" ? 0 : initialValue === "date" ? null : "")}
                     className="w-max py-1.5 h-max self-start"
                 >
                     Add Item
@@ -37,25 +37,38 @@ export const ArrayField = ({ name, control, initialValue, label, description }) 
                             <FormItem className="w-full">
                                 <FormControl>
                                     {initialValue === "date" ?
-                                        <Popover>
-                                            <PopoverTrigger asChild>
-                                                <Button
-                                                    variant={"outline"}
-                                                    className={`w-[280px] justify-start text-left font-normal ${(!field.value || field.value === "string") && "text-muted-foreground"}`}
-                                                >
-                                                    <CalendarIcon />
-                                                    {field.value && field.value !== "string" ? format(field.value, "PPP") : <span>Pick a date</span>}
-                                                </Button>
-                                            </PopoverTrigger>
-                                            <PopoverContent className="w-auto p-0">
-                                                <Calendar
-                                                    mode="single"
-                                                    selected={field.value}
-                                                    onSelect={(date) => field.onChange(date)}
-                                                    initialFocus
-                                                />
-                                            </PopoverContent>
-                                        </Popover>
+                                        <div className="flex gap-4">
+                                            <Popover>
+                                                <PopoverTrigger asChild>
+                                                    <Button
+                                                        variant={"outline"}
+                                                        className={`w-[220px] justify-start text-left font-normal ${!field.value && "text-muted-foreground"}`}
+                                                    >
+                                                        <CalendarIcon />
+                                                        {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
+                                                    </Button>
+                                                </PopoverTrigger>
+                                                <PopoverContent className="w-auto p-0">
+                                                    <Calendar
+                                                        mode="single"
+                                                        selected={field.value}
+                                                        onSelect={(date) => field.onChange(date)}
+                                                        initialFocus
+                                                    />
+                                                </PopoverContent>
+                                            </Popover>
+                                            <Input
+                                                type="time"
+                                                className="w-max"
+                                                onChange={(e) => {
+                                                    const [hours, minutes] = e.target.value.split(":");
+                                                    const updatedDate = new Date(field.value || new Date()); // Use field.value if present
+                                                    updatedDate.setHours(hours, minutes, 0, 0); // Update only the time
+                                                    field.onChange(updatedDate); // Save back the updated Date object
+                                                }}
+                                                value={field.value ? format(field.value, "HH:mm") : ""} // Format for time input
+                                            />
+                                        </div>
                                         :
                                         <Input
                                             {...field}

@@ -4,6 +4,15 @@ export const itinerarySchema = {
 	name: z.string().min(1, { message: "Please add the name of the itinerary" }),
 	description: z.string().min(1, { message: "Please add the description of the itinerary" }),
 
+	cardImage: z
+		.any()
+		.refine(
+			(files) =>
+				files === undefined ||
+				(files instanceof FileList && Array.from(files).every(file => ['image/png', 'image/jpeg'].includes(file.type))),
+			{ message: "Image must be a PNG or JPG file" }
+		),
+
 	activities: z
 		.array(z.string()
 			.min(1, { message: "Activity ID must be provided" })
@@ -30,8 +39,12 @@ export const itinerarySchema = {
 	price: z.number().min(0, { message: "Price must be a non-negative number" }),
 
 	availableDatesTimes: z.array(
-		z.string().min(1, { message: "Date and time must be provided" }),
-	),
+		z.date()
+			.refine(
+				(date) => date > new Date(),
+				{ message: "Date must be in the future" }
+			)
+	).min(1, { message: "Please specify available dates" }),
 
 	accessibility: z
 		.array(
