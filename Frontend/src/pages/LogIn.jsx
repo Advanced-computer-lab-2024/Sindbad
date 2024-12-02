@@ -108,6 +108,17 @@ function LogIn() {
           accessToken: response.accessToken,
         })
       );
+      let currency;
+      if(response.role === "tourist") {
+        currency = await getTouristPreferredCurrency(response.id);
+      } else if(response.role === "tourGuide") {
+        currency = await getTourGuidePreferredCurrency(response.id);
+      } else if(response.role === "seller") {
+        currency = await getSellerPreferredCurrency(response.id);
+      } else if(response.role === "advertiser") {
+        currency = await getAdvertiserPreferredCurrency(response.id);
+      }
+      dispatch(setCurrency(currency));
       navigate("/app/itineraries");
     }
 

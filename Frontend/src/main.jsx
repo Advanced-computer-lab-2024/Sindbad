@@ -8,7 +8,8 @@ import { store } from './state management/userInfo';
 import { ToastProvider } from "@/components/ui/toast";
 import { Toaster } from "@/components/ui/toaster";
 import { automaticLogin } from './services/AuthApiHandler.js';
-import { login } from './state management/userInfo'; // Import the login action from Redux slice
+import { login } from './state management/userInfo';
+import { setCurrency } from './state management/userInfo';
 
 const AppWithLogin = () => {
     const dispatch = useDispatch();
@@ -26,6 +27,7 @@ const AppWithLogin = () => {
                         id: user.id,
                         accessToken: user.accessToken,
                     }));
+                    dispatch(setCurrency(user.preferredCurrency));
                 }
             } catch (error) {
                 console.error("Automatic login failed:", error);

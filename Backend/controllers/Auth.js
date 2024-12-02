@@ -238,6 +238,7 @@ const getUserInfo = async (req, res) => {
         id: user._id,
         username: user.username,
         role: decoded.role,
+        preferredCurrency: user.preferredCurrency || "USD",
         accessToken: jwt.sign(
           {
             id: user._id,
