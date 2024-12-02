@@ -30,21 +30,21 @@ const TouristSchema = new mongoose.Schema(
         profileImageUri: {
             public_id: {
                 type: String,
-                required: true,
+                required: this.profileImageUri !== undefined,
             },
             url: {
                 type: String,
-                required: true,
+                required: this.profileImageUri !== undefined,
             },
         },
         bannerImageUri: {
             public_id: {
                 type: String,
-                required: true,
+                required: this.bannerImageUri !== undefined,
             },
             url: {
                 type: String,
-                required: true,
+                required: this.bannerImageUri !== undefined,
             },
         },
         mobileNumber: {

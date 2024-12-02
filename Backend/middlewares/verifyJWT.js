@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 
 // List of routes to skip JWT verification
 const excludedRoutes = [
-  /^\/signup$/, // Matches exactly "/signup"
+  /^\/user\/signup$/, // Matches exactly "/user/signup"
   /^\/tag$/,
   /^\/auth(\/.*)?$/, // Matches "/auth" and anything after it
   /^\/advertiser\/upload\/[a-fA-F0-9]+$/, // Matches "/advertiser/upload/{id}"
