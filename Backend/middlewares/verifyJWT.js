@@ -1,6 +1,24 @@
 const jwt = require("jsonwebtoken");
 
+// List of routes to skip JWT verification
+const excludedRoutes = [
+  /^\/signup$/, // Matches exactly "/signup"
+  /^\/tag$/,
+  /^\/auth(\/.*)?$/, // Matches "/auth" and anything after it
+  /^\/advertiser\/upload\/[a-fA-F0-9]+$/, // Matches "/advertiser/upload/{id}"
+  /^\/seller\/upload\/[a-fA-F0-9]+$/, // Matches "/seller/upload/{id}"
+  /^\/tourGuide\/upload\/[a-fA-F0-9]+$/, // Matches "/tourGuide/upload/{id}"
+
+  // /^\/public-route/, // Matches "/public-route" and any sub-routes
+  // Add more complex regex patterns if needed
+];
+
 const verifyJWT = (req, res, next) => {
+  // Check if the route matches any of the excluded patterns
+  if (excludedRoutes.some((pattern) => pattern.test(req.originalUrl))) {
+    return next();
+  }
+
   const authHeader = req.headers.authorization || req.headers.Authorization;
 
   if (!authHeader?.startsWith("Bearer ")) {
@@ -19,18 +37,5 @@ const verifyJWT = (req, res, next) => {
     next();
   });
 };
-//   const accessToken = req.header("Authorization");
-
-//   if (!accessToken) {
-//     return res.status(401).json({ message: "Unauthorized" });
-//   }
-
-//   try {
-//     const user = jwt.verify(accessToken, process.env.JWT_SECRET);
-//     req.user = user;
-//     next();
-//   } catch (error) {
-//     return res.status(403).json({ message: "Forbidden" });
-//   }
 
 module.exports = verifyJWT;

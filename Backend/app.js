@@ -31,7 +31,7 @@ const tripRoutes = require("./routes/Trip");
 const saleRoutes = require("./routes/Sale");
 const hotelRoutes = require("./routes/Hotel");
 const authRoutes = require("./routes/Auth");
-const verifyJWT = require("./middlewares/verifyJWT");
+const verifyJWTMiddleware = require("./middlewares/verifyJWT");
 
 //Set memory preference to be RAM
 const upload = multer({ storage: multer.memoryStorage() });
@@ -62,6 +62,8 @@ if (process.env.NODE_ENV !== "test") {
       console.error("Database connection error:", err);
     });
 }
+
+app.use(verifyJWTMiddleware);
 
 // Auth routes
 app.use("/auth", authRoutes);
@@ -95,8 +97,6 @@ app.post(
 
 //User routes
 app.use("/user", userRoutes);
-
-app.use(verifyJWT);
 
 // Activity routes
 app.use("/activity", activityRoutes);
