@@ -8,6 +8,7 @@ const Complaint = require("../models/Complaint");
 const Seller = require("../models/Seller");
 const Admin = require("../models/Admin");
 const TourismGovernor = require("../models/TourismGovernor");
+const nodemailer = require("nodemailer");
 
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
@@ -383,6 +384,80 @@ const UserController = {
       res.json(user);
     } catch (error) {
       return res.status(500).json({ message: error.message });
+    }
+  },
+
+  forgotPassword: async (req, res) => {
+    const { email } = req.body;
+
+    // Validate the email input
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    // Define all user models
+    const models = {
+      tourist: Tourist,
+      advertiser: Advertiser,
+      tourGuide: TourGuide,
+      seller: Seller,
+      tourismGovernor: TourismGovernor,
+      admin: Admin,
+    };
+
+    let foundUser = null;
+
+    try {
+      // Loop through all models to find the user
+      for (const [_, UserModel] of Object.entries(models)) {
+        foundUser = await UserModel.findOne({ email }).exec();
+        if (foundUser) {
+          break; // Exit the loop once the user is found
+        }
+      }
+
+      // If the user is not found in any model
+      if (!foundUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Generate a password reset link
+      const resetLink = `${process.env.FRONTEND_DOMAIN}/reset-password/${foundUser._id}`;
+
+      // Configure nodemailer with Gmail
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.GMAIL, // Your Gmail address
+          pass: process.env.GMAILPASSWORD, // Your Gmail app password
+        },
+      });
+
+      // Email options
+      const mailOptions = {
+        from: process.env.GMAIL,
+        to: foundUser.email,
+        subject: "Password Reset Request",
+        html: `
+        <p>Hello ${foundUser.username || "User"},</p>
+        <p>We received a request to reset your password. Please click the link below to reset your password:</p>
+        <a href="${resetLink}" target="_blank">Reset Password</a>
+        <p>If you did not request a password reset, please ignore this email.</p>
+        <p>Thank you,<br>Your Team</p>
+      `,
+      };
+
+      // Send email
+      await transporter.sendMail(mailOptions);
+
+      return res
+        .status(200)
+        .json({ message: "Password reset email sent successfully" });
+    } catch (error) {
+      return res.status(500).json({
+        message: "An error occurred while processing your request",
+        error: error.message,
+      });
     }
   },
 };

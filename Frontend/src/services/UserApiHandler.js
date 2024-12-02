@@ -72,3 +72,10 @@ export const deleteUser = async (id, role) => {
     return error;
   }
 };
+
+export const sendForgotPasswordEmail = async (email) => {
+  const response = await axiosInstance.post(`/user/forgot-password`, {
+    email,
+  });
+  return response.data;
+};

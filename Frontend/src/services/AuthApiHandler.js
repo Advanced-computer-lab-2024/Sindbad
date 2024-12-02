@@ -20,7 +20,7 @@ export const userLogin = async (params) => {
     return response.data;
   } catch (error) {
     console.error("Error:", error.message);
-    return error;
+    throw error;
   }
 };
 

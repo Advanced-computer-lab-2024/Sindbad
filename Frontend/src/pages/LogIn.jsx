@@ -49,6 +49,7 @@ function LogIn() {
   // }, [dispatch]);
 
   const [signUpRedirect, setSignUpRedirect] = useState(false);
+  const [isLoginError, setIsLoginError] = useState(false);
 
   // Schema for Login Form
   const formSchema = z.object({
@@ -92,81 +93,34 @@ function LogIn() {
   };
 
   async function onSubmit(values) {
-    // console.log("form values on front end: ", values);
+    try {
+      const response = await userLogin(values);
+      dispatch(
+        login({
+          role: response.role,
+          id: response.id,
+          accessToken: response.accessToken,
+        })
+      );
 
-    // const data = await axios.post("http://localhost:5000/api/auth/login");
+      console.log("Log in successful:", response);
+      // navigate("/app/itineraries");
+    } catch (err) {
+      // Axios errors have a 'response' property for HTTP errors
 
-    await userLogin(values)
-      .then((response) => {
-        // console.log("response: ", response);
-
-        dispatch(
-          login({
-            role: response.role,
-            id: response.id,
-            accessToken: response.accessToken,
-          })
+      setIsLoginError(true);
+      if (err.response) {
+        console.error(
+          "Login failed:",
+          err.response.data.message || err.response.statusText
         );
-
-        navigate("/app/itineraries");
-      })
-      .catch((err) => console.log(err));
-
-    // const { accessToken, refreshToken, role, id, preferredCurrency } =
-    //   await loginUser(values);
-
-    // if (values.username === "tourist" && values.password === "tourist") {
-    //   dispatch(login({ role: "tourist", id: "672faf6be3120c5df6679670" }));
-    //   const currency = await getTouristPreferredCurrency(
-    //     "672faf6be3120c5df6679670"
-    //   );
-    //   dispatch(setCurrency(currency));
-    //   navigate(`/app/itineraries`, { replace: true });
-    // } else if (
-    //   values.username === "tourGuide" &&
-    //   values.password === "tourGuide"
-    // ) {
-    //   dispatch(login({ role: "tourGuide", id: "6725031bd5a2d7588e2ce42a" }));
-    //   const currency = await getTourGuidePreferredCurrency(
-    //     "6725031bd5a2d7588e2ce42a"
-    //   );
-    //   dispatch(setCurrency(currency));
-    //   navigate(`/app/profile`, { replace: true });
-    // } else if (values.username === "seller" && values.password === "seller") {
-    //   dispatch(login({ role: "seller", id: "67252de1d5a2d7588e2ce7fe" }));
-    //   const currency = await getSellerPreferredCurrency(
-    //     "67252de1d5a2d7588e2ce7fe"
-    //   );
-    //   dispatch(setCurrency(currency));
-    //   navigate(`/app/store`, { replace: true });
-    // } else if (
-    //   values.username === "advertiser" &&
-    //   values.password === "advertiser"
-    // ) {
-    //   dispatch(login({ role: "advertiser", id: "672505d8d5a2d7588e2ce4a2" }));
-    //   const currency = await getAdvertiserPreferredCurrency(
-    //     "672505d8d5a2d7588e2ce4a2"
-    //   );
-    //   dispatch(setCurrency(currency));
-    //   navigate(`/app/profile`, { replace: true });
-    // } else if (
-    //   values.username === "tourismGovernor" &&
-    //   values.password === "tourismGovernor"
-    // ) {
-    //   dispatch(
-    //     login({ role: "tourismGovernor", id: "67250766d5a2d7588e2ce4fe" })
-    //   );
-    //   navigate(`/app/profile`, { replace: true });
-    // } else if (values.username === "admin" && values.password === "admin") {
-    //   dispatch(login({ role: "admin", id: "672537b565d46abdbd520858" }));
-    //   navigate(`/app/management`, { replace: true });
-    // } else if (values.username === "guest" && values.password === "guest") {
-    //   dispatch(login({ role: "guest", id: null }));
-    //   dispatch(setCurrency("USD"));
-    //   navigate(`/app/itineraries`, { replace: true });
-    // } else {
-    //   console.log("Invalid username or password");
-    // }
+        // alert(`Error: ${err.response.data.message || "Invalid credentials"}`);
+      } else if (err.request) {
+        console.error("No response received:", err.request);
+      } else {
+        console.error("Error setting up the request:", err.message);
+      }
+    }
   }
 
   const renderCommonFields = () => (
@@ -227,7 +181,7 @@ function LogIn() {
               variant="link"
               className="p-0 text-xs font-normal text-secondary/90 hover:text-secondary"
             >
-              continue as guest
+              Continue as guest
             </Button>
           </p>
         </div>
@@ -243,6 +197,26 @@ function LogIn() {
                 className="flex flex-col gap-4"
               >
                 {renderCommonFields()}
+                <Button
+                  onClick={() =>
+                    navigate(`/forgot-password`, { replace: true })
+                  }
+                  variant="link"
+                  className="p-0 mt-[-1rem] text-xs font-bold justify-start text-gray-700 " // hover:text-secondary/80
+                >
+                  Forgot your password?
+                </Button>
+
+                {isLoginError && (
+                  <div>
+                    <p
+                      id="error-message"
+                      className="text-red-500  text-sm justify-self-center w-auto"
+                    >
+                      Incorrect Username / Password
+                    </p>
+                  </div>
+                )}
                 <Button
                   type="submit"
                   className="w-1/2 justify-center h-max mt-2"

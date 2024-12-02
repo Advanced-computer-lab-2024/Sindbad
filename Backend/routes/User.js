@@ -10,6 +10,7 @@ const {
   updateUserAcceptance,
   checkDeletion,
   requestAccountDeletion,
+  forgotPassword,
 } = require("../controllers/User");
 
 // Public routes (No authentication required)
@@ -31,5 +32,7 @@ router.get("/", getAllUsers);
 router.delete("/:id", deleteUser);
 
 router.patch("/request-account-deletion/:id", requestAccountDeletion);
+
+router.post("/forgot-password", forgotPassword);
 
 module.exports = router;

@@ -34,6 +34,7 @@ import { Checkout } from "./pages/Checkout";
 import { useUser } from "@/state management/userInfo";
 import { CheckoutSuccess } from "./pages/CheckoutSuccess";
 import { CheckoutOutlet } from "./pages/CheckoutOutlet";
+import ForgotPassword from "./pages/ForgotPassword";
 
 function App() {
   const { id } = useUser();
@@ -47,7 +48,7 @@ function App() {
             element={<Navigate to={`/app/profile/${id}`} replace />}
           />
           <Route path="profile/:profileId" element={<Profile />} />
-          <Route path="cart" element={<Cart/>} />
+          <Route path="cart" element={<Cart />} />
           <Route path="activities" element={<ActivitiesPage />} />
           <Route path="sites" element={<SitesPage />} />
           <Route path="itineraries" element={<ItinerariesPage />} />
@@ -78,12 +79,13 @@ function App() {
           <Route path="trip/:tripId" element={<TripView />} />
           <Route path="complaints/:creatorId" element={<ComplaintView />} />
         </Route>
-        <Route path="/checkout" element={<CheckoutOutlet/>} >
+        <Route path="/checkout" element={<CheckoutOutlet />}>
           <Route path="" element={<Checkout />} />
-          <Route path="success" element={<CheckoutSuccess/>} />
+          <Route path="success" element={<CheckoutSuccess />} />
         </Route>
         <Route path="/login" element={<LogIn />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
 
         <Route path="/" element={<Navigate to="/app" replace />} />
       </Routes>
