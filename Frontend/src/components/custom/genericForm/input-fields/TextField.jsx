@@ -14,7 +14,6 @@ export const TextField = ({ name, control, type = 'text', label }) => {
             <Input
               {...field}
               type={type}
-              className="text-black"
               onChange={(e) => {
                 if (type === 'date') {
                   console.log("Date input detected");

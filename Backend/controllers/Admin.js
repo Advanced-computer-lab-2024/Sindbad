@@ -4,6 +4,9 @@ const TourGuide = require("../models/TourGuide");
 const Advertiser = require("../models/Advertiser");
 const Seller = require("../models/Seller");
 const { isUniqueUsername } = require("./User");
+const cloudinary = require("../utils/cloudinary");
+const DatauriParser = require("datauri/parser");
+const path = require('path');
 
 /**
  * Creates a new admin.
@@ -96,19 +99,76 @@ const getAdminById = async (req, res) => {
  * @throws {400} - If there is an error updating the admin.
  */
 const updateAdmin = async (req, res) => {
+	let admin;
 	try {
-		req.body.username = undefined; // Prevent updating the username
-
-		const admin = await Admin.findByIdAndUpdate(req.params.id, req.body, {
-			new: true,
-			runValidators: true, // To ensure validations are run on update
-		});
-		if (!admin) {
+		admin = await Admin.findById(req.params.id);
+		if (admin == null) {
 			return res.status(404).json({ message: "Admin not found" });
 		}
-		res.status(200).json({ message: "Admin updated successfully!", admin });
 	} catch (err) {
-		res.status(400).json({ message: err.message });
+		return res.status(500).json({
+			message: "Error retrieving admin",
+			error: err.message,
+		});
+	}
+
+	if (admin.profileImageUri && admin.profileImageUri.public_id && req.files.profileImageUri) {
+		await cloudinary.uploader.destroy(admin.profileImageUri.public_id);
+	}
+
+	if (admin.bannerImageUri && admin.bannerImageUri.public_id && req.files.bannerImageUri) {
+		await cloudinary.uploader.destroy(admin.bannerImageUri.public_id);
+	}
+
+	if (req.files.profileImageUri) {
+		const profileImage = req.files.profileImageUri[0];
+		const parser = new DatauriParser();
+		const extName = path.extname(profileImage.originalname);
+		const file64 = parser.format(extName, profileImage.buffer);
+		const profileUpload = await cloudinary.uploader.upload(
+			file64.content,
+			{
+				folder: "profileImages",
+				resource_type: "image",
+			}
+		);
+		// Update schema
+		admin.profileImageUri = {
+			public_id: profileUpload.public_id,
+			url: profileUpload.secure_url,
+		};
+	}
+
+	if (req.files.bannerImageUri) {
+		const bannerImage = req.files.bannerImageUri[0];
+		const parser = new DatauriParser();
+		const extName = path.extname(bannerImage.originalname);
+		const file64 = parser.format(extName, bannerImage.buffer);
+		const bannerUpload = await cloudinary.uploader.upload(
+			file64.content,
+			{
+				folder: "bannerImages",
+				resource_type: "image",
+			}
+		);
+		// Update schema
+		admin.bannerImageUri = {
+			public_id: bannerUpload.public_id,
+			url: bannerUpload.secure_url,
+		};
+	}
+
+	if (req.body.email != null)
+		admin.email = req.body.email;
+
+	try {
+		const updatedAdmin = await admin.save();
+		res.json(updatedAdmin);
+	} catch (err) {
+		return res.status(400).json({
+			message: "Error saving admin's information",
+			error: err.message,
+		});
 	}
 };
 
@@ -143,7 +203,7 @@ const getAllRequestedAccountDeletionUsers = async (req, res) => {
 			Advertiser.find({ isRequestedAccountDeletion: true }),
 			Seller.find({ isRequestedAccountDeletion: true }),
 		]);
-		
+
 		const touristsWithRole = tourists.map((tourist) => ({
 			...tourist.toObject(),
 			role: "tourist",

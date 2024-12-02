@@ -11,6 +11,5 @@ router.route("/")
 
 router.route("/:id")
     .get(getTourismGovernorById)
-    .put(updateTourismGovernor);
 
 module.exports = router;

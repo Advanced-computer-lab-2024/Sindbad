@@ -35,11 +35,25 @@ const SellerSchema = new mongoose.Schema(
 			type: Buffer,
 			default: null,
 		},
-		logoImageUri: {
-			type: String,
+		profileImageUri: {
+			public_id: {
+				type: String,
+				required: true,
+			},
+			url: {
+				type: String,
+				required: true,
+			},
 		},
 		bannerImageUri: {
-			type: String,
+			public_id: {
+				type: String,
+				required: true,
+			},
+			url: {
+				type: String,
+				required: true,
+			},
 		},
 		preferredCurrency: {
 			type: String,
@@ -56,13 +70,30 @@ const SellerSchema = new mongoose.Schema(
 		},
 		isAccepted: {
 			type: Boolean,
-			default: null, // Default to null indicating the tour guide is not accepted yet
+			default: null, // Default to null indicating the Seller is not accepted yet
 		},
 		products: [{}],
 		isRequestedAccountDeletion: {
 			type: Boolean,
 			default: false,
 		},
+		Notifications: {
+			type: [
+				{
+					title: {
+						type: String,
+					},
+					Body: {
+						type: String,
+					},
+					isSeen: {
+						Type: Boolean,
+					},
+				}
+			],
+			default: [],
+		},
+
 	},
 	{ timestamps: true }
 );

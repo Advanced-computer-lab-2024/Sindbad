@@ -28,37 +28,37 @@ const isAcceptedmodels = {
 };
 
 const defaultFields = {
-  tourist: {
-    wallet: 0,
-    bookmarks: [],
-    loyaltyPoints: 0,
-    level: 1,
-    xpPoints: 0,
-    isReceiveNotifications: false,
-    wishlist: [],
-    cart: [],
-    addresses: [],
-    preferences: [],
-    isRequestedAccountDeletion: false,
-  },
-  advertiser: {
-    isAccepted: null,
-    createdActivities: [],
-    createdIterinaries: [],
-    createdHistoricalPlaces: [],
-    isRequestedAccountDeletion: false,
-  },
-  seller: {
-    isAccepted: null,
-    products: [],
-    isRequestedAccountDeletion: false,
-  },
-  tourguide: {
-    isAccepted: null,
-    isRequestedAccountDeletion: false,
-  },
-  admin: {},
-  tourismgovernor: {},
+	tourist: {
+		wallet: 0,
+		bookmarks: [],
+		loyaltyPoints: 0,
+		level: 1,
+		xpPoints: 0,
+		Notifications: [],
+		wishlist: [],
+		cart: [],
+		addresses: [],
+		preferences: [],
+		isRequestedAccountDeletion: false,
+	},
+	advertiser: {
+		isAccepted: null,
+		createdActivities: [],
+		createdIterinaries: [],
+		createdHistoricalPlaces: [],
+		isRequestedAccountDeletion: false,
+	},
+	seller: {
+		isAccepted: null,
+		products: [],
+		isRequestedAccountDeletion: false,
+	},
+	tourguide: {
+		isAccepted: null,
+		isRequestedAccountDeletion: false,
+	},
+	admin: {},
+	tourismgovernor: {},
 };
 
 const UserController = {

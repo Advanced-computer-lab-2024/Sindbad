@@ -29,7 +29,11 @@ import DeletionRequests from "./components/custom/admin/deletion-requests/deleti
 import { Cart } from "./pages/Cart";
 import Trips from "./pages/Trips";
 import TripView from "./pages/TripView";
+import RevenueReport from "./pages/RevenueReport";
+import { Checkout } from "./pages/Checkout";
 import { useUser } from "@/state management/userInfo";
+import { CheckoutSuccess } from "./pages/CheckoutSuccess";
+import { CheckoutOutlet } from "./pages/CheckoutOutlet";
 
 function App() {
   const { id } = useUser();
@@ -50,6 +54,7 @@ function App() {
           <Route path="store" element={<ShoppingPage />} />
           <Route path="trips" element={<Trips />} />
           <Route path="product/:productId" element={<ProductView />} />
+          <Route path="revenue" element={<RevenueReport />} />
           <Route path="management" element={<AdminManagementView />}>
             <Route path="" element={<Navigate to="users" replace />} />
             <Route path="users" element={<UserManagement />} />
@@ -72,6 +77,10 @@ function App() {
           <Route path="site/:siteId" element={<Site />} />
           <Route path="trip/:tripId" element={<TripView />} />
           <Route path="complaints/:creatorId" element={<ComplaintView />} />
+        </Route>
+        <Route path="/checkout" element={<CheckoutOutlet/>} >
+          <Route path="" element={<Checkout />} />
+          <Route path="success" element={<CheckoutSuccess/>} />
         </Route>
         <Route path="/login" element={<LogIn />} />
         <Route path="/signup" element={<SignUp />} />

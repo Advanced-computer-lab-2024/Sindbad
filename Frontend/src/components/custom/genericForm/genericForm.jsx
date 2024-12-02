@@ -9,6 +9,7 @@ import { CheckboxField } from "./input-fields/CheckboxField";
 import { CoordinatesField } from "./input-fields/CoordinatesField";
 import { TextField } from "./input-fields/TextField";
 import { TextArea } from './input-fields/TextArea';
+import { FileUpload } from './input-fields/FileUploadField';
 import { forms } from "./forms";
 import { SelectField } from "./input-fields/SelectField";
 import { useNavigate } from "react-router-dom";
@@ -16,8 +17,7 @@ import { useDispatch } from "react-redux";
 import { useToast } from "@/hooks/use-toast";
 import { Star } from "lucide-react";
 
-export function GenericForm({ type, data, id }) {
-	console.log(data);
+export function GenericForm({ type, data, id, fetcher }) {
 	// If you need more information about how this component works, check out forms.js in the same folder.
 	const formObject = forms[type];
 	const onSubmit = formObject.onSubmit;
@@ -68,17 +68,19 @@ export function GenericForm({ type, data, id }) {
 	const dispatch = useDispatch();
 	const { toast } = useToast();
 	const handleSubmit = (values) => {
-		try{
+		try {
 			if (typeof onSubmit === "function") {
 				if (onSubmit.length === 4) {
 					onSubmit(values, id, navigate, dispatch);
 				} else {
 					onSubmit(values, id, data, navigate, dispatch);
 				}
-				
+				if (typeof fetcher === "function"){
+					fetcher();
+				}
 				//toast({ description: "Submitted" });
 			}
-		}catch(e){
+		} catch (e) {
 			toast({ description: `Error occured on submission: ${e.message}` });
 		}
 	};
@@ -159,6 +161,7 @@ export function GenericForm({ type, data, id }) {
 						control={form.control}
 						label={field.label || field.name.toUpperCase()}
 						options={field.options}
+						defaultValue={defaultValues[fullPath]}
 					/>
 				);
 
@@ -175,7 +178,7 @@ export function GenericForm({ type, data, id }) {
 					/>
 				);
 			case 'textArea':
-				return(
+				return (
 					<TextArea
 						key={fullPath}
 						name={fullPath}
@@ -183,7 +186,17 @@ export function GenericForm({ type, data, id }) {
 						type={field.type}
 						label={field.label || field.name.toUpperCase()}
 					/>
-			 	)
+				);
+			case 'file':
+				return (
+					<FileUpload
+						key={fullPath}
+						name={fullPath}
+						control={form.control}
+						type={field.type}
+						label={field.label || field.name.toUpperCase()}
+					/>
+				);
 			default:
 				return null;
 		}
@@ -192,7 +205,7 @@ export function GenericForm({ type, data, id }) {
 	return (
 		<div>
 			<Form {...form}>
-				<form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
+				<form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
 					{formFields.map((field) => renderField(field))}
 					<Button type="submit" className="bg-dark text-white">
 						Submit

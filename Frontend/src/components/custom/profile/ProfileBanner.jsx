@@ -53,9 +53,9 @@ function ProfileBanner({ userData, profileId, id, profileRole, setEditing }) {
         <section className="group relative w-[280px] border border-neutral-300 rounded-md overflow-clip flex flex-col items-center shrink-0 pb-6 bg-gradient-to-b from-neutral-200/60 to-light">
             <div className="h-[110px] w-full">
                 {/* header image */}
-                {userData.bannerImageUri ? (
+                {userData.bannerImageUri && userData.bannerImageUri.url ? (
                     <img
-                        src={userData.bannerImageUri}
+                        src={userData.bannerImageUri.url}
                         alt="banner"
                         className="w-full h-full object-cover"
                     />
@@ -80,17 +80,9 @@ function ProfileBanner({ userData, profileId, id, profileRole, setEditing }) {
                 <div className="flex flex-col -mt-10 w-full items-center gap-3">
                     {/* profile photo */}
                     <div className="rounded-full h-[116px] w-[116px] border-2 border-light">
-                        {(profileRole !== "seller" &&
-                            profileRole !== "advertiser" &&
-                            userData.profileImageUri) ||
-                            ((profileRole === "seller" || profileRole === "advertiser") &&
-                                userData.logoImageUri) ? (
+                        {userData.profileImageUri && userData.profileImageUri.url ? (
                             <img
-                                src={
-                                    profileRole === "seller" || profileRole === "advertiser"
-                                        ? userData.logoImageUri
-                                        : userData.profileImageUri
-                                }
+                                src={userData.profileImageUri.url}
                                 alt="profile"
                                 className="rounded-full h-full w-full object-cover"
                             />

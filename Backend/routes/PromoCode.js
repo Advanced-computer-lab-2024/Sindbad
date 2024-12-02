@@ -7,6 +7,6 @@ const {
 } = require("../controllers/PromoCode");
 
 router.route("/").post(createPromoCode);
-router.route("/:id").get(usePromoCode);
+router.route("/:id").put(usePromoCode);
 
 module.exports = router;

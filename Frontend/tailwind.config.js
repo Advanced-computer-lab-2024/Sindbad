@@ -43,13 +43,15 @@ export default {
 				},
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
+				"input-bg": 'hsl(var(--input-bg))',
 				ring: 'hsl(var(--ring))',
 				chart: {
 					'1': 'hsl(var(--chart-1))',
 					'2': 'hsl(var(--chart-2))',
 					'3': 'hsl(var(--chart-3))',
 					'4': 'hsl(var(--chart-4))',
-					'5': 'hsl(var(--chart-5))'
+					'5': 'hsl(var(--chart-5))',
+					'6': 'hsl(var(--chart-6))'
 				},
 				dark: '#111111',
 				light: '#eeeeee',

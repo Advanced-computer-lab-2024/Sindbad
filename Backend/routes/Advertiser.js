@@ -10,6 +10,5 @@ router.route("/upload/:id").put(AdvertiserController.addAdvertiserDocuments);
 router
 	.route("/:id")
 	.get(AdvertiserController.getAdvertiserById)
-	.put(AdvertiserController.updateAdveriser);
 
 module.exports = router;

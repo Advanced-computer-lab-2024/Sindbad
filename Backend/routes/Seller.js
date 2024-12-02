@@ -14,7 +14,6 @@ const router = express.Router();
 router.post("/", createSeller);
 router.get("/:id", getSellerById);
 // router.put("/upload/:id",addSellerDocuments);
-router.put("/:id", updateSeller);
 router.get("/", getAllSellers); 
 
 // Remove route for getting products by seller ID

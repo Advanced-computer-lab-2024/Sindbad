@@ -21,10 +21,9 @@ function Comment({ comment }) {
         <div className="flex flex-col gap-2">
             <div className="flex gap-2">
                 <div className="h-11 w-11 rounded-full">
-                    {
-                        user.profileImageUri ?
+                    {user?.profileImageUri && user.profileImageUri.url ?
                             <img
-                                src={user.profileImageUri}
+                                src={user.profileImageUri.url}
                                 alt="profile"
                                 className="rounded-full h-full w-full object-cover"
                             />
