@@ -14,12 +14,15 @@ export const getMyItineraries = async (tourGuideId) => {
     }
 };
 
-export const updateItinerary = async (itineraryId, itineraryData) => {
+export const updateItinerary = async (itineraryId, formData) => {
     try {
         const response = await axiosInstance.put(
             `/itinerary/${itineraryId}`,
-            itineraryData,
+            formData,
             {
+                headers: {
+                    "Content-Type": "multipart/form-data", // Explicitly set for FormData
+                },
                 resourceName: "Itinerary",
             }
         );
@@ -29,9 +32,17 @@ export const updateItinerary = async (itineraryId, itineraryData) => {
     }
 };
 
-export const createItinerary = async (itineraryData) => {
+export const createItinerary = async (formData) => {
     try {
-        const response = await axiosInstance.post(`/itinerary`, itineraryData);
+        const response = await axiosInstance.post(
+            `/itinerary`,
+            formData,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data", // Explicitly set for FormData
+                },
+            }
+        );
         return response.data;
     } catch (error) {
         return error;

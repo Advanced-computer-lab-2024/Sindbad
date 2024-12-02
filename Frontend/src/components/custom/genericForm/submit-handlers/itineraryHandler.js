@@ -6,19 +6,19 @@ export const itinerarySubmit = (values, id, data, navigate, dispatch) => {
 	formData.append("description", values.description);
 	//parse activity ids from URLs
 	const activities = values.activities.map((activity) => activity.split("/").pop());
-	formData.append("activities", activities);
-	formData.append("locations", values.locations);
-	formData.append("timeline", values.timeline);
+	formData.append("activities", JSON.stringify(activities));
+	formData.append("locations", JSON.stringify(values.locations));
+	formData.append("timeline", JSON.stringify(values.timeline));
 	formData.append("duration", values.duration);
-	formData.append("languages", values.languages);
+	formData.append("languages", JSON.stringify(values.languages));
 	formData.append("price", values.price);
 	// map availableDatesTimes to object with dateTime key and headCount key with value 0
 	const availableDatesTimes = values.availableDatesTimes.map((dateTime) => ({
 		dateTime: dateTime,
 		headCount: 0,
 	}));
-	formData.append("availableDatesTimes", availableDatesTimes);
-	formData.append("accessibility", values.accessibility);
+	formData.append("availableDatesTimes", JSON.stringify(availableDatesTimes));
+	formData.append("accessibility", JSON.stringify(values.accessibility));
 	formData.append("pickUpLocation", values.pickUpLocation);
 	formData.append("dropOffLocation", values.dropOffLocation);
 
@@ -30,12 +30,12 @@ export const itinerarySubmit = (values, id, data, navigate, dispatch) => {
 		console.log(pair[0] + ": " + pair[1]);
 	}
 
-	// if (data) {
-	// 	updateItinerary(data._id, formData);
-	// } else {
-	// 	formData.append("creatorId", id);
-	// 	createItinerary(formData);
-	// }
+	if (data) {
+		updateItinerary(data._id, formData);
+	} else {
+		formData.append("creatorId", id);
+		createItinerary(formData);
+	}
 
 	// const formattedValues = {
 	// 	...values,
