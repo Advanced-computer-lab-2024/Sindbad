@@ -1,4 +1,5 @@
 import { getCurrencyOptions } from "@/utilities/getCurrencyOptions";
+import { nationalities } from "@/utilities/getNationalities";
 
 export const tourist = {
     fields: [
@@ -16,8 +17,9 @@ export const tourist = {
         },
         {
             name: "nationality",
-            type: "text",
+            type: "select",
             label: "Nationality",
+            options: nationalities.map((nationality) => (nationality.label)),
             required: true,
         },
         {
@@ -51,8 +53,8 @@ export const tourist = {
         mobileNumber: "",
         nationality: "",
         job: "",
-        profileImageUri: "",
-        bannerImageUri: "",
+        profileImageUri: undefined,
+        bannerImageUri: undefined,
         preferredCurrency: "",
     },
 };

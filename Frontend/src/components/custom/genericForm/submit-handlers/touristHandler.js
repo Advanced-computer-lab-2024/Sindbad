@@ -3,7 +3,7 @@ import { setCurrency } from "@/state management/userInfo";
 
 export const touristSubmit = (values, id, navigate, dispatch) => {
 	dispatch(setCurrency(values.preferredCurrency));
-
+	
 	const formData = new FormData();
 	formData.append("email", values.email);
 	formData.append("mobileNumber", values.mobileNumber);

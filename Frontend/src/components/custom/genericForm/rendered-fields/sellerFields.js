@@ -31,8 +31,8 @@ export const seller = {
         firstName: "",
         lastName: "",
         description: "",
-        profileImageUri: "",
-        bannerImageUri: "",
+        profileImageUri: undefined,
+        bannerImageUri: undefined,
         preferredCurrency: "",
     },
 };

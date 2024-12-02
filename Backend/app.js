@@ -69,10 +69,10 @@ if (process.env.NODE_ENV !== "test") {
         });
 }
 
-app.use(verifyJWTMiddleware);
+// app.use(verifyJWTMiddleware);
 
 // Auth routes
-app.use("/auth", authRoutes);
+//app.use("/auth", authRoutes);
 
 app.put(
     "/tourGuide/:id",

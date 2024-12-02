@@ -6,8 +6,8 @@ const userSlice = createSlice({
   initialState: {
     // role: "admin",
     // id: "672537b565d46abdbd520858",
-    // role: "tourist",
-    // id: "672faf6be3120c5df6679670",
+    role: "tourist",
+    id: "672faf6be3120c5df6679670",
     // role: "tourGuide",
     // id: "6725031bd5a2d7588e2ce42a",
     // role: "seller",
@@ -16,8 +16,8 @@ const userSlice = createSlice({
     // id: "67327815411855f8de68b97a",
     // role: "tourismGovernor",
     // id: "67250766d5a2d7588e2ce4fe",
-    role: "guest",
-    id: null,
+    // role: "guest",
+    // id: null,
     accessToken: null,
   },
   reducers: {
