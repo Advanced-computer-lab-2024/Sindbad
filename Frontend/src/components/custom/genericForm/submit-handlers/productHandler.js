@@ -1,6 +1,6 @@
 import { createProduct, updateProduct } from "@/services/ProductApiHandler";
 
-export const productSubmit = (values, id, data, navigate, dispatch) => {
+export const productSubmit = (values, id, data, navigate, dispatch, currency) => {
 	if (data) {
 		updateProduct(data._id, values);
 	} else {

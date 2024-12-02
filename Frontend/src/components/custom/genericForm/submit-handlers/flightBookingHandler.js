@@ -1,7 +1,7 @@
 import { bookFlight } from "@/services/FlightApiHandler";
 import { confirmationResponse } from "@/state management/confirmationResponse";
 
-export const flightBookingHandler = (values, id, data, navigate, dispatch) => {
+export const flightBookingHandler = (values, id, data, navigate, dispatch, currency) => {
     let submitValues = {};
     submitValues.travelers = values;
     submitValues.travelerID = id;

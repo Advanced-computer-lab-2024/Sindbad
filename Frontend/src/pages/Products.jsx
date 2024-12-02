@@ -121,7 +121,7 @@ function ShoppingPage() {
 
 	useEffect(() => {
 		getPriceRange();
-	}, []);
+	}, [currency]);
 
 	return (
 		<div className="py-8 px-24 max-w-[1200px] flex flex-col gap-4 mx-auto">

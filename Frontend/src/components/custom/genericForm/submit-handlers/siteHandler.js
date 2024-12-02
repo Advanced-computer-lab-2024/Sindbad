@@ -1,6 +1,6 @@
 import { createSite, updateSite } from "@/services/SiteApiHandler";
 
-export const siteSubmit = (values, id, data, navigate, dispatch) => {
+export const siteSubmit = (values, id, data, navigate, dispatch, currency) => {
 	if (data) {
 		updateSite(data._id, values);
 	} else {

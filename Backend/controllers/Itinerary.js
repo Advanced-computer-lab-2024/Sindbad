@@ -117,8 +117,6 @@ const updateItinerary = async (req, res) => {
         const itineraryId = req.params.id;
         const updatedData = req.body;
 
-        console.log(updatedData);
-
         if (req.files.cardImage) {
             const cardImage = req.files.cardImage[0];
             const parser = new DatauriParser();
@@ -138,7 +136,7 @@ const updateItinerary = async (req, res) => {
         }
         // convert price to number if it is a string
         if (typeof updatedData.price === "string") {
-            updatedData.price = parseInt(updatedData.price);
+            updatedData.price = parseFloat(updatedData.price);
         }
         if(updatedData.activities){
             updatedData.activities = JSON.parse(updatedData.activities);

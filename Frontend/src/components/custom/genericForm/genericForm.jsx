@@ -14,6 +14,7 @@ import { forms } from "./forms";
 import { SelectField } from "./input-fields/SelectField";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { useCurrency } from "@/state management/userInfo";
 import { useToast } from "@/hooks/use-toast";
 import { Star } from "lucide-react";
 import { MultiSelectField } from "./input-fields/MultiSelectField";
@@ -67,14 +68,15 @@ export function GenericForm({ type, data, id, fetcher }) {
 
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
+	const currency = useCurrency();
 	const { toast } = useToast();
 	const handleSubmit = (values) => {
 		try {
 			if (typeof onSubmit === "function") {
-				if (onSubmit.length === 4) {
-					onSubmit(values, id, navigate, dispatch);
+				if (onSubmit.length === 5) {
+					onSubmit(values, id, navigate, dispatch, currency);
 				} else {
-					onSubmit(values, id, data, navigate, dispatch);
+					onSubmit(values, id, data, navigate, dispatch, currency);
 				}
 				if (typeof fetcher === "function") {
 					fetcher();

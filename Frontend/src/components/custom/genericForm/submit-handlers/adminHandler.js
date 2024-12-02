@@ -1,6 +1,6 @@
 import { updateAdmin } from "@/services/AdminApiHandler";
 
-export const adminSubmit = (values, id, navigate, dispatch) => {
+export const adminSubmit = (values, id, navigate, dispatch, currency) => {
 	const formData = new FormData();
 	formData.append("email", values.email);
 	if (values.profileImageUri && values.profileImageUri.length > 0) {

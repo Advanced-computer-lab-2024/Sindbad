@@ -1,22 +1,49 @@
 import { useLocation, useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
 import GenericForm from "@/components/custom/genericForm/genericForm";
+import { useCurrency } from "@/state management/userInfo";
+import { Convert } from "easy-currencies";
 
 function EditFormPage() {
     const location = useLocation();
     const { data } = location.state || {};
     const { cardType, cardId } = useParams();
+    const currency = useCurrency();
     
-    function formatData(data) {
+    const [formattedData, setFormattedData] = useState(null);
+
+    // Effect to format data when the page loads
+    useEffect(() => {
+        async function loadData() {
+            const formatted = await formatData(data);
+            setFormattedData(formatted);
+        }
+
+        if (data) {
+            loadData();
+        }
+    }, [data]); // Re-run when `data` changes
+
+    // The async data formatting function
+    async function formatData(data) {
         let formattedData = { ...data };
-        if(cardType === "itinerary") {
-            //remove cardImage
+        if (cardType === "itinerary") {
+            // Remove cardImage
             delete formattedData.cardImage;
-            // convert activities to URLs
+            // Convert activities to URLs
             formattedData.activities = formattedData.activities.map((activity) => `http://localhost:5173/app/activity/${activity}`);
-            // convert availableDatesTimes to array of dates
+            // Convert availableDatesTimes to array of dates
             formattedData.availableDatesTimes = formattedData.availableDatesTimes.map((item) => new Date(item.dateTime));
+            // Convert price to local currency
+            const converter = await Convert().from("USD").fetch();
+            const convertedPrice = formattedData.price * converter.rates[currency];
+            formattedData.price = convertedPrice;
         }
         return formattedData;
+    }
+
+    if (!formattedData) {
+        return <div>Loading...</div>; // Show loading state until formattedData is ready
     }
 
     return (
@@ -26,7 +53,7 @@ function EditFormPage() {
                 <hr className="border-neutral-300 border w-full mt-1.5" />
             </div>
             <div className="w-2/3 mx-auto">
-                <GenericForm type={cardType} id={cardId} data={formatData(data)} />
+                <GenericForm type={cardType} id={cardId} data={formattedData} />
             </div>
         </div>
     );

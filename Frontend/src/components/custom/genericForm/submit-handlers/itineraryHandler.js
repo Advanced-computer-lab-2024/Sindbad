@@ -1,6 +1,7 @@
 import { createItinerary, updateItinerary } from "@/services/ItineraryApiHandler";
+import { Convert } from "easy-currencies";
 
-export const itinerarySubmit = (values, id, data, navigate, dispatch) => {
+export const itinerarySubmit = async (values, id, data, navigate, dispatch, currency) => {
 	const formData = new FormData();
 	formData.append("name", values.name);
 	formData.append("description", values.description);
@@ -11,7 +12,10 @@ export const itinerarySubmit = (values, id, data, navigate, dispatch) => {
 	formData.append("timeline", JSON.stringify(values.timeline));
 	formData.append("duration", values.duration);
 	formData.append("languages", JSON.stringify(values.languages));
-	formData.append("price", values.price);
+	// convert price to USD
+	const converter = await Convert().from("USD").fetch();
+	const convertedPrice = values.price / converter.rates[currency];
+	formData.append("price", convertedPrice);
 	// map availableDatesTimes to object with dateTime key and headCount key with value 0
 	const availableDatesTimes = values.availableDatesTimes.map((dateTime) => ({
 		dateTime: dateTime,
@@ -36,21 +40,4 @@ export const itinerarySubmit = (values, id, data, navigate, dispatch) => {
 		formData.append("creatorId", id);
 		createItinerary(formData);
 	}
-
-	// const formattedValues = {
-	// 	...values,
-	// 	availableDatesTimes: values.availableDatesTimes.map((dateTime) => ({
-	// 		...dateTime,
-	// 		dateTime: new Date(dateTime.dateTime),
-	// 	})),
-	// };
-	// if (data) {
-	// 	updateItinerary(data._id, formattedValues);
-	// } else {
-	// 	const itineraryWithId = {
-	// 		...formattedValues,
-	// 		creatorId: id,
-	// 	};
-	// 	createItinerary(itineraryWithId);
-	// }
 };
