@@ -29,8 +29,8 @@ export const advertiser = {
         email: "",
         websiteLink: "",
         hotline: "",
-        bannerImageUri: "",
-        profileImageUri: "",
+        bannerImageUri: undefined,
+        profileImageUri: undefined,
         preferredCurrency: "",
     },
 };

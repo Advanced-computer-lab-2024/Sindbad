@@ -646,7 +646,7 @@ function SignUp() {
                             <Form {...commonForm}>
                                 <form onSubmit={commonForm.handleSubmit(handleCommonFormSubmit)} className="gap-2 flex flex-col">
                                     {renderCommonFields()}
-                                    {error && <p className="text-red-500 text-xs text-center">{error}</p>}
+                                    {error && <p className="text-red-500 text-xs">{error === "Username already exists" ? error : "An unknown error has occurred"}</p>}
                                     <p className="text-center text-neutral-700 text-sm mt-2">
                                         <Input type="checkbox" id="accept" name="accept" onChange={() => setAccepted(!accepted)} checked={accepted} className="w-max h-max shadow-none inline mr-2 accent-primary-700 cursor-pointer" />
                                         By creating an account you agree to our{" "}

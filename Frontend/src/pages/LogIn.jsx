@@ -35,6 +35,7 @@ import { refreshAccessToken, userLogin } from "@/services/AuthApiHandler";
 function LogIn() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [error, setError] = useState(null);
 
   const { role, id } = useUser();
 
@@ -91,26 +92,25 @@ function LogIn() {
     return advertiser.preferredCurrency;
   };
 
-  async function onSubmit(values) {
+  const onSubmit = async (values) => {
     // console.log("form values on front end: ", values);
 
     // const data = await axios.post("http://localhost:5000/api/auth/login");
 
-    await userLogin(values)
-      .then((response) => {
-        // console.log("response: ", response);
-
-        dispatch(
-          login({
-            role: response.role,
-            id: response.id,
-            accessToken: response.accessToken,
-          })
-        );
-
-        navigate("/app/itineraries");
-      })
-      .catch((err) => console.log(err));
+    const response = await userLogin(values);
+    if (response.error) {
+      setError(response.message);
+      console.error(response.message);
+    } else {
+      dispatch(
+        login({
+          role: response.role,
+          id: response.id,
+          accessToken: response.accessToken,
+        })
+      );
+      navigate("/app/itineraries");
+    }
 
     // const { accessToken, refreshToken, role, id, preferredCurrency } =
     //   await loginUser(values);
@@ -187,22 +187,29 @@ function LogIn() {
           </FormItem>
         )}
       />
-      <FormField
-        key="password"
-        control={form.control}
-        name="password"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>
-              <p className="form-label">Password</p>
-            </FormLabel>
-            <FormControl>
-              <Input {...field} type="password" />
-            </FormControl>
-            <FormMessage className="text-xs" />
-          </FormItem>
+      <div>
+        <FormField
+          key="password"
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>
+                <p className="form-label">Password</p>
+              </FormLabel>
+              <FormControl>
+                <Input {...field} type="password" />
+              </FormControl>
+              <FormMessage className="text-xs" />
+            </FormItem>
+          )}
+        />
+        {error && (
+          <p className="text-destructive text-xs mt-2">
+            {error === "Resource not found." ? "Incorrect username or password" : "An unknown error has occurred"}
+          </p>
         )}
-      />
+      </div>
     </>
   );
 

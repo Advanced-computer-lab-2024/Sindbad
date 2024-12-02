@@ -20,7 +20,7 @@ export const tourismGovernor = {
     ],
     defaultValues: {
         email: '',
-        profileImageUri: '',
-        bannerImageUri: '',
+        profileImageUri: undefined,
+        bannerImageUri: undefined,
     }
 };

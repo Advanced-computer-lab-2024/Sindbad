@@ -27,8 +27,8 @@ export const tourGuide = {
     defaultValues: {
         email: "",
         mobileNumber: "",
-        profileImageUri: "",
-        bannerImageUri: "",
+        profileImageUri: undefined,
+        bannerImageUri: undefined,
         preferredCurrency: "",
     },
 };
