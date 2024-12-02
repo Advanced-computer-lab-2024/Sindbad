@@ -31,6 +31,7 @@ import { getSeller } from "@/services/SellerApiHandler";
 import { getAdvertiser } from "@/services/AdvertiserApiHandler";
 import LogoSVG from "@/SVGs/Logo";
 import { refreshAccessToken, userLogin } from "@/services/AuthApiHandler";
+import { Currency } from "lucide-react";
 
 function LogIn() {
   const dispatch = useDispatch();
@@ -118,7 +119,7 @@ function LogIn() {
       } else if(response.role === "advertiser") {
         currency = await getAdvertiserPreferredCurrency(response.id);
       }
-      dispatch(setCurrency(currency));
+      if (currency){dispatch(setCurrency(currency))};
       navigate("/app/itineraries");
     }
 

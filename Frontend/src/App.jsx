@@ -28,6 +28,7 @@ import FlightConfirmation from "./pages/FlightConfirmation";
 import DeletionRequests from "./components/custom/admin/deletion-requests/deletionRequest";
 import EditFormPage from "./pages/EditFormPage";
 import CreateFormPage from "./pages/CreateFormPage";
+import PromoCodes from "./components/custom/admin/promocode-management/promoCode";
 import { Cart } from "./pages/Cart";
 import Trips from "./pages/Trips";
 import TripView from "./pages/TripView";
@@ -64,6 +65,7 @@ function App() {
                         <Route path="complaints" element={<ComplaintManagement />} />
                         <Route path="tagcategories" element={<TagCategoryManagement />} />
                         <Route path="deletion-requests" element={<DeletionRequests />} />
+                        <Route path="promocodes" element={<PromoCodes />} />
                     </Route>
                     <Route path="booking" element={<Booking />}>
                         <Route path="" element={<Navigate to="hotel" replace />} />

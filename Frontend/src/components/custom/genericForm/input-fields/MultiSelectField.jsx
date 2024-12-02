@@ -23,12 +23,11 @@ export const MultiSelectField = ({ name, control, label, options = [], defaultVa
                                     (selectedOption) => selectedOption.value
                                 )
                             )
-                            // console.log(selectedOptions)
                         }
                         }
-                        defaultValue={defaultValue.map((value) =>
-                            options.includes(value) ? { label: value, value } : null
-                        )}
+                        defaultValue={defaultValue
+                            .filter((value) => options.includes(value))
+                            .map((value) => ({ label: value, value }))}
                         placeholder="Select Options"
                     />
                 </div>

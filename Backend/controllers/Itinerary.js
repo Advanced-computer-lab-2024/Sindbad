@@ -117,6 +117,47 @@ const updateItinerary = async (req, res) => {
         const itineraryId = req.params.id;
         const updatedData = req.body;
 
+        console.log(updatedData);
+
+        if (req.files.cardImage) {
+            const cardImage = req.files.cardImage[0];
+            const parser = new DatauriParser();
+            const extName = path.extname(cardImage.originalname);
+            const file64 = parser.format(extName, cardImage.buffer);
+            const cardImageUpload = await cloudinary.uploader.upload(
+                file64.content,
+                {
+                    folder: "itineraries",
+                    resource_type: "image",
+                }
+            );
+            updatedData.cardImage = {
+                public_id: cardImageUpload.public_id,
+                url: cardImageUpload.secure_url,
+            };
+        }
+        // convert price to number if it is a string
+        if (typeof updatedData.price === "string") {
+            updatedData.price = parseInt(updatedData.price);
+        }
+        if(updatedData.activities){
+            updatedData.activities = JSON.parse(updatedData.activities);
+        }
+        if(updatedData.locations){
+            updatedData.locations = JSON.parse(updatedData.locations);
+        }
+        if(updatedData.timeline){
+            updatedData.timeline = JSON.parse(updatedData.timeline);
+        }
+        if(updatedData.languages){
+            updatedData.languages = JSON.parse(updatedData.languages);
+        }
+        if (updatedData.availableDatesTimes) {
+            updatedData.availableDatesTimes = JSON.parse(updatedData.availableDatesTimes);
+        }
+        if (updatedData.accessibility) {
+            updatedData.accessibility = JSON.parse(updatedData.accessibility);
+        }
         const updatedItinerary = await Itinerary.findByIdAndUpdate(
             itineraryId,
             updatedData,

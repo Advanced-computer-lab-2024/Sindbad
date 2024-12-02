@@ -5,6 +5,19 @@ function EditFormPage() {
     const location = useLocation();
     const { data } = location.state || {};
     const { cardType, cardId } = useParams();
+    
+    function formatData(data) {
+        let formattedData = { ...data };
+        if(cardType === "itinerary") {
+            //remove cardImage
+            delete formattedData.cardImage;
+            // convert activities to URLs
+            formattedData.activities = formattedData.activities.map((activity) => `http://localhost:5173/app/activity/${activity}`);
+            // convert availableDatesTimes to array of dates
+            formattedData.availableDatesTimes = formattedData.availableDatesTimes.map((item) => new Date(item.dateTime));
+        }
+        return formattedData;
+    }
 
     return (
         <div className="py-8 px-24 max-w-[1200px] mx-auto">
@@ -13,7 +26,7 @@ function EditFormPage() {
                 <hr className="border-neutral-300 border w-full mt-1.5" />
             </div>
             <div className="w-2/3 mx-auto">
-                <GenericForm type={cardType} id={cardId} data={data} />
+                <GenericForm type={cardType} id={cardId} data={formatData(data)} />
             </div>
         </div>
     );
