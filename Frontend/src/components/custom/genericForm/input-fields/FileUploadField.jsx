@@ -1,7 +1,7 @@
 import { FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 
-export const FileUpload = ({ name, control, type = 'file', label }) => {
+export const FileUpload = ({ name, control, type = 'file', label, description }) => {
     return (
         <FormField
             control={control}
@@ -11,6 +11,7 @@ export const FileUpload = ({ name, control, type = 'file', label }) => {
                     <FormLabel>
                         {label || name.toUpperCase()}
                     </FormLabel>
+                    {description && <p className="text-xs text-neutral-500">{description}</p>}
                     <FormControl>
                         <Input
                             type={type}

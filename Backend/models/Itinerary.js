@@ -6,6 +6,10 @@ const itinerarySchema = mongoose.Schema(
       type: String,
       required: [true, "Please add the name of the itinerary"],
     },
+    description: {
+      type: String,
+      required: [true, "Please add the description of the itinerary"],
+    },
     activities: [
       {
         type: mongoose.Schema.Types.ObjectId,

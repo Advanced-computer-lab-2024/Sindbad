@@ -2,9 +2,15 @@ import { z } from "zod";
 
 export const itinerarySchema = {
 	name: z.string().min(1, { message: "Please add the name of the itinerary" }),
+	description: z.string().min(1, { message: "Please add the description of the itinerary" }),
 
 	activities: z
-		.array(z.string().min(1, { message: "Activity ID must be provided" }))
+		.array(z.string()
+			.min(1, { message: "Activity ID must be provided" })
+			.regex(
+				/^(https?:\/\/)?localhost:5173\/app\/activity\/[a-fA-F0-9]{24}$/,
+				{ message: "Invalid activity URL" }
+			))
 		.min(1, { message: "Please add at least one activity" }),
 
 	locations: z
@@ -24,10 +30,7 @@ export const itinerarySchema = {
 	price: z.number().min(0, { message: "Price must be a non-negative number" }),
 
 	availableDatesTimes: z.array(
-		z.object({
-			dateTime: z.string().min(1, { message: "Date and time must be provided" }),
-			headCount: z.number().default(0),
-		})
+		z.string().min(1, { message: "Date and time must be provided" }),
 	),
 
 	accessibility: z
@@ -41,5 +44,4 @@ export const itinerarySchema = {
 		.min(1, { message: "Please add the pick-up location" }),
 
 	dropOffLocation: z.string().min(1, { message: "Please add the drop-off location" }),
-
 };

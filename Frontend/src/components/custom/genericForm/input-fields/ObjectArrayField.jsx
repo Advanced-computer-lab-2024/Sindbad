@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { FormLabel } from '@/components/ui/form';
 import { TextField } from './TextField';
 
-export const ObjectArrayField = ({ name, control, initialValue, label, fieldsSchema }) => {
+export const ObjectArrayField = ({ name, control, initialValue, label, fieldsSchema, description }) => {
   const { fields, append, remove } = useFieldArray({
     control,
     name,
@@ -34,7 +34,10 @@ export const ObjectArrayField = ({ name, control, initialValue, label, fieldsSch
 
   return (
     <div className="space-y-4">
-      <FormLabel>{label || name}</FormLabel>
+      <div>
+        <FormLabel>{label || name}</FormLabel>
+        {description && <p className="text-xs text-neutral-500">{description}</p>}
+      </div>
       {fields.map((field, index) => (
         <div key={field.id} className="space-y-2">
           {fieldsSchema.map((schema) => renderNestedField(schema, `${name}.${index}`))}

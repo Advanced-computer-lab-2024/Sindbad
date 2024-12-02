@@ -2,7 +2,7 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/comp
 import { Input } from '@/components/ui/input';
 import { format } from 'date-fns';
 
-export const TextField = ({ name, control, type = 'text', label }) => {
+export const TextField = ({ name, control, type = 'text', label, description }) => {
   return (
     <FormField
       control={control}
@@ -10,6 +10,7 @@ export const TextField = ({ name, control, type = 'text', label }) => {
       render={({ field }) => (
         <FormItem>
           <FormLabel>{label || name.toUpperCase()}</FormLabel>
+          {description && <p className="text-xs text-neutral-500">{description}</p>}
           <FormControl>
             <Input
               {...field}

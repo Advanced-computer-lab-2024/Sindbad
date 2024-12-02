@@ -26,7 +26,8 @@ import HotelConfirmation from "./pages/HotelConfirmation";
 import FlightView from "./pages/FlightView";
 import FlightConfirmation from "./pages/FlightConfirmation";
 import DeletionRequests from "./components/custom/admin/deletion-requests/deletionRequest";
-import FormPage from "./pages/FormPage";
+import EditFormPage from "./pages/EditFormPage";
+import CreateFormPage from "./pages/CreateFormPage";
 import { Cart } from "./pages/Cart";
 import Trips from "./pages/Trips";
 import TripView from "./pages/TripView";
@@ -80,7 +81,18 @@ function App() {
                     <Route path="complaints/:creatorId" element={<ComplaintView />} />
                     <Route
                         path=":cardType/:cardId/edit"
-                        element={<FormPage />}
+                        element={<EditFormPage />}
+                        loader={({ params }) => {
+                            const validCardTypes = ["itinerary", "activity", "site", "product", "trip"];
+                            if (!validCardTypes.includes(params.cardType)) {
+                                throw new Error("Invalid card type"); // Replace with error handling or redirection
+                            }
+                            return params;
+                        }}
+                    />
+                    <Route
+                        path="create/:cardType"
+                        element={<CreateFormPage />}
                         loader={({ params }) => {
                             const validCardTypes = ["itinerary", "activity", "site", "product", "trip"];
                             if (!validCardTypes.includes(params.cardType)) {

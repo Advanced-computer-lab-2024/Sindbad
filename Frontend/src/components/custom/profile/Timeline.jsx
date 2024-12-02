@@ -6,15 +6,33 @@ import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "@/components
 import { CirclePlus } from "lucide-react";
 
 import { useUser } from '@/state management/userInfo';
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 function Timeline({ userData, profileId, id, profileRole, cardData, fetchCardData }) {
 	const { role } = useUser();
+	const navigate = useNavigate();
 
 	const rejectable = () => {
 		return profileRole === "tourGuide" || profileRole === "seller" || profileRole === "advertiser";
 	}
 	const myProfile = () => {
 		return profileId === id;
+	}
+
+	const getCardType = () => {
+		if (profileRole === "tourGuide") {
+			return "itinerary";
+		}
+		else if (profileRole === "seller" || profileRole === "admin") {
+			return "product";
+		}
+		else if (profileRole === "tourismGovernor") {
+			return "site";
+		}
+		else {
+			return "activity";
+		}
 	}
 
 	const filteredCardData = role === "admin" && profileRole === "tourGuide"
@@ -45,27 +63,11 @@ function Timeline({ userData, profileId, id, profileRole, cardData, fetchCardDat
 				</h1>
 				<hr className="border-neutral-300 border w-full mt-1.5" />
 				{role !== "tourist" && myProfile() === true && (rejectable() === false || userData.isAccepted === true) &&
-					<Dialog>
-						<DialogTrigger className="shrink-0 mt-1.5 text-neutral-400 hover:text-neutral-600 transition-all">
+						<button
+						className="shrink-0 mt-1.5 text-neutral-400 hover:text-neutral-600 transition-all"
+						onClick={() => navigate(`/app/create/${getCardType()}`)}>
 							<CirclePlus size={24} />
-						</DialogTrigger>
-						<DialogContent className="overflow-y-scroll max-h-[50%]">
-							<DialogHeader>
-								<GenericForm
-									type={
-										role === "seller" || role === "admin"
-											? "product"
-											: role === "advertiser"
-												? "activity"
-												: role === "tourGuide"
-													? "itinerary"
-													: "site"
-									}
-									id={id}
-								/>
-							</DialogHeader>
-						</DialogContent>
-					</Dialog>
+						</button>
 				}
 			</div>
 			<div>

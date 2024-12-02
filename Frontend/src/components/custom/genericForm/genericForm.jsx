@@ -16,6 +16,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useToast } from "@/hooks/use-toast";
 import { Star } from "lucide-react";
+import { MultiSelectField } from "./input-fields/MultiSelectField";
 
 export function GenericForm({ type, data, id, fetcher }) {
 	// If you need more information about how this component works, check out forms.js in the same folder.
@@ -95,8 +96,9 @@ export function GenericForm({ type, data, id, fetcher }) {
 						key={fullPath}
 						name={fullPath}
 						control={form.control}
-						initialValue={field.type}
+						initialValue={field.arrayType}
 						label={field.label || field.name.toUpperCase()}
+						description={field.description}
 					/>
 				);
 
@@ -109,6 +111,7 @@ export function GenericForm({ type, data, id, fetcher }) {
 						label={field.label || field.name.toUpperCase()}
 						latitude={field.latitude}
 						longitude={field.longitude}
+						description={field.description}
 					/>
 				);
 
@@ -141,6 +144,7 @@ export function GenericForm({ type, data, id, fetcher }) {
 						)}
 						label={field.label || field.name.toUpperCase()}
 						fieldsSchema={field.fields}
+						description={field.description}
 					/>
 				);
 
@@ -151,6 +155,7 @@ export function GenericForm({ type, data, id, fetcher }) {
 						name={fullPath}
 						control={form.control}
 						label={field.label || field.name.toUpperCase()}
+						description={field.description}
 					/>
 				);
 			case "select":
@@ -162,6 +167,19 @@ export function GenericForm({ type, data, id, fetcher }) {
 						label={field.label || field.name.toUpperCase()}
 						options={field.options}
 						defaultValue={defaultValues[fullPath]}
+						description={field.description}
+					/>
+				);
+			case "multiSelect":
+				return (
+					<MultiSelectField
+						key={fullPath}
+						name={fullPath}
+						control={form.control}
+						label={field.label || field.name.toUpperCase()}
+						options={field.options}
+						defaultValue={defaultValues[fullPath]}
+						description={field.description}
 					/>
 				);
 
@@ -175,6 +193,7 @@ export function GenericForm({ type, data, id, fetcher }) {
 						control={form.control}
 						type={field.type}
 						label={field.label || field.name.toUpperCase()}
+						description={field.description}
 					/>
 				);
 			case 'textArea':
@@ -185,6 +204,7 @@ export function GenericForm({ type, data, id, fetcher }) {
 						control={form.control}
 						type={field.type}
 						label={field.label || field.name.toUpperCase()}
+						description={field.description}
 					/>
 				);
 			case 'file':
@@ -195,6 +215,7 @@ export function GenericForm({ type, data, id, fetcher }) {
 						control={form.control}
 						type={field.type}
 						label={field.label || field.name.toUpperCase()}
+						description={field.description}
 					/>
 				);
 			default:
