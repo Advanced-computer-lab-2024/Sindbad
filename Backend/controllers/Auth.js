@@ -188,8 +188,76 @@ const logout = (req, res) => {
   res.json({ message: "Cookie cleared" });
 };
 
+// @desc Get User Info from JWT
+// @route GET /auth/user
+// @access Private
+const getUserInfo = async (req, res) => {
+  try {
+    const cookies = req.cookies;
+
+    if (!cookies?.jwt) {
+      return res.status(401).json({ message: "No JWT token in cookie" });
+    }
+
+    const token = cookies.jwt;
+
+    jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, async (err, decoded) => {
+      if (err) {
+        return res.status(426).json({ message: "Forbidden" });
+      }
+
+      let UserModel;
+      switch (decoded.role) {
+        case "tourist":
+          UserModel = Tourist;
+          break;
+        case "advertiser":
+          UserModel = Advertiser;
+          break;
+        case "tourGuide":
+          UserModel = TourGuide;
+          break;
+        case "seller":
+          UserModel = Seller;
+          break;
+        case "tourismGovernor":
+          UserModel = TourismGovernor;
+          break;
+        case "admin":
+          UserModel = Admin;
+          break;
+        default:
+          return res.status(400).json({ message: "Invalid user type" });
+      }
+
+      const user = await UserModel.findOne({ _id: decoded.id }).exec();
+
+      if (!user) return res.status(404).json({ message: "User not found" });
+
+      res.json({
+        id: user._id,
+        username: user.username,
+        role: decoded.role,
+        accessToken: jwt.sign(
+          {
+            id: user._id,
+            username: user.username,
+            role: decoded.role,
+          },
+          process.env.ACCESS_TOKEN_SECRET,
+          { expiresIn: accessTokenExpiryTime }
+        ),
+      });
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 module.exports = {
   login,
   refresh,
   logout,
+  getUserInfo,
 };

@@ -11,4 +11,6 @@ router.route("/refresh").get(AuthController.refresh);
 
 router.route("/logout").post(AuthController.logout);
 
+router.route("/get-user").get(AuthController.getUserInfo);
+
 module.exports = router;
