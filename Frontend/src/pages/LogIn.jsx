@@ -53,13 +53,12 @@ function LogIn() {
 
   // Schema for Login Form
   const formSchema = z.object({
-    username: z.string().min(2, {
-      message: "Username must be at least 2 characters.",
+    username: z.string().min(1, {
+      message: "Username is required.",
     }),
-    // password: z.string().min(8, {
-    //     message: "Password must be at least 8 characters.",
-    // }),
-    password: z.string(),
+    password: z.string().min(1, {
+        message: "Password is required.",
+    }),
   });
 
   const touristDefaultValues = {
@@ -206,7 +205,7 @@ function LogIn() {
         />
         {error && (
           <p className="text-destructive text-xs mt-2">
-            {error === "Resource not found." ? "Incorrect username or password" : "An unknown error has occurred"}
+            {error === "Resource not found." || error === "Unexpected status code: 401" ? "Incorrect username or password" : "An unknown error has occurred"}
           </p>
         )}
       </div>
