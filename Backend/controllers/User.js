@@ -28,37 +28,37 @@ const isAcceptedmodels = {
 };
 
 const defaultFields = {
-	tourist: {
-		wallet: 0,
-		bookmarks: [],
-		loyaltyPoints: 0,
-		level: 1,
-		xpPoints: 0,
-		Notifications: [],
-		wishlist: [],
-		cart: [],
-		addresses: [],
-		preferences: [],
-		isRequestedAccountDeletion: false,
-	},
-	advertiser: {
-		isAccepted: null,
-		createdActivities: [],
-		createdIterinaries: [],
-		createdHistoricalPlaces: [],
-		isRequestedAccountDeletion: false,
-	},
-	seller: {
-		isAccepted: null,
-		products: [],
-		isRequestedAccountDeletion: false,
-	},
-	tourguide: {
-		isAccepted: null,
-		isRequestedAccountDeletion: false,
-	},
-	admin: {},
-	tourismgovernor: {},
+  tourist: {
+    wallet: 0,
+    bookmarks: [],
+    loyaltyPoints: 0,
+    level: 1,
+    xpPoints: 0,
+    Notifications: [],
+    wishlist: [],
+    cart: [],
+    addresses: [],
+    preferences: [],
+    isRequestedAccountDeletion: false,
+  },
+  advertiser: {
+    isAccepted: null,
+    createdActivities: [],
+    createdIterinaries: [],
+    createdHistoricalPlaces: [],
+    isRequestedAccountDeletion: false,
+  },
+  seller: {
+    isAccepted: null,
+    products: [],
+    isRequestedAccountDeletion: false,
+  },
+  tourguide: {
+    isAccepted: null,
+    isRequestedAccountDeletion: false,
+  },
+  admin: {},
+  tourismgovernor: {},
 };
 
 const UserController = {
@@ -298,14 +298,14 @@ const UserController = {
 
   updateUserPassword: async (req, res) => {
     const { id } = req.params;
-    const { role, passwordHash } = req.body;
+    const { role, password } = req.body;
     console.log(req.body);
     console.log(req.params);
 
     if (!role) {
       return res.status(400).json({ message: "Role is required" });
     }
-    if (!passwordHash) {
+    if (!password) {
       return res.status(400).json({ message: "Password is required" });
     }
 
@@ -321,7 +321,9 @@ const UserController = {
         return res.status(404).json({ message: "User not found" });
       }
 
-      user.passwordHash = passwordHash;
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+      user.passwordHash = hashedPassword;
       await user.save();
       res.json(user);
     } catch (error) {
