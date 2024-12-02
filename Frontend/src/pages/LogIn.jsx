@@ -18,13 +18,19 @@ import {
 } from "@/components/ui/form";
 
 import { useDispatch } from "react-redux";
-import { useUser, login, setCurrency } from "@/state management/userInfo";
+import {
+  useUser,
+  login,
+  setCurrency,
+  logout,
+} from "@/state management/userInfo";
 
 import { getTouristById } from "@/services/TouristApiHandler";
 import { getTourGuide } from "@/services/TourGuideApiHandler";
 import { getSeller } from "@/services/SellerApiHandler";
 import { getAdvertiser } from "@/services/AdvertiserApiHandler";
 import LogoSVG from "@/SVGs/Logo";
+import { refreshAccessToken, userLogin } from "@/services/AuthApiHandler";
 
 function LogIn() {
   const dispatch = useDispatch();
@@ -86,7 +92,25 @@ function LogIn() {
   };
 
   async function onSubmit(values) {
-    console.log(values);
+    // console.log("form values on front end: ", values);
+
+    // const data = await axios.post("http://localhost:5000/api/auth/login");
+
+    await userLogin(values)
+      .then((response) => {
+        // console.log("response: ", response);
+
+        dispatch(
+          login({
+            role: response.role,
+            id: response.id,
+            accessToken: response.accessToken,
+          })
+        );
+
+        navigate("/app/itineraries");
+      })
+      .catch((err) => console.log(err));
 
     // const { accessToken, refreshToken, role, id, preferredCurrency } =
     //   await loginUser(values);

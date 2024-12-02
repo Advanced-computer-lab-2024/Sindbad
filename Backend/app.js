@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const passport = require("passport");
 const session = require("express-session");
 const Amadeus = require("amadeus");
+const cookieParser = require("cookie-parser");
 require("dotenv").config();
 
 const adminRoutes = require("./routes/Admin");
@@ -48,6 +49,7 @@ app.use(
 // Middleware to parse JSON and URL-encoded data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 // Connect to MongoDB, and prevent connecting to the database during testing
 if (process.env.NODE_ENV !== "test") {
@@ -96,6 +98,12 @@ app.use("/user", userRoutes);
 
 app.use(verifyJWT);
 
+// Activity routes
+app.use("/activity", activityRoutes);
+
+// Itinerary routes
+app.use("/itinerary", itineraryRoutes);
+
 //Advertiser routes
 app.use("/advertiser", advertiserRoutes);
 
@@ -104,12 +112,6 @@ app.use("/admin", adminRoutes);
 
 // Site routes
 app.use("/site", siteRoutes);
-
-// Activity routes
-app.use("/activity", activityRoutes);
-
-// Itinerary routes
-app.use("/itinerary", itineraryRoutes);
 
 //seller routes
 app.use("/seller", sellerRoutes);
