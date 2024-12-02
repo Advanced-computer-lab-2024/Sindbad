@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const passport = require("passport");
 const session = require("express-session");
 const Amadeus = require("amadeus");
+const cookieParser = require("cookie-parser");
 require("dotenv").config();
 
 const adminRoutes = require("./routes/Admin");
@@ -34,6 +35,8 @@ const saleRoutes = require("./routes/Sale");
 const hotelRoutes = require("./routes/Hotel");
 const checkoutRoutes = require("./routes/Checkout");
 const webhookRoutes = require("./routes/Webhook");
+const authRoutes = require("./routes/Auth");
+const verifyJWTMiddleware = require("./middlewares/verifyJWT");
 
 //Set memory preference to be RAM
 const upload = multer({ storage: multer.memoryStorage() });
@@ -52,6 +55,7 @@ app.use(
 // Middleware to parse JSON and URL-encoded data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 // Connect to MongoDB, and prevent connecting to the database during testing
 if (process.env.NODE_ENV !== "test") {
@@ -64,6 +68,11 @@ if (process.env.NODE_ENV !== "test") {
             console.error("Database connection error:", err);
         });
 }
+
+app.use(verifyJWTMiddleware);
+
+// Auth routes
+app.use("/auth", authRoutes);
 
 app.put(
     "/tourGuide/:id",
@@ -149,6 +158,12 @@ app.post(
 //User routes
 app.use("/user", userRoutes);
 
+// Activity routes
+app.use("/activity", activityRoutes);
+
+// Itinerary routes
+app.use("/itinerary", itineraryRoutes);
+
 //Advertiser routes
 app.use("/advertiser", advertiserRoutes);
 
@@ -157,12 +172,6 @@ app.use("/admin", adminRoutes);
 
 // Site routes
 app.use("/site", siteRoutes);
-
-// Activity routes
-app.use("/activity", activityRoutes);
-
-// Itinerary routes
-app.use("/itinerary", itineraryRoutes);
 
 //seller routes
 app.use("/seller", sellerRoutes);

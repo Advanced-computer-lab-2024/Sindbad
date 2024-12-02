@@ -1,23 +1,24 @@
 const express = require("express");
 const router = express.Router();
 const {
-	signUp,
-	getUserRole,
-	deleteUser,
-	getAllUsers,
-	updateUserPassword,
-	getAllPendingUsers,
-	updateUserAcceptance,
-	checkDeletion,
-	requestAccountDeletion,
+  signUp,
+  getUserRole,
+  deleteUser,
+  getAllUsers,
+  updateUserPassword,
+  getAllPendingUsers,
+  updateUserAcceptance,
+  checkDeletion,
+  requestAccountDeletion,
 } = require("../controllers/User");
 
-// Sign up route
+// Public routes (No authentication required)
+router.post("/signup", signUp);
+
+// Protected routes (Require JWT authentication)
 router.post("/changePassword/:id", updateUserPassword);
 
 router.post("/changeAcceptance/:id", updateUserAcceptance);
-
-router.post("/signup", signUp);
 
 router.get("/get-user-role/:id", getUserRole);
 

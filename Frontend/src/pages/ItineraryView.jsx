@@ -31,6 +31,9 @@ import { useUser, useCurrency } from "@/state management/userInfo";
 import { Convert } from "easy-currencies";
 
 import { useNavigate } from "react-router-dom";
+import { Input } from "@/components/ui/input";
+import { Label } from "@radix-ui/react-dropdown-menu";
+import { usePromoCode } from "@/services/PromocodeApiHandler";
 
 function handleItineraryValues(itinerary) {
     if (!itinerary.description) {
@@ -64,6 +67,11 @@ const Itinerary = () => {
     const [convertedPrice, setConvertedPrice] = useState(null);
     const { toast } = useToast();
     const navigate = useNavigate();
+    const [applied, setApplied] = useState(false);
+    const [promoCode, setPromoCode] = useState("");
+    const [loading, setLoading] = useState(false); // For apply button 
+    const [discount, setDiscount] = useState(0);
+    const [totalCost, setTotalCost] = useState(0);
 
     const getItinerary = async () => {
         let response = await getItineraryById(itineraryId);
@@ -90,6 +98,12 @@ const Itinerary = () => {
         }
     };
 
+    useEffect(() => {
+        const baseCost = (adult * convertedPrice) + (child * convertedPrice);
+        const discountedCost = discount > 0 ? baseCost * (1 - discount / 100) : baseCost; // Apply discount if any
+        setTotalCost(discountedCost.toFixed(2)); // Update total cost
+    }, [adult, child, convertedPrice, discount]); // Dependencies to trigger re-calculation
+    
     useEffect(() => {
         getItinerary();
     }, []);
@@ -166,6 +180,37 @@ const Itinerary = () => {
     const handleChildIncrement = () => setChild(child + 1);
     const handleChildDecrement = () => child > 0 && setChild(child - 1);
 
+    const handlePromoCodeApply = () => {
+        if (!promoCode || promoCode.trim() === "") {
+            toast({ description: "Please enter a promo code." });
+            return;
+        }
+    
+        setLoading(true); // Set loading state to true, indicating a request is in progress
+    
+        // Handle the async logic
+        const applyPromoCode = async () => {
+            try {
+                const result = await usePromoCode(id, promoCode); // Use the promo code here
+                console.log(result);
+    
+                if (result.discount) {
+                    setDiscount(result.discount);  // Set discount if the result contains it
+                    setApplied(true); // Mark promo code as applied
+                    toast({ description: `Promo code applied! You got a ${result.discount}% discount.` });
+                } else {
+                    toast({ description: result.message || "Incorrect Promo Code." });
+                }
+            } catch (error) {
+                toast({ description: error.message || "An unexpected error occurred." });
+            } finally {
+                setLoading(false); // Reset loading state after the request is finished
+            }
+        };
+    
+        applyPromoCode(); // Call the async function to apply the promo code
+    };
+    
     return (
         <div className="py-8 px-24 max-w-[1200px] mx-auto">
             <div className="flex items-center gap-6">
@@ -357,15 +402,15 @@ const Itinerary = () => {
                             </Carousel>
 
 
-                            <div className="relative p-6 bg-gradient-to-b from-neutral-200/60 to-light rounded-md mt-4 overflow-clip">
+                            <div className="relative p-6 bg-gradient-to-b from-neutral-200/60 to-light rounded-md mt-4 overflow-clip z-0">
                                 {/* border */}
-                                <div className="absolute top-0 left-0 rounded-md border border-neutral-500 h-full w-full"></div>
+                                <div className="absolute top-0 left-0 rounded-md border border-neutral-500 h-full w-full z-0"></div>
                                 {/* Top cutout */}
-                                <div className="absolute top-[248px] -left-5 -right-5 flex justify-between">
+                                <div className="absolute top-[248px] -left-5 -right-5 flex justify-between z-0">
                                     <div className="w-[36px] h-6 bg-light rounded-t-full border-t border-r border-neutral-500"></div>
                                     <div className="w-[36px] h-6 bg-light rounded-t-full border-t border-l border-neutral-500"></div>
                                 </div>
-                                <div className="absolute top-[270px] -left-5 -right-5 flex justify-between">
+                                <div className="absolute top-[270px] -left-5 -right-5 flex justify-between z-0">
                                     <div className="w-[36px] h-3 bg-light rounded-b-full border-b border-r border-neutral-500"></div>
                                     <div className="w-[36px] h-3 bg-light rounded-b-full border-b border-l border-neutral-500"></div>
                                 </div>
@@ -433,20 +478,58 @@ const Itinerary = () => {
                                             </Button>
                                         </div>
                                     </div>
+                                    
+                                    
+                                </div>
+                                <div className="relative z-10">
+                                {!applied ? (
+                                    <div className="grid grid-cols-3 w-full max-w-sm items-center gap-1">
+                                        <div className="col-span-2 p-2">
+                                            <Label className="text-sm p-1" htmlFor="code">Enter Promocode</Label>
+                                            <Input
+                                                type="text"
+                                                id="code"
+                                                placeholder="Enter code.."
+                                                value={promoCode} 
+                                                onChange={(e) => setPromoCode(e.target.value.trim())} 
+                                                className="w-full border border-gray-300 rounded text-sm p-1 px-2"
+                                            />
+                                        </div>
+                                        <Button
+                                            className="col-span-1 flex items-center justify-center mt-6"
+                                            onClick={() => handlePromoCodeApply()}
+                                        >
+                                            Apply
+                                        </Button>
+                                    </div>
+                                ) : (
+                                    <div className="grid grid-cols-3 w-full max-w-sm items-center gap-1">
+                                        <div className="col-span-2 p-2">
+                                            <Input
+                                                type="text"
+                                                id="code"
+                                                placeholder={promoCode} // Display the applied promo code
+                                                className="p-2"
+                                                disabled
+                                            />
+                                        </div>
+                                        <Button className="col-span-1 flex items-center justify-center" disabled>
+                                            Applied
+                                        </Button>
+                                    </div>
+                                )}
                                 </div>
 
                                 {/* Total Cost Section */}
                                 <div className="bg-primary-700/40 -mx-6 px-8 py-4 text-sm flex flex-col gap-2">
                                     <div className="flex justify-between">
-                                        <p>Item count: </p>
+                                        <p>Item count:</p>
                                         <p className="font-medium">{adult + child}</p>
                                     </div>
                                     <div>
                                         <div className="flex justify-between">
                                             <p>Total:</p>
-                                            <p className="font-medium">
-                                                {(adult * convertedPrice + child * convertedPrice).toFixed(2)} {currency}
-                                            </p>
+                                            <p className="font-medium">{totalCost} {currency}</p> {/* Use totalCost state */}
                                         </div>
                                         <p className="text-xs text-neutral-500 italic mt-0.5">
                                             *Includes taxes and charges
@@ -534,6 +617,7 @@ const Itinerary = () => {
                 type="itinerary"
             />
         </div>
+        
     );
 };
 

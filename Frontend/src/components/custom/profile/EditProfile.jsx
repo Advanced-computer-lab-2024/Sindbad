@@ -23,15 +23,15 @@ function EditProfile({ userType, id, userData }) {
     });
 
     const onSubmit = (data) => {
-        if (userData.passwordHash == data.oldPassword) {
-            const body = {
-                passwordHash: data.newPassword,
-                id: id,
-                role: userType,
-            };
-            updateUserPassword(body.id, body.role, body.passwordHash);
-        }
-    }
+        // if (userData.passwordHash == data.oldPassword) {
+        const body = {
+            password: data.newPassword,
+            id: id,
+            role: userType,
+        };
+        updateUserPassword(body.id, body.role, body.password);
+        // }
+    };
 
     return (
         <div>

@@ -27,8 +27,9 @@ import { getMySites } from "@/services/SiteApiHandler";
 import { getUserRole } from "@/services/UserApiHandler";
 import { useUser } from "@/state management/userInfo";
 import EditProfile from "@/components/custom/profile/EditProfile";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Import } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 
 function Profile() {
     const { profileId } = useParams(); // id of the user whose profile is being viewed
@@ -39,6 +40,10 @@ function Profile() {
     const [totalRatings, setTotalRatings] = useState(0);
     const [error, setError] = useState(false);
     const [editing, setEditing] = useState(false);
+    const today = new Date();
+    const testDate = new Date('2012-10-22');
+	const { toast } = useToast();
+    
 
     const getUserInfo = async (profileId) => {
         let response;
@@ -136,6 +141,12 @@ function Profile() {
             Object.keys(userData).length > 0
         ) {
             getCardData(profileId);
+            console.log(Object.keys(userData));
+            if (userData.DOB) {
+                console.log(userData.DOB);
+            } else {
+                console.log("DOB not found in userData.");
+            }
         }
     }, [profileRole, userData]);
 
@@ -182,6 +193,11 @@ function Profile() {
             </div>
         );
     }
+   // Ensure dob is available and valid
+    const dob = userData?.DOB ? new Date(userData.DOB) : null;
+    const isBirthday =
+        dob && !isNaN(dob.getTime()) && today.getDate() === dob.getDate() && today.getMonth() === dob.getMonth();
+
 
     return (
         <div className="py-8 px-24 max-w-[1200px] mx-auto">
@@ -216,6 +232,25 @@ function Profile() {
                     )}
                 </div>
                 <div className="w-full">
+                    { isBirthday && 
+                    (
+                        <div className="w-full py-5">
+                            <p className=" text-lg text-primary-950">Thank you for your support! To celebrate your birthday, here’s a special promo code just for you!</p>
+                            <p
+                                className="p-5 text-center font-semibold text-primary-900 text-2xl cursor-pointer hover:font-bold hover:text-primary-850"
+                                onClick={() => {
+                                    navigator.clipboard.writeText("HAPPYBDAY")
+                                    .then(() => {
+                                        // Ensure the toast is called with the correct message
+                                        toast({description:"Code copied to clipboard!"});
+                                    })
+                                }}
+                            >
+                                HAPPYBDAY
+                            </p>
+
+                        </div>
+                    )}
                     {!editing ? (
                         <div className="w-full flex flex-col gap-12">
                             {profileRole === "advertiser" && (
