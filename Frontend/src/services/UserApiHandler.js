@@ -74,8 +74,21 @@ export const deleteUser = async (id, role) => {
 };
 
 export const sendForgotPasswordEmail = async (email) => {
-  const response = await axiosInstance.post(`/user/forgot-password`, {
-    email,
+  try {
+    const response = await axiosInstance.post(`/user/forgot-password`, {
+      email,
+    });
+    return response.data;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const resetPassword = async (id, newPassword) => {
+  console.log("Reset Password:", { id, newPassword });
+  const response = await axiosInstance.post(`/user/reset-password`, {
+    id,
+    newPassword,
   });
   return response.data;
 };

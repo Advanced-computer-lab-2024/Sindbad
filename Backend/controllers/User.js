@@ -460,6 +460,64 @@ const UserController = {
       });
     }
   },
+
+  resetPassword: async (req, res) => {
+    const { newPassword, id } = req.body;
+
+    // console.log("req.body: ", { newPassword, id });
+
+    // Validate the password input
+    if (!newPassword) {
+      return res.status(400).json({ message: "Password is required" });
+    }
+
+    // Define all user models
+    const models = {
+      tourist: Tourist,
+      advertiser: Advertiser,
+      tourGuide: TourGuide,
+      seller: Seller,
+      tourismGovernor: TourismGovernor,
+      admin: Admin,
+    };
+
+    let foundUser = null;
+    let userType = null;
+
+    try {
+      // Loop through all models and find the user in one of the models
+      for (const [type, UserModel] of Object.entries(models)) {
+        // Use findOne instead of find to get a single user
+        foundUser = await UserModel.findOne({ _id: id }).exec();
+        if (foundUser) {
+          userType = type; // Set the userType when found
+          break; // Exit the loop when the user is found
+        }
+      }
+
+      // console.log("Found user: ", foundUser);
+
+      if (!foundUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Hash the new password
+      const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+
+      // Update the user's password
+      foundUser.passwordHash = hashedPassword;
+      await foundUser.save();
+
+      return res
+        .status(200)
+        .json({ message: "Password reset successfully", foundUser });
+    } catch (error) {
+      return res.status(500).json({
+        message: "An error occurred while resetting your password",
+        error: error.message,
+      });
+    }
+  },
 };
 
 module.exports = UserController;

@@ -35,6 +35,7 @@ import { useUser } from "@/state management/userInfo";
 import { CheckoutSuccess } from "./pages/CheckoutSuccess";
 import { CheckoutOutlet } from "./pages/CheckoutOutlet";
 import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 function App() {
   const { id } = useUser();
@@ -86,6 +87,7 @@ function App() {
         <Route path="/login" element={<LogIn />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:id" element={<ResetPassword />} />
 
         <Route path="/" element={<Navigate to="/app" replace />} />
       </Routes>

@@ -18,19 +18,14 @@ import {
 } from "@/components/ui/form";
 
 import { useDispatch } from "react-redux";
-import {
-  useUser,
-  login,
-  setCurrency,
-  logout,
-} from "@/state management/userInfo";
+import { useUser, login } from "@/state management/userInfo";
 
 import { getTouristById } from "@/services/TouristApiHandler";
 import { getTourGuide } from "@/services/TourGuideApiHandler";
 import { getSeller } from "@/services/SellerApiHandler";
 import { getAdvertiser } from "@/services/AdvertiserApiHandler";
 import LogoSVG from "@/SVGs/Logo";
-import { refreshAccessToken, userLogin } from "@/services/AuthApiHandler";
+import { userLogin } from "@/services/AuthApiHandler";
 
 function LogIn() {
   const dispatch = useDispatch();
@@ -102,9 +97,8 @@ function LogIn() {
           accessToken: response.accessToken,
         })
       );
-
       console.log("Log in successful:", response);
-      // navigate("/app/itineraries");
+      navigate("/app/itineraries");
     } catch (err) {
       // Axios errors have a 'response' property for HTTP errors
 
