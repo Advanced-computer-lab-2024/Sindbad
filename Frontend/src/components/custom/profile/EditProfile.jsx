@@ -9,11 +9,11 @@ import { Input } from "@/components/ui/input";
 import { updateUserPassword } from "@/services/UserApiHandler";
 
 function EditProfile({ userType, id, userData }) {
-  console.log(userType, id, userData);
+  console.log(`userType: ${userType}, id: ${id}, userData: ${userData}`);
 
   const changePasswordSchema = z.object({
-    oldPassword: z.string(),
-    newPassword: z.string(),
+    oldPassword: z.string().min(8),
+    newPassword: z.string().min(8),
   });
 
   const form = useForm({
@@ -24,15 +24,62 @@ function EditProfile({ userType, id, userData }) {
     },
   });
 
-  const onSubmit = (data) => {
-    // if (userData.passwordHash == data.oldPassword) {
+  const onSubmit = async (data) => {
+    // console.log("Form data: ", data);
+
     const body = {
-      password: data.newPassword,
+      oldPassword: data.oldPassword,
+      newPassword: data.newPassword,
       id: id,
       role: userType,
     };
-    updateUserPassword(body.id, body.role, body.password);
-    // }
+
+    try {
+      await updateUserPassword(
+        body.id,
+        body.role,
+        body.oldPassword,
+        body.newPassword
+      );
+
+      alert("Password changed successfully!");
+    } catch (error) {
+      // Handle error responses
+      if (error.response) {
+        const statusCode = error.response.status;
+
+        switch (statusCode) {
+          case 400:
+            alert(
+              `Bad Request: ${
+                error.response.data.message || "Please check your input."
+              }`
+            );
+            break;
+          case 404:
+            alert("User not found. Please check the ID and try again.");
+            break;
+          case 500:
+            alert(
+              "Server error. Please try again later or contact support if the issue persists."
+            );
+            break;
+          default:
+            alert(
+              `Unexpected error: ${
+                error.response.data.message || "Something went wrong."
+              }`
+            );
+            break;
+        }
+      } else if (error.request) {
+        alert(
+          "No response received from the server. Please check your internet connection and try again."
+        );
+      } else {
+        alert(`Request failed: ${error.message}`);
+      }
+    }
   };
 
   return (

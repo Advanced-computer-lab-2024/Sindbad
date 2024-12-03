@@ -299,15 +299,22 @@ const UserController = {
 
   updateUserPassword: async (req, res) => {
     const { id } = req.params;
-    const { role, password } = req.body;
-    console.log(req.body);
-    console.log(req.params);
+    const { role, oldPassword, newPassword } = req.body;
+    // console.log(req.body);
+    // console.log(req.params);
+
+    if (!id) {
+      return res.status(400).json({ message: "ID is required" });
+    }
 
     if (!role) {
       return res.status(400).json({ message: "Role is required" });
     }
-    if (!password) {
-      return res.status(400).json({ message: "Password is required" });
+    if (!oldPassword) {
+      return res.status(400).json({ message: "Old Password is required" });
+    }
+    if (!newPassword) {
+      return res.status(400).json({ message: "New Password is required" });
     }
 
     try {
@@ -322,7 +329,23 @@ const UserController = {
         return res.status(404).json({ message: "User not found" });
       }
 
-      const hashedPassword = await bcrypt.hash(password, saltRounds);
+      if (newPassword.length < 8) {
+        return res
+          .status(400)
+          .json({ message: "New password must be at least 8 characters." });
+      }
+
+      if (!(await bcrypt.compare(oldPassword, user.passwordHash))) {
+        return res.status(400).json({ message: "Old password is incorrect" });
+      }
+
+      if (oldPassword == newPassword) {
+        return res.status(400).json({
+          message: "Old password and new password cannot be the same!",
+        });
+      }
+
+      const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
 
       user.passwordHash = hashedPassword;
       await user.save();
