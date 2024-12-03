@@ -123,7 +123,7 @@ export function GenericForm({ type, data, id, fetcher }) {
 						<h3 className="text-lg font-semibold mb-2">
 							{field.label || field.name.toUpperCase()}
 						</h3>
-						<div className="ml-4">
+						<div className="">
 							{field.fields.map((nestedField) =>
 								renderField(nestedField, fullPath)
 							)}
