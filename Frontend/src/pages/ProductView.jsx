@@ -59,7 +59,7 @@ function ProductView() {
       console.error(response.message);
     } else {
       toast({
-        description: "Product purchased successfully.",
+        description: "Product added to cart.",
       });
     }
   };

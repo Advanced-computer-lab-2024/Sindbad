@@ -23,7 +23,7 @@ const verifyJWT = (req, res, next) => {
 
   if (!authHeader?.startsWith("Bearer ")) {
     console.log("no auth in header");
-    return res.status(401).json({ message: "Unauthorized" });
+    return res.status(401).json({ message: "No JWT token in request" });
   }
 
   const token = authHeader.split(" ")[1];
