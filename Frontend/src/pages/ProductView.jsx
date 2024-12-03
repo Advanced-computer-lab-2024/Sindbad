@@ -193,7 +193,7 @@ function ProductView() {
               onClick={() => handleAddToWishlist()}
               className="w-10 h-10 p-2 rounded-full bg-transparent flex items-center justify-center"
             >
-              <Heart size={24} className="text-black-500" />
+              <Heart size={24} className="text-black" />
             </Button>
           </div>
         </div>
