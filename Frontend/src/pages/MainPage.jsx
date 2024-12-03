@@ -46,7 +46,10 @@ function MainPage() {
 
   const renderFields = () => {
     return renderedFields
-      .filter((field) => field !== "cart" && field !== "profile")
+      .filter(
+        (field) =>
+          field !== "cart" && field != "wishlist" && field !== "profile"
+      )
       .map((field) => {
         return (
           <NavigationMenuItem key={field}>
