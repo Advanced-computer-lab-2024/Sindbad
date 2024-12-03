@@ -48,6 +48,29 @@ export const redeemPoints = async (touristId) => {
     }
 };
 
+export const addActivityToBookmarks = async (touristId, activityID) => {
+    try {
+        const response = await axiosInstance.post(
+            `/tourist/${touristId}/bookmark`,
+            {
+                activityID,
+            }
+        );
+        return response;
+    } catch (error) {
+        return error.message;
+    }
+};
+
+export const getBookmarkedActivities = async (touristId) => {
+    try {
+        const response = await axiosInstance.get(`/tourist/${touristId}/bookmark`);
+        return response;
+    } catch (error) {
+        return error;
+    }
+};
+
 export const addItemToCart = async (touristId, itemId, amount) => {
     try {
         const response = await axiosInstance.post(`/tourist/${touristId}/cart`, {
@@ -58,16 +81,18 @@ export const addItemToCart = async (touristId, itemId, amount) => {
     } catch (error) {
         return error;
     }
-}
+};
 
 export const removeItemFromCart = async (touristId, itemId) => {
     try {
-        const response = await axiosInstance.delete(`/tourist/${touristId}/cart/${itemId}`);
+        const response = await axiosInstance.delete(
+            `/tourist/${touristId}/cart/${itemId}`
+        );
         return response.data;
     } catch (error) {
         return error;
     }
-}
+};
 
 export const getCart = async (touristId) => {
     try {
@@ -76,7 +101,7 @@ export const getCart = async (touristId) => {
     } catch (error) {
         return error;
     }
-}
+};
 
 export const updateCart = async (touristId, itemId, amount) => {
     try {
@@ -88,62 +113,93 @@ export const updateCart = async (touristId, itemId, amount) => {
     } catch (error) {
         return error;
     }
-}
+};
 
-export const addAddress = async (touristId, address) => {
+export const getWishlistProducts = async (touristId) => {
     try {
-        const response = await axiosInstance.post(`/tourist/${touristId}/address`, address);
+        const response = await axiosInstance.get(
+            `/tourist/${touristId}/wishlist/products`
+        );
+        return response.data || [];
+    } catch (error) {
+        return error;
+    }
+};
+
+export const removeFromWishlist = async (touristId, productID) => {
+    try {
+        const response = await axiosInstance.delete(
+            `/tourist/${touristId}/wishlist`,
+            {
+                data: { productID },
+            }
+        );
         return response.data;
     } catch (error) {
         return error;
     }
-}
+};
+
+export const addProductToWishlist = async (touristId, productID) => {
+    try {
+        const response = await axiosInstance.post(
+            `/tourist/${touristId}/wishlist`,
+            { productID } // Send productID directly in the body
+        );
+        return response.data || [];
+    } catch (error) {
+        return error;
+    }
+};
+
+export const addAddress = async (touristId, address) => {
+    try {
+        const response = await axiosInstance.post(
+            `/tourist/${touristId}/address`,
+            address
+        );
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
 
 export const checkoutWithStripe = async (id, cart) => {
     try {
-        const response = await fetch('http://localhost:3000/checkout/stripe', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
+        const response = await axiosInstance.post(
+            "/checkout/stripe",
+            {
                 userId: id,
-                cart: cart
-            }),
-        });
+                cart: cart,
+            });
 
-        if (!response.ok) {
-            throw new Error('Failed to create Stripe session.');
-        }
-
-        const { url } = await response.json();
+        const url = response.data.url;
         window.location.href = url; // Redirect to Stripe Checkout
     } catch (error) {
-        console.error('Error:', error.message);
-        alert('Something went wrong. Please try again later.');
+        return error;
     }
-}
+};
 
 export const checkoutWithWallet = async (touristId, cart) => {
     try {
         const response = await axiosInstance.post(`/checkout/wallet`, {
             userId: touristId,
-            cart: cart
+            cart: cart,
         });
         return response.data;
     } catch (error) {
         return error;
     }
-}
+};
 
 export const checkoutWithCod = async (touristId, cart) => {
     try {
         const response = await axiosInstance.post(`/checkout/cod`, {
             userId: touristId,
-            cart: cart
+            cart: cart,
         });
         return response.data;
     } catch (error) {
         return error;
     }
-}
+};

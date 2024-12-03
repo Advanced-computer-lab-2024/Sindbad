@@ -5,23 +5,25 @@ import { useNavigate } from "react-router-dom";
 import { EllipsisVertical } from "lucide-react";
 
 import {
-    updateItinerary,
-    setItineraryInappropriate,
+  updateItinerary,
+  setItineraryInappropriate,
 } from "@/services/ItineraryApiHandler";
 import { setActivityInappropriate } from "@/services/ActivityApiHandler";
 import { updateProduct } from "@/services/ProductApiHandler";
 import {
-    DropdownMenu,
-    DropdownMenuItem,
-    DropdownMenuContent,
-    DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
+
+import { addActivityToBookmarks } from "@/services/TouristApiHandler";
 
 import GenericForm from "../genericForm/genericForm";
 import DeleteForm from "../deleteForm";
@@ -34,176 +36,198 @@ To edit the configuration, modify the cardConfig object in the specific card com
 To add a new action, write its method, add it to the parent's cardConfig object, and finally add it as DropdownMenuItem.
 */
 function CardMenu({
-    data,
-    config = { actions: {} },
-    role,
-    id,
-    cardType,
-    fetchCardData,
-    openDialog,
-    setOpenDialog,
+  data,
+  config = { actions: {} },
+  role,
+  id,
+  cardType,
+  fetchCardData,
+  openDialog,
+  setOpenDialog,
 }) {
-    const { toast } = useToast();
-    const navigate = useNavigate();
+  const { toast } = useToast();
+  const navigate = useNavigate();
 
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-    // Function to copy the link to clipboard
-    const handleCopyLink = () => {
-        const link = `http://localhost:5173/app/${cardType}/${data._id}`;
-        navigator.clipboard
-            .writeText(link)
-            .then(() => {
-                toast({
-                    description: "Link copied to clipboard",
-                });
-            })
-            .catch((err) => console.error("Failed to copy link: ", err));
-    };
-
-    // Function to share via email
-    const handleShareEmail = () => {
-        const subject = encodeURIComponent(`Check out this ${cardType}!`);
-        const body = encodeURIComponent(
-            `Here's ${cardType === "itinerary" || cardType === "activity"
-                ? "an " + cardType
-                : "a " + cardType
-            } I found on Sindbad:\nhttp://localhost:5173/app/${cardType}/${data._id}`
-        );
-        window.location.href = `mailto:?subject=${subject}&body=${body}`;
-    };
-
-    const toggleItineraryActive = async () => {
-        const response = await updateItinerary(data._id, {
-            isActive: !data.isActive,
+  // Function to copy the link to clipboard
+  const handleCopyLink = () => {
+    const link = `http://localhost:5173/app/${cardType}/${data._id}`;
+    navigator.clipboard
+      .writeText(link)
+      .then(() => {
+        toast({
+          description: "Link copied to clipboard",
         });
-        if (response.error) {
-            console.error(response.message);
-        } else {
-            fetchCardData();
-            toast({
-                description: `Itinerary ${data.isActive ? "deactivated" : "activated"
-                    } successfully`,
-            });
-        }
-    };
+      })
+      .catch((err) => console.error("Failed to copy link: ", err));
+  };
 
-    const toggleInappropriate = async () => {
-        const response =
-            cardType === "itinerary"
-                ? await setItineraryInappropriate(data._id, {
-                    isInappropriate: !data.isInappropriate,
-                })
-                : await setActivityInappropriate(data._id, {
-                    isInappropriate: !data.isInappropriate,
-                });
-        if (response.error) {
-            console.error(response.message);
-        } else {
-            fetchCardData();
-            toast({
-                description: `This ${cardType} has been ${data.isInappropriate ? "unflagged" : "flagged"
-                    } as inappropriate`,
-            });
-        }
-    };
-
-    const toggleArchive = async () => {
-        const response = await updateProduct(data._id, {
-            isArchived: !data.isArchived,
-        });
-        if (response.error) {
-            console.error(response.message);
-        } else {
-            fetchCardData();
-            toast({
-                description: `Product ${data.isArchived ? "unarchived" : "archived"
-                    } successfully`,
-            });
-        }
-    };
-
-    return (
-        <>
-            <DropdownMenu
-                onOpenChange={(open) => setIsDropdownOpen(open)}
-                modal={false}
-            >
-                <DropdownMenuTrigger asChild>
-                    <div className="icon-button">
-                        <EllipsisVertical fill="currentColor" size={16} />
-                    </div>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start">
-                    <DropdownMenuItem onClick={handleCopyLink}>
-                        Copy link
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleShareEmail}>
-                        Share via email
-                    </DropdownMenuItem>
-
-                    {config.actions.bookmark?.includes(role) && (
-                        <DropdownMenuItem>Bookmark</DropdownMenuItem>
-                    )}
-
-                    {config.actions.edit && id === data.creatorId && (
-                        <DropdownMenuItem onClick={() => navigate(`/app/${cardType}/${data._id}/edit`, { state: { data } })}>
-                            Edit
-                        </DropdownMenuItem>
-                    )}
-
-                    {config.actions.delete && id === data.creatorId && (
-                        <DropdownMenuItem onClick={() => setOpenDialog("delete")}>
-                            Delete
-                        </DropdownMenuItem>
-                    )}
-
-                    {config.actions.deactivate && id === data.creatorId && (
-                        <DropdownMenuItem onClick={toggleItineraryActive}>
-                            {data.isActive ? "Deactivate" : "Activate"}
-                        </DropdownMenuItem>
-                    )}
-
-                    {config.actions.flagAsInappropriate?.includes(role) && (
-                        <DropdownMenuItem onClick={toggleInappropriate}>
-                            {data.isInappropriate
-                                ? "Unflag as inappropriate"
-                                : "Flag as inappropriate"}
-                        </DropdownMenuItem>
-                    )}
-
-                    {config.actions.toggleArchive && id === data.creatorId && (
-                        <DropdownMenuItem onClick={toggleArchive}>
-                            {data.isArchived ? "Unarchive" : "Archive"}
-                        </DropdownMenuItem>
-                    )}
-                </DropdownMenuContent>
-            </DropdownMenu>
-            <Dialog
-                open={openDialog === "edit"}
-                onOpenChange={() => setOpenDialog("")}
-            >
-                <DialogContent className="overflow-y-scroll max-h-[50%]">
-                    <DialogHeader>
-                        <GenericForm type={cardType} id={id} data={data} />
-                    </DialogHeader>
-                </DialogContent>
-            </Dialog>
-            <Dialog
-                open={openDialog === "delete"}
-                onOpenChange={() => setOpenDialog("")}
-            >
-                <DialogContent className="max-h-[50%]">
-                    <DialogTitle>
-                        Are you sure you want to delete this {cardType}?
-                    </DialogTitle>
-                    <DialogHeader>
-                        <DeleteForm type={cardType} data={data} />
-                    </DialogHeader>
-                </DialogContent>
-            </Dialog>
-        </>
+  // Function to share via email
+  const handleShareEmail = () => {
+    const subject = encodeURIComponent(`Check out this ${cardType}!`);
+    const body = encodeURIComponent(
+      `Here's ${
+        cardType === "itinerary" || cardType === "activity"
+          ? "an " + cardType
+          : "a " + cardType
+      } I found on Sindbad:\nhttp://localhost:5173/app/${cardType}/${data._id}`
     );
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+  };
+
+  const toggleItineraryActive = async () => {
+    const response = await updateItinerary(data._id, {
+      isActive: !data.isActive,
+    });
+    if (response.error) {
+      console.error(response.message);
+    } else {
+      fetchCardData();
+      toast({
+        description: `Itinerary ${
+          data.isActive ? "deactivated" : "activated"
+        } successfully`,
+      });
+    }
+  };
+
+  const bookmarkActivity = async () => {
+    try {
+      const response = await addActivityToBookmarks(id, data._id);
+      console.log("id:", id, "data._id:", data?._id);
+    } catch (error) {
+      console.error("An unexpected error occurred:", error.message);
+    }
+  };
+
+  const toggleInappropriate = async () => {
+    const response =
+      cardType === "itinerary"
+        ? await setItineraryInappropriate(data._id, {
+            isInappropriate: !data.isInappropriate,
+          })
+        : await setActivityInappropriate(data._id, {
+            isInappropriate: !data.isInappropriate,
+          });
+    if (response.error) {
+      console.error(response.message);
+    } else {
+      fetchCardData();
+      toast({
+        description: `This ${cardType} has been ${
+          data.isInappropriate ? "unflagged" : "flagged"
+        } as inappropriate`,
+      });
+    }
+  };
+
+  const toggleArchive = async () => {
+    const response = await updateProduct(data._id, {
+      isArchived: !data.isArchived,
+    });
+    if (response.error) {
+      console.error(response.message);
+    } else {
+      fetchCardData();
+      toast({
+        description: `Product ${
+          data.isArchived ? "unarchived" : "archived"
+        } successfully`,
+      });
+    }
+  };
+
+  return (
+    <>
+      <DropdownMenu
+        onOpenChange={(open) => setIsDropdownOpen(open)}
+        modal={false}
+      >
+        <DropdownMenuTrigger asChild>
+          <div className="icon-button">
+            <EllipsisVertical fill="currentColor" size={16} />
+          </div>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="start">
+          <DropdownMenuItem onClick={handleCopyLink}>
+            Copy link
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleShareEmail}>
+            Share via email
+          </DropdownMenuItem>
+
+          {config.actions.bookmark?.includes(role) && (
+            <DropdownMenuItem onClick={() => bookmarkActivity()}>
+              Bookmark
+              {console.log("ahh")}
+            </DropdownMenuItem>
+          )}
+
+          {config.actions.edit && id === data.creatorId && (
+            <DropdownMenuItem
+              onClick={() =>
+                navigate(`/app/${cardType}/${data._id}/edit`, {
+                  state: { data },
+                })
+              }
+            >
+              Edit
+            </DropdownMenuItem>
+          )}
+
+          {config.actions.delete && id === data.creatorId && (
+            <DropdownMenuItem onClick={() => setOpenDialog("delete")}>
+              Delete
+            </DropdownMenuItem>
+          )}
+
+          {config.actions.deactivate && id === data.creatorId && (
+            <DropdownMenuItem onClick={toggleItineraryActive}>
+              {data.isActive ? "Deactivate" : "Activate"}
+            </DropdownMenuItem>
+          )}
+
+          {config.actions.flagAsInappropriate?.includes(role) && (
+            <DropdownMenuItem onClick={toggleInappropriate}>
+              {data.isInappropriate
+                ? "Unflag as inappropriate"
+                : "Flag as inappropriate"}
+            </DropdownMenuItem>
+          )}
+
+          {config.actions.toggleArchive && id === data.creatorId && (
+            <DropdownMenuItem onClick={toggleArchive}>
+              {data.isArchived ? "Unarchive" : "Archive"}
+            </DropdownMenuItem>
+          )}
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <Dialog
+        open={openDialog === "edit"}
+        onOpenChange={() => setOpenDialog("")}
+      >
+        <DialogContent className="overflow-y-scroll max-h-[50%]">
+          <DialogHeader>
+            <GenericForm type={cardType} id={id} data={data} />
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+      <Dialog
+        open={openDialog === "delete"}
+        onOpenChange={() => setOpenDialog("")}
+      >
+        <DialogContent className="max-h-[50%]">
+          <DialogTitle>
+            Are you sure you want to delete this {cardType}?
+          </DialogTitle>
+          <DialogHeader>
+            <DeleteForm type={cardType} data={data} />
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
 }
 
 export default CardMenu;
