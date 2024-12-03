@@ -8,7 +8,6 @@ const excludedRoutes = [
   /^\/advertiser\/upload\/[a-fA-F0-9]+$/, // Matches "/advertiser/upload/{id}"
   /^\/seller\/upload\/[a-fA-F0-9]+$/, // Matches "/seller/upload/{id}"
   /^\/tourGuide\/upload\/[a-fA-F0-9]+$/, // Matches "/tourGuide/upload/{id}"
-  
 
   // /^\/public-route/, // Matches "/public-route" and any sub-routes
   // Add more complex regex patterns if needed
@@ -31,7 +30,7 @@ const verifyJWT = (req, res, next) => {
 
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
     if (err) {
-      return res.status(403).json({ message: "Forbidden" });
+      return res.status(426).json({ message: "JWT access token expired" });
     }
 
     req.user = user;
