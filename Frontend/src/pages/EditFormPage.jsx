@@ -1,15 +1,17 @@
 import { useLocation, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import GenericForm from "@/components/custom/genericForm/genericForm";
-import { useCurrency } from "@/state management/userInfo";
+import { useCurrency, useUser } from "@/state management/userInfo";
 import { Convert } from "easy-currencies";
+import { getTag } from "@/services/TagApiHandler";
+import { getCategoryById } from "@/services/AdminApiHandler";
 
 function EditFormPage() {
     const location = useLocation();
     const { data } = location.state || {};
     const { cardType, cardId } = useParams();
     const currency = useCurrency();
-    
+
     const [formattedData, setFormattedData] = useState(null);
 
     // Effect to format data when the page loads
@@ -27,9 +29,9 @@ function EditFormPage() {
     // The async data formatting function
     async function formatData(data) {
         let formattedData = { ...data };
+        delete formattedData.cardImage;
         if (cardType === "itinerary") {
             // Remove cardImage
-            delete formattedData.cardImage;
             // Convert activities to URLs
             formattedData.activities = formattedData.activities.map((activity) => `http://localhost:5173/app/activity/${activity}`);
             // Convert availableDatesTimes to array of dates
@@ -39,6 +41,20 @@ function EditFormPage() {
             const convertedPrice = formattedData.price * converter.rates[currency];
             formattedData.price = convertedPrice;
         }
+        if (cardType === "activity") {
+            // Convert dateTime to Date object
+            formattedData.dateTime = new Date(formattedData.dateTime);
+            const converter = await Convert().from("USD").fetch();
+            const convertedPrice = formattedData.price * converter.rates[currency];
+            formattedData.price = convertedPrice;
+            // get category name
+            const category = await getCategoryById(formattedData.category);
+            formattedData.category = category.name;
+            // get tag names
+            const tags = await Promise.all(formattedData.tags.map((tag) => getTag(tag)));
+            formattedData.tags = tags.map((tag) => tag.name);
+        }
+        // console.log("FORMATTED: ", formattedData)
         return formattedData;
     }
 

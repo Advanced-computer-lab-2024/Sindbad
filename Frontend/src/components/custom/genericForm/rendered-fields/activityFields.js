@@ -47,23 +47,9 @@ export const activity = {
         },
         {
             name: "price",
-            type: "object",
-            label: "Price Range",
+            type: "number",
+            label: "Price",
             required: true,
-            fields: [
-                {
-                    name: "min",
-                    type: "number",
-                    label: "Minimum Price",
-                    required: true,
-                },
-                {
-                    name: "max",
-                    type: "number",
-                    label: "Maximum Price",
-                    required: true,
-                }
-            ]
         },
         {
             name: "category",
@@ -83,7 +69,8 @@ export const activity = {
         {
             name: "discounts",
             type: "number",
-            label: "Discount Percentage",
+            label: "Discount",
+            description: "Discount value that will automatically be applied to the price of the activity",
             required: true,
             min: 0,
             max: 100,
@@ -91,12 +78,14 @@ export const activity = {
         {
             name: "isBookingOpen",
             type: "checkbox",
-            label: "Booking Status",
+            label: "This activity is currently open for booking",
         }
     ],
     defaultValues: {
         name: "",
-        dateTime: "",
+        description: "",
+        cardImage: undefined,
+        dateTime: null,
         location: {
             address: "",
             coordinates: {
@@ -104,10 +93,7 @@ export const activity = {
                 lng: 0
             }
         },
-        price: {
-            min: 0,
-            max: 0
-        },
+        price: 0,
         category: "",
         tags: [],
         discounts: 0,

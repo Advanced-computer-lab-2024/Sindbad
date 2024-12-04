@@ -71,7 +71,10 @@ const createItinerary = async (req, res) => {
         }
         // convert price to number if it is a string
         if (typeof req.body.price === "string") {
-            req.body.price = parseInt(req.body.price);
+            req.body.price = parseFloat(req.body.price);
+        }
+        if (typeof req.body.duration === "string") {
+            req.body.duration = parseInt(req.body.duration);
         }
         if(req.body.activities){
             req.body.activities = JSON.parse(req.body.activities);
@@ -91,7 +94,7 @@ const createItinerary = async (req, res) => {
         if (req.body.accessibility) {
             req.body.accessibility = JSON.parse(req.body.accessibility);
         }
-        console.log(req.body);
+
         const newItinerary = await Itinerary.create(req.body);
         
         res.status(201).json(newItinerary);

@@ -18,6 +18,7 @@ import { useCurrency } from "@/state management/userInfo";
 import { useToast } from "@/hooks/use-toast";
 import { Star } from "lucide-react";
 import { MultiSelectField } from "./input-fields/MultiSelectField";
+import { DateTimeField } from "./input-fields/DateTimeField";
 
 export function GenericForm({ type, data, id, fetcher }) {
 	// If you need more information about how this component works, check out forms.js in the same folder.
@@ -57,7 +58,7 @@ export function GenericForm({ type, data, id, fetcher }) {
 				defaultValues[key] = data[key];
 			}
 		}
-		formatDateFields(formFields, defaultValues);
+		// formatDateFields(formFields, defaultValues);
 	}
 
 	// Create the form using react-hook-form.
@@ -185,9 +186,19 @@ export function GenericForm({ type, data, id, fetcher }) {
 					/>
 				);
 
+			case "date":
+				return (
+					<DateTimeField
+						key={fullPath}
+						name={fullPath}
+						control={form.control}
+						type={field.type}
+						label={field.label || field.name.toUpperCase()}
+						description={field.description}
+					/>
+				);
 			case "text":
 			case "number":
-			case "date":
 				return (
 					<TextField
 						key={fullPath}

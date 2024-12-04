@@ -22,14 +22,7 @@ export const activitySchema = {
 
 	location: locationSchema,
 
-	price: z.object({
-		min: z
-			.number()
-			.min(1, "Price must be a positive number"),
-		max: z
-			.number()
-			.min(1, "Price must be a positive number")
-	}),
+	price: z.number().min(0, { message: "Price must be a non-negative number" }),
 
 	category: z
 		.string()

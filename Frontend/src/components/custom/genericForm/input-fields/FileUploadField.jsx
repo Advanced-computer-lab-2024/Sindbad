@@ -1,4 +1,4 @@
-import { FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form"
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 
 export const FileUpload = ({ name, control, type = 'file', label, description }) => {
@@ -22,6 +22,7 @@ export const FileUpload = ({ name, control, type = 'file', label, description })
                             }}
                         />
                     </FormControl>
+                    <FormMessage />
                 </FormItem>
             )}
         />

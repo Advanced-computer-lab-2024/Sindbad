@@ -66,6 +66,17 @@ export const getAllCategories = async () => {
 	}
 };
 
+export const getCategoryById = async (categoryId) => {
+	try {
+		// Fetch a category by ID
+		let category = await axiosInstance.get(`/category/${categoryId}`);
+		return category.data;
+	} catch (error) {
+		console.error("Error fetching category by ID: ", error);
+		return error; // Handle errors appropriately
+	}
+};
+
 export const createCategory = async (category) => {
 	try {
 		// Create a category

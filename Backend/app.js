@@ -31,6 +31,7 @@ const TourismGovernorController = require("./controllers/TourismGovernor");
 const AdminController = require("./controllers/Admin");
 const TouristController = require("./controllers/Tourist");
 const ItineraryController = require("./controllers/Itinerary");
+const ActivityController = require("./controllers/Activity");
 const tripRoutes = require("./routes/Trip");
 const saleRoutes = require("./routes/Sale");
 const hotelRoutes = require("./routes/Hotel");
@@ -143,6 +144,22 @@ app.post(
         { name: "cardImage", maxCount: 1 },
     ]),
     ItineraryController.createItinerary
+);
+
+app.post(
+    "/activity",
+    upload.fields([
+        { name: "cardImage", maxCount: 1 },
+    ]),
+    ActivityController.setActivity
+);
+
+app.put(
+    "/activity/:id",
+    upload.fields([
+        { name: "cardImage", maxCount: 1 },
+    ]),
+    ActivityController.updateActivity
 );
 
 app.post(

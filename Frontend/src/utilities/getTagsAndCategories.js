@@ -4,7 +4,6 @@ import { getAllCategories } from "@/services/AdminApiHandler";
 export async function getTags() {
     try {
         let tags = await getAllTags();
-        console.log("TAGS: ", tags.data.map((tag) => tag.name))
         return (tags.data.map((tag) => tag.name));
     } catch (error) {
         console.error("Error fetching tags: ", error);
