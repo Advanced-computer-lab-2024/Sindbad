@@ -73,12 +73,15 @@ function RevenueReport() {
   }, [role, id, currency]);
 
   return (
-    <div className="py-8 px-24 max-w-[1200px] mx-auto flex flex-col gap-4">
-      <div className="flex justify-center w-full gap-4">
+    <div className="py-8 px-24 mx-auto flex flex-col gap-4">
+      {/*HACK: 💀 */}
+      <div className="flex justify-center w-full gap-4 max-w-[1350px] mx-auto">
         <TotalRevenue data={data} />
         <UsersPerItem data={data} />
       </div>
-      <RevenueLedger loading={loading} data={data} />
+      <div className="max-w-[1200px] mx-auto w-full">
+        <RevenueLedger loading={loading} data={data} />
+      </div>
     </div>
   );
 }
