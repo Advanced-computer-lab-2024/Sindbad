@@ -41,7 +41,7 @@ function EditFormPage() {
             const convertedPrice = formattedData.price * converter.rates[currency];
             formattedData.price = convertedPrice;
         }
-        if (cardType === "activity") {
+        else if (cardType === "activity") {
             // Convert dateTime to Date object
             formattedData.dateTime = new Date(formattedData.dateTime);
             const converter = await Convert().from("USD").fetch();
@@ -50,6 +50,26 @@ function EditFormPage() {
             // get category name
             const category = await getCategoryById(formattedData.category);
             formattedData.category = category.name;
+            // get tag names
+            const tags = await Promise.all(formattedData.tags.map((tag) => getTag(tag)));
+            formattedData.tags = tags.map((tag) => tag.name);
+        }
+        else if (cardType === "site") {
+            // Convert openingHours to object
+            const openingHours = {};
+            for (const [key, value] of Object.entries(formattedData.openingHours)) {
+                const start = Math.floor(value.start / 60).toString().padStart(2, "0") + ":" + (value.start % 60).toString().padStart(2, "0");
+                const end = Math.floor(value.end / 60).toString().padStart(2, "0") + ":" + (value.end % 60).toString().padStart(2, "0");
+                openingHours[key] = { start, end };
+            }
+            formattedData.openingHours = openingHours;
+            // Convert ticketPrices to local currency
+            const converter = await Convert().from("USD").fetch();
+            const convertedPrices = {};
+            for (const [key, price] of Object.entries(formattedData.ticketPrices)) {
+                convertedPrices[key] = price * converter.rates[currency];
+            }
+            formattedData.ticketPrices = convertedPrices;
             // get tag names
             const tags = await Promise.all(formattedData.tags.map((tag) => getTag(tag)));
             formattedData.tags = tags.map((tag) => tag.name);

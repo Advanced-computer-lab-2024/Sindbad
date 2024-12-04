@@ -32,6 +32,7 @@ const AdminController = require("./controllers/Admin");
 const TouristController = require("./controllers/Tourist");
 const ItineraryController = require("./controllers/Itinerary");
 const ActivityController = require("./controllers/Activity");
+const SiteController = require("./controllers/Site");
 const tripRoutes = require("./routes/Trip");
 const saleRoutes = require("./routes/Sale");
 const hotelRoutes = require("./routes/Hotel");
@@ -160,6 +161,22 @@ app.put(
         { name: "cardImage", maxCount: 1 },
     ]),
     ActivityController.updateActivity
+);
+
+app.post(
+    "/site",
+    upload.fields([
+        { name: "cardImage", maxCount: 1 },
+    ]),
+    SiteController.createSite
+);
+
+app.put(
+    "/site/:id",
+    upload.fields([
+        { name: "cardImage", maxCount: 1 },
+    ]),
+    SiteController.updateSite
 );
 
 app.post(

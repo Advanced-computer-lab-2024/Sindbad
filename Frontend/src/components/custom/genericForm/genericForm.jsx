@@ -121,10 +121,10 @@ export function GenericForm({ type, data, id, fetcher }) {
 			case "object":
 				return (
 					<div key={fullPath}>
-						<h3 className="text-lg font-semibold mb-2">
+						<h3 className={`${fullPath.split(".").length === 1 ? "text-base font-semibold mb-2" : "text-sm font-semibold"}`}>
 							{field.label || field.name.toUpperCase()}
 						</h3>
-						<div className="">
+						<div className={`${fullPath.split(".").includes("openingHours") && fullPath.split(".").length === 2 ? "flex gap-8 text-neutral-600" : "flex gap-2 flex-col"}`}>
 							{field.fields.map((nestedField) =>
 								renderField(nestedField, fullPath)
 							)}
@@ -199,6 +199,7 @@ export function GenericForm({ type, data, id, fetcher }) {
 				);
 			case "text":
 			case "number":
+			case "time":
 				return (
 					<TextField
 						key={fullPath}

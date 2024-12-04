@@ -11,13 +11,13 @@ const {
 
 router
 	.route("/")
-	.post(createSite) // Create a new site
+	// .post(createSite) // Create a new site
 	.get(getAllSites); // Get all sites
 
 router
 	.route("/:id")
 	.get(getSiteById) // Get a single site by ID
-	.put(updateSite) // Update a site by ID
+	// .put(updateSite) // Update a site by ID
 	.delete(deleteSite); // Delete a site by ID
 
 router.route("/my-sites/:creatorId")

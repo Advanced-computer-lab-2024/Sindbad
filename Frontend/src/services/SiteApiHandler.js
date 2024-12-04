@@ -26,11 +26,16 @@ export const getMySites = async (tourismGovernorId) => {
 	}
 };
 
-export const createSite = async (siteData) => {
+export const createSite = async (formData) => {
 	try {
 		const response = await axiosInstance.post(
 			`/site/`,
-			siteData
+			formData,
+			{
+				headers: {
+					"Content-Type": "multipart/form-data", // Explicitly set for FormData
+				}
+			}
 		);
 
 		return response.data;
@@ -39,12 +44,15 @@ export const createSite = async (siteData) => {
 	}
 };
 
-export const updateSite = async (siteId, updatedValues) => {
+export const updateSite = async (siteId, formData) => {
 	try {
 		const response = await axiosInstance.put(
 			`/site/${siteId}`,
-			updatedValues,
+			formData,
 			{
+				headers: {
+					"Content-Type": "multipart/form-data", // Explicitly set for FormData
+				},
 				resourceName: "Site",
 			}
 		);
