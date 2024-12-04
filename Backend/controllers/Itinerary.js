@@ -195,7 +195,7 @@ const getAllItineraries = async (req, res) => {
     // Create filter object based on provided criteria
     const filter = {
       // Uncomment if needed to filter for upcoming available date times
-      availableDatesTimes: { $elemMatch: { dateTime: { $gte: new Date() } } },
+      //availableDatesTimes: { $elemMatch: { dateTime: { $gte: new Date() } } },
       // Default filter for inappropriate itineraries and active itineraries
       isInappropriate: false,
       isActive: true,
@@ -220,18 +220,38 @@ const getAllItineraries = async (req, res) => {
     }
 
     // Date filter
-    if (date.start || date.end) {
+    const startDate = new Date(date.start);
+    const endDate = new Date(date.end);
+    if (date.start && date.end) {
       filter.availableDatesTimes = {
         $elemMatch: {
-          ...(date.start && { dateTime: { $gte: new Date(date.start) } }),
-          ...(date.end && {
-            dateTime: {
-              $lte: new Date(new Date(date.end).setHours(23, 59, 59, 999)), // End of the day
-            },
-          }),
+          dateTime: {
+            $gte: startDate,
+            $lte: endDate,
+          },
         },
       };
     }
+    else if(date.start) {
+      filter.availableDatesTimes = {
+        $elemMatch: {
+          dateTime: {
+            $gte: startDate,
+          },
+        },
+      };
+    }
+    else if(date.end) {
+      filter.availableDatesTimes = {
+        $elemMatch: {
+          dateTime: {
+            $lte: endDate,
+          },
+        },
+      };
+    }
+    
+
 
     // Tag filter
     if (tag) {
