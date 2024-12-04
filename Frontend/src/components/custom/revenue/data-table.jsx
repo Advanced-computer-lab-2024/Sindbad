@@ -13,6 +13,7 @@ import {
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
+  getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 import { ArrowRight, ArrowLeft } from "lucide-react";
@@ -24,6 +25,10 @@ export function DataTable({ columns, data, search, dateRange }) {
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    initialState: {
+      sorting: [{ id: "createdAt", desc: true }],
+    },
   });
 
   console.log("Data: ", data);
