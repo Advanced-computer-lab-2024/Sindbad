@@ -36,11 +36,11 @@ function TotalRevenue({ data }) {
     revenue: item.revenue,
   }));
 
+  chartData.sort((a, b) => a.date - b.date);
+
   let totalSum = calculateTotalSum(chartData);
   let trend = calculateRevenueTrend(chartData);
   chartData = groupByDay(chartData);
-
-  console.log(chartData);
 
   const chartConfig = {
     revenue: {
