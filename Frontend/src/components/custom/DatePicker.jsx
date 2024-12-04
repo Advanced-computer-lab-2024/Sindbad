@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/popover";
 import { useState } from "react";
 
-export const DatePicker = ({ startDate, endDate, setDate }) => {
+export const DatePicker = ({ startDate, endDate, setDate, clear=true }) => {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const [selected, setSelected] = useState({ from: startDate, to: endDate });
 
@@ -66,13 +66,15 @@ export const DatePicker = ({ startDate, endDate, setDate }) => {
             numberOfMonths={2}
           />
           <div className="flex justify-end p-2 gap-2">
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={handleClearSelection} // Clear selection and reset dates
-            >
-              Clear
-            </Button>
+            {clear && (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleClearSelection} // Clear selection and reset dates
+              >
+                Clear
+              </Button>
+            )}
             <Button
               size="sm"
               className="bg-primary-300"
