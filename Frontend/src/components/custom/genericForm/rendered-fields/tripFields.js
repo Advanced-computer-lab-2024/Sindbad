@@ -3,19 +3,25 @@ export const trip = {
     {
       name: "name",
       type: "text",
-      label: "Trip Name",
+      label: "Transportation Name",
       required: true,
     },
     {
       name: "description",
-      type: "text",
+      type: "textArea",
       label: "Description",
+      required: true,
+    },
+    {
+      name: "cardImage",
+      type: "file",
+      label: "Photo",
       required: true,
     },
     {
       name: "dateTime",
       type: "date",
-      label: "Date and Time",
+      label: "Date & Time",
       required: true,
     },
     {
@@ -59,29 +65,10 @@ export const trip = {
       ],
     },
     {
-      name: "imageUris",
-      type: "array",
-      label: "Image URLs",
-      required: true,
-    },
-    {
       name: "price",
       type: "number",
       label: "Price",
       required: true,
-    },
-    {
-      name: "discount",
-      type: "number",
-      label: "Discount Percentage",
-      required: true,
-      min: 0,
-      max: 100,
-    },
-    {
-      name: "isBookingOpen",
-      type: "checkbox",
-      label: "Booking Status",
     },
     {
       name: "capacity",
@@ -91,6 +78,8 @@ export const trip = {
   ],
   defaultValues: {
     name: "",
+    description: "",
+    cardImage: undefined,
     dateTime: "",
     pickupLocation: {
       address: "",
@@ -106,11 +95,7 @@ export const trip = {
         lng: 0,
       },
     },
-    description: "",
     price: 0,
-    discount: 0,
-    isBookingOpen: false,
-    imageUris: "",
     capacity: 0,
   },
 };

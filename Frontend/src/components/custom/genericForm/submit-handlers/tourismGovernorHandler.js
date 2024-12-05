@@ -1,6 +1,6 @@
 import { updateTourismGovernor } from "@/services/TourismGovernorApiHandler";
 
-export const tourismGovernorSubmit = (values, id, navigate, dispatch) => {
+export const tourismGovernorSubmit = (values, id, navigate, dispatch, currency) => {
 	const formData = new FormData();
 
 	formData.append("email", values.email);

@@ -120,16 +120,14 @@ function Site() {
 				<div className="h-[400px] w-[400px] shrink-0">
 					<Carousel>
 						<CarouselContent>
-							{site.imageUris.length !== 0 ? (
-								site.imageUris.map((image, index) => (
-									<CarouselItem key={index} className="h-[400px] w-[400px]">
-										<img
-											src={image}
-											alt={`Image ${index + 1}`}
-											className="h-full w-full object-cover rounded-md border border-neutral-300"
-										/>
-									</CarouselItem>
-								))
+							{site.cardImage ? (
+								<CarouselItem className="h-[400px] w-[400px]">
+									<img
+										src={site.cardImage.url}
+										alt={`${site.name}`}
+										className="h-full w-full object-cover rounded-md border border-neutral-300"
+									/>
+								</CarouselItem>
 							) : (
 								<CarouselItem className="h-[400px]">
 									<ImagePlaceholder />

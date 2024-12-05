@@ -14,8 +14,11 @@ import { forms } from "./forms";
 import { SelectField } from "./input-fields/SelectField";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { useCurrency } from "@/state management/userInfo";
 import { useToast } from "@/hooks/use-toast";
 import { Star } from "lucide-react";
+import { MultiSelectField } from "./input-fields/MultiSelectField";
+import { DateTimeField } from "./input-fields/DateTimeField";
 
 export function GenericForm({ type, data, id, fetcher }) {
 	// If you need more information about how this component works, check out forms.js in the same folder.
@@ -55,7 +58,7 @@ export function GenericForm({ type, data, id, fetcher }) {
 				defaultValues[key] = data[key];
 			}
 		}
-		formatDateFields(formFields, defaultValues);
+		// formatDateFields(formFields, defaultValues);
 	}
 
 	// Create the form using react-hook-form.
@@ -66,14 +69,15 @@ export function GenericForm({ type, data, id, fetcher }) {
 
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
+	const currency = useCurrency();
 	const { toast } = useToast();
 	const handleSubmit = (values) => {
 		try {
 			if (typeof onSubmit === "function") {
-				if (onSubmit.length === 4) {
-					onSubmit(values, id, navigate, dispatch);
+				if (onSubmit.length === 5) {
+					onSubmit(values, id, navigate, dispatch, currency);
 				} else {
-					onSubmit(values, id, data, navigate, dispatch);
+					onSubmit(values, id, data, navigate, dispatch, currency);
 				}
 				if (typeof fetcher === "function") {
 					fetcher();
@@ -95,8 +99,9 @@ export function GenericForm({ type, data, id, fetcher }) {
 						key={fullPath}
 						name={fullPath}
 						control={form.control}
-						initialValue={field.type}
+						initialValue={field.arrayType}
 						label={field.label || field.name.toUpperCase()}
+						description={field.description}
 					/>
 				);
 
@@ -109,16 +114,17 @@ export function GenericForm({ type, data, id, fetcher }) {
 						label={field.label || field.name.toUpperCase()}
 						latitude={field.latitude}
 						longitude={field.longitude}
+						description={field.description}
 					/>
 				);
 
 			case "object":
 				return (
 					<div key={fullPath}>
-						<h3 className="text-lg font-semibold mb-2">
+						<h3 className={`${fullPath.split(".").length === 1 ? "text-base font-semibold mb-2" : "text-sm font-semibold"}`}>
 							{field.label || field.name.toUpperCase()}
 						</h3>
-						<div className="ml-4">
+						<div className={`${fullPath.split(".").includes("openingHours") && fullPath.split(".").length === 2 ? "flex gap-8 text-neutral-600" : "flex gap-2 flex-col"}`}>
 							{field.fields.map((nestedField) =>
 								renderField(nestedField, fullPath)
 							)}
@@ -141,6 +147,7 @@ export function GenericForm({ type, data, id, fetcher }) {
 						)}
 						label={field.label || field.name.toUpperCase()}
 						fieldsSchema={field.fields}
+						description={field.description}
 					/>
 				);
 
@@ -151,6 +158,7 @@ export function GenericForm({ type, data, id, fetcher }) {
 						name={fullPath}
 						control={form.control}
 						label={field.label || field.name.toUpperCase()}
+						description={field.description}
 					/>
 				);
 			case "select":
@@ -162,12 +170,36 @@ export function GenericForm({ type, data, id, fetcher }) {
 						label={field.label || field.name.toUpperCase()}
 						options={field.options}
 						defaultValue={defaultValues[fullPath]}
+						description={field.description}
+					/>
+				);
+			case "multiSelect":
+				return (
+					<MultiSelectField
+						key={fullPath}
+						name={fullPath}
+						control={form.control}
+						label={field.label || field.name.toUpperCase()}
+						options={field.options}
+						defaultValue={defaultValues[fullPath]}
+						description={field.description}
 					/>
 				);
 
+			case "date":
+				return (
+					<DateTimeField
+						key={fullPath}
+						name={fullPath}
+						control={form.control}
+						type={field.type}
+						label={field.label || field.name.toUpperCase()}
+						description={field.description}
+					/>
+				);
 			case "text":
 			case "number":
-			case "date":
+			case "time":
 				return (
 					<TextField
 						key={fullPath}
@@ -175,6 +207,7 @@ export function GenericForm({ type, data, id, fetcher }) {
 						control={form.control}
 						type={field.type}
 						label={field.label || field.name.toUpperCase()}
+						description={field.description}
 					/>
 				);
 			case 'textArea':
@@ -185,6 +218,7 @@ export function GenericForm({ type, data, id, fetcher }) {
 						control={form.control}
 						type={field.type}
 						label={field.label || field.name.toUpperCase()}
+						description={field.description}
 					/>
 				);
 			case 'file':
@@ -195,6 +229,7 @@ export function GenericForm({ type, data, id, fetcher }) {
 						control={form.control}
 						type={field.type}
 						label={field.label || field.name.toUpperCase()}
+						description={field.description}
 					/>
 				);
 			default:

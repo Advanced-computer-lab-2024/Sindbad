@@ -1,6 +1,6 @@
 import { updateTourGuide } from "@/services/TourGuideApiHandler";
 
-export const experienceSubmit = (values, id, data, navigate, dispatch) => {
+export const experienceSubmit = (values, id, data, navigate, dispatch, currency) => {
 	const previousWork = {};
 	for (const key in values) {
 		if (key === "jobTitle") {

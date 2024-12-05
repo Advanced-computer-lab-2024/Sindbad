@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const excludedRoutes = [
   /^\/user\/signup$/, // Matches exactly "/user/signup"
   /^\/tag$/,
+  /^\/category$/,
   /^\/auth(\/.*)?$/, // Matches "/auth" and anything after it
   /^\/advertiser\/upload\/[a-fA-F0-9]+$/, // Matches "/advertiser/upload/{id}"
   /^\/seller\/upload\/[a-fA-F0-9]+$/, // Matches "/seller/upload/{id}"

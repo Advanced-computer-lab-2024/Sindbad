@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const locationSchema = z.object({
-	address: z.string().nonempty("Address is required"),
+	address: z.string().min(1, "Address is required"),
 	coordinates: z.object({
 		lat: z.number().min(-90).max(90, "Latitude must be between -90 and 90"),
 		lng: z

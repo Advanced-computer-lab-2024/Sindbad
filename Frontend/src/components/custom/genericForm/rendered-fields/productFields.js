@@ -7,9 +7,15 @@ export const product = {
 			required: true,
 		},
 		{
-			name: "imageUris",
-			type: "array",
-			label: "Image URLs",
+			name: "description",
+			type: "textArea",
+			label: "Description",
+			required: true,
+		},
+		{
+			name: "cardImage",
+			type: "file",
+			label: "Photo",
 			required: true,
 		},
 		{
@@ -20,30 +26,18 @@ export const product = {
 			min: 0,
 		},
 		{
-			name: "description",
-			type: "text",
-			label: "Description",
-			required: true,
-		},
-		{
 			name: "quantity",
 			type: "number",
 			label: "Quantity",
 			required: true,
 			min: 0,
 		},
-		{
-			name: "isArchived",
-			type: "checkbox",
-			label: "Archive Product",
-		},
 	],
 	defaultValues: {
 		name: "",
-		imageUris: "",
-		price: 0,
 		description: "",
+		cardImage: undefined,
+		price: 0,
 		quantity: 0,
-		isArchived: false,
 	},
 };

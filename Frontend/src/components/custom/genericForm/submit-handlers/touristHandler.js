@@ -1,7 +1,7 @@
 import { updateTourist } from "@/services/TouristApiHandler";
 import { setCurrency } from "@/state management/userInfo";
 
-export const touristSubmit = (values, id, navigate, dispatch) => {
+export const touristSubmit = (values, id, navigate, dispatch, currency) => {
 	dispatch(setCurrency(values.preferredCurrency));
 	
 	const formData = new FormData();

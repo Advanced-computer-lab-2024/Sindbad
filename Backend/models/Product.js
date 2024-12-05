@@ -6,9 +6,20 @@ const productSchema = mongoose.Schema(
 			type: String,
 			required: [true, "Please add the product name"],
 		},
-		imageUris: {
-			type: [String],
+		description: {
+			type: String,
+			required: [true, "Please add a product description"],
 		},
+		cardImage: {
+            public_id: {
+                type: String,
+                required: this.cardImage !== undefined,
+            },
+            url: {
+                type: String,
+                required: this.cardImage !== undefined,
+            },
+        },
 		price: {
 			type: Number,
 			required: [true, "Please add the product price"],
@@ -18,10 +29,6 @@ const productSchema = mongoose.Schema(
 				},
 				message: "Price must be a non-negative number",
 			},
-		},
-		description: {
-			type: String,
-			required: [true, "Please add a product description"],
 		},
 		creatorId: {
 			type: mongoose.Schema.Types.ObjectId,

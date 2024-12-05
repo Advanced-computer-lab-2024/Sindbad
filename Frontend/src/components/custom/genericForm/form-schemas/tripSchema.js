@@ -2,33 +2,29 @@ import { z } from "zod";
 import { locationSchema } from "./locationSchema";
 
 export const tripSchema = {
-  name: z.string().min(1, { message: "Please add the name of the activity" }),
+    name: z.string().min(1, { message: "Please add the name of the transportation offer" }),
 
-  description: z.string(),
+    description: z.string().min(1, { message: "Please add a description of the transportation offer" }),
 
-  dateTime: z
-    .string({
-      required_error: "Please add the date of the activity",
-    })
-    .refine((val) => !isNaN(Date.parse(val)), {
-      message: "Invalid date",
-    }),
+    cardImage: z
+        .any()
+        .refine(
+            (files) =>
+                files === undefined ||
+                (files instanceof FileList && Array.from(files).every(file => ['image/png', 'image/jpeg'].includes(file.type))),
+            { message: "Image must be a PNG or JPG file" }
+        ),
 
-  pickupLocation: locationSchema,
-  dropoffLocation: locationSchema,
+    dateTime: z.date()
+        .refine(
+            (date) => date > new Date(),
+            { message: "Date must be in the future" }
+        ),
 
-  imageUris: z
-    .array(z.string().url("Invalid image URL"))
-    .nonempty("Please add at least one image URL"),
+    pickupLocation: locationSchema,
+    dropoffLocation: locationSchema,
 
-  price: z.number(),
+    price: z.number().min(0, { message: "Price must be a non-negative number" }),
 
-  discount: z
-    .number()
-    .min(0, { message: "Discount must be between 0 and 100" })
-    .max(100, { message: "Discount must be between 0 and 100" }),
-
-  isBookingOpen: z.boolean(),
-
-  capacity: z.number(),
+    capacity: z.number().min(0, { message: "Capacity must be a non-negative number" }),
 };

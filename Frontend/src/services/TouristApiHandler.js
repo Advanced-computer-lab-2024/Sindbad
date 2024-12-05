@@ -20,12 +20,16 @@ export const getTouristByUsername = async (username) => {
 
 export const updateTourist = async (touristId, formData) => {
     try {
-        const response = axiosInstance.put(`/tourist/${touristId}`, formData, {
-            headers: {
-                "Content-Type": "multipart/form-data", // Explicitly set for FormData
-            },
-            resourceName: "Tourist",
-        });
+        const response = axiosInstance.put(
+            `/tourist/${touristId}`,
+            formData,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data", // Explicitly set for FormData
+                },
+                resourceName: "Tourist",
+            }
+        );
         return response.data;
     } catch (error) {
         return error;

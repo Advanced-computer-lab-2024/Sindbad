@@ -198,6 +198,7 @@ function ReactSelect({ options, onChange, multi, defaultValue, value }) {
                     classNamePrefix="select"
                     styles={filterStyles}
                     onChange={onChange}
+                    defaultValue={defaultValue || "Select"}
                     menuPlacement="auto"
                 />
                 : value ?
@@ -207,7 +208,7 @@ function ReactSelect({ options, onChange, multi, defaultValue, value }) {
                         classNamePrefix="select"
                         styles={defaultStyles}
                         onChange={onChange}
-                        defaultValue={defaultValue || 'Select'}
+                        defaultValue={defaultValue || "Select"}
                         menuPlacement="auto"
                         value={value?.value ? value : null}
                     />

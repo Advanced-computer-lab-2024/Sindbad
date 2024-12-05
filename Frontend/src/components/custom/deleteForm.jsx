@@ -29,7 +29,7 @@ function DeleteForm({ type, data }) {
     ) {
       deleteUser(data._id, type);
     }
-    if (type === "trip") {
+    if (type === "transportation") {
       deleteTrip(data._id);
     }
   };

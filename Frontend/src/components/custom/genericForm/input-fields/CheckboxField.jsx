@@ -7,15 +7,17 @@ export const CheckboxField = ({ name, control, label }) => {
       name={name}
       render={({ field }) => (
         <FormItem>
-          <FormLabel>{label || name.toUpperCase()}</FormLabel>
-          <FormControl>
-            <input
-              type="checkbox"
-              className="form-checkbox h-4 w-4 text-blue-600 border-gray-300 rounded"
-              checked={field.value}
-              onChange={(e) => field.onChange(e.target.checked)}
-            />
-          </FormControl>
+          <div className="flex items-end my-5">
+            <FormControl>
+              <input
+                type="checkbox"
+                className="w-max h-max shadow-none inline mr-2 accent-primary-700 cursor-pointer"
+                checked={field.value}
+                onChange={(e) => field.onChange(e.target.checked)}
+              />
+            </FormControl>
+            <FormLabel>{label || name.toUpperCase()}</FormLabel>
+          </div>
           <FormMessage />
         </FormItem>
       )}
