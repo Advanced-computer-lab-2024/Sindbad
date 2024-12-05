@@ -43,58 +43,65 @@ const ResetPassword = () => {
   const [isSuccess, setIsSuccess] = useState(false);
 
   async function onSubmit(values) {
-    setIsError(""); // Reset any existing error message
-    setIsSuccess(false); // Reset the success message
-
-    // console.log("Values:", { id: id, newPassword: values.newPassword });
+    setIsError(""); // Clear any previous error messages
+    setIsSuccess(false); // Reset success state
 
     try {
+      // Call the resetPassword function
       const response = await resetPassword(id, values.newPassword);
-      console.log("Password reset successfully:", response);
-      setIsSuccess(true);
+      console.log("Password reset successful:", response);
 
-      // Ensure the navigate function works correctly
+      setIsSuccess(true); // Indicate success to the user
+
+      // Redirect to login after a short delay
       setTimeout(() => {
         navigate("/login", { replace: true });
-      }, 3000); // Redirect after 3 seconds
-    } catch (err) {
-      if (err.response) {
-        const statusCode = err.response.status;
+      }, 3000);
+    } catch (error) {
+      // Handle various error scenarios
+      if (error.status) {
+        const { status, data } = error;
         const errorMessage =
-          err.response.data.message || err.response.statusText;
+          data?.message || error.statusText || "An error occurred.";
 
-        switch (statusCode) {
+        switch (status) {
+          case 204:
+            setIsError("Password reset failed. Please try again.");
+            console.error("Password Reset Failed:", errorMessage);
+            break;
+
           case 400:
             setIsError(
-              "Invalid password. Please ensure the password is provided correctly."
+              "Invalid password. Please ensure the password meets the required criteria."
             );
             console.error("Bad Request:", errorMessage);
             break;
 
           case 404:
-            setIsError("User not found. Please check the ID and try again.");
+            setIsError("User not found. Please check the provided ID.");
             console.error("User Not Found:", errorMessage);
             break;
 
           case 500:
-            setIsError(
-              "An error occurred while resetting the password. Please try again later."
-            );
+            setIsError("Server error. Please try again later.");
             console.error("Server Error:", errorMessage);
             break;
 
           default:
-            setIsError(`Error: ${errorMessage}`);
-            console.error("Error:", errorMessage);
+            setIsError(`Unexpected error: ${errorMessage}`);
+            console.error("Unexpected Error:", errorMessage);
+            break;
         }
-      } else if (err.request) {
+      } else if (error.request) {
+        // Handle no response from server
         setIsError(
-          "No response received from the server. Please check your internet connection."
+          "No response received. Please check your network connection."
         );
-        console.error("No response received:", err.request);
+        console.error("No Response Received:", error.request);
       } else {
-        setIsError(`Request error: ${err.message}`);
-        console.error("Error setting up the request:", err.message);
+        // Handle general errors
+        setIsError(`Error: ${error.message}`);
+        console.error("Error Setting Up Request:", error.message);
       }
     }
   }

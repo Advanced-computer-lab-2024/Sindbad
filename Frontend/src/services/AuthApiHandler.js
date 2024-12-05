@@ -16,11 +16,11 @@ export const userLogin = async (params) => {
       {},
       { withCredentials: true }
     );
-    
+
     return response.data;
   } catch (error) {
     console.error("Error:", error.message);
-    throw error;
+    return error;
   }
 };
 

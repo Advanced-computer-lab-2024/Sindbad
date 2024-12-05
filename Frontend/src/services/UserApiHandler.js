@@ -87,10 +87,10 @@ export const sendForgotPasswordEmail = async (email) => {
 };
 
 export const resetPassword = async (id, newPassword) => {
-  console.log("Reset Password:", { id, newPassword });
+  console.log("Reset Password Request:", { id, newPassword });
   const response = await axiosInstance.post(`/user/reset-password`, {
     id,
     newPassword,
   });
-  return response.data;
+  return response.data; // Return response data directly
 };
