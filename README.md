@@ -40,7 +40,7 @@ This project is developed using the MERN stack, a popular technology stack for b
 - **More Frameworks**:
   - **Tailwind.js**
   - **Authentication**: Passport.js
-  - **API Integration**: Amadeus API for hotel and flight bookings, Stripe for Payment and cloudinary to store photos externally.
+  - **API Integration**: Amadeus API for hotel and flight bookings, nodemailer for sending emails,Stripe for Payment and cloudinary to store photos externally.
   - **Testing**: Postman.
 
 ## Features
@@ -103,11 +103,86 @@ function TotalRevenue({ data }) {
 
 ## Installation
 Steps to install the project:
-1. Clone the repository: `git clone https://github.com/yourusername/sindbad.git`
-2. Navigate to the project directory: `cd sindbad`
-3. Install dependencies: `npm install`
-4. Set up environment variables: Create a `.env` file and add necessary configurations
-5. Start the development server: `npm run dev`
+1. Clone the repository: 
+``` bash 
+git clone https://github.com/Advanced-computer-lab-2024/Sindbad.git
+```
+2. Navigate to the project directory: 
+``` bash 
+cd sindbad
+```
+
+3. Install dependencies: 
+- **For the backend**
+``` bash 
+cd Backend
+npm install
+```
+
+- **For the frontend**
+
+To first navigate back to the sindbad folder
+``` bash 
+cd ..
+```
+Then to install frontend dependencies
+``` bash 
+cd Frontend
+npm install
+```
+
+4. Set up environment variables: 
+
+To run this project, you will need to add the following
+>create the following accounts
+- create a mongoDB account and create a cluster
+- create an amadeus account and create a new self service app
+- For the website's gmail account, enable 2 Factor Authentication and create a new App password
+- create a cloudinary account?
+- create a stripe account?
+- authentication stuff?
+
+>Adding the .env files to the project
+- Create a `.env` file in the **backend** folder and add the following necessary configurations
+```bash
+MONGO_URI='mongodb+srv://<username>:<password>@cluster0.mongodb.net/<dbname>?retryWrites=true&w=majority' //Mongo URI of your cluster
+
+AMADEUS_CLIENT_ID='yourAPIKey' //API key of the self service app
+AMADEUS_CLIENT_SECRET='yourAPISecret' //API secret of the self service app
+
+CLOUDINARY_CLOUD_NAME='sindbad-acl'
+CLOUDINARY_API_KEY='165149291965994'
+CLOUDINARY_API_SECRET='X3cCckqvOhe_jTKJDQPhLcpngik'
+
+GMAIL='email@gmail.com' //the gmail to send email notifications from
+GMAILPASSWORD='AppPassword' //the gmail app password
+
+STRIPE_SECRET_KEY='sk_test_51QQoZ0FqphnFdcP1jLOH7FLZdJuynYYGXZEeBt6QjfCl8JGFoxKt9nGaljUwISqrqBAl1g3lguVOxFHl89bFpatN003tmEzWXM'
+FRONTEND_DOMAIN='http://localhost:5173'
+BACKEND_DOMAIN='http://localhost:3000'
+STRIPE_ENDPOINT_SECRET='whsec_1fb60fbf213e9d24afcf8db4da79f9da0d40e823f9ded3f092f3f752227f9592'
+
+ACCESS_TOKEN_SECRET='a6a0a0b7136d22e0dbfaf29369a23d6a7ae33aa1c369b000e1e51d8f441e198bd6d902a079dd774dcebfbe0230fb0d956526ceb2ef4360b8f0b0f0817fcd7673'
+REFRESH_TOKEN_SECRET='a402bf504889fc2f10f451ebb8369719defe02c6c2c8e4d10a3a14d56e4dadf14f869d75d6502b5d14032d87acd9e3cd0b14dceb9ec8a911aa2221ee9cccd27a'
+```
+- Create a `.env` file in the **Frontend** folder and add the following necessary configurations
+``` bash
+VITE_BASE_URL='http://localhost:3000'
+VITE_GOOGLE_MAPS_API_KEY='apikey'          //add your google maps API key
+VITE_AMADEUS_CLIENT_ID='yourAPIKey'        //API key of the self service app
+VITE_AMADEUS_CLIENT_SECRET='yourAPISecret' //API secret of the self service app
+```
+
+5. Start the development server: 
+
+Open a new terminal
+``` bash 
+nodemon app.js
+``` 
+In another terminal
+``` bash 
+npm run dev
+```
 
 ## API References
 
@@ -162,6 +237,15 @@ Guidelines for contributing to the project:
 4. Create a pull request with a detailed description of your changes.
 
 ## Credits
+- [README template](https://www.mygreatlearning.com/blog/readme-file/)
+- [Sending Emails in Node.js](https://youtu.be/klDTBiW6iiM?si=u-gJWy1LuoR7Mvab)
+- [REST API](https://youtu.be/fgTGADljAeg?si=_8386HwIs8WPIA7C)
+- [Amadeus Flight Booking Documentation](https://developers.amadeus.com/self-service/category/flights/api-doc/flight-offers-search)
+- [Amadeus Hotel Booking Documentation](https://developers.amadeus.com/blog/react-hotel-booking-app-part1)
+- [Stripe Documentation](https://docs.stripe.com/api)
+- [Cloudinary Documentation](https://cloudinary.com/documentation/image_upload_api_reference)
+
+
 - emad video for authentication
 - documentation for every external api
 
