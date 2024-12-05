@@ -72,6 +72,7 @@ function hashCart(cart) {
 
         userOrder.sales = saleIds;
         userOrder.cart = JSON.parse(JSON.stringify(user.cart));
+        userOrder.isDelivered = Math.random() >= 0.5;
         user.orders.push(userOrder);
 
         user.cart = [];
