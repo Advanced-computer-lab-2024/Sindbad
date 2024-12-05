@@ -112,6 +112,7 @@ export default function UserManagement() {
             startDate={dateRange.from}
             endDate={dateRange.to}
             setDate={(range) => setDateRange(range)}
+            clear = {false}
           />
         </div>
       </div>

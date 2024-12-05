@@ -15,7 +15,9 @@ const {
 
 const router = express.Router();
 
-router.route("/").post(createProduct).get(getAllProducts);
+router.route("/")
+	// .post(createProduct)
+	.get(getAllProducts);
 router.route("/price-min-max").get(getMinMaxPrices);
 
 router.route("/my-products/:creatorId").get(getProductsByCreatorId);
@@ -25,7 +27,7 @@ router.route("/registerProductsStripe").get(registerAllProductsStripe);
 router
 	.route("/:id")
 	.get(getProductById)
-	.put(updateProduct)
+	// .put(updateProduct)
 	.delete(deleteProduct)
 	.post(addRating);
 

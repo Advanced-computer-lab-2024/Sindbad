@@ -7,6 +7,7 @@ const excludedRoutes = [
   /^\/user\/forgot-password$/, // Matches exactly "/user/forgot-password"
   /^\/user\/reset-password$/, // Matches exactly "/user/reset-password"
   /^\/tag$/,
+  /^\/category$/,
   /^\/auth(\/.*)?$/, // Matches "/auth" and anything after it
   /^\/advertiser\/upload\/[a-fA-F0-9]+$/, // Matches "/advertiser/upload/{id}"
   /^\/seller\/upload\/[a-fA-F0-9]+$/, // Matches "/seller/upload/{id}"
@@ -26,14 +27,14 @@ const verifyJWT = (req, res, next) => {
 
   if (!authHeader?.startsWith("Bearer ")) {
     console.log("no auth in header");
-    return res.status(401).json({ message: "Unauthorized" });
+    return res.status(401).json({ message: "No JWT token in request" });
   }
 
   const token = authHeader.split(" ")[1];
 
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
     if (err) {
-      return res.status(403).json({ message: "JWT Access token expired" });
+      return res.status(426).json({ message: "JWT access token expired" });
     }
 
     req.user = user;

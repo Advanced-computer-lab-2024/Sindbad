@@ -105,7 +105,7 @@ function UsersPerItem({data}) {
               {chartData.map((entry, index) => {
                 const fillColor =
                   typeColorMap[entry.itemType] || typeColorMap.DEFAULT;
-                return <Cell key={`cell-${index}`} fill={fillColor} />;
+                return <Cell key={`cell-${entry.itemName}`} fill={fillColor} />;
               })}
             </Bar>
           </BarChart>

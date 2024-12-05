@@ -1,5 +1,6 @@
 import { useState } from "react"; // Add this line
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 import { EllipsisVertical } from "lucide-react";
 
@@ -22,6 +23,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+import { addActivityToBookmarks } from "@/services/TouristApiHandler";
+
 import GenericForm from "../genericForm/genericForm";
 import DeleteForm from "../deleteForm";
 
@@ -43,6 +46,7 @@ function CardMenu({
   setOpenDialog,
 }) {
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -85,6 +89,15 @@ function CardMenu({
           data.isActive ? "deactivated" : "activated"
         } successfully`,
       });
+    }
+  };
+
+  const bookmarkActivity = async () => {
+    try {
+      const response = await addActivityToBookmarks(id, data._id);
+      console.log("id:", id, "data._id:", data?._id);
+    } catch (error) {
+      console.error("An unexpected error occurred:", error.message);
     }
   };
 
@@ -145,11 +158,20 @@ function CardMenu({
           </DropdownMenuItem>
 
           {config.actions.bookmark?.includes(role) && (
-            <DropdownMenuItem>Bookmark</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => bookmarkActivity()}>
+              Bookmark
+              {console.log("ahh")}
+            </DropdownMenuItem>
           )}
 
           {config.actions.edit && id === data.creatorId && (
-            <DropdownMenuItem onClick={() => setOpenDialog("edit")}>
+            <DropdownMenuItem
+              onClick={() =>
+                navigate(`/app/${cardType}/${data._id}/edit`, {
+                  state: { data },
+                })
+              }
+            >
               Edit
             </DropdownMenuItem>
           )}

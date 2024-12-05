@@ -99,7 +99,7 @@ function Trip() {
       <div className="py-8 px-24 max-w-[1200px] flex gap-9 mx-auto">
         <div className="flex justify-center w-full">
           <p className="text-neutral-400 text-sm italic">
-            {error === true ? "Trip does not exist." : "Loading..."}
+            {error === true ? "Transportation offer does not exist." : "Loading..."}
           </p>
         </div>
       </div>
@@ -109,7 +109,7 @@ function Trip() {
   const handleBooking = async () => {
     // Check if the user is a tourist
     if (role !== "tourist") {
-      toast({ description: "You must be a tourist to book a trip" });
+      toast({ description: "You must be a tourist to book transportation" });
       return; // Exit the function if not a tourist
     }
 
@@ -118,14 +118,14 @@ function Trip() {
       console.error(response.error);
       toast({ description: "An error occurred, please try again later" });
     } else {
-      toast({ description: "Successfully booked trip" });
+      toast({ description: "Successfully booked transportation" });
     }
   };
 
   return (
     <div className="py-8 px-12 sm:px-24 max-w-[1200px] mx-auto">
       <div className="flex items-center gap-6 mb-6">
-        <h1 className="text-3xl font-extrabold text-gray-900">{trip.name}</h1>
+        <h1 className="text-3xl font-extrabold shrink-0">{trip.name}</h1>
         <hr className="border-neutral-300 border w-full mt-1.5" />
       </div>
 

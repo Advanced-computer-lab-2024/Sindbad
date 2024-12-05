@@ -16,7 +16,7 @@ export const userLogin = async (params) => {
       {},
       { withCredentials: true }
     );
-
+    
     return response.data;
   } catch (error) {
     console.error("Error:", error.message);
@@ -32,5 +32,15 @@ export const refreshAccessToken = async () => {
   } catch (error) {
     console.error("Error during refresh:", error);
     throw error; // Re-throw the error to handle it appropriately in the calling function
+  }
+};
+
+export const automaticLogin = async () => {
+  try {
+    const response = await axiosInstance.get(`/auth/get-user`);
+    return response.data;
+  } catch (error) {
+    console.error("Error during automatic login:", error);
+    return error;
   }
 };

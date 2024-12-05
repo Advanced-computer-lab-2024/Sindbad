@@ -49,8 +49,8 @@ const CardContainer = ({ cardList, cardType, fetchCardData, columns = 3 }) => {
         return "No products found.";
       case "hotel":
         return "No hotels found.";
-      case "trip":
-        return "No trips found";
+      case "transportation":
+        return "No transportation offers found";
       case "flight":
         return "No flights found.";
       default:
@@ -70,7 +70,7 @@ const CardContainer = ({ cardList, cardType, fetchCardData, columns = 3 }) => {
         return ProductCard;
       case "hotel":
         return HotelCard;
-      case "trip":
+      case "transportation":
         return TripCard;
       case "flight":
         return FlightCard;
@@ -81,7 +81,7 @@ const CardContainer = ({ cardList, cardType, fetchCardData, columns = 3 }) => {
 
   return (
     // TODO: Make this change columns based on prop
-    <div className={`grid gap-6 grid-cols-3 w-full auto-rows-max`}>
+    <div className={`grid gap-6 w-full auto-rows-max ${columns === 3 ? "grid-cols-3" : "grid-cols-4"}`}>
       {cardList.length > 0 ? (
         cardList.map((item, index) => {
           const CardComponent = getCardComponent(cardType);

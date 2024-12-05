@@ -1,7 +1,7 @@
 import { updateSeller } from '@/services/SellerApiHandler';
 import { setCurrency } from "@/state management/userInfo";
 
-export const sellerSubmit = (values, id, navigate, dispatch) => {
+export const sellerSubmit = (values, id, navigate, dispatch, currency) => {
 	dispatch(setCurrency(values.preferredCurrency));
 
 	const formData = new FormData();

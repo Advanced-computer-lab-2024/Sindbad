@@ -1,6 +1,6 @@
 import { createComplaint } from "@/services/ComplaintApiHandler";
 
-export const complaintSubmit = (values, id, navigate, dispatch) => {
+export const complaintSubmit = (values, id, navigate, dispatch, currency) => {
     const newComplaint  = {
       ...values,
       creatorId: id

@@ -14,7 +14,9 @@ const {
   setIsInappropriate,
 } = require("../controllers/Itinerary");
 
-router.route("/").post(createItinerary).get(getAllItineraries);
+router.route("/")
+  // .post(createItinerary)
+  .get(getAllItineraries);
 
 router.route("/book").post(bookItinerary);
 
@@ -27,7 +29,7 @@ router.route("/:id/comment").post(addComment);
 router
   .route("/:id")
   .get(getItineraryById)
-  .put(updateItinerary)
+  // .put(updateItinerary)
   .delete(deleteItinerary)
   .post(addRating);
 

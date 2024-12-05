@@ -1,7 +1,7 @@
 import { updateAdvertiser } from '@/services/AdvertiserApiHandler';
 import { setCurrency } from "@/state management/userInfo";
 
-export const advertiserSubmit = (values, id, navigate, dispatch) => {
+export const advertiserSubmit = (values, id, navigate, dispatch, currency) => {
 	dispatch(setCurrency(values.preferredCurrency));
 
 	const formData = new FormData();

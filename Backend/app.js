@@ -30,6 +30,11 @@ const TourGuideController = require("./controllers/TourGuide");
 const TourismGovernorController = require("./controllers/TourismGovernor");
 const AdminController = require("./controllers/Admin");
 const TouristController = require("./controllers/Tourist");
+const ItineraryController = require("./controllers/Itinerary");
+const ActivityController = require("./controllers/Activity");
+const SiteController = require("./controllers/Site");
+const TripController = require("./controllers/Trip");
+const ProductController = require("./controllers/Product");
 const tripRoutes = require("./routes/Trip");
 const saleRoutes = require("./routes/Sale");
 const hotelRoutes = require("./routes/Hotel");
@@ -126,6 +131,86 @@ app.put(
         { name: "bannerImageUri", maxCount: 1 },
     ]),
     TouristController.updateTourist
+);
+
+app.put(
+    "/itinerary/:id",
+    upload.fields([
+        { name: "cardImage", maxCount: 1 },
+    ]),
+    ItineraryController.updateItinerary
+);
+
+app.post(
+    "/itinerary",
+    upload.fields([
+        { name: "cardImage", maxCount: 1 },
+    ]),
+    ItineraryController.createItinerary
+);
+
+app.post(
+    "/activity",
+    upload.fields([
+        { name: "cardImage", maxCount: 1 },
+    ]),
+    ActivityController.setActivity
+);
+
+app.put(
+    "/activity/:id",
+    upload.fields([
+        { name: "cardImage", maxCount: 1 },
+    ]),
+    ActivityController.updateActivity
+);
+
+app.post(
+    "/site",
+    upload.fields([
+        { name: "cardImage", maxCount: 1 },
+    ]),
+    SiteController.createSite
+);
+
+app.put(
+    "/site/:id",
+    upload.fields([
+        { name: "cardImage", maxCount: 1 },
+    ]),
+    SiteController.updateSite
+);
+
+app.post(
+    "/trip/create",
+    upload.fields([
+        { name: "cardImage", maxCount: 1 },
+    ]),
+    TripController.createTrip
+);
+
+app.put(
+    "/trip/:id",
+    upload.fields([
+        { name: "cardImage", maxCount: 1 },
+    ]),
+    TripController.updateTrip
+);
+
+app.post(
+    "/product",
+    upload.fields([
+        { name: "cardImage", maxCount: 1 },
+    ]),
+    ProductController.createProduct
+);
+
+app.put(
+    "/product/:id",
+    upload.fields([
+        { name: "cardImage", maxCount: 1 },
+    ]),
+    ProductController.updateProduct
 );
 
 app.post(

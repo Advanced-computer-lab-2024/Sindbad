@@ -15,6 +15,7 @@ function Activities() {
 	const [categories, setCategories] = useState([]);
 	const [categoryNames, setCategoryNames] = useState([]);
 	const currency = useCurrency();
+
 	const [priceRange, setPriceRange] = useState({
 		minPrice: 0,
 		maxPrice: 1000,
@@ -166,7 +167,7 @@ function Activities() {
 	useEffect(() => {
 		fetchCategories();
 		getPriceRange();
-	}, []);
+	}, [currency]);
 
 	return (
 		<div className="py-8 px-24 max-w-[1200px] flex flex-col gap-4 mx-auto">

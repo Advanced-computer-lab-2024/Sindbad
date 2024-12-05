@@ -1,7 +1,7 @@
 import { updateTourGuide } from '@/services/TourGuideApiHandler';
 import { setCurrency } from "@/state management/userInfo";
 
-export const tourGuideSubmit = (values, id, navigate, dispatch) => {
+export const tourGuideSubmit = (values, id, navigate, dispatch, currency) => {
 	dispatch(setCurrency(values.preferredCurrency));
 
 	// Prepare FormData

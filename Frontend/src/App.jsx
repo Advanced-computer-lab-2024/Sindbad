@@ -26,6 +26,9 @@ import HotelConfirmation from "./pages/HotelConfirmation";
 import FlightView from "./pages/FlightView";
 import FlightConfirmation from "./pages/FlightConfirmation";
 import DeletionRequests from "./components/custom/admin/deletion-requests/deletionRequest";
+import EditFormPage from "./pages/EditFormPage";
+import CreateFormPage from "./pages/CreateFormPage";
+import PromoCodes from "./components/custom/admin/promocode-management/promoCode";
 import { Cart } from "./pages/Cart";
 import Trips from "./pages/Trips";
 import TripView from "./pages/TripView";
@@ -34,6 +37,7 @@ import { Checkout } from "./pages/Checkout";
 import { useUser } from "@/state management/userInfo";
 import { CheckoutSuccess } from "./pages/CheckoutSuccess";
 import { CheckoutOutlet } from "./pages/CheckoutOutlet";
+import { Wishlist } from "./pages/Wishlist";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 
@@ -50,11 +54,12 @@ function App() {
           />
           <Route path="profile/:profileId" element={<Profile />} />
           <Route path="cart" element={<Cart />} />
+          <Route path="wishlist" element={<Wishlist />} />
           <Route path="activities" element={<ActivitiesPage />} />
           <Route path="sites" element={<SitesPage />} />
           <Route path="itineraries" element={<ItinerariesPage />} />
           <Route path="store" element={<ShoppingPage />} />
-          <Route path="trips" element={<Trips />} />
+          <Route path="transportation" element={<Trips />} />
           <Route path="product/:productId" element={<ProductView />} />
           <Route path="revenue" element={<RevenueReport />} />
           <Route path="management" element={<AdminManagementView />}>
@@ -64,6 +69,7 @@ function App() {
             <Route path="complaints" element={<ComplaintManagement />} />
             <Route path="tagcategories" element={<TagCategoryManagement />} />
             <Route path="deletion-requests" element={<DeletionRequests />} />
+            <Route path="promocodes" element={<PromoCodes />} />
           </Route>
           <Route path="booking" element={<Booking />}>
             <Route path="" element={<Navigate to="hotel" replace />} />
@@ -77,8 +83,42 @@ function App() {
           <Route path="itinerary/:itineraryId" element={<Itinerary />} />
           <Route path="activity/:activityId" element={<Activity />} />
           <Route path="site/:siteId" element={<Site />} />
-          <Route path="trip/:tripId" element={<TripView />} />
+          <Route path="transportation/:tripId" element={<TripView />} />
           <Route path="complaints/:creatorId" element={<ComplaintView />} />
+          <Route
+            path=":cardType/:cardId/edit"
+            element={<EditFormPage />}
+            loader={({ params }) => {
+              const validCardTypes = [
+                "itinerary",
+                "activity",
+                "site",
+                "product",
+                "transportation",
+              ];
+              if (!validCardTypes.includes(params.cardType)) {
+                throw new Error("Invalid card type"); // Replace with error handling or redirection
+              }
+              return params;
+            }}
+          />
+          <Route
+            path="create/:cardType"
+            element={<CreateFormPage />}
+            loader={({ params }) => {
+              const validCardTypes = [
+                "itinerary",
+                "activity",
+                "site",
+                "product",
+                "transportation",
+              ];
+              if (!validCardTypes.includes(params.cardType)) {
+                throw new Error("Invalid card type"); // Replace with error handling or redirection
+              }
+              return params;
+            }}
+          />
         </Route>
         <Route path="/checkout" element={<CheckoutOutlet />}>
           <Route path="" element={<Checkout />} />
@@ -88,7 +128,6 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:id" element={<ResetPassword />} />
-
         <Route path="/" element={<Navigate to="/app" replace />} />
       </Routes>
     </main>

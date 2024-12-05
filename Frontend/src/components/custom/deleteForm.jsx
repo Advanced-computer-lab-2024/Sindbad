@@ -29,13 +29,13 @@ function DeleteForm({ type, data }) {
     ) {
       deleteUser(data._id, type);
     }
-    if (type === "trip") {
+    if (type === "transportation") {
       deleteTrip(data._id);
     }
   };
   return (
     <div>
-      <Button onClick={handleButtonClick} className="bg-destructive">
+      <Button onClick={handleButtonClick} className="bg-destructive w-max">
         <p className="text-xs text-white">Delete</p>
       </Button>
     </div>

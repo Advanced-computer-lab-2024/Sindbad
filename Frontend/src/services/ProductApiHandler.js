@@ -9,12 +9,15 @@ export const getAllProducts = async (search, minprice, maxprice, sortrating) => 
 	}
 };
 
-export const updateProduct = async (productId, productData) => {
+export const updateProduct = async (productId, formData) => {
 	try {
 		const response = await axiosInstance.put(
 			`/product/${productId}`,
-			productData,
+			formData,
 			{
+				headers: {
+					"Content-Type": "multipart/form-data",
+				},
 				resourceName: "Product",
 			}
 		);
@@ -24,11 +27,16 @@ export const updateProduct = async (productId, productData) => {
 	}
 };
 
-export const createProduct = async (productData) => {
+export const createProduct = async (formData) => {
 	try {
 		const response = await axiosInstance.post(
 			`/product`,
-			productData
+			formData,
+			{
+				headers: {
+					"Content-Type": "multipart/form-data",
+				},
+			}
 		);
 		return response.data;
 	} catch (error) {

@@ -25,11 +25,13 @@ import { getTourGuide } from "@/services/TourGuideApiHandler";
 import { getSeller } from "@/services/SellerApiHandler";
 import { getAdvertiser } from "@/services/AdvertiserApiHandler";
 import LogoSVG from "@/SVGs/Logo";
-import { userLogin } from "@/services/AuthApiHandler";
+import { refreshAccessToken, userLogin } from "@/services/AuthApiHandler";
+import { Currency } from "lucide-react";
 
 function LogIn() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [error, setError] = useState(null);
 
   const { role, id } = useUser();
 
@@ -48,13 +50,12 @@ function LogIn() {
 
   // Schema for Login Form
   const formSchema = z.object({
-    username: z.string().min(2, {
-      message: "Username must be at least 2 characters.",
+    username: z.string().min(1, {
+      message: "Username is required.",
     }),
-    // password: z.string().min(8, {
-    //     message: "Password must be at least 8 characters.",
-    // }),
-    password: z.string(),
+    password: z.string().min(1, {
+        message: "Password is required.",
+    }),
   });
 
   const touristDefaultValues = {
@@ -87,9 +88,16 @@ function LogIn() {
     return advertiser.preferredCurrency;
   };
 
-  async function onSubmit(values) {
-    try {
-      const response = await userLogin(values);
+  const onSubmit = async (values) => {
+    // console.log("form values on front end: ", values);
+
+    // const data = await axios.post("http://localhost:5000/api/auth/login");
+
+    const response = await userLogin(values);
+    if (response.error) {
+      setError(response.message);
+      console.error(response.message);
+    } else {
       dispatch(
         login({
           role: response.role,
@@ -97,24 +105,75 @@ function LogIn() {
           accessToken: response.accessToken,
         })
       );
-      console.log("Log in successful:", response);
-      navigate("/app/itineraries");
-    } catch (err) {
-      // Axios errors have a 'response' property for HTTP errors
-
-      setIsLoginError(true);
-      if (err.response) {
-        console.error(
-          "Login failed:",
-          err.response.data.message || err.response.statusText
-        );
-        // alert(`Error: ${err.response.data.message || "Invalid credentials"}`);
-      } else if (err.request) {
-        console.error("No response received:", err.request);
-      } else {
-        console.error("Error setting up the request:", err.message);
+      let currency;
+      if(response.role === "tourist") {
+        currency = await getTouristPreferredCurrency(response.id);
+      } else if(response.role === "tourGuide") {
+        currency = await getTourGuidePreferredCurrency(response.id);
+      } else if(response.role === "seller") {
+        currency = await getSellerPreferredCurrency(response.id);
+      } else if(response.role === "advertiser") {
+        currency = await getAdvertiserPreferredCurrency(response.id);
       }
+      if (currency){dispatch(setCurrency(currency))};
+      navigate("/app/itineraries");
     }
+
+    // const { accessToken, refreshToken, role, id, preferredCurrency } =
+    //   await loginUser(values);
+
+    // if (values.username === "tourist" && values.password === "tourist") {
+    //   dispatch(login({ role: "tourist", id: "672faf6be3120c5df6679670" }));
+    //   const currency = await getTouristPreferredCurrency(
+    //     "672faf6be3120c5df6679670"
+    //   );
+    //   dispatch(setCurrency(currency));
+    //   navigate(`/app/itineraries`, { replace: true });
+    // } else if (
+    //   values.username === "tourGuide" &&
+    //   values.password === "tourGuide"
+    // ) {
+    //   dispatch(login({ role: "tourGuide", id: "6725031bd5a2d7588e2ce42a" }));
+    //   const currency = await getTourGuidePreferredCurrency(
+    //     "6725031bd5a2d7588e2ce42a"
+    //   );
+    //   dispatch(setCurrency(currency));
+    //   navigate(`/app/profile`, { replace: true });
+    // } else if (values.username === "seller" && values.password === "seller") {
+    //   dispatch(login({ role: "seller", id: "67252de1d5a2d7588e2ce7fe" }));
+    //   const currency = await getSellerPreferredCurrency(
+    //     "67252de1d5a2d7588e2ce7fe"
+    //   );
+    //   dispatch(setCurrency(currency));
+    //   navigate(`/app/store`, { replace: true });
+    // } else if (
+    //   values.username === "advertiser" &&
+    //   values.password === "advertiser"
+    // ) {
+    //   dispatch(login({ role: "advertiser", id: "672505d8d5a2d7588e2ce4a2" }));
+    //   const currency = await getAdvertiserPreferredCurrency(
+    //     "672505d8d5a2d7588e2ce4a2"
+    //   );
+    //   dispatch(setCurrency(currency));
+    //   navigate(`/app/profile`, { replace: true });
+    // } else if (
+    //   values.username === "tourismGovernor" &&
+    //   values.password === "tourismGovernor"
+    // ) {
+    //   dispatch(
+    //     login({ role: "tourismGovernor", id: "67250766d5a2d7588e2ce4fe" })
+    //   );
+    //   navigate(`/app/profile`, { replace: true });
+    // } else if (values.username === "admin" && values.password === "admin") {
+    //   dispatch(login({ role: "admin", id: "672537b565d46abdbd520858" }));
+    //   navigate(`/app/management`, { replace: true });
+    // } else if (values.username === "guest" && values.password === "guest") {
+    //   dispatch(login({ role: "guest", id: null }));
+    //   dispatch(setCurrency("USD"));
+    //   navigate(`/app/itineraries`, { replace: true });
+    // } else {
+    //   console.log("Invalid username or password");
+    // }
   }
 
   const renderCommonFields = () => (
@@ -135,22 +194,29 @@ function LogIn() {
           </FormItem>
         )}
       />
-      <FormField
-        key="password"
-        control={form.control}
-        name="password"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>
-              <p className="form-label">Password</p>
-            </FormLabel>
-            <FormControl>
-              <Input {...field} type="password" />
-            </FormControl>
-            <FormMessage className="text-xs" />
-          </FormItem>
+      <div>
+        <FormField
+          key="password"
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>
+                <p className="form-label">Password</p>
+              </FormLabel>
+              <FormControl>
+                <Input {...field} type="password" />
+              </FormControl>
+              <FormMessage className="text-xs" />
+            </FormItem>
+          )}
+        />
+        {error && (
+          <p className="text-destructive text-xs mt-2">
+            {error === "Resource not found." || error === "Unexpected status code: 401" ? "Incorrect username or password" : "An unknown error has occurred"}
+          </p>
         )}
-      />
+      </div>
     </>
   );
 
