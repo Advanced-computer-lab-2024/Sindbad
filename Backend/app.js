@@ -198,6 +198,22 @@ app.put(
 );
 
 app.post(
+    "/product",
+    upload.fields([
+        { name: "cardImage", maxCount: 1 },
+    ]),
+    ProductController.createProduct
+);
+
+app.put(
+    "/product/:id",
+    upload.fields([
+        { name: "cardImage", maxCount: 1 },
+    ]),
+    ProductController.updateProduct
+);
+
+app.post(
     "/advertiser/upload/:id",
     upload.fields([
         { name: "idCardImage", maxCount: 1 },

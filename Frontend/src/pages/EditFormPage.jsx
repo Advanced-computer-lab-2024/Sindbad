@@ -83,6 +83,12 @@ function EditFormPage() {
             // Convert dateTime to Date object
             formattedData.dateTime = new Date(formattedData.dateTime);
         }
+        else if (cardType === "product") {
+            // Convert price to local currency
+            const converter = await Convert().from("USD").fetch();
+            const convertedPrice = formattedData.price * converter.rates[currency];
+            formattedData.price = convertedPrice;
+        }
         // console.log("FORMATTED: ", formattedData)
         return formattedData;
     }
