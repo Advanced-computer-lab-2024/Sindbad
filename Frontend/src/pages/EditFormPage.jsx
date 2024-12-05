@@ -44,6 +44,7 @@ function EditFormPage() {
         else if (cardType === "activity") {
             // Convert dateTime to Date object
             formattedData.dateTime = new Date(formattedData.dateTime);
+            // Convert price to local currency
             const converter = await Convert().from("USD").fetch();
             const convertedPrice = formattedData.price * converter.rates[currency];
             formattedData.price = convertedPrice;
@@ -73,6 +74,14 @@ function EditFormPage() {
             // get tag names
             const tags = await Promise.all(formattedData.tags.map((tag) => getTag(tag)));
             formattedData.tags = tags.map((tag) => tag.name);
+        }
+        else if (cardType === "transportation") {
+            // Convert price to local currency
+            const converter = await Convert().from("USD").fetch();
+            const convertedPrice = formattedData.price * converter.rates[currency];
+            formattedData.price = convertedPrice;
+            // Convert dateTime to Date object
+            formattedData.dateTime = new Date(formattedData.dateTime);
         }
         // console.log("FORMATTED: ", formattedData)
         return formattedData;

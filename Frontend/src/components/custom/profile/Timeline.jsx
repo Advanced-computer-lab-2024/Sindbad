@@ -318,6 +318,17 @@ function Timeline({ userData, profileId, id, profileRole, cardData, fetchCardDat
                         cardType={"transportation"}
                         fetchCardData={() => { getMyTrips(profileId) }}
                     />
+                    {transportation.length === 0 && (
+                        <p className="text-neutral-400 text-sm italic">
+                            {profileId !== id
+                                ? "No transportation offers to show."
+                                : userData.isAccepted === null
+                                    ? "Your account must be approved before you can add transportation offers. It is currently being reviewed; please check back later."
+                                    : userData.isAccepted === false
+                                        ? "Your account has been rejected. Please contact the administrator for more information."
+                                        : "You have not added any transportation offers yet. Click the + button to get started!"}
+                        </p>
+                    )}
                 </>
             }
         </div>

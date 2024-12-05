@@ -2,7 +2,6 @@ import { createActivity, updateActivity } from "@/services/ActivityApiHandler";
 import { Convert } from "easy-currencies";
 
 export const activitySubmit = async (values, id, data, navigate, dispatch, currency) => {
-	console.log(values)
 	const formData = new FormData();
 	formData.append("name", values.name);
 	formData.append("description", values.description);

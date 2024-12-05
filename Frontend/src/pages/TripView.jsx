@@ -125,7 +125,7 @@ function Trip() {
   return (
     <div className="py-8 px-12 sm:px-24 max-w-[1200px] mx-auto">
       <div className="flex items-center gap-6 mb-6">
-        <h1 className="text-3xl font-extrabold text-gray-900">{trip.name}</h1>
+        <h1 className="text-3xl font-extrabold shrink-0">{trip.name}</h1>
         <hr className="border-neutral-300 border w-full mt-1.5" />
       </div>
 
