@@ -14,7 +14,7 @@ export const getAllSales = async () => {
 export const getMySales = async (type, creatorId) => {
   try {
     const response = await axiosInstance.get(
-      `/sale/my-sales/${type}/${creatorId}`,
+      `/sale/my-sales/${type === "transportation" ? "trip" : type}/${creatorId}`,
       {
         resourceName: "Sale",
       }

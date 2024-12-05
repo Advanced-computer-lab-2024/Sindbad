@@ -12,6 +12,6 @@ export const tripSubmit = async (values, id, data, navigate, dispatch, currency)
   }
 
   if (navigate) {
-    navigate("/app/trips");
+    navigate("/app/transportation");
   }
 };

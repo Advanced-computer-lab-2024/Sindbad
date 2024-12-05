@@ -47,8 +47,8 @@ function RevenueReport() {
           case "advertiser": {
             let activities = await getMySales("activity", id);
             console.log("activities", activities);
-            let trips = await getMySales("trip", id);
-            console.log("trips", trips);
+            let trips = await getMySales("transportation", id);
+            console.log("transportation", trips);
             result = activities.concat(trips);
             break;
           }

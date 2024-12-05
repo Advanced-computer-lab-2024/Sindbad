@@ -57,7 +57,7 @@ function App() {
                     <Route path="sites" element={<SitesPage />} />
                     <Route path="itineraries" element={<ItinerariesPage />} />
                     <Route path="store" element={<ShoppingPage />} />
-                    <Route path="trips" element={<Trips />} />
+                    <Route path="transportation" element={<Trips />} />
                     <Route path="product/:productId" element={<ProductView />} />
                     <Route path="revenue" element={<RevenueReport />} />
                     <Route path="management" element={<AdminManagementView />}>
@@ -81,13 +81,13 @@ function App() {
                     <Route path="itinerary/:itineraryId" element={<Itinerary />} />
                     <Route path="activity/:activityId" element={<Activity />} />
                     <Route path="site/:siteId" element={<Site />} />
-                    <Route path="trip/:tripId" element={<TripView />} />
+                    <Route path="transportation/:tripId" element={<TripView />} />
                     <Route path="complaints/:creatorId" element={<ComplaintView />} />
                     <Route
                         path=":cardType/:cardId/edit"
                         element={<EditFormPage />}
                         loader={({ params }) => {
-                            const validCardTypes = ["itinerary", "activity", "site", "product", "trip"];
+                            const validCardTypes = ["itinerary", "activity", "site", "product", "transportation"];
                             if (!validCardTypes.includes(params.cardType)) {
                                 throw new Error("Invalid card type"); // Replace with error handling or redirection
                             }
@@ -98,7 +98,7 @@ function App() {
                         path="create/:cardType"
                         element={<CreateFormPage />}
                         loader={({ params }) => {
-                            const validCardTypes = ["itinerary", "activity", "site", "product", "trip"];
+                            const validCardTypes = ["itinerary", "activity", "site", "product", "transportation"];
                             if (!validCardTypes.includes(params.cardType)) {
                                 throw new Error("Invalid card type"); // Replace with error handling or redirection
                             }

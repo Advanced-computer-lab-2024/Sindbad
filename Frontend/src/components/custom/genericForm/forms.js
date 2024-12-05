@@ -179,7 +179,7 @@ export const forms = {
     onSubmit: complaintSubmit,
   },
 
-  trip: {
+  transportation: {
     zodSchema: tripSchema,
     renderedFields: trip.fields,
     defaultValues: trip.defaultValues,
