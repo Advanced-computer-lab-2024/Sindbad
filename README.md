@@ -44,19 +44,56 @@ This project is developed using the MERN stack, a popular technology stack for b
   - **Testing**: Postman.
 
 ## Features
-- User authentication and authorization
-- CRUD operations for activities, itineraries, products, and more
-- Integration with Amadeus API for hotel bookings
-- Real-time notifications and updates
-- Comprehensive admin dashboard
-- Data visualization and reporting
-- 
+- **User authentication and authorization**: To ensure secure access to the system.
+- **Trip Management**: Users can manage their entire trip from start till end including accomodation, transportation and booking of activities and itineraries.
+- **Product and Services Management:** Provide an easy-to-use interface for managing product and service listings, including the ability to create, read, update, and delete offerings. This includes features tailored for sellers to manage product availability and for tour guides and advertisers to schedule services, ensuring streamlined operations.
+- **Tourism Governer??**
+- **Rating system??**
+- **Points System??**
+- **Notifications**: Users Receive Real-time notifications and updates on the app and on email for future booked events or for any changes to their posts.
+- **Payment System**: A secure payment system for users to book services of pay for products.
+- **Admin dashboard**: Comprehensive admin dashboard to maintain the integrity of the website, manage user accounts, products and services.
+- **Data Visualization and Reporting:** Access comprehensive sales reports with detailed revenue insights.
+
+
 ### Secure Payment Options
 **Credit Card Payments:** Seamless and secure credit card payments for medicines are supported, ensuring a hassle-free transaction experience for patients.
 
 **Wallet Integration:** Patients have the option to pay for medicine using their wallet balance, providing a convenient and quick payment method.
 
 ## Code Examples
+### Starting the server
+```javascript
+const express = require("express");
+const app = express();
+app.use(
+    cors({
+        origin: "http://localhost:5173",
+        methods: "GET,POST,PUT,DELETE,PATCH",
+        credentials: true,
+    })
+);
+
+// Connect to MongoDB, and prevent connecting to the database during testing
+if (process.env.NODE_ENV !== "test") {
+    mongoose
+        .connect(process.env.MONGO_URI)
+        .then(() => {
+            console.log("Connected to MongoDB");
+        })
+        .catch((err) => {
+            console.error("Database connection error:", err);
+        });
+}
+// Start the server
+let PORT = process.env.PORT || 3000;
+if (process.env.NODE_ENV === "test") {
+    PORT = 0; // Finds first available port, to prevent conflicts when running test suites in parallel
+}
+const server = app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
+```
 ### Example of a Route Definition
 ```javascript
 app.post(
@@ -185,56 +222,44 @@ npm run dev
 ```
 
 ## API References
+Can view the APIs in the following link
+ [API documentation](https://)
 
-
-###
-
- >User Routes
-- `POST /user/register`: Register a new user
-- `POST /user/login`: Login a user
-- `GET /user/:id`: Get user details
-
-> Activity Routes
-- `POST /activity`: Create a new activity
-- `GET /activity/:id`: Get activity details
-- `PUT /activity/:id`: Update activity
-- `DELETE /activity/:id`: Delete activity
-
-> Itinerary Routes
-- `POST /itinerary`: Create a new itinerary
-- `GET /itinerary/:id`: Get itinerary details
-- `PUT /itinerary/:id`: Update itinerary
-- `DELETE /itinerary/:id`: Delete itinerary
-
-> Product Routes
-- `POST /product`: Create a new product
-- `GET /product/:id`: Get product details
-- `PUT /product/:id`: Update product
-- `DELETE /product/:id`: Delete product
-
-> Sales Routes
-- `GET /sale/my-product-sales/:creatorId`: Get product sales by creator ID
-- `GET /sale/my-sales/:creatorId/:type`: Get sales by creator ID and type
 
 ## Tests
-To run tests using Postman:
-1. Import the Postman collection from the `tests` directory.
-2. Run the collection to execute the tests.
+Testing is done using postman, you can check the tests in the following link
+ [API documentation](https://)
 
 ## How to Use
+- mention VOD
+
+**As a Tourist**
 1. Register or login to the platform.
-2. Navigate through the dashboard to manage activities, itineraries, and products.
+2. Navigate through the dashboard to view available activities, itineraries, products, sites, hotel, flight and transportation bookings
 3. Use the booking features to book hotels and other services.
-4. View reports and analytics in the admin dashboard.
+4. Navigate to the cart to checkout the products in it
+5. Navigate to the profile to view all the booked services
 
 ## Contribute
-Contributions are always welcome!
+Contributions for bug fixes or suggesting enhancements are always welcome!
 
 Guidelines for contributing to the project:
-1. Fork the repository.
-2. Create a new branch for your feature or bugfix.
+1. **Fork the repository:** This creates your own copy of the project where you can make your changes.
+2. **Clone your fork:** This downloads the repository to your local machine for editing. The command is 
+```bash
+git clone https://github.com/your-username/repository-name.git
+```
+3. Create a new branch for your feature or bugfix.
+```bash
+ git checkout -b branch-name.
+ ```
 3. Commit your changes and push to your branch.
-4. Create a pull request with a detailed description of your changes.
+```bash
+git add .
+git commit -m "Commit message"
+git push origin branch-name
+```
+4. Create a pull request with a detailed description of your changes, include as much details as possible.
 
 ## Credits
 - [README template](https://www.mygreatlearning.com/blog/readme-file/)
