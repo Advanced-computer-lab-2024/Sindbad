@@ -63,10 +63,10 @@ export const removeFromBookmarks = async (touristId, activityID) => {
     const response = await axiosInstance.delete(
       `/tourist/${touristId}/bookmark`,
       {
-        activityID,
+        data: { activityID }, // Use 'data' key to send the request body
       }
     );
-    return response;
+    return response.data;
   } catch (error) {
     return error.message;
   }
