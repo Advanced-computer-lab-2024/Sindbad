@@ -8,6 +8,7 @@ const Complaint = require("../models/Complaint");
 const Seller = require("../models/Seller");
 const Admin = require("../models/Admin");
 const TourismGovernor = require("../models/TourismGovernor");
+const nodemailer = require("nodemailer");
 
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
@@ -298,15 +299,22 @@ const UserController = {
 
   updateUserPassword: async (req, res) => {
     const { id } = req.params;
-    const { role, password } = req.body;
-    console.log(req.body);
-    console.log(req.params);
+    const { role, oldPassword, newPassword } = req.body;
+    // console.log(req.body);
+    // console.log(req.params);
+
+    if (!id) {
+      return res.status(400).json({ message: "ID is required" });
+    }
 
     if (!role) {
       return res.status(400).json({ message: "Role is required" });
     }
-    if (!password) {
-      return res.status(400).json({ message: "Password is required" });
+    if (!oldPassword) {
+      return res.status(400).json({ message: "Old Password is required" });
+    }
+    if (!newPassword) {
+      return res.status(400).json({ message: "New Password is required" });
     }
 
     try {
@@ -321,7 +329,23 @@ const UserController = {
         return res.status(404).json({ message: "User not found" });
       }
 
-      const hashedPassword = await bcrypt.hash(password, saltRounds);
+      if (newPassword.length < 8) {
+        return res
+          .status(400)
+          .json({ message: "New password must be at least 8 characters." });
+      }
+
+      if (!(await bcrypt.compare(oldPassword, user.passwordHash))) {
+        return res.status(400).json({ message: "Old password is incorrect" });
+      }
+
+      if (oldPassword == newPassword) {
+        return res.status(400).json({
+          message: "Old password and new password cannot be the same!",
+        });
+      }
+
+      const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
 
       user.passwordHash = hashedPassword;
       await user.save();
@@ -330,6 +354,7 @@ const UserController = {
       return res.status(500).json({ message: error.message });
     }
   },
+
   updateUserAcceptance: async (req, res) => {
     const { id } = req.params;
     const { role, isAccepted } = req.body;
@@ -383,6 +408,138 @@ const UserController = {
       res.json(user);
     } catch (error) {
       return res.status(500).json({ message: error.message });
+    }
+  },
+
+  forgotPassword: async (req, res) => {
+    const { email } = req.body;
+
+    // Validate the email input
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    // Define all user models
+    const models = {
+      tourist: Tourist,
+      advertiser: Advertiser,
+      tourGuide: TourGuide,
+      seller: Seller,
+      tourismGovernor: TourismGovernor,
+      admin: Admin,
+    };
+
+    let foundUser = null;
+
+    try {
+      // Loop through all models to find the user
+      for (const [_, UserModel] of Object.entries(models)) {
+        foundUser = await UserModel.findOne({ email }).exec();
+        if (foundUser) {
+          break; // Exit the loop once the user is found
+        }
+      }
+
+      // If the user is not found in any model
+      if (!foundUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Generate a password reset link
+      const resetLink = `${process.env.FRONTEND_DOMAIN}/reset-password/${foundUser._id}`;
+
+      // Configure nodemailer with Gmail
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.GMAIL, // Your Gmail address
+          pass: process.env.GMAILPASSWORD, // Your Gmail app password
+        },
+      });
+
+      // Email options
+      const mailOptions = {
+        from: process.env.GMAIL,
+        to: foundUser.email,
+        subject: "Password Reset Request",
+        html: `
+        <p>Hello ${foundUser.username || "User"},</p>
+        <p>We received a request to reset your password. Please click the link below to reset your password:</p>
+        <a href="${resetLink}" target="_blank">Reset Password</a>
+        <p>If you did not request a password reset, please ignore this email.</p>
+        <p>Thank you,<br>Your Team</p>
+      `,
+      };
+
+      // Send email
+      await transporter.sendMail(mailOptions);
+
+      return res
+        .status(200)
+        .json({ message: "Password reset email sent successfully" });
+    } catch (error) {
+      return res.status(500).json({
+        message: "An error occurred while processing your request",
+        error: error.message,
+      });
+    }
+  },
+
+  resetPassword: async (req, res) => {
+    const { newPassword, id } = req.body;
+
+    // console.log("req.body: ", { newPassword, id });
+
+    // Validate the password input
+    if (!newPassword) {
+      return res.status(400).json({ message: "Password is required" });
+    }
+
+    // Define all user models
+    const models = {
+      tourist: Tourist,
+      advertiser: Advertiser,
+      tourGuide: TourGuide,
+      seller: Seller,
+      tourismGovernor: TourismGovernor,
+      admin: Admin,
+    };
+
+    let foundUser = null;
+    let userType = null;
+
+    try {
+      // Loop through all models and find the user in one of the models
+      for (const [type, UserModel] of Object.entries(models)) {
+        // Use findOne instead of find to get a single user
+        foundUser = await UserModel.findOne({ _id: id }).exec();
+        if (foundUser) {
+          userType = type; // Set the userType when found
+          break; // Exit the loop when the user is found
+        }
+      }
+
+      // console.log("Found user: ", foundUser);
+
+      if (!foundUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Hash the new password
+      const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+
+      // Update the user's password
+      foundUser.passwordHash = hashedPassword;
+      await foundUser.save();
+
+      return res
+        .status(200)
+        .json({ message: "Password reset successfully", foundUser });
+    } catch (error) {
+      return res.status(500).json({
+        message: "An error occurred while resetting your password",
+        error: error.message,
+      });
     }
   },
 };

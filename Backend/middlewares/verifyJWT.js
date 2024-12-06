@@ -2,9 +2,14 @@ const jwt = require("jsonwebtoken");
 
 // List of routes to skip JWT verification
 const excludedRoutes = [
+  /^\/signup$/, // Matches exactly "/signup"
   /^\/user\/signup$/, // Matches exactly "/user/signup"
+  /^\/user\/forgot-password$/, // Matches exactly "/user/forgot-password"
+  /^\/user\/reset-password$/, // Matches exactly "/user/reset-password"
   /^\/tag$/,
   /^\/category$/,
+  /^\/activity\/?.*/,
+  /^\/itinerary\/?.*/,
   /^\/auth(\/.*)?$/, // Matches "/auth" and anything after it
   /^\/advertiser\/upload\/[a-fA-F0-9]+$/, // Matches "/advertiser/upload/{id}"
   /^\/seller\/upload\/[a-fA-F0-9]+$/, // Matches "/seller/upload/{id}"
@@ -15,8 +20,10 @@ const excludedRoutes = [
 ];
 
 const verifyJWT = (req, res, next) => {
+  console.log("original url: ", req.originalUrl);
   // Check if the route matches any of the excluded patterns
   if (excludedRoutes.some((pattern) => pattern.test(req.originalUrl))) {
+    console.log("skipping jwt verification");
     return next();
   }
 

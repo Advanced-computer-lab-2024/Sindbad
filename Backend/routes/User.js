@@ -10,12 +10,17 @@ const {
   updateUserAcceptance,
   checkDeletion,
   requestAccountDeletion,
+  forgotPassword,
+  resetPassword,
 } = require("../controllers/User");
 
 // Public routes (No authentication required)
 router.post("/signup", signUp);
 
-// Protected routes (Require JWT authentication)
+router.post("/reset-password", resetPassword);
+
+router.post("/forgot-password", forgotPassword);
+
 router.post("/changePassword/:id", updateUserPassword);
 
 router.post("/changeAcceptance/:id", updateUserAcceptance);

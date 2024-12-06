@@ -18,12 +18,7 @@ import {
 } from "@/components/ui/form";
 
 import { useDispatch } from "react-redux";
-import {
-  useUser,
-  login,
-  setCurrency,
-  logout,
-} from "@/state management/userInfo";
+import { useUser, login, setCurrency } from "@/state management/userInfo";
 
 import { getTouristById } from "@/services/TouristApiHandler";
 import { getTourGuide } from "@/services/TourGuideApiHandler";
@@ -58,7 +53,7 @@ function LogIn() {
       message: "Username is required.",
     }),
     password: z.string().min(1, {
-        message: "Password is required.",
+      message: "Password is required.",
     }),
   });
 
@@ -110,16 +105,18 @@ function LogIn() {
         })
       );
       let currency;
-      if(response.role === "tourist") {
+      if (response.role === "tourist") {
         currency = await getTouristPreferredCurrency(response.id);
-      } else if(response.role === "tourGuide") {
+      } else if (response.role === "tourGuide") {
         currency = await getTourGuidePreferredCurrency(response.id);
-      } else if(response.role === "seller") {
+      } else if (response.role === "seller") {
         currency = await getSellerPreferredCurrency(response.id);
-      } else if(response.role === "advertiser") {
+      } else if (response.role === "advertiser") {
         currency = await getAdvertiserPreferredCurrency(response.id);
       }
-      if (currency){dispatch(setCurrency(currency))};
+      if (currency) {
+        dispatch(setCurrency(currency));
+      }
       navigate("/app/itineraries");
     }
 
@@ -178,7 +175,7 @@ function LogIn() {
     // } else {
     //   console.log("Invalid username or password");
     // }
-  }
+  };
 
   const renderCommonFields = () => (
     <>
@@ -217,7 +214,11 @@ function LogIn() {
         />
         {error && (
           <p className="text-destructive text-xs mt-2">
-            {error === "Resource not found." || error === "Unexpected status code: 401" ? "Incorrect username or password" : "An unknown error has occurred"}
+            {error}
+            {/* {error === "Resource not found." ||
+            error === "Unexpected status code: 401"
+              ? "Incorrect username or password"
+              : "An unknown error has occurred"} */}
           </p>
         )}
       </div>
@@ -245,7 +246,7 @@ function LogIn() {
               variant="link"
               className="p-0 text-xs font-normal text-secondary/90 hover:text-secondary"
             >
-              continue as guest
+              Continue as guest
             </Button>
           </p>
         </div>
@@ -261,6 +262,16 @@ function LogIn() {
                 className="flex flex-col gap-4"
               >
                 {renderCommonFields()}
+                <Button
+                  type="button"
+                  onClick={() =>
+                    navigate(`/forgot-password`, { replace: true })
+                  }
+                  variant="link"
+                  className="p-0 mt-[-1rem] text-xs font-bold justify-start text-gray-700 " // hover:text-secondary/80
+                >
+                  Forgot your password?
+                </Button>
                 <Button
                   type="submit"
                   className="w-1/2 justify-center h-max mt-2"

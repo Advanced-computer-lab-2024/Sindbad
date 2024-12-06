@@ -50,17 +50,21 @@ export const updateUserAcceptance = async (id, role, isAccepted) => {
     return error;
   }
 };
-export const updateUserPassword = async (id, role, password) => {
-  try {
-    const response = await axiosInstance.post(`/user/changePassword/${id}`, {
-      role,
-      password,
-    });
-    return response.data;
-  } catch (error) {
-    return error;
-  }
+
+export const updateUserPassword = async (
+  id,
+  role,
+  oldPassword,
+  newPassword
+) => {
+  const response = await axiosInstance.post(`/user/changePassword/${id}`, {
+    role,
+    oldPassword,
+    newPassword,
+  });
+  return response.data;
 };
+
 export const deleteUser = async (id, role) => {
   try {
     const response = await axiosInstance.patch(
@@ -71,4 +75,24 @@ export const deleteUser = async (id, role) => {
   } catch (error) {
     return error;
   }
+};
+
+export const sendForgotPasswordEmail = async (email) => {
+  try {
+    const response = await axiosInstance.post(`/user/forgot-password`, {
+      email,
+    });
+    return response.data;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const resetPassword = async (id, newPassword) => {
+  console.log("Reset Password Request:", { id, newPassword });
+  const response = await axiosInstance.post(`/user/reset-password`, {
+    id,
+    newPassword,
+  });
+  return response.data; // Return response data directly
 };
