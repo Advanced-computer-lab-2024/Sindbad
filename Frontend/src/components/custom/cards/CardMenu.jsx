@@ -85,7 +85,9 @@ function CardMenu({
 
   const unbookmarkActivity = async () => {
     try {
-      await removeFromBookmarks(id, data._id);
+      console.log(data._id);
+      const response = await removeFromBookmarks(id, data._id);
+      console.log("API response:", response); // Debug response
       setIsBookmarked(false); // Update state after unbookmarking
       toast({
         description: "Activity removed from bookmarks.",
