@@ -36,11 +36,6 @@ export const refreshAccessToken = async () => {
 };
 
 export const automaticLogin = async () => {
-  try {
-    const response = await axiosInstance.get(`/auth/get-user`);
-    return response.data;
-  } catch (error) {
-    console.error("Error during automatic login:", error);
-    return error;
-  }
+  const response = await axiosInstance.get(`/auth/get-user`);
+  return response.data;
 };

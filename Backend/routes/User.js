@@ -21,7 +21,6 @@ router.post("/reset-password", resetPassword);
 
 router.post("/forgot-password", forgotPassword);
 
-// Protected routes (Require JWT authentication)
 router.post("/changePassword/:id", updateUserPassword);
 
 router.post("/changeAcceptance/:id", updateUserAcceptance);

@@ -354,6 +354,7 @@ const UserController = {
       return res.status(500).json({ message: error.message });
     }
   },
+
   updateUserAcceptance: async (req, res) => {
     const { id } = req.params;
     const { role, isAccepted } = req.body;

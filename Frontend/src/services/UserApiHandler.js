@@ -50,6 +50,7 @@ export const updateUserAcceptance = async (id, role, isAccepted) => {
     return error;
   }
 };
+
 export const updateUserPassword = async (
   id,
   role,
@@ -63,6 +64,7 @@ export const updateUserPassword = async (
   });
   return response.data;
 };
+
 export const deleteUser = async (id, role) => {
   try {
     const response = await axiosInstance.patch(

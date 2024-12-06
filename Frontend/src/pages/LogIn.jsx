@@ -214,10 +214,11 @@ function LogIn() {
         />
         {error && (
           <p className="text-destructive text-xs mt-2">
-            {error === "Resource not found." ||
+            {error}
+            {/* {error === "Resource not found." ||
             error === "Unexpected status code: 401"
               ? "Incorrect username or password"
-              : "An unknown error has occurred"}
+              : "An unknown error has occurred"} */}
           </p>
         )}
       </div>
