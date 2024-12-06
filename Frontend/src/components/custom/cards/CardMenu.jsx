@@ -1,4 +1,4 @@
-import { useState } from "react"; // Add this line
+import { useState, useEffect } from "react"; // Add this line
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 
@@ -23,7 +23,11 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-import { addActivityToBookmarks } from "@/services/TouristApiHandler";
+import {
+  addActivityToBookmarks,
+  removeFromBookmarks,
+  getBookmarkedActivities,
+} from "@/services/TouristApiHandler";
 
 import GenericForm from "../genericForm/genericForm";
 import DeleteForm from "../deleteForm";
@@ -49,6 +53,55 @@ function CardMenu({
   const navigate = useNavigate();
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(false);
+
+  useEffect(() => {
+    // Function to check if the activity is already bookmarked
+    const checkIfBookmarked = async () => {
+      try {
+        const response = await getBookmarkedActivities(id);
+        const isActivityBookmarked = response.data.some(
+          (activity) => activity._id === data._id
+        );
+        setIsBookmarked(isActivityBookmarked);
+      } catch (error) {
+        console.error("Error fetching bookmark status:", error);
+      }
+    };
+    checkIfBookmarked();
+  }, [id, data._id]); // Check bookmark status whenever id or data._id changes
+
+  const bookmarkActivity = async () => {
+    try {
+      await addActivityToBookmarks(id, data._id);
+      setIsBookmarked(true); // Update state after bookmarking
+      toast({
+        description: "Activity bookmarked successfully!",
+      });
+    } catch (error) {
+      console.error("An error occurred while bookmarking:", error.message);
+    }
+  };
+
+  const unbookmarkActivity = async () => {
+    try {
+      await removeFromBookmarks(id, data._id);
+      setIsBookmarked(false); // Update state after unbookmarking
+      toast({
+        description: "Activity removed from bookmarks.",
+      });
+    } catch (error) {
+      console.error("An error occurred while unbookmarking:", error.message);
+    }
+  };
+
+  const handleBookmarkToggle = () => {
+    if (isBookmarked) {
+      unbookmarkActivity();
+    } else {
+      bookmarkActivity();
+    }
+  };
 
   // Function to copy the link to clipboard
   const handleCopyLink = () => {
@@ -89,15 +142,6 @@ function CardMenu({
           data.isActive ? "deactivated" : "activated"
         } successfully`,
       });
-    }
-  };
-
-  const bookmarkActivity = async () => {
-    try {
-      const response = await addActivityToBookmarks(id, data._id);
-      console.log("id:", id, "data._id:", data?._id);
-    } catch (error) {
-      console.error("An unexpected error occurred:", error.message);
     }
   };
 
@@ -158,9 +202,8 @@ function CardMenu({
           </DropdownMenuItem>
 
           {config.actions.bookmark?.includes(role) && (
-            <DropdownMenuItem onClick={() => bookmarkActivity()}>
-              Bookmark
-              {console.log("ahh")}
+            <DropdownMenuItem onClick={handleBookmarkToggle}>
+              {isBookmarked ? "Unbookmark" : "Bookmark"}
             </DropdownMenuItem>
           )}
 
