@@ -281,7 +281,7 @@ const getAllItineraries = async (req, res) => {
     // Create filter object based on provided criteria
     const filter = {
       // Uncomment if needed to filter for upcoming available date times
-      //availableDatesTimes: { $elemMatch: { dateTime: { $gte: new Date() } } },
+      availableDatesTimes: { $elemMatch: { dateTime: { $gte: new Date() } } },
       // Default filter for inappropriate itineraries and active itineraries
       isInappropriate: false,
       isActive: true,
