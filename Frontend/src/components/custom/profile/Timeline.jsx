@@ -12,6 +12,7 @@ import { useUser } from "@/state management/userInfo";
 import { getActivityById } from "@/services/ActivityApiHandler";
 import { getItineraryById } from "@/services/ItineraryApiHandler";
 import { itinerary } from "../genericForm/rendered-fields/itineraryFields";
+import { useNavigate } from "react-router-dom";
 
 function Timeline({
   userData,
@@ -22,6 +23,7 @@ function Timeline({
   fetchCardData,
 }) {
   const { role } = useUser();
+  const navigate = useNavigate();
   const [bookmarkedActivities, setBookmarkedActivities] = useState([]);
   const [upcomingActivities, setUpcomingActivites] = useState([]);
   const [upcomingItineraries, setUpcomingItineraries] = useState([]);
@@ -107,14 +109,29 @@ function Timeline({
     role === "admin" && profileRole === "tourGuide"
       ? cardData.filter((card) => card.isActive)
       : role === "admin" && profileRole === "advertiser"
-      ? cardData
-      : profileRole === "tourGuide" && id !== profileId
-      ? cardData.filter((card) => card.isActive && !card.isInappropriate)
-      : profileRole === "advertiser" && id !== profileId
-      ? cardData.filter((card) => !card.isInappropriate)
-      : profileRole === "seller" && id !== profileId
-      ? cardData.filter((card) => !card.isArchived)
-      : cardData;
+        ? cardData
+        : profileRole === "tourGuide" && id !== profileId
+          ? cardData.filter((card) => card.isActive && !card.isInappropriate)
+          : profileRole === "advertiser" && id !== profileId
+            ? cardData.filter((card) => !card.isInappropriate)
+            : profileRole === "seller" && id !== profileId
+              ? cardData.filter((card) => !card.isArchived)
+              : cardData;
+
+  const getCardType = () => {
+    if (profileRole === "tourGuide") {
+      return "itinerary";
+    }
+    else if (profileRole === "seller" || profileRole === "admin") {
+      return "product";
+    }
+    else if (profileRole === "tourismGovernor") {
+      return "site";
+    }
+    else {
+      return "activity";
+    }
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -123,38 +140,22 @@ function Timeline({
           {profileRole === "tourist"
             ? "Bookmarks"
             : profileRole === "seller" || profileRole === "admin"
-            ? "Products"
-            : profileRole === "advertiser"
-            ? "Activities"
-            : profileRole === "tourismGovernor"
-            ? "Historical Places & Museums"
-            : "Itineraries"}
+              ? "Products"
+              : profileRole === "advertiser"
+                ? "Activities"
+                : profileRole === "tourismGovernor"
+                  ? "Historical Places & Museums"
+                  : "Itineraries"}
         </h1>
         <hr className="border-neutral-300 border w-full mt-1.5" />
         {role !== "tourist" &&
           myProfile() &&
           (rejectable() === false || userData.isAccepted) && (
-            <Dialog>
-              <DialogTrigger className="shrink-0 mt-1.5 text-neutral-400 hover:text-neutral-600 transition-all">
-                <CirclePlus size={24} />
-              </DialogTrigger>
-              <DialogContent className="overflow-y-scroll max-h-[50%]">
-                <DialogHeader>
-                  <GenericForm
-                    type={
-                      role === "seller" || role === "admin"
-                        ? "product"
-                        : role === "advertiser"
-                        ? "activity"
-                        : role === "tourGuide"
-                        ? "itinerary"
-                        : "site"
-                    }
-                    id={id}
-                  />
-                </DialogHeader>
-              </DialogContent>
-            </Dialog>
+            <button
+              className="shrink-0 mt-1.5 text-neutral-400 hover:text-neutral-600 transition-all"
+              onClick={() => navigate(`/app/create/${getCardType()}`)}>
+              <CirclePlus size={24} />
+            </button>
           )}
       </div>
 
@@ -166,12 +167,12 @@ function Timeline({
           profileRole === "tourist"
             ? "activity"
             : profileRole === "tourGuide"
-            ? "itinerary"
-            : profileRole === "seller" || profileRole === "admin"
-            ? "product"
-            : profileRole === "advertiser"
-            ? "activity"
-            : "site"
+              ? "itinerary"
+              : profileRole === "seller" || profileRole === "admin"
+                ? "product"
+                : profileRole === "advertiser"
+                  ? "activity"
+                  : "site"
         }
         fetchCardData={fetchCardData}
       />
