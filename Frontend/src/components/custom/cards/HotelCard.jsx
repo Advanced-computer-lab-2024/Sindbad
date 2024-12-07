@@ -34,7 +34,7 @@ function HotelCard({ data, fetchCardData, styles }) {
 					setOpenDialog={setOpenDialog}
 				/>
 			</div>
-			<div className={styles.detailsContainer}>
+			<div className={styles.noImageDetailsContainer}>
 				<h4 className={styles.title}>{data.name}</h4>
 				<div className="flex flex-col gap-1">
 

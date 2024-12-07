@@ -14,10 +14,10 @@ export const TextField = ({ name, control, type = 'text', label, description }) 
                     <FormControl>
                         <Input
                             {...field}
-                            type={type}
-                            className={`${type === "time" ? "w-max" : "w-full"} text-dark`}
+                            type={type === "dateText" ? "date" : type}
+                            className={`${type === "time" ? "w-max" : type === "dateText" ? "signup-date" : "w-full"} text-dark`}
                             onChange={(e) => {
-                                if (type === 'date') {
+                                if (type === 'dateText') {
                                     console.log("Date input detected");
                                     const rawValue = e.target.value;
                                     console.log("Raw Date Value:", rawValue);

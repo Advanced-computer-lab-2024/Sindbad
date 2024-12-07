@@ -93,15 +93,14 @@ function HotelBooking() {
                     </div>
                 ) : (
                     <div className="w-[1000px] -ml-[240px]">
-                    <CardContainer
-                        cardList={hotels}
-                        cardType={"hotel"}
-                        fetchCardData={fetchHotels}
-                        columns={4}
-                    />
+                        <CardContainer
+                            cardList={hotels}
+                            cardType={"hotel"}
+                            fetchCardData={fetchHotels}
+                            columns={4}
+                        />
                     </div>
                 )}
-
             </div>
         </div>
     );

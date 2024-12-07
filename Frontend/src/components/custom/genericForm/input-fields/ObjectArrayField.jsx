@@ -34,29 +34,33 @@ export const ObjectArrayField = ({ name, control, initialValue, label, fieldsSch
 
     return (
         <div className="space-y-4">
-            <div>
-                <FormLabel>{label || name}</FormLabel>
-                {description && <p className="text-xs text-neutral-500">{description}</p>}
+            <div className="flex justify-between">
+                <div>
+                    <FormLabel className="text-base font-semibold mb-2">{label || name}</FormLabel>
+                    {description && <p className="text-xs text-neutral-500">{description}</p>}
+                </div>
+                <Button
+                    type="button"
+                    onClick={() => append(initialValue)}
+                    className="w-max py-1.5 h-max self-start"
+                >
+                    Add Item
+                </Button>
             </div>
             {fields.map((field, index) => (
                 <div key={field.id} className="space-y-2">
                     {fieldsSchema.map((schema) => renderNestedField(schema, `${name}.${index}`))}
-                    <Button
-                        type="button"
-                        onClick={() => remove(index)}
-                        className="bg-red-500 text-white"
-                    >
-                        Remove
-                    </Button>
+                    <div className="flex justify-end">
+                        <Button
+                            type="button"
+                            onClick={() => remove(index)}
+                            className="bg-red-500 text-white w-[94px] py-1.5 h-max justify-center"
+                        >
+                            Remove
+                        </Button>
+                    </div>
                 </div>
             ))}
-            <Button
-                type="button"
-                onClick={() => append(initialValue)}
-                className="bg-blue-500 text-white"
-            >
-                Add Item
-            </Button>
         </div>
     );
 };

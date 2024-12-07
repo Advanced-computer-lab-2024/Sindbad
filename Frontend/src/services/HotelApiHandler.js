@@ -74,16 +74,20 @@ const bookHotel = async (bookingValues, bookingId, travelerId) => {
 
 	try {
 		const token = getAccessToken(); // Extract the token
-		const response = await axios.post(endpoint, {
-			bookingValues,
-			bookingId,
-			travelerId,
-			headers: {
-				"Content-Type": "application/json",
-				Authorization: token ? `Bearer ${token}` : undefined, // Add token if available
+		const response = await axios.post(endpoint,
+			{
+				bookingValues,
+				bookingId,
+				travelerId,
 			},
-			withCredentials: true, // Include cookies if required
-		});
+			{
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: token ? `Bearer ${token}` : undefined, // Add token if available
+				},
+				withCredentials: true, // Include cookies if required
+			}
+		);
 		console.log("Hotel booked:", response);
 		return response.data;
 	} catch (error) {
