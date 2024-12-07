@@ -174,11 +174,12 @@ export const addAddress = async (touristId, address) => {
   }
 };
 
-export const checkoutWithStripe = async (id, cart) => {
+export const checkoutWithStripe = async (id, cart, promoCode) => {
   try {
     const response = await axiosInstance.post("/checkout/stripe", {
       userId: id,
       cart: cart,
+      promoCode: promoCode,
     });
 
     const url = response.data.url;
@@ -188,11 +189,12 @@ export const checkoutWithStripe = async (id, cart) => {
   }
 };
 
-export const checkoutWithWallet = async (touristId, cart) => {
+export const checkoutWithWallet = async (touristId, cart, discount) => {
   try {
     const response = await axiosInstance.post(`/checkout/wallet`, {
       userId: touristId,
       cart: cart,
+      discount: discount,
     });
     return response.data;
   } catch (error) {

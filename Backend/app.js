@@ -42,6 +42,7 @@ const checkoutRoutes = require("./routes/Checkout");
 const webhookRoutes = require("./routes/Webhook");
 const authRoutes = require("./routes/Auth");
 const verifyJWTMiddleware = require("./middlewares/verifyJWT");
+const { syncPromoCodesWithStripe } = require("./controllers/PromoCode");
 
 //Set memory preference to be RAM
 const upload = multer({ storage: multer.memoryStorage() });
