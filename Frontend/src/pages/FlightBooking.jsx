@@ -11,6 +11,7 @@ import { Form, FormControl, FormItem, FormLabel } from "@/components/ui/form";
 function FlightBooking() {
 	const [loading, setLoading] = useState(false);
 	const [flights, setFlights] = useState([]);
+	const [error, setError] = useState(false);
 
 	const flightSearchSchema = z.object({
 		origin: z.string(),
@@ -54,11 +55,7 @@ function FlightBooking() {
 
 	return (
 		<div className="">
-			<div className="flex items-center gap-6 mb-6">
-				<h1 className="text-3xl font-extrabold shrink-0">Featured Flights</h1>
-				<hr className="border-neutral-300 border w-full mt-1.5" />
-			</div>
-			<div className="flex gap-10">
+			<div className="flex gap-10 flex-col">
 				<div className="w-[280px] shrink-0">
 					<Form {...form}>
 						<form onSubmit={form.handleSubmit(handleSubmit)} className="gap-2 flex flex-col">

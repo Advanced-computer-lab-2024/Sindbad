@@ -48,6 +48,7 @@ function App() {
     <main className="bg-light text-dark font-inter min-h-screen h-max">
       <Routes>
         <Route path="/app" element={<MainPage />}>
+        <Route index element={<Navigate to="/app/itineraries" replace />} />
           <Route
             path="profile"
             element={<Navigate to={`/app/profile/${id}`} replace />}
@@ -128,7 +129,7 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:id" element={<ResetPassword />} />
-        <Route path="/" element={<Navigate to="/app" replace />} />
+        <Route path="/" element={<Navigate to="/app/itineraries" replace />} />
       </Routes>
     </main>
   );

@@ -22,6 +22,7 @@ const {
   addAddress,
   viewOrderDetails,
   viewOrders,
+  cancelOrder,
 } = require("../controllers/Tourist");
 
 router.route("/").get(getAllTourists);
@@ -48,7 +49,10 @@ router
 router.route("/:id/cart").get(getCart).post(addToCart).put(updateCart);
 router.route("/:id/cart/:productID").delete(removeFromCart);
 
-router.route("/:id/orders/:orderID").get(viewOrderDetails);
+router.
+route("/:id/orders/:orderID")
+.get(viewOrderDetails)
+.delete(cancelOrder);
 
 router.route("/:id/orders").get(viewOrders);
 

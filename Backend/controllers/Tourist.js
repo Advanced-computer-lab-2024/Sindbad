@@ -861,12 +861,6 @@ const viewOrders = async (req, res) => {
   const { id: touristID } = req.params;
   const { isDelivered } = req.body;
 
-  if (isDelivered === undefined) {
-    return res
-      .status(400)
-      .json({ message: "isDelivered parameter is required" });
-  }
-
   try {
     const tourist = await Tourist.findById(touristID);
 
@@ -874,9 +868,11 @@ const viewOrders = async (req, res) => {
       return res.status(404).json({ message: "Tourist not found" });
     }
 
-    const orders = tourist.orders.filter(
-      (order) => order.isDelivered === (isDelivered === "true")
-    );
+    // If isDelivered is provided, filter orders; otherwise, return all orders
+    const orders = isDelivered !== undefined
+      ? tourist.orders.filter(order => order.isDelivered === (isDelivered === "true"))
+      : tourist.orders;
+
     res.status(200).json(orders);
   } catch (err) {
     res
@@ -885,8 +881,9 @@ const viewOrders = async (req, res) => {
   }
 };
 
+
 const viewOrderDetails = async (req, res) => {
-  const { id: touristID, orderID } = req.params;
+  const { id: touristID, orderID: orderID } = req.params;
 
   try {
     // Find the tourist by ID
@@ -914,6 +911,47 @@ const viewOrderDetails = async (req, res) => {
 };
 
 
+const cancelOrder = async (req, res) => {
+  const { id: touristID, orderID: orderID } = req.params;
+
+  try {
+    // Find the tourist by ID
+    const tourist = await Tourist.findById(touristID);
+
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found" });
+    }
+
+    // Find the specific order by orderID
+    const orderIndex = tourist.orders.findIndex(
+      (order) => order._id.toString() === orderID
+    );
+
+    if (orderIndex === -1) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    // Check if the order is already delivered
+    if (tourist.orders[orderIndex].isDelivered) {
+      return res
+        .status(400)
+        .json({ message: "Delivered orders cannot be canceled" });
+    }
+
+    // Remove the order from the tourist's orders array
+    tourist.orders.splice(orderIndex, 1);
+
+    // Save the updated tourist document
+    await tourist.save();
+
+    res.status(200).json({ message: "Order successfully canceled" });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Error canceling order", error: err.message });
+  }
+};
+
 
 module.exports = {
   getAllTourists,
@@ -937,6 +975,7 @@ module.exports = {
   addToCartFromWishlist,
   viewOrderDetails,
   viewOrders,
+  cancelOrder,
 };
 
 /*
