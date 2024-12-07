@@ -1,5 +1,6 @@
 const PromoCode = require("../models/PromoCode");
 const Tourist = require("../models/Tourist");
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 /**
  * Creates a new admin.
@@ -13,9 +14,25 @@ const Tourist = require("../models/Tourist");
  */
 const createPromoCode = async (req, res) => {
 	try {
-		const PromoCodeData = req.body;
-		const promoCode = await PromoCode.create(PromoCodeData);
-		res.status(201).json({ message: "Promo Code created successfully!", promoCode });
+		const { promocode, discount } = req.body;
+
+		// Create a Stripe coupon
+		const stripeCoupon = await stripe.coupons.create({
+			percent_off: discount, // Discount percentage
+			duration: 'once', // Options: once, repeating, or forever
+			name: promocode, // Optional: Name for Stripe dashboard
+		});
+
+		// Save the promo code to your database
+		const promoCode = await PromoCode.create({
+			...req.body,
+			stripeCouponId: stripeCoupon.id, // Store the Stripe coupon ID for reference
+		});
+
+		res.status(201).json({
+			message: "Promo Code and Stripe coupon created successfully!",
+			promoCode,
+		});
 	} catch (err) {
 		res.status(400).json({ message: err.message });
 	}
@@ -39,8 +56,6 @@ const createPromoCode = async (req, res) => {
 const usePromoCode = async (req, res) => {
     const { promocode } = req.body; // Promo code is passed in the body now
     const touristID = req.params.id;
-    console.log("Tourist ID:", touristID);
-    console.log("Promo Code:", promocode);
 
     try {
         // Fetch the tourist and promo code details
@@ -89,6 +104,7 @@ const usePromoCode = async (req, res) => {
         return res.json({
             message: "Promo code applied.",
             discount: promoCodeDiscount.discount,
+            stripeID: promoCodeDiscount.stripeCouponId,
         });
 
     } catch (err) {
@@ -99,9 +115,53 @@ const usePromoCode = async (req, res) => {
     }
 };
 
-
+const syncPromoCodesWithStripe = async () => {
+    try {
+      // Connect to your database
+  
+      // Fetch all promo codes from the database
+      const promoCodes = await PromoCode.find();
+  
+      for (const promoCode of promoCodes) {
+        // Check if Stripe coupon already exists
+        if (promoCode.stripeCouponId) {
+          console.log(`PromoCode "${promoCode.promocode}" already has a Stripe coupon.`);
+          continue;
+        }
+  
+        console.log(`Creating Stripe coupon for PromoCode: "${promoCode.promocode}"`);
+  
+        try {
+          // Create the Stripe coupon
+          const stripeCoupon = await stripe.coupons.create({
+            percent_off: promoCode.discount,
+            duration: "once", // Or other duration types as needed
+            name: promoCode.promocode, // Optional: Add a name for easy tracking in Stripe
+          });
+  
+          // Update the database with the Stripe coupon ID
+          promoCode.stripeCouponId = stripeCoupon.id;
+          await promoCode.save();
+  
+          console.log(`Stripe coupon created for "${promoCode.promocode}" with ID: ${stripeCoupon.id}`);
+        } catch (stripeError) {
+          console.error(`Failed to create Stripe coupon for "${promoCode.promocode}": ${stripeError.message}`);
+        }
+      }
+  
+      return res.json({
+        message: "Sync Completed",
+    });
+      
+    } catch (error) {
+        return res.json({
+            message: "Error During Sync:" + error.message,
+        });
+    }
+  };
 
 module.exports = {
 	createPromoCode,
     usePromoCode,
+    syncPromoCodesWithStripe,
 };

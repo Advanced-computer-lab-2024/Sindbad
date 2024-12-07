@@ -11,14 +11,18 @@ const PromoCodeSchema = new mongoose.Schema(
             type: Number,
 			required: true,
         },
+        stripeCouponId: {
+            type: String, // Store Stripe coupon ID
+            default: null,
+        },
         usersWhoRedeemedIt: {
             type: [mongoose.Schema.Types.ObjectId],
             ref: "Tourist",
-			default:[],
+			default: [],
         },
     },
     { timestamps: true }
-  );
+);
 
   // Create the Promo Code model
   const PromoCode = mongoose.model("PromoCode", PromoCodeSchema);

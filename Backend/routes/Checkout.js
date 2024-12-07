@@ -17,7 +17,7 @@ function hashCart(cart) {
 
 router.post('/stripe', async (req, res) => {
   try {
-    const { cart, userId } = req.body;
+    const { cart, userId, promoCode } = req.body;
 
     if (!Array.isArray(cart) || cart.length === 0) {
       return res.status(400).json({ error: 'Cart is invalid or empty.' });
@@ -37,6 +37,7 @@ router.post('/stripe', async (req, res) => {
     const session = await stripe.checkout.sessions.create({
       line_items,
       mode: 'payment',
+      discounts : promoCode ? [{coupon: promoCode}] : [],
       success_url: `${YOUR_DOMAIN}/checkout/success`,
       cancel_url: `${YOUR_DOMAIN}?canceled=true`,
       metadata: {
@@ -54,7 +55,7 @@ router.post('/stripe', async (req, res) => {
 
 router.post('/wallet' , async (req, res) => {
   try {
-    const { cart, userId } = req.body;
+    const { cart, userId, discount } = req.body;
 
     if (!Array.isArray(cart) || cart.length === 0) {
       return res.status(400).json({ error: 'Cart is invalid or empty.' });
@@ -79,7 +80,7 @@ router.post('/wallet' , async (req, res) => {
     }
 
     // Deduct total amount from user's balance
-    user.wallet -= total;
+    user.wallet -= total + (total * discount)/100;
 
     const userOrder = {};
     const saleIds = [];
@@ -92,7 +93,7 @@ router.post('/wallet' , async (req, res) => {
             itemId: product._id,
             buyerId: userId,
             quantity: item.quantity,
-            totalPrice: product.price * item.quantity
+            totalPrice: product.price * item.quantity + (product.price * item.quantity * discount)/100
         });
 
         const savedSale = await sale.save();
