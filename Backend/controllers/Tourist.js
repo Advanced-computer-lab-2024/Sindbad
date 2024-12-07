@@ -770,7 +770,7 @@ const sendNotifications = async () => {
       },
     ]);
 
-    const now = moment();
+    const now = moment().utc();
     const oneDayLater = now.clone().add(1, "days");
 
     for (const tourist of tourists) {
@@ -778,64 +778,84 @@ const sendNotifications = async () => {
 
       // Check booked activities
       for (const activity of tourist.bookedEvents.activities) {
-        const activityDate = moment(activity.activityId.dateTime);
+        const activityDate = moment(activity.activityId.dateTime).utc();;
         if (activityDate.isBetween(now, oneDayLater)) {
-          notifications.push({
+          const notification = {
             title: `Upcoming Activity: ${activity.activityId.name}`,
-            body: `Reminder: Your activity "${
+            Body: `Reminder: Your activity "${
               activity.activityId.name
             }" is scheduled for ${activityDate.format(
               "MMMM Do YYYY, h:mm a"
             )}.`,
             isSeen: false,
-          });
+          };
 
-          // Send email notification for the activity
-          await sendEmail(
-            tourist.email,
-            "Activity Reminder",
-            `Your activity "${
-              activity.activityId.name
-            }" is scheduled for ${activityDate.format("MMMM Do YYYY, h:mm a")}.`
+           // Check if the notification already exists to avoid duplicates
+           const existingNotification = tourist.Notifications.find(
+            (n) => n.title === notification.title && n.Body === notification.Body
           );
+
+          if (!existingNotification) {
+            notifications.push(notification);
+
+            // Send email notification for the activity
+            await sendEmail(
+              tourist.email,
+              "Activity Reminder",
+              `Your activity "${
+                activity.activityId.name
+              }" is scheduled for ${activityDate.format("MMMM Do YYYY, h:mm a")}.`
+            );
+          }
         }
       }
-
       // Check booked itineraries
       for (const itinerary of tourist.bookedEvents.itineraries) {
-        const itineraryDate = moment(itinerary.dateBooked); // Use `dateBooked` for the itinerary
+        const itineraryDate = moment(itinerary.dateBooked).utc();; // Use `dateBooked` for the itinerary
         if (itineraryDate.isBetween(now, oneDayLater)) {
-          notifications.push({
+          const notification = {
             title: `Upcoming Itinerary: ${itinerary.itineraryId.name}`,
-            body: `Reminder: Your itinerary "${
+            Body: `Reminder: Your itinerary "${
               itinerary.itineraryId.name
             }" is scheduled for ${itineraryDate.format(
               "MMMM Do YYYY, h:mm a"
             )}.`,
             isSeen: false,
-          });
+          };
+          // Check if the notification already exists to avoid duplicates
+          const existingNotification = tourist.Notifications.find(
+            (n) => n.title === notification.title && n.Body === notification.Body
+          );
+
+          if (!existingNotification) {
+            notifications.push(notification);
 
           // Send email notification for the itinerary
-          await sendEmail(
-            tourist.email,
-            "Itinerary Reminder",
-            `Your itinerary "${
-              itinerary.itineraryId.name
-            }" is scheduled for ${itineraryDate.format(
-              "MMMM Do YYYY, h:mm a"
-            )}.`
-          );
+            await sendEmail(
+              tourist.email,
+              "Itinerary Reminder",
+              `Your itinerary "${
+                itinerary.itineraryId.name
+              }" is scheduled for ${itineraryDate.format(
+                "MMMM Do YYYY, h:mm a"
+              )}.`
+            );
+          }
         }
       }
-
-      // Add notifications to the tourist's record
-      tourist.Notifications.push(...notifications);
-      await tourist.save();
+      if (notifications.length > 0) {
+        // Add notifications to the tourist's record
+        tourist.Notifications.push(...notifications);
+        await tourist.save();
+      }
     }
   } catch (error) {
     console.error("Error sending notifications:", error);
   }
 };
+
+// Schedule the notification task to run daily at midnight
+cron.schedule("*/1 * * * *", sendNotifications);
 
 const viewOrders = async (req, res) => {
   const { id: touristID } = req.params;
@@ -890,6 +910,7 @@ const viewOrderDetails = async (req, res) => {
   }
 };
 
+
 const cancelOrder = async (req, res) => {
   const { id: touristID, orderID: orderID } = req.params;
 
@@ -931,9 +952,6 @@ const cancelOrder = async (req, res) => {
   }
 };
 
-
-// Schedule the notification task to run daily at midnight
-cron.schedule("0 0 * * *", sendNotifications);
 
 module.exports = {
   getAllTourists,
