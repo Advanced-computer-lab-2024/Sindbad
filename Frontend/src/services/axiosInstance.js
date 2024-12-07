@@ -47,7 +47,6 @@ axiosInstance.interceptors.response.use(
     }
 
     const oldAccessToken = getAccessToken();
-    console.log("Old Access Token:", oldAccessToken); // Debugging line
 
     // Check if the error is due to an expired token (426) and hasn't been retried yet
     if (error.response?.status === 426 && !originalRequest._retry) {
