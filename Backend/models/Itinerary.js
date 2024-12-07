@@ -141,6 +141,10 @@ const itinerarySchema = mongoose.Schema(
             type: Boolean,
             default: true,
         },
+        priceId: {
+			type: String,
+			required: [true, "Please add the Stripe price ID"],
+		},
     },
     { timestamps: true }
 );

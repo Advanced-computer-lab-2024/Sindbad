@@ -7,6 +7,7 @@ const nodemailer = require("nodemailer");
 const cloudinary = require("../utils/cloudinary");
 const DatauriParser = require("datauri/parser");
 const path = require('path');
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 require("dotenv").config();
 
 
@@ -76,16 +77,16 @@ const createItinerary = async (req, res) => {
         if (typeof req.body.duration === "string") {
             req.body.duration = parseInt(req.body.duration);
         }
-        if(req.body.activities){
+        if (req.body.activities) {
             req.body.activities = JSON.parse(req.body.activities);
         }
-        if(req.body.locations){
+        if (req.body.locations) {
             req.body.locations = JSON.parse(req.body.locations);
         }
-        if(req.body.timeline){
+        if (req.body.timeline) {
             req.body.timeline = JSON.parse(req.body.timeline);
         }
-        if(req.body.languages){
+        if (req.body.languages) {
             req.body.languages = JSON.parse(req.body.languages);
         }
         if (req.body.availableDatesTimes) {
@@ -95,8 +96,20 @@ const createItinerary = async (req, res) => {
             req.body.accessibility = JSON.parse(req.body.accessibility);
         }
 
+        const stripeProduct = await stripe.products.create({
+            name: req.body.name,
+        });
+
+        const price = await stripe.prices.create({
+            unit_amount: Math.floor(req.body.price * 100), // Price in cents (2000 = $20.00)
+            currency: "usd",
+            product: stripeProduct.id, // Use the product ID from the previous step
+        });
+
+        req.body.priceId = price.id;
+
         const newItinerary = await Itinerary.create(req.body);
-        
+
         res.status(201).json(newItinerary);
     } catch (error) {
         return res.status(500).json({
@@ -141,16 +154,16 @@ const updateItinerary = async (req, res) => {
         if (typeof updatedData.price === "string") {
             updatedData.price = parseFloat(updatedData.price);
         }
-        if(updatedData.activities){
+        if (updatedData.activities) {
             updatedData.activities = JSON.parse(updatedData.activities);
         }
-        if(updatedData.locations){
+        if (updatedData.locations) {
             updatedData.locations = JSON.parse(updatedData.locations);
         }
-        if(updatedData.timeline){
+        if (updatedData.timeline) {
             updatedData.timeline = JSON.parse(updatedData.timeline);
         }
-        if(updatedData.languages){
+        if (updatedData.languages) {
             updatedData.languages = JSON.parse(updatedData.languages);
         }
         if (updatedData.availableDatesTimes) {
@@ -278,14 +291,14 @@ const getAllItineraries = async (req, res) => {
             limit = 10,
         } = req.query;
 
-    // Create filter object based on provided criteria
-    const filter = {
-      // Uncomment if needed to filter for upcoming available date times
-      availableDatesTimes: { $elemMatch: { dateTime: { $gte: new Date() } } },
-      // Default filter for inappropriate itineraries and active itineraries
-      isInappropriate: false,
-      isActive: true,
-    };
+        // Create filter object based on provided criteria
+        const filter = {
+            // Uncomment if needed to filter for upcoming available date times
+            availableDatesTimes: { $elemMatch: { dateTime: { $gte: new Date() } } },
+            // Default filter for inappropriate itineraries and active itineraries
+            isInappropriate: false,
+            isActive: true,
+        };
 
         // Budget filter
         if (budget.min || budget.max) {
@@ -305,38 +318,38 @@ const getAllItineraries = async (req, res) => {
             ];
         }
 
-    // Date filter
-    const startDate = new Date(date.start);
-    const endDate = new Date(date.end);
-    if (date.start && date.end) {
-      filter.availableDatesTimes = {
-        $elemMatch: {
-          dateTime: {
-            $gte: startDate,
-            $lte: endDate,
-          },
-        },
-      };
-    }
-    else if(date.start) {
-      filter.availableDatesTimes = {
-        $elemMatch: {
-          dateTime: {
-            $gte: startDate,
-          },
-        },
-      };
-    }
-    else if(date.end) {
-      filter.availableDatesTimes = {
-        $elemMatch: {
-          dateTime: {
-            $lte: endDate,
-          },
-        },
-      };
-    }
-    
+        // Date filter
+        const startDate = new Date(date.start);
+        const endDate = new Date(date.end);
+        if (date.start && date.end) {
+            filter.availableDatesTimes = {
+                $elemMatch: {
+                    dateTime: {
+                        $gte: startDate,
+                        $lte: endDate,
+                    },
+                },
+            };
+        }
+        else if (date.start) {
+            filter.availableDatesTimes = {
+                $elemMatch: {
+                    dateTime: {
+                        $gte: startDate,
+                    },
+                },
+            };
+        }
+        else if (date.end) {
+            filter.availableDatesTimes = {
+                $elemMatch: {
+                    dateTime: {
+                        $lte: endDate,
+                    },
+                },
+            };
+        }
+
 
 
         // Tag filter

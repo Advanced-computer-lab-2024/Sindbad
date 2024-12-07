@@ -8,6 +8,7 @@ const nodemailer = require("nodemailer");
 const cloudinary = require("../utils/cloudinary");
 const DatauriParser = require("datauri/parser");
 const path = require('path');
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 require("dotenv").config();
 
 
@@ -123,6 +124,18 @@ const setActivity = async (req, res) => {
             });
         }
         req.body.tags = tags.map((tag) => tag._id);
+
+        const stripeProduct = await stripe.products.create({
+            name: req.body.name,
+        });
+
+        const price = await stripe.prices.create({
+            unit_amount: Math.floor(req.body.price * 100), // Price in cents (2000 = $20.00)
+            currency: "usd",
+            product: stripeProduct.id, // Use the product ID from the previous step
+        });
+
+        req.body.priceId = price.id;
 
         const activity = await Activity.create(req.body);
 
