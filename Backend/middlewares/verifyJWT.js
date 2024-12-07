@@ -20,7 +20,7 @@ const excludedRoutes = [
 ];
 
 const verifyJWT = (req, res, next) => {
-  console.log("original url: ", req.originalUrl);
+  // console.log("original url: ", req.originalUrl);
   // Check if the route matches any of the excluded patterns
   if (excludedRoutes.some((pattern) => pattern.test(req.originalUrl))) {
     console.log("skipping jwt verification");

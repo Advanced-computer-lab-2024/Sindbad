@@ -34,7 +34,7 @@ function FlightCard({ data, fetchCardData, styles }) {
           setOpenDialog={setOpenDialog}
         />
       </div>
-      <div className={styles.detailsContainer}>
+      <div className={styles.noImageDetailsContainer}>
         <h4 className={styles.title}>
           {"Aircraft " +
             data.itineraries[0].segments[0].aircraft.code +
