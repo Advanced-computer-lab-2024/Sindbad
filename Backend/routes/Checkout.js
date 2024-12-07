@@ -1,3 +1,6 @@
+const { bookActivity } = require('../controllers/Activity');
+const { bookItinerary } = require('../controllers/Itinerary');
+
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const User = require('../models/Tourist');
 const Sale = require('../models/Sale');
@@ -17,34 +20,91 @@ function hashCart(cart) {
 
 router.post('/stripe', async (req, res) => {
   try {
-    const { cart, userId, promoCode } = req.body;
+    const { cart, userId, promoCode, type } = req.body;
+    let line_items;
+    if (type === 'product') {
+      if (!Array.isArray(cart) || cart.length === 0) {
+        return res.status(400).json({ error: 'Cart is invalid or empty.' });
+      }
 
-    if (!Array.isArray(cart) || cart.length === 0) {
-      return res.status(400).json({ error: 'Cart is invalid or empty.' });
+      line_items = cart.map((item) => {
+        if (!item.productID?.priceId || !item.quantity) {
+          throw new Error('Invalid cart item: missing priceId or quantity.');
+        }
+        return {
+          price: item.productID.priceId,
+          quantity: item.quantity,
+        };
+      });
+    }
+    if (type === 'itinerary') {
+      line_items = [{
+        price: cart.priceId,
+        quantity: cart.adultTicketCount + cart.childTicketCount,
+      }]
+    }    
+
+    if (type === 'activity') {
+      line_items = [{
+        price: cart.priceId,
+        quantity: 1,
+      }]
+    }
+    let session;
+
+    if (type === 'product') {
+    // Create a Stripe Checkout session
+      session = await stripe.checkout.sessions.create({
+        line_items,
+        mode: 'payment',
+        discounts : promoCode ? [{coupon: promoCode}] : [],
+        success_url: `${YOUR_DOMAIN}/checkout/success`,
+        cancel_url: `${YOUR_DOMAIN}?canceled=true`,
+        metadata: {
+          userId,
+          cartHash: hashCart(cart),
+          type: type,
+        },
+      });
     }
 
-    const line_items = cart.map((item) => {
-      if (!item.productID?.priceId || !item.quantity) {
-        throw new Error('Invalid cart item: missing priceId or quantity.');
-      }
-      return {
-        price: item.productID.priceId,
-        quantity: item.quantity,
-      };
-    });
+    if (type === 'itinerary') {
 
-    // Create a Stripe Checkout session
-    const session = await stripe.checkout.sessions.create({
-      line_items,
-      mode: 'payment',
-      discounts : promoCode ? [{coupon: promoCode}] : [],
-      success_url: `${YOUR_DOMAIN}/checkout/success`,
-      cancel_url: `${YOUR_DOMAIN}?canceled=true`,
-      metadata: {
-        userId,
-        cartHash: hashCart(cart),
-      },
-    });
+      session = await stripe.checkout.sessions.create({
+        line_items,
+        mode: 'payment',
+        discounts : promoCode ? [{coupon: promoCode}] : [],
+        success_url: `${YOUR_DOMAIN}/checkout/success`,
+        cancel_url: `${YOUR_DOMAIN}?canceled=true`,
+        metadata: {
+          userId,
+          type: type,
+          date: cart.date.dateTime,
+          adultTicketCount: cart.adultTicketCount,
+          childTicketCount: cart.childTicketCount,
+          itineraryId: cart._id,
+          userId: userId,
+          amount_total: cart.price * (cart.adultTicketCount + cart.childTicketCount)
+        },
+      });
+    }
+
+    if (type === 'activity') {
+      session = await stripe.checkout.sessions.create({
+        line_items,
+        mode: 'payment',
+        discounts : promoCode ? [{coupon: promoCode}] : [],
+        success_url: `${YOUR_DOMAIN}/checkout/success`,
+        cancel_url: `${YOUR_DOMAIN}?canceled=true`,
+        metadata: {
+          userId,
+          type: type,
+          activityId: cart._id,
+          userId: userId,
+          amount_total: cart.price
+        },
+      });
+    }
 
     res.status(200).json({ url: session.url });
   } catch (error) {
@@ -55,20 +115,28 @@ router.post('/stripe', async (req, res) => {
 
 router.post('/wallet' , async (req, res) => {
   try {
-    const { cart, userId, discount } = req.body;
+    const { cart, userId, discount, type } = req.body;
 
-    if (!Array.isArray(cart) || cart.length === 0) {
-      return res.status(400).json({ error: 'Cart is invalid or empty.' });
+    let total;
+
+    if (type === 'product') {
+      if (!Array.isArray(cart) || cart.length === 0) {
+        return res.status(400).json({ error: 'Cart is invalid or empty.' });
+      }
+        total = cart.reduce((acc, item) => {
+        if (!item.productID?.price || !item.quantity) {
+          throw new Error('Invalid cart item: missing price or quantity.');
+        }
+        return acc + item.productID.price * item.quantity;
+      }, 0);
+    }
+    if (type === 'itinerary') {
+      total = cart.price;
     }
 
-    // Calculate total amount
-    const total = cart.reduce((acc, item) => {
-      if (!item.productID?.price || !item.quantity) {
-        throw new Error('Invalid cart item: missing price or quantity.');
-      }
-      return acc + item.productID.price * item.quantity;
-    }, 0);
-
+    if (type === 'activity') {
+      total = cart.price;
+    }
     // Check if user has enough balance
     const user = await User.findById(userId);
     if (!user) {
@@ -82,29 +150,82 @@ router.post('/wallet' , async (req, res) => {
     // Deduct total amount from user's balance
     user.wallet -= total + (total * discount)/100;
 
-    const userOrder = {};
-    const saleIds = [];
+    if (type === 'product') {
+      const userOrder = {};
+      const saleIds = [];
 
-    for (const item of cart) {
-        const product = item.productID;
+      for (const item of cart) {
+          const product = item.productID;
 
-        const sale = new Sale({
-            type: 'Product',
-            itemId: product._id,
-            buyerId: userId,
-            quantity: item.quantity,
-            totalPrice: product.price * item.quantity + (product.price * item.quantity * discount)/100
-        });
+          const sale = new Sale({
+              type: 'Product',
+              itemId: product._id,
+              buyerId: userId,
+              quantity: item.quantity,
+              totalPrice: product.price * item.quantity + (product.price * item.quantity * discount)/100
+          });
 
-        const savedSale = await sale.save();
-        saleIds.push(savedSale._id);
+          const savedSale = await sale.save();
+          saleIds.push(savedSale._id);
+      }
+      userOrder.sales = saleIds;
+      userOrder.cart = JSON.parse(JSON.stringify(user.cart));
+      user.orders.push(userOrder);
+      user.cart = [];
     }
 
-    userOrder.sales = saleIds;
-    userOrder.cart = JSON.parse(JSON.stringify(user.cart));
-    user.orders.push(userOrder);
-    user.cart = [];
+    if (type === 'itinerary') {
+      const sale = new Sale({
+          type: 'Itinerary',
+          itemId: cart._id,
+          buyerId: userId,
+          quantity: cart.adultTicketCount + cart.childTicketCount,
+          totalPrice: (cart.price + (cart.price * discount)/100 ) * (cart.adultTicketCount + cart.childTicketCount)
+      });
+      const mockRes = {
+        status: function(statusCode) {
+          this.statusCode = statusCode;
+          return this;
+        },
+        json: function(data) {
+          this.data = data;
+          return this;
+        },
+        send: function(data) {
+          this.data = data;
+          return this;
+        }
+      };
+      const savedSale = await sale.save();
+      const req = { body: { date: cart.date.dateTime, adultTicketCount: cart.adultTicketCount, childTicketCount: cart.childTicketCount, itineraryId: cart._id, userId: userId } };
+      await bookItinerary(req, mockRes);
+    }
 
+    if (type === 'activity') {
+      const sale = new Sale({
+          type: 'Activity',
+          itemId: cart._id,
+          buyerId: userId,
+          totalPrice: cart.price + (cart.price * discount)/100
+      });
+      const mockRes = {
+        status: function(statusCode) {
+          this.statusCode = statusCode;
+          return this;
+        },
+        json: function(data) {
+          this.data = data;
+          return this;
+        },
+        send: function(data) {
+          this.data = data;
+          return this;
+        }
+      };
+      const savedSale = await sale.save();
+      const req = { body : { activityId: cart._id, userId: userId } };
+      activity = await bookActivity(req, mockRes);
+    }
     await user.save();
 
     res.status(200).json({ message: 'Payment successful.' });

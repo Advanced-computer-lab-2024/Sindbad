@@ -770,7 +770,7 @@ const sendNotifications = async () => {
       },
     ]);
 
-    const now = moment();
+    const now = moment().utc();
     const oneDayLater = now.clone().add(1, "days");
 
     for (const tourist of tourists) {
@@ -778,74 +778,88 @@ const sendNotifications = async () => {
 
       // Check booked activities
       for (const activity of tourist.bookedEvents.activities) {
-        const activityDate = moment(activity.activityId.dateTime);
+        const activityDate = moment(activity.activityId.dateTime).utc();;
         if (activityDate.isBetween(now, oneDayLater)) {
-          notifications.push({
+          const notification = {
             title: `Upcoming Activity: ${activity.activityId.name}`,
-            body: `Reminder: Your activity "${
+            Body: `Reminder: Your activity "${
               activity.activityId.name
             }" is scheduled for ${activityDate.format(
               "MMMM Do YYYY, h:mm a"
             )}.`,
             isSeen: false,
-          });
+          };
 
-          // Send email notification for the activity
-          await sendEmail(
-            tourist.email,
-            "Activity Reminder",
-            `Your activity "${
-              activity.activityId.name
-            }" is scheduled for ${activityDate.format("MMMM Do YYYY, h:mm a")}.`
+           // Check if the notification already exists to avoid duplicates
+           const existingNotification = tourist.Notifications.find(
+            (n) => n.title === notification.title && n.Body === notification.Body
           );
+
+          if (!existingNotification) {
+            notifications.push(notification);
+
+            // Send email notification for the activity
+            await sendEmail(
+              tourist.email,
+              "Activity Reminder",
+              `Your activity "${
+                activity.activityId.name
+              }" is scheduled for ${activityDate.format("MMMM Do YYYY, h:mm a")}.`
+            );
+          }
         }
       }
-
       // Check booked itineraries
       for (const itinerary of tourist.bookedEvents.itineraries) {
-        const itineraryDate = moment(itinerary.dateBooked); // Use `dateBooked` for the itinerary
+        const itineraryDate = moment(itinerary.dateBooked).utc();; // Use `dateBooked` for the itinerary
         if (itineraryDate.isBetween(now, oneDayLater)) {
-          notifications.push({
+          const notification = {
             title: `Upcoming Itinerary: ${itinerary.itineraryId.name}`,
-            body: `Reminder: Your itinerary "${
+            Body: `Reminder: Your itinerary "${
               itinerary.itineraryId.name
             }" is scheduled for ${itineraryDate.format(
               "MMMM Do YYYY, h:mm a"
             )}.`,
             isSeen: false,
-          });
+          };
+          // Check if the notification already exists to avoid duplicates
+          const existingNotification = tourist.Notifications.find(
+            (n) => n.title === notification.title && n.Body === notification.Body
+          );
+
+          if (!existingNotification) {
+            notifications.push(notification);
 
           // Send email notification for the itinerary
-          await sendEmail(
-            tourist.email,
-            "Itinerary Reminder",
-            `Your itinerary "${
-              itinerary.itineraryId.name
-            }" is scheduled for ${itineraryDate.format(
-              "MMMM Do YYYY, h:mm a"
-            )}.`
-          );
+            await sendEmail(
+              tourist.email,
+              "Itinerary Reminder",
+              `Your itinerary "${
+                itinerary.itineraryId.name
+              }" is scheduled for ${itineraryDate.format(
+                "MMMM Do YYYY, h:mm a"
+              )}.`
+            );
+          }
         }
       }
-
-      // Add notifications to the tourist's record
-      tourist.Notifications.push(...notifications);
-      await tourist.save();
+      if (notifications.length > 0) {
+        // Add notifications to the tourist's record
+        tourist.Notifications.push(...notifications);
+        await tourist.save();
+      }
     }
   } catch (error) {
     console.error("Error sending notifications:", error);
   }
 };
 
+// Schedule the notification task to run daily at midnight
+cron.schedule("*/1 * * * *", sendNotifications);
+
 const viewOrders = async (req, res) => {
   const { id: touristID } = req.params;
   const { isDelivered } = req.body;
-
-  if (isDelivered === undefined) {
-    return res
-      .status(400)
-      .json({ message: "isDelivered parameter is required" });
-  }
 
   try {
     const tourist = await Tourist.findById(touristID);
@@ -854,9 +868,11 @@ const viewOrders = async (req, res) => {
       return res.status(404).json({ message: "Tourist not found" });
     }
 
-    const orders = tourist.orders.filter(
-      (order) => order.isDelivered === (isDelivered === "true")
-    );
+    // If isDelivered is provided, filter orders; otherwise, return all orders
+    const orders = isDelivered !== undefined
+      ? tourist.orders.filter(order => order.isDelivered === (isDelivered === "true"))
+      : tourist.orders;
+
     res.status(200).json(orders);
   } catch (err) {
     res
@@ -865,8 +881,9 @@ const viewOrders = async (req, res) => {
   }
 };
 
+
 const viewOrderDetails = async (req, res) => {
-  const { id: touristID, orderID } = req.params;
+  const { id: touristID, orderID: orderID } = req.params;
 
   try {
     // Find the tourist by ID
@@ -893,8 +910,48 @@ const viewOrderDetails = async (req, res) => {
   }
 };
 
-// Schedule the notification task to run daily at midnight
-cron.schedule("0 0 * * *", sendNotifications);
+
+const cancelOrder = async (req, res) => {
+  const { id: touristID, orderID: orderID } = req.params;
+
+  try {
+    // Find the tourist by ID
+    const tourist = await Tourist.findById(touristID);
+
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found" });
+    }
+
+    // Find the specific order by orderID
+    const orderIndex = tourist.orders.findIndex(
+      (order) => order._id.toString() === orderID
+    );
+
+    if (orderIndex === -1) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    // Check if the order is already delivered
+    if (tourist.orders[orderIndex].isDelivered) {
+      return res
+        .status(400)
+        .json({ message: "Delivered orders cannot be canceled" });
+    }
+
+    // Remove the order from the tourist's orders array
+    tourist.orders.splice(orderIndex, 1);
+
+    // Save the updated tourist document
+    await tourist.save();
+
+    res.status(200).json({ message: "Order successfully canceled" });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Error canceling order", error: err.message });
+  }
+};
+
 
 module.exports = {
   getAllTourists,
@@ -918,6 +975,7 @@ module.exports = {
   addToCartFromWishlist,
   viewOrderDetails,
   viewOrders,
+  cancelOrder,
 };
 
 /*

@@ -1,6 +1,24 @@
 # Sindbad
 Sindbad is a comprehensive travel management platform that allows users to plan, book, and manage all aspects of their trips from start to finish.
 
+
+- [Motivation](#motivation)
+- [Build Status](#build-status)
+- [Code Style](#code-style)
+- [Screenshots](#screenshots)
+- [Tech/Framework Used](#tech/framework-used)
+- [Features](#features)
+- [Code Examples](#code-examples)
+- [Installation](#installation)
+- [API Refrences](#API-refrences)
+- [Tests](#tests)
+- [How to Use](#how-to-use)
+- [Contribute](#contribute)
+- [Credits](#credits)
+- [License](#license)
+
+
+
 ## Motivation
 Sindbad is designed to provide a comprehensive platform for managing and booking all travel-related services, including activities, itineraries, products, and more—all in one place. The motivation behind Sindbad is to create a seamless, efficient experience by offering everything you need for your trip, from start to finish, on a single platform. Whether you're planning, booking, or managing your travels, Sindbad aims to streamline the entire process for both users and service providers.
 
@@ -47,19 +65,22 @@ This project is developed using the MERN stack, a popular technology stack for b
 - **User authentication and authorization**: To ensure secure access to the system.
 - **Trip Management**: Users can manage their entire trip from start till end including accomodation, transportation and booking of activities and itineraries.
 - **Product and Services Management:** Provide an easy-to-use interface for managing product and service listings, including the ability to create, read, update, and delete offerings. This includes features tailored for sellers to manage product availability and for tour guides and advertisers to schedule services, ensuring streamlined operations.
-- **Tourism Governer??**
-- **Rating system??**
-- **Points System??**
-- **Notifications**: Users Receive Real-time notifications and updates on the app and on email for future booked events or for any changes to their posts.
-- **Payment System**: A secure payment system for users to book services of pay for products.
-- **Admin dashboard**: Comprehensive admin dashboard to maintain the integrity of the website, manage user accounts, products and services.
+- **Verified Historical Sites and Museums:** To ensure authenticity and credibility, our platform allows only Tourism Governors to add historical sites and museums. This feature guarantees that all listed locations are Verified by authorized personnel and that only genuine historical and cultural landmarks are included.
+
+- **Rating system:** Our platform includes a comprehensive Rating System to enhance transparency and ensure quality. Users can:
+Rate Events, Products or Tour Guides to Share feedback on events to help others choose the best experiences and make informed decisions which fosters a community of trust and quality.
+
+- **Loyalty Points System:** Our website features an integrated Loyalty Points System designed to reward tourists for their participation by earning loyalty points each time they pay for an event or itinerary through our platform and then  the accumulated points can be redeemed for cash, which is added directly to their wallet for future use.
+- **Notifications**: Users Receive Real-time notifications and updates on the app and on email for future booked events, for any changes to their posts.
+- **Admin dashboard**: Comprehensive admin dashboard to maintain the integrity and features of the website, manage user accounts, products and services.
 - **Data Visualization and Reporting:** Access comprehensive sales reports with detailed revenue insights.
 
 
-### Secure Payment Options
-**Credit Card Payments:** Seamless and secure credit card payments for medicines are supported, ensuring a hassle-free transaction experience for patients.
+- **Payment Options**
+  - **Credit Card Payments:** Seamless and secure credit card payments for users to book services or pay for products are supported, ensuring a hassle-free transaction experience for users.
+  - **Cash on Delivery Payments** 
+  - **Wallet Integration:** users have the option to pay for their booked services or products using their wallet balance, providing a convenient and quick payment method.
 
-**Wallet Integration:** Patients have the option to pay for medicine using their wallet balance, providing a convenient and quick payment method.
 
 ## Code Examples
 ### Starting the server
@@ -187,17 +208,17 @@ MONGO_URI='mongodb+srv://<username>:<password>@cluster0.mongodb.net/<dbname>?ret
 AMADEUS_CLIENT_ID='yourAPIKey' //API key of the self service app
 AMADEUS_CLIENT_SECRET='yourAPISecret' //API secret of the self service app
 
-CLOUDINARY_CLOUD_NAME='sindbad-acl'
-CLOUDINARY_API_KEY='165149291965994'
-CLOUDINARY_API_SECRET='X3cCckqvOhe_jTKJDQPhLcpngik'
+CLOUDINARY_CLOUD_NAME='yourCloudinaryName'
+CLOUDINARY_API_KEY='yourCloudinaryAPIKey'
+CLOUDINARY_API_SECRET='yourAPISecret'
 
 GMAIL='email@gmail.com' //the gmail to send email notifications from
 GMAILPASSWORD='AppPassword' //the gmail app password
 
-STRIPE_SECRET_KEY='sk_test_51QQoZ0FqphnFdcP1jLOH7FLZdJuynYYGXZEeBt6QjfCl8JGFoxKt9nGaljUwISqrqBAl1g3lguVOxFHl89bFpatN003tmEzWXM'
+STRIPE_SECRET_KEY='yourStripeSecretKey'
 FRONTEND_DOMAIN='http://localhost:5173'
 BACKEND_DOMAIN='http://localhost:3000'
-STRIPE_ENDPOINT_SECRET='whsec_1fb60fbf213e9d24afcf8db4da79f9da0d40e823f9ded3f092f3f752227f9592'
+STRIPE_ENDPOINT_SECRET='yourStripeEndpointSecret'
 
 ACCESS_TOKEN_SECRET='a6a0a0b7136d22e0dbfaf29369a23d6a7ae33aa1c369b000e1e51d8f441e198bd6d902a079dd774dcebfbe0230fb0d956526ceb2ef4360b8f0b0f0817fcd7673'
 REFRESH_TOKEN_SECRET='a402bf504889fc2f10f451ebb8369719defe02c6c2c8e4d10a3a14d56e4dadf14f869d75d6502b5d14032d87acd9e3cd0b14dceb9ec8a911aa2221ee9cccd27a'
@@ -231,14 +252,40 @@ Testing is done using postman, you can check the tests in the following link
  [API documentation](https://)
 
 ## How to Use
-- mention VOD
+Since there are different types of users that can use the website,we have curated the platform to provide a tailored experience for each user type:
 
 **As a Tourist**
 1. Register or login to the platform.
 2. Navigate through the dashboard to view available activities, itineraries, products, sites, hotel, flight and transportation bookings
 3. Use the booking features to book hotels and other services.
-4. Navigate to the cart to checkout the products in it
-5. Navigate to the profile to view all the booked services
+4. Navigate to the wishlist to view the saved products.
+5. Navigate to the cart to checkout the products in it.
+6. Navigate to the profile to view all the personal information, wallet, Loyalty Points, booked services, bookmarked events, event history and to also report an issue.
+
+**As a TourGuide/Tourism Governer**
+1. Register or login to the platform.
+2. Navigate through the dashboard to view available activities, itineraries and sites.
+3. Navigate to the revenue to access comprehensive sales reports with detailed revenue insights.
+4. Navigate to the profile to view all the personal information. For the TourGuide can also view ratings and manage itineraries and for the tourism governer can manage sites and add tags.
+
+**As a Advertiser**
+1. Register or login to the platform.
+2. Navigate through the dashboard to view available activities, itineraries, sites and transportation.
+3. Navigate to the revenue to access comprehensive sales reports with detailed revenue insights.
+4. Navigate to the profile to view all the personal information and manage activities.
+
+**As a Admin**
+1. Register or login to the platform.
+2. Navigate through the dashboard to view available activities, itineraries, products, sites, transportation.
+3. Navigate to the revenue management to manage users, complaints, tags, categories and promocodes.
+4. Navigate to the revenue to to access comprehensive sales reports with detailed revenue insights.
+5. Navigate to the profile to view all all the personal information and manage products.
+
+**As a Seller**
+1. Register or login to the platform.
+2. Navigate through the dashboard to view available activities, itineraries, products and sites.
+3. Navigate to the revenue to to access comprehensive sales reports with detailed revenue insights.
+4. Navigate to the profile to view all all the personal information and manage products.
 
 ## Contribute
 Contributions for bug fixes or suggesting enhancements are always welcome!
@@ -264,16 +311,17 @@ git push origin branch-name
 ## Credits
 - [README template](https://www.mygreatlearning.com/blog/readme-file/)
 - [Sending Emails in Node.js](https://youtu.be/klDTBiW6iiM?si=u-gJWy1LuoR7Mvab)
+- [Login Authentication](https://www.youtube.com/watch?v=PDJm1Hwx0oo&ab_channel=DaveGray)
 - [REST API](https://youtu.be/fgTGADljAeg?si=_8386HwIs8WPIA7C)
 - [Amadeus Flight Booking Documentation](https://developers.amadeus.com/self-service/category/flights/api-doc/flight-offers-search)
 - [Amadeus Hotel Booking Documentation](https://developers.amadeus.com/blog/react-hotel-booking-app-part1)
 - [Stripe Documentation](https://docs.stripe.com/api)
 - [Cloudinary Documentation](https://cloudinary.com/documentation/image_upload_api_reference)
-
-
-- emad video for authentication
-- documentation for every external api
-
+- [shadcn Documentation](https://ui.shadcn.com/docs)
+- [zod Documentation](https://zod.dev/)
+- [react-hook-form Documentation](https://react-hook-form.com/docs)
+- [tanstack Documentation](https://tanstack.com/table/latest)
+- yara, salma
 ## License
 This project is licensed under the Apache 2.0 License.
 

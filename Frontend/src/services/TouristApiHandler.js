@@ -174,12 +174,13 @@ export const addAddress = async (touristId, address) => {
   }
 };
 
-export const checkoutWithStripe = async (id, cart, promoCode) => {
+export const checkoutWithStripe = async (id, cart, promoCode, type) => {
   try {
     const response = await axiosInstance.post("/checkout/stripe", {
       userId: id,
       cart: cart,
       promoCode: promoCode,
+      type: type,
     });
 
     const url = response.data.url;
@@ -189,12 +190,13 @@ export const checkoutWithStripe = async (id, cart, promoCode) => {
   }
 };
 
-export const checkoutWithWallet = async (touristId, cart, discount) => {
+export const checkoutWithWallet = async (touristId, cart, discount ,type) => {
   try {
     const response = await axiosInstance.post(`/checkout/wallet`, {
       userId: touristId,
       cart: cart,
       discount: discount,
+      type: type,
     });
     return response.data;
   } catch (error) {
@@ -202,11 +204,12 @@ export const checkoutWithWallet = async (touristId, cart, discount) => {
   }
 };
 
-export const checkoutWithCod = async (touristId, cart) => {
+export const checkoutWithCod = async (touristId, cart, type) => {
   try {
     const response = await axiosInstance.post(`/checkout/cod`, {
       userId: touristId,
       cart: cart,
+      type: type,
     });
     return response.data;
   } catch (error) {
