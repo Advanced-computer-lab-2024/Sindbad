@@ -24,6 +24,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { usePromoCode } from "@/services/PromocodeApiHandler";
+import { useToast } from "@/hooks/use-toast";
+import { Label } from "@/components/ui/label";
 
 export const Checkout = () => {
 
@@ -36,6 +39,13 @@ export const Checkout = () => {
     const [addresses, setAddresses] = useState([]);
     const [chosenAddress, setChosenAddress] = useState("null");
     const [addNewAddress, setAddNewAddress] = useState(false);
+    const [promoCode, setPromoCode] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [applied, setApplied] = useState(false);
+    const [discount, setDiscount] = useState(0);
+    const [stripeID, setStripeID] = useState(null);
+    const toast = useToast();
+
 
     const formObject = forms["touristAddress"];
 	const onSubmit = formObject.onSubmit;
@@ -107,7 +117,7 @@ export const Checkout = () => {
 
     const payWithWallet = async () => {
         try {
-            const response = checkoutWithWallet(id, cart);
+            const response = checkoutWithWallet(id, cart, discount);
             navigate("/checkout/success");
         }
         catch (error) {
@@ -115,7 +125,7 @@ export const Checkout = () => {
         }
     }
     const payWithStripe = async () => {
-        checkoutWithStripe(id, cart);
+        checkoutWithStripe(id, cart, stripeID);
     }
     const payWithCOD = async () => {
         try {
@@ -126,6 +136,38 @@ export const Checkout = () => {
             console.error("Error paying with COD:", error);
         }
     }
+
+    const handlePromoCodeApply = () => {
+        if (!promoCode || promoCode.trim() === "") {
+            toast({ description: "Please enter a promo code." });
+            return;
+        }
+    
+        setLoading(true); // Set loading state to true, indicating a request is in progress
+    
+        // Handle the async logic
+        const applyPromoCode = async () => {
+            try {
+                const result = await usePromoCode(id, promoCode); // Use the promo code here
+                console.log(result);
+    
+                if (result.discount) {
+                    setDiscount(result.discount);  // Set discount if the result contains it
+                    setApplied(true); // Mark promo code as applied
+                    setStripeID(result.stripeID); // Set the Stripe coupon ID
+                    toast({ description: `Promo code applied! You got a ${result.discount}% discount.` });
+                } else {
+                    toast({ description: result.message || "Incorrect Promo Code." });
+                }
+            } catch (error) {
+                toast({ description: error.message || "An unexpected error occurred." });
+            } finally {
+                setLoading(false); // Reset loading state after the request is finished
+            }
+        };
+    
+        applyPromoCode(); // Call the async function to apply the promo code
+    };
 
     return (
         <div className="max-w-[1200px] mx-auto">
@@ -346,13 +388,55 @@ export const Checkout = () => {
                         </Table>
                     </div>
                     <hr className="my-2 border-gray-200" />
-                    <div className="flex mt-8  text-lg">
+                    <div className="flex mt-8 text-lg">
                         <span className="font-bold">Your Subtotal is: &nbsp;</span>
                         <span>
-                            {cart.reduce((acc, item) => {
-                                return acc + (convertedPrices[item.productID._id] || 0);
-                            }, 0).toFixed(2)}
+                            {(() => {
+                                const subtotal = cart.reduce((acc, item) => {
+                                    return acc + (convertedPrices[item.productID._id] || 0);
+                                }, 0);
+                                const totalWithDiscount = subtotal - (discount * subtotal)/100;
+                                return totalWithDiscount.toFixed(2);
+                            })()}
                         </span>
+                    </div>
+                    <div className="flex mt-4">
+                    {!applied ? (
+                                    <div className="grid grid-cols-3 w-full max-w-sm items-center gap-1">
+                                        <div className="col-span-2 p-2">
+                                            <Label className="text-sm p-1" htmlFor="code">Enter Promocode</Label>
+                                            <Input
+                                                type="text"
+                                                id="code"
+                                                placeholder="Enter code.."
+                                                value={promoCode} 
+                                                onChange={(e) => setPromoCode(e.target.value.trim())} 
+                                                className="w-full border border-gray-300 rounded text-sm p-1 px-2"
+                                            />
+                                        </div>
+                                        <Button
+                                            className="col-span-1 flex items-center justify-center mt-6"
+                                            onClick={() => handlePromoCodeApply()}
+                                        >
+                                            Apply
+                                        </Button>
+                                    </div>
+                                ) :  (
+                                    <div className="grid grid-cols-3 w-full max-w-sm items-center gap-1">
+                                        <div className="col-span-2 p-2">
+                                            <Input
+                                                type="text"
+                                                id="code"
+                                                placeholder={promoCode} // Display the applied promo code
+                                                className="p-2"
+                                                disabled
+                                            />
+                                        </div>
+                                        <Button className="col-span-1 flex items-center justify-center" disabled>
+                                            Applied
+                                        </Button>
+                                    </div>
+                                )}
                     </div>
                 </div>
             </div>
