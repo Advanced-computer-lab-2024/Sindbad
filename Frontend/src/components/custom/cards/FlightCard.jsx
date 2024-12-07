@@ -11,16 +11,16 @@ import CardMenu from "./CardMenu";
 import GenericForm from "../genericForm/genericForm";
 
 const cardConfig = {
-	actions: {
-	},
+  actions: {
+  },
 };
 
 function FlightCard({ data, fetchCardData, styles }) {
-	const [openDialog, setOpenDialog] = useState("");
-	const navigate = useNavigate();
-	const { role, id } = useUser();
+  const [openDialog, setOpenDialog] = useState("");
+  const navigate = useNavigate();
+  const { role, id } = useUser();
 
-	return (
+  return (
     <article className={styles.container}>
       <div className={styles.noImageContainer}>
         <CardMenu
@@ -42,20 +42,17 @@ function FlightCard({ data, fetchCardData, styles }) {
             data.itineraries[0].segments[0].number}
         </h4>
         <div className="flex flex-col gap-1">
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button className={styles.button}>
-                <p className={styles.buttonText}>Book </p>
-                <div className={styles.buttonIcon}>
-                  <ArrowRight size={13} />
-                </div>
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="overflow-y-scroll max-h-[50%]">
-              <DialogTitle>Book Flight</DialogTitle>
-              <GenericForm type="flightBooking" data={data} id={id} />
-            </DialogContent>
-          </Dialog>
+          <Button
+            onClick={() => navigate(`/app/flight/${data.id}`, {
+              state: { data },
+            })}
+            className={styles.button}
+          >
+            <p className={styles.buttonText}>Book flight</p>
+            <div className={styles.buttonIcon}>
+              <ArrowRight size={13} />
+            </div>
+          </Button>
         </div>
       </div>
     </article>

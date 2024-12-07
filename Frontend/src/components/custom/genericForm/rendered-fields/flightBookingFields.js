@@ -1,3 +1,6 @@
+import { countryCodes } from "@/utilities/countryCodes";
+import countries from "@/utilities/countries";
+
 export const flightBookingFields = {
   fields: [
     {
@@ -27,7 +30,7 @@ export const flightBookingFields = {
     },
     {
       name: "dateOfBirth",
-      type: "date",
+      type: "dateText",
       label: "Date of Birth",
       required: true,
     },
@@ -45,19 +48,21 @@ export const flightBookingFields = {
     },
     {
       name: "birthPlace",
-      type: "text",
+      type: "select",
+      options: (countries.map((country) => country.value)),
       label: "Birth Place",
       required: true,
     },
     {
       name: "passportIssuanceLocation",
-      type: "text",
+      type: "select",
+      options: (countries.map((country) => country.value)),
       label: "Passport Issuance Location",
       required: true,
     },
     {
       name: "passportIssuanceDate",
-      type: "date",
+      type: "dateText",
       label: "Passport Issuance Date",
       required: true,
     },
@@ -69,19 +74,21 @@ export const flightBookingFields = {
     },
     {
       name: "passportExpiryDate",
-      type: "date",
+      type: "dateText",
       label: "Passport Expiry Date",
       required: true,
     },
     {
       name: "passportIssuanceCountry",
-      type: "text",
+      type: "select",
+      options: (countryCodes.map((country) => country.value)),
       label: "Passport Issuance Country",
       required: true,
     },
     {
       name: "nationality",
-      type: "text",
+      type: "select",
+      options: (countryCodes.map((country) => country.value)),
       label: "Nationality",
       required: true,
     },

@@ -197,6 +197,7 @@ export function GenericForm({ type, data, id, fetcher }) {
 						description={field.description}
 					/>
 				);
+			case "dateText":
 			case "text":
 			case "number":
 			case "time":
