@@ -117,6 +117,10 @@ const activitySchema = mongoose.Schema(
             type: Boolean,
             default: false,
         },
+        priceId: {
+			type: String,
+			required: [true, "Please add the Stripe price ID"],
+		},
     },
     { timestamps: true }
 );

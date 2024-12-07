@@ -55,7 +55,7 @@ function FlightBooking() {
 
 	return (
 		<div className="">
-			<div className="flex gap-10">
+			<div className="flex gap-10 flex-col">
 				<div className="w-[280px] shrink-0">
 					<Form {...form}>
 						<form onSubmit={form.handleSubmit(handleSubmit)} className="gap-2 flex flex-col">
