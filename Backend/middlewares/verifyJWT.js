@@ -9,7 +9,9 @@ const excludedRoutes = [
   /^\/tag$/,
   /^\/category$/,
   /^\/webhook$/,
-  /^\/activity\/?.*/,
+  /^\/activity\/?$/, // Matches "/activity" and "/activity/"
+  /^\/activity\/[a-fA-F0-9]+$/, // Matches "/activity/{id}"
+  /^\/activity\/\?.*$/, // Matches "/activity/" with query parameters
   /^\/itinerary\/?.*/,
   /^\/site(\/?$|\?.*)$/, // Matches "/site", "/site/", and "/site" with query parameters
   /^\/site\/[a-fA-F0-9]+$/, // Matches "/site/{id}"
