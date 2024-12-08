@@ -40,6 +40,8 @@ import { CheckoutOutlet } from "./pages/CheckoutOutlet";
 import { Wishlist } from "./pages/Wishlist";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import { Orders } from "./pages/Orders";
+import { OrdersView } from "./pages/OrdersView";
 
 function App() {
   const { id } = useUser();
@@ -48,7 +50,7 @@ function App() {
     <main className="bg-light text-dark font-inter min-h-screen h-max">
       <Routes>
         <Route path="/app" element={<MainPage />}>
-        <Route index element={<Navigate to="/app/itineraries" replace />} />
+          <Route index element={<Navigate to="/app/itineraries" replace />} />
           <Route
             path="profile"
             element={<Navigate to={`/app/profile/${id}`} replace />}
@@ -63,6 +65,8 @@ function App() {
           <Route path="transportation" element={<Trips />} />
           <Route path="product/:productId" element={<ProductView />} />
           <Route path="revenue" element={<RevenueReport />} />
+          <Route path="orders/:touristId" element={<Orders />} />
+          <Route path="orderDetails/:orderId" element={<OrdersView />} />
           <Route path="management" element={<AdminManagementView />}>
             <Route path="" element={<Navigate to="users" replace />} />
             <Route path="users" element={<UserManagement />} />

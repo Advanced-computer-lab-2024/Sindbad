@@ -778,7 +778,7 @@ const sendNotifications = async () => {
 
       // Check booked activities
       for (const activity of tourist.bookedEvents.activities) {
-        const activityDate = moment(activity.activityId.dateTime).utc();;
+        const activityDate = moment(activity.activityId.dateTime).utc();
         if (activityDate.isBetween(now, oneDayLater)) {
           const notification = {
             title: `Upcoming Activity: ${activity.activityId.name}`,
@@ -790,9 +790,10 @@ const sendNotifications = async () => {
             isSeen: false,
           };
 
-           // Check if the notification already exists to avoid duplicates
-           const existingNotification = tourist.Notifications.find(
-            (n) => n.title === notification.title && n.Body === notification.Body
+          // Check if the notification already exists to avoid duplicates
+          const existingNotification = tourist.Notifications.find(
+            (n) =>
+              n.title === notification.title && n.Body === notification.Body
           );
 
           if (!existingNotification) {
@@ -804,14 +805,16 @@ const sendNotifications = async () => {
               "Activity Reminder",
               `Your activity "${
                 activity.activityId.name
-              }" is scheduled for ${activityDate.format("MMMM Do YYYY, h:mm a")}.`
+              }" is scheduled for ${activityDate.format(
+                "MMMM Do YYYY, h:mm a"
+              )}.`
             );
           }
         }
       }
       // Check booked itineraries
       for (const itinerary of tourist.bookedEvents.itineraries) {
-        const itineraryDate = moment(itinerary.dateBooked).utc();; // Use `dateBooked` for the itinerary
+        const itineraryDate = moment(itinerary.dateBooked).utc(); // Use `dateBooked` for the itinerary
         if (itineraryDate.isBetween(now, oneDayLater)) {
           const notification = {
             title: `Upcoming Itinerary: ${itinerary.itineraryId.name}`,
@@ -824,13 +827,14 @@ const sendNotifications = async () => {
           };
           // Check if the notification already exists to avoid duplicates
           const existingNotification = tourist.Notifications.find(
-            (n) => n.title === notification.title && n.Body === notification.Body
+            (n) =>
+              n.title === notification.title && n.Body === notification.Body
           );
 
           if (!existingNotification) {
             notifications.push(notification);
 
-          // Send email notification for the itinerary
+            // Send email notification for the itinerary
             await sendEmail(
               tourist.email,
               "Itinerary Reminder",
@@ -869,9 +873,12 @@ const viewOrders = async (req, res) => {
     }
 
     // If isDelivered is provided, filter orders; otherwise, return all orders
-    const orders = isDelivered !== undefined
-      ? tourist.orders.filter(order => order.isDelivered === (isDelivered === "true"))
-      : tourist.orders;
+    const orders =
+      isDelivered !== undefined
+        ? tourist.orders.filter(
+            (order) => order.isDelivered === (isDelivered === "true")
+          )
+        : tourist.orders;
 
     res.status(200).json(orders);
   } catch (err) {
@@ -880,7 +887,6 @@ const viewOrders = async (req, res) => {
       .json({ message: "Error retrieving orders", error: err.message });
   }
 };
-
 
 const viewOrderDetails = async (req, res) => {
   const { id: touristID, orderID: orderID } = req.params;
@@ -909,7 +915,6 @@ const viewOrderDetails = async (req, res) => {
       .json({ message: "Error retrieving order details", error: err.message });
   }
 };
-
 
 const cancelOrder = async (req, res) => {
   const { id: touristID, orderID: orderID } = req.params;
@@ -951,7 +956,6 @@ const cancelOrder = async (req, res) => {
       .json({ message: "Error canceling order", error: err.message });
   }
 };
-
 
 module.exports = {
   getAllTourists,

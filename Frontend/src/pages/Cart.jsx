@@ -118,7 +118,14 @@ export const Cart = () => {
               {cart?.map((item) => (
                 <TableRow key={item.productID._id}>
                   <TableCell className="font-medium">
-                    {item.productID.name}
+                    <span
+                      className="text-black-500 cursor-pointer"
+                      onClick={() =>
+                        navigate(`/app/product/${item.productID._id}`)
+                      } // Navigate to product page
+                    >
+                      {item.productID.name}
+                    </span>
                   </TableCell>
                   <TableCell className="flex items-center space-x-2">
                     <button
