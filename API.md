@@ -407,6 +407,7 @@ GET /admin/requested-account-deletion-users
 ## Category Routes
 ### Create Category 
 
+#### Request
 ```bash
 POST /category/
 ```
@@ -417,6 +418,7 @@ POST /category/
 
 ### Retrieve Category by ID
 
+#### Request
 ```bash
 GET /category/:id
 ```
@@ -425,14 +427,36 @@ GET /category/:id
 |------------|--------|------------------------------------------------------|
 | id         | String | **Required.** Id of the category to be retrieved.        |
 
+#### Response
+
+```json
+{
+  Category Document
+}
+```
+
 ### Retrieve All Categories
 
+#### Request
 ```bash
 GET /category/
 ```
 
+#### Response
+
+```json
+{
+    [
+    Category 1 Document,
+    Category 2 Document,
+    ...
+    ]
+}
+```
+
 ### Update Category by ID
 
+#### Request
 ```bash
 PUT /category/:id
 ```
@@ -442,8 +466,18 @@ PUT /category/:id
 | id         | String | **Required.** Id of the category to be updated.      |
 | name       | String | **Required.** Catergory's name to be passed in the body.|
 
+
+#### Response
+
+```json
+{
+  Updated Category Document
+}
+```
+
 ### Delete Category by ID
 
+#### Request
 ```bash
 DELETE /category/:id
 ```
@@ -451,11 +485,21 @@ DELETE /category/:id
 | Parameter  | Type   | Description                                          |
 |------------|--------|------------------------------------------------------|
 | id         | String | **Required.** Id of the category to be deleted.      |
+
+#### Response
+
+```json
+{
+  "message": "Category deleted successfully!",
+}
+```
 ## Checkout Routes
 ## Complaints Routes
 ## Flight Routes
 
 ### Find Flights
+
+#### Request
 
 ```bash
 GET /flight/findFlight
@@ -470,6 +514,7 @@ GET /flight/findFlight
 
 ### Get Tourist's booked flights
 
+#### Request
 ```bash
 GET /flight/getFlight/:id
 ```
@@ -480,6 +525,7 @@ GET /flight/getFlight/:id
 
 ### Confirm Flight's Price before booking
 
+#### Request
 ```bash
 PUT /flight/confirmFlight
 ```
@@ -490,6 +536,7 @@ PUT /flight/confirmFlight
 
 ### Book a flight
 
+#### Request
 ```bash
 PUT /flight/bookFlight
 ```
@@ -518,6 +565,7 @@ PUT /flight/bookFlight
 ## Hotel Routes
 ### Find Hotel by City
 
+#### Request
 ```bash
 GET /hotel/by-city
 ```
@@ -530,6 +578,7 @@ GET /hotel/by-city
 
 ### Find Hotel by Geographical Code
 
+#### Request
 ```bash
 GET /hotel/by-geocode
 ```
@@ -542,6 +591,7 @@ GET /hotel/by-geocode
 
 ### Find Hotel by id
 
+#### Request
 ```bash
 GET /hotel/:hotelId/offers
 ```
@@ -552,6 +602,7 @@ GET /hotel/:hotelId/offers
 
 ### Book Hotel
 
+#### Request
 ```bash
 GET /hotel/book
 ```
@@ -573,6 +624,7 @@ GET /hotel/book
 ## Promo Code Routes
 ### Create Promo Code 
 
+#### Request
 ```bash
 POST /PromoCode/
 ```
@@ -584,6 +636,7 @@ POST /PromoCode/
 
 ### Use Promo Code
 
+#### Request
 ```bash
 PUT /PromoCode/:id
 ```
@@ -606,6 +659,7 @@ PUT /PromoCode/:id
 
 ### Create a New Tag
 
+#### Request
 ```bash
 POST /tag/
 ```
@@ -616,6 +670,7 @@ POST /tag/
 
 ### Retrieve a Tag by ID
 
+#### Request
 ```bash
 GET /tag/:id
 ```
@@ -626,12 +681,14 @@ GET /tag/:id
 
 ### Retrieve all Tags
 
+#### Request
 ```bash
 GET /tag/
 ```
 
 ### Update a Tag
 
+#### Request
 ```bash
 PUT /tag/:id
 ```
@@ -643,6 +700,7 @@ PUT /tag/:id
 
 ### Delete a Tag
 
+#### Request
 ```bash
 DELETE /tag/:id
 ```
