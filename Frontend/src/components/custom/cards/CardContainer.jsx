@@ -24,6 +24,7 @@ const CardContainer = ({ cardList, cardType, fetchCardData, columns = 3 }) => {
     imageContainer: "h-[156px] relative shrink-0 bg-neutral-300",
     noImageContainer: "h-[0px] relative shrink-0 ",
     detailsContainer: "flex flex-col p-3 gap-2 h-full justify-between",
+    noImageDetailsContainer: "bg-gradient-to-br from-light to-primary-200 flex flex-col p-3 gap-2 h-full justify-between",
     title: "text-base font-semibold line-clamp-2",
     button: "mt-2",
     buttonInappropriate: "bg-red-300",
