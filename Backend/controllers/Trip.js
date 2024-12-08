@@ -1,5 +1,6 @@
 const Sale = require("../models/Sale");
 const Trip = require("../models/Trip");
+const Tourist = require("../models/Tourist");
 const cloudinary = require("../utils/cloudinary");
 const DatauriParser = require("datauri/parser");
 const path = require('path');
@@ -75,7 +76,7 @@ async function bookTrip(req, res) {
             return res.status(404).json({ message: "Trip not found" });
         }
 
-        const { userId } = req.body;
+        const { userId, discount, type } = req.body;
 
         if (trip.capacity === trip.participants.length) {
             return res.status(409).json({ message: "Trip is fully booked" });
@@ -85,6 +86,15 @@ async function bookTrip(req, res) {
             return res.status(400).json({ message: "User already booked this trip" });
         }
 
+        if (type == "wallet") {
+            const user = await Tourist.findById(userId);
+            if (user.wallet < (trip.price - (trip.price * discount/100))) {
+                return res.status(400).json({ message: "Insufficient funds" });
+            }
+            user.wallet -= trip.price - (trip.price * discount/100);
+            await user.save();
+        }
+
         trip.participants.push(userId);
 
         await trip.save();
@@ -92,7 +102,7 @@ async function bookTrip(req, res) {
             type: "Trip",
             itemId: trip._id,
             buyerId: userId,
-            totalPrice: trip.price,
+            totalPrice: trip.price - (trip.price * discount/100),
         });
         res.status(200).json({ message: "Trip booked successfully", trip });
     } catch (error) {
