@@ -30,15 +30,15 @@ export const columns = (handleDeleteTag, handleUpdateTag) => [
 			};
 
 			return (
-				<Input
-					type="text"
-					value={name}
-					onChange={(e) => setName(e.target.value)}
-					onKeyDown={handleKeyDown}
-					className={isDirty ? "bg-secondary-900 text-dark" : ""}
-					disabled={role !== "admin"}
-				/>
-			);
+        <Input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          onKeyDown={handleKeyDown}
+          className={isDirty ? "bg-primary-100 text-dark" : ""}
+          disabled={role !== "admin"}
+        />
+      );
 		},
 	},
 	{

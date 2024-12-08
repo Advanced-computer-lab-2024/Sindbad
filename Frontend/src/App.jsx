@@ -42,6 +42,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import { Orders } from "./pages/Orders";
 import { OrdersView } from "./pages/OrdersView";
+import PrivilegeManagement from "./components/custom/admin/privelege-management/PrivelegeManagement";
 
 function App() {
   const { id } = useUser();
@@ -71,6 +72,7 @@ function App() {
             <Route path="" element={<Navigate to="users" replace />} />
             <Route path="users" element={<UserManagement />} />
             <Route path="verification" element={<UserVerification />} />
+            <Route path="priveleges" element={<PrivilegeManagement/>} />
             <Route path="complaints" element={<ComplaintManagement />} />
             <Route path="tagcategories" element={<TagCategoryManagement />} />
             <Route path="deletion-requests" element={<DeletionRequests />} />
@@ -90,7 +92,10 @@ function App() {
           <Route path="site/:siteId" element={<Site />} />
           <Route path="transportation/:tripId" element={<TripView />} />
           <Route path="complaints/:creatorId" element={<ComplaintView />} />
-          <Route path="complaints" element={<Navigate to={`/app/complaints/${id}`} replace />} />
+          <Route
+            path="complaints"
+            element={<Navigate to={`/app/complaints/${id}`} replace />}
+          />
           <Route
             path=":cardType/:cardId/edit"
             element={<EditFormPage />}
