@@ -921,7 +921,10 @@ const cancelOrder = async (req, res) => {
 
   try {
     // Find the tourist by ID
-    const tourist = await Tourist.findById(touristID);
+    const tourist = await Tourist.findById(touristID).populate({
+      path: "orders.sales", // Populate sales for the orders
+      model: "Sale",
+    });
 
     if (!tourist) {
       return res.status(404).json({ message: "Tourist not found" });
@@ -936,12 +939,23 @@ const cancelOrder = async (req, res) => {
       return res.status(404).json({ message: "Order not found" });
     }
 
+    const order = tourist.orders[orderIndex];
+
     // Check if the order is already delivered
-    if (tourist.orders[orderIndex].isDelivered) {
+    if (order.isDelivered) {
       return res
         .status(400)
         .json({ message: "Delivered orders cannot be canceled" });
     }
+
+    // Calculate the total refund amount from associated sales
+    const refundAmount = order.sales.reduce(
+      (sum, sale) => sum + sale.totalPrice,
+      0
+    );
+
+    // Update the tourist's wallet
+    tourist.wallet += refundAmount;
 
     // Remove the order from the tourist's orders array
     tourist.orders.splice(orderIndex, 1);
@@ -949,7 +963,11 @@ const cancelOrder = async (req, res) => {
     // Save the updated tourist document
     await tourist.save();
 
-    res.status(200).json({ message: "Order successfully canceled" });
+    res.status(200).json({
+      message: "Order successfully canceled",
+      refundAmount,
+      wallet: tourist.wallet,
+    });
   } catch (err) {
     res
       .status(500)
