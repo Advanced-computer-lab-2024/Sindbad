@@ -73,7 +73,7 @@ function UsersPerItem({data}) {
 
 
   return (
-    <Card className="w-full">
+    <Card className="w-1/2 shrink-0">
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle>Item Popularity</CardTitle>
@@ -85,7 +85,7 @@ function UsersPerItem({data}) {
         </div>
       </CardHeader>
       <CardContent className="h-full">
-        <ChartContainer config={chartConfig} className="h-3/4">
+        <ChartContainer config={chartConfig} className="h-3/4 w-11/12">
           <BarChart accessibilityLayer data={chartData} layout="vertical">
             <CartesianGrid horizontal={false} />
             <YAxis

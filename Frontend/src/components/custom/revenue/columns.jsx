@@ -26,7 +26,7 @@ export const columns = (currency) => [
     header: "Type",
     cell: ({ getValue }) => (
       <Badge variant="dark" className={getBadgeColor(getValue())}>
-        {getValue()}
+        {getValue() === "Trip" ? "Transportation" : getValue()}
       </Badge>
     ),
   },

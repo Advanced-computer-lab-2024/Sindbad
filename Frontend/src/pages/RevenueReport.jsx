@@ -75,7 +75,7 @@ function RevenueReport() {
   return (
     <div className="py-8 px-24 mx-auto flex flex-col gap-4">
       {/*HACK: 💀 */}
-      <div className="flex justify-center w-full gap-4 max-w-[1350px] mx-auto">
+      <div className="flex justify-center w-full gap-4 max-w-[1200px] mx-auto">
         <TotalRevenue data={data} />
         <UsersPerItem data={data} />
       </div>
