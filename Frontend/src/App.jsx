@@ -86,6 +86,7 @@ function App() {
           <Route path="site/:siteId" element={<Site />} />
           <Route path="transportation/:tripId" element={<TripView />} />
           <Route path="complaints/:creatorId" element={<ComplaintView />} />
+          <Route path="complaints" element={<Navigate to={`/app/complaints/${id}`} replace />} />
           <Route
             path=":cardType/:cardId/edit"
             element={<EditFormPage />}

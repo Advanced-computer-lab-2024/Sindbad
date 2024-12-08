@@ -1,8 +1,9 @@
 import { createSite, updateSite } from "@/services/SiteApiHandler";
 import { Convert } from "easy-currencies";
 
-export const siteSubmit = async (values, id, data, navigate, dispatch, currency, toast) => {
-	console.log("VALUES: ", values);
+export const siteSubmit = async (values, id, data, navigate, dispatch, currency, toast, setLoading) => {
+	// console.log("VALUES: ", values);
+	setLoading(true);
 	const formData = new FormData();
 	formData.append("name", values.name);
 	formData.append("description", values.description);
@@ -58,11 +59,13 @@ export const siteSubmit = async (values, id, data, navigate, dispatch, currency,
 		if (response && !response.error && navigate) {
 			navigate("/app/profile");
 			toast({ description: desc });
+			setLoading(false);
 		} else {
 			throw new Error("API did not return a success response");
 		}
 	} catch (error) {
 		console.error("Error submitting form:", error);
 		toast({ description: "Error submitting form" });
+		setLoading(false);
 	}
 };

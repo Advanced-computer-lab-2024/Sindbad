@@ -1,7 +1,8 @@
 import { createItinerary, updateItinerary } from "@/services/ItineraryApiHandler";
 import { Convert } from "easy-currencies";
 
-export const itinerarySubmit = async (values, id, data, navigate, dispatch, currency, toast) => {
+export const itinerarySubmit = async (values, id, data, navigate, dispatch, currency, toast, setLoading) => {
+	setLoading(true);
 	const formData = new FormData();
 	formData.append("name", values.name);
 	formData.append("description", values.description);
@@ -55,11 +56,13 @@ export const itinerarySubmit = async (values, id, data, navigate, dispatch, curr
         if (response && !response.error && navigate) {
             navigate("/app/profile");
 			toast({description: desc});
+			setLoading(false);
         } else {
             throw new Error("API did not return a success response");
         }
     } catch (error) {
         console.error("Error submitting form:", error);
 		toast({description: "Error submitting form"});
+		setLoading(false);
     }
 };

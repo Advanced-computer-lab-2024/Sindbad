@@ -1,6 +1,7 @@
 import { updateAdvertiser } from "@/services/AdvertiserApiHandler";
 
-export const companySubmit = async (values, id, navigate, dispatch, currency, toast) => {
+export const companySubmit = async (values, id, navigate, dispatch, currency, toast, setLoading) => {
+	setLoading(true);
 	let companyProfile = {};
 	for (const key in values) {
 		if (key === "name") {
@@ -26,11 +27,13 @@ export const companySubmit = async (values, id, navigate, dispatch, currency, to
 		if (response && !response.error && navigate) {
 			navigate("/app/profile");
 			toast({description: "Company updated successfully"});
+			setLoading(false);
 		} else {
 			throw new Error("API did not return a success response");
 		}
 	} catch (error) {
 		console.error("Error submitting form:", error);
 		toast({description: "Error updating company"});
+		setLoading(false);
 	}
 };
