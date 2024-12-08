@@ -8,16 +8,17 @@ http://localhost:3000/addRouteHere
 
 - [Activity Routes](#activity-routes)
 - [Admin Routes](#admin-routes)
+- [Advertiser Routes](#advertiser-routes)
+- [Auth Routes](#auth-routes)
 - [Category Routes](#category-routes)
 - [Flight Routes](#flight-routes)
 - [Hotel Routes](#hotel-routes)
 - [Promo Code Routes](#promo-code-routes)
 - [Tag Routes](#tag-routes)
-- [Advertiser Routes](#advertiser-routes)
-- [Auth Routes](#auth-routes)
 - [Tour Guide Routes](#tour-guide-routes)
 - [Itinerary Routes](#itinerary-routes)
 - [User Routes](#user-routes)
+- [Tourist Routes](#tourist-routes)
 
 ## Activity Routes
 
@@ -897,6 +898,614 @@ POST /tourGuide/:id/previous-work/:previousWorkId
 
 ## Tourist Routes
 
+### Get all Tourists
+
+```bash
+GET /tourist/
+```
+
+#### Request
+
+None
+
+#### Response
+
+```json
+[
+  Tourist 1 Document,
+  Tourist 2 Document,
+  ...
+]
+```
+
+### Get tourist by username
+
+```bash
+GET /tourist/user/:username
+```
+
+#### Request
+
+| Parameter | Type   | Description                                                       |
+| --------- | ------ | ----------------------------------------------------------------- |
+| username  | String | **Required.** The username of the user inside the request params. |
+
+#### Response
+
+```json
+{
+  Tourist Document
+}
+```
+
+### Get tourist by id
+
+```bash
+GET /tourist/:id
+```
+
+#### Request
+
+| Parameter | Type   | Description                                                    |
+| --------- | ------ | -------------------------------------------------------------- |
+| id        | String | **Required.** The id of the tourist inside the request params. |
+
+#### Response
+
+```json
+{
+  Tourist Document
+}
+```
+
+### Delete tourist by id
+
+```bash
+DELETE /tourist/:id
+```
+
+#### Request
+
+| Parameter | Type   | Description                                                    |
+| --------- | ------ | -------------------------------------------------------------- |
+| id        | String | **Required.** The id of the tourist inside the request params. |
+
+#### Response
+
+```json
+{
+  Deleted Tourist Document
+}
+```
+
+### Tourist Redeem Points
+
+```bash
+POST /tourist/:id
+```
+
+#### Request
+
+| Parameter | Type   | Description                                                    |
+| --------- | ------ | -------------------------------------------------------------- |
+| id        | String | **Required.** The id of the tourist inside the request params. |
+
+#### Response
+
+```json
+{
+  "message": "Points redeemed successfully",
+  "wallet": 1000,
+  "loyaltyPoints": 500
+}
+```
+
+### Add product to wishlist
+
+```bash
+POST /tourist/:id/wishlist
+```
+
+#### Request
+
+| Parameter | Type   | Description                                                    |
+| --------- | ------ | -------------------------------------------------------------- |
+| id        | String | **Required.** The id of the tourist inside the request params. |
+| productID | String | **Required.** The product id inside the request body.          |
+
+#### Response
+
+```json
+{
+  "message": "Product added to wishlist",
+  "wishlist": [
+    Product 1 id,
+    Product 2 id,
+    ...
+  ]
+}
+```
+
+### Remove product from wishlist
+
+```bash
+DELETE /tourist/:id/wishlist
+```
+
+#### Request
+
+| Parameter | Type   | Description                                                    |
+| --------- | ------ | -------------------------------------------------------------- |
+| id        | String | **Required.** The id of the tourist inside the request params. |
+| productID | String | **Required.** The product id inside the request body.          |
+
+#### Response
+
+```json
+{
+  "message": "Product removed from wishlist successfully",
+  "wishlist": [
+    Product 1 id,
+    Product 2 id,
+    ...
+  ]
+}
+```
+
+### Add activity to bookmarks
+
+```bash
+POST /tourist/:id/bookmark
+```
+
+#### Request
+
+| Parameter  | Type   | Description                                                    |
+| ---------- | ------ | -------------------------------------------------------------- |
+| id         | String | **Required.** The id of the tourist inside the request params. |
+| activityID | String | **Required.** The activity id inside the request body.         |
+
+#### Response
+
+```json
+{
+  "message": "Activity added to bookmarks",
+  "bookmarks": [
+    Activity 1 id,
+    Activity 2 id,
+    ...
+  ]
+}
+```
+
+### Get bookmarked activities
+
+```bash
+GET /tourist/:id/bookmark
+```
+
+#### Request
+
+| Parameter | Type   | Description                                                    |
+| --------- | ------ | -------------------------------------------------------------- |
+| id        | String | **Required.** The id of the tourist inside the request params. |
+
+#### Response
+
+```json
+{
+  [
+    Activity 1 id,
+    Activity 2 id,
+    ...
+  ]
+}
+```
+
+### Remove activity from bookmarks
+
+```bash
+DELETE /tourist/:id/bookmark
+```
+
+#### Request
+
+| Parameter  | Type   | Description                                                    |
+| ---------- | ------ | -------------------------------------------------------------- |
+| id         | String | **Required.** The id of the tourist inside the request params. |
+| activityID | String | **Required.** The activity id inside the request body.         |
+
+#### Response
+
+```json
+{
+  "message": "Activity removed from bookmarks successfully",
+  "bookmarks": [
+    Activity 1 id,
+    Activity 2 id,
+    ...
+  ]
+}
+```
+
+### Get Cart
+
+```bash
+GET /tourist/:id/cart
+```
+
+#### Request
+
+| Parameter | Type   | Description                                                    |
+| --------- | ------ | -------------------------------------------------------------- |
+| id        | String | **Required.** The id of the tourist inside the request params. |
+
+#### Response
+
+```json
+[
+  {
+    "productID": Product 1 ID,
+    "quantity": 10,
+  },
+  {
+    "productID": Product 2 ID,
+    "quantity": 5,
+  },
+]
+```
+
+### Add to Cart
+
+```bash
+POST /tourist/:id/cart
+```
+
+#### Request
+
+| Parameter | Type   | Description                                                    |
+| --------- | ------ | -------------------------------------------------------------- |
+| id        | String | **Required.** The id of the tourist inside the request params. |
+| productID | String | **Required.** The id of the product inside the request body.   |
+| quantity  | String | **Required.** The id of the product inside the request body.   |
+
+#### Response
+
+```json
+[
+  "message": "Product added to cart",
+  "cart":
+    {
+      "productID": Product 1 ID,
+      "quantity": 10,
+    },
+    {
+      "productID": Product 2 ID,
+      "quantity": 5,
+    },
+]
+```
+
+### Remove amount of specific product from Cart
+
+```bash
+PUT /tourist/:id/cart
+```
+
+#### Request
+
+| Parameter | Type   | Description                                                    |
+| --------- | ------ | -------------------------------------------------------------- |
+| id        | String | **Required.** The id of the tourist inside the request params. |
+| productID | String | **Required.** The id of the product inside the request body.   |
+| quantity  | String | **Required.** The id of the product inside the request body.   |
+
+#### Response
+
+```json
+[
+  "message": "Product updated from cart successfully",
+  "cart":
+    {
+      "productID": Product 1 ID,
+      "quantity": 10,
+    },
+    {
+      "productID": Product 2 ID,
+      "quantity": 5,
+    },
+]
+```
+
+### Remove product from Cart
+
+```bash
+DELETE /tourist/:id/cart/:productID
+```
+
+#### Request
+
+| Parameter | Type   | Description                                                    |
+| --------- | ------ | -------------------------------------------------------------- |
+| id        | String | **Required.** The id of the tourist inside the request params. |
+| productID | String | **Required.** The id of the product inside the request params. |
+
+#### Response
+
+```json
+[
+  "message": "Product removed from cart successfully",
+  "cart":
+    {
+      "productID": Product 1 ID,
+      "quantity": 10,
+    },
+    {
+      "productID": Product 2 ID,
+      "quantity": 5,
+    },
+]
+```
+
+### View Order Details
+
+```bash
+GET /tourist/:id/orders/:orderID
+```
+
+#### Request
+
+| Parameter | Type   | Description                                                    |
+| --------- | ------ | -------------------------------------------------------------- |
+| id        | String | **Required.** The id of the tourist inside the request params. |
+| orderID   | String | **Required.** The id of the order inside the request params.   |
+
+#### Response
+
+```json
+{
+  "sales": [
+    {
+      "_id": "64a3b8e9d5d38d001a6c815a",
+      "type": "Sale"
+    }
+  ],
+  "cart": [
+    {
+      "productID": {
+        "_id": "64a3b8e9d5d38d001a6c815b",
+        "name": "Wireless Earbuds",
+        "price": 59.99,
+        "category": "Electronics"
+      },
+      "quantity": 2
+    },
+    {
+      "productID": {
+        "_id": "64a3b8e9d5d38d001a6c815c",
+        "name": "Yoga Mat",
+        "price": 29.99,
+        "category": "Sports & Outdoors"
+      },
+      "quantity": 1
+    }
+  ],
+  "isDelivered": false
+}
+```
+
+### View Orders
+
+```bash
+GET /tourist/:id/orders
+```
+
+#### Request
+
+| Parameter   | Type   | Description                                                                |
+| ----------- | ------ | -------------------------------------------------------------------------- |
+| id          | String | **Required.** The id of the tourist inside the request params.             |
+| isDelivered | String | **Required.** The status of delivery of the order inside the request body. |
+
+#### Response
+
+```json
+[
+  {
+    "sales": [
+      {
+        "_id": "64a3b8e9d5d38d001a6c815a",
+        "type": "Sale"
+      }
+    ],
+    "cart": [
+      {
+        "productID": {
+          "_id": "64a3b8e9d5d38d001a6c815b",
+          "name": "Wireless Earbuds",
+          "price": 59.99,
+          "category": "Electronics"
+        },
+        "quantity": 2
+      },
+      {
+        "productID": {
+          "_id": "64a3b8e9d5d38d001a6c815c",
+          "name": "Yoga Mat",
+          "price": 29.99,
+          "category": "Sports & Outdoors"
+        },
+        "quantity": 1
+      }
+    ],
+    "isDelivered": false
+  },
+  ...
+]
+```
+
+### Add address
+
+```bash
+POST /tourist/:id/address
+```
+
+#### Request
+
+| Parameter | Type   | Description                                                       |
+| --------- | ------ | ----------------------------------------------------------------- |
+| id        | String | **Required.** The id of the tourist inside the request params.    |
+| street    | String | **Required.** The street of the address inside the request body.  |
+| city      | String | **Required.** The city of the address inside the request body.    |
+| state     | String | **Required.** The state of the address inside the request body.   |
+| zip       | String | **Required.** The zip of the address inside the request body.     |
+| country   | String | **Required.** The country of the address inside the request body. |
+
+#### Response
+
+```json
+{
+  "message": "Address added successfully",
+  "addresses": [
+    {
+      "type": [
+        {
+          "label": "Work",
+          "street": "Group 116, Building 26, Flat 6",
+          "city": "New Cairo",
+          "state": "Cairo",
+          "zip": "11735",
+          "country": "Egypt"
+        }
+      ],
+      "_id": {
+        "$oid": "6754895e15efad19b9f51ad6"
+      }
+    },
+    {
+      "type": [
+        {
+          "label": "Home",
+          "street": "Group 120, Building 10, Flat 4",
+          "city": "Old Cairo",
+          "state": "Cairo",
+          "zip": "11532",
+          "country": "Egypt"
+        }
+      ],
+      "_id": {
+        "$oid": "6754896115efad19b9f51aef"
+      }
+    }
+  ]
+}
+```
+
+### Add to Cart from Wishlist
+
+```bash
+POST /tourist/:id/cart/wishlist
+```
+
+#### Request
+
+| Parameter | Type   | Description                                                    |
+| --------- | ------ | -------------------------------------------------------------- |
+| id        | String | **Required.** The id of the tourist inside the request params. |
+| productID | String | **Required.** The id of the product inside the request body.   |
+| quantity  | String | **Required.** The id of the product inside the request body.   |
+
+#### Response
+
+```json
+{
+  "message": "Product moved from wishlist to cart",
+  "cart": [
+    {
+      "productID": Product 1 ID,
+      "quantity": 10,
+    },
+    {
+      "productID": Product 2 ID,
+      "quantity": 5,
+    },
+  ],
+  "wishlist": [
+    Product 1 id,
+    Product 2 id,
+    ...
+  ]
+}
+```
+
+### Get Wishlist Products
+
+```bash
+GET /tourist/:id/cart/wishlist
+```
+
+#### Request
+
+| Parameter | Type   | Description                                                    |
+| --------- | ------ | -------------------------------------------------------------- |
+| id        | String | **Required.** The id of the tourist inside the request params. |
+
+#### Response
+
+```json
+[
+  {
+    "_id": {
+      "$oid": "67253028d5a2d7588e2ce83c"
+    },
+    "name": "Headphones",
+    "imageUris": [
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTJZIVemLQYn-oA9n_I34o3U5CFYc7kitMdWg&s"
+    ],
+    "price": 60,
+    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean ullamcorper turpis vitae imperdiet vehicula. Suspendisse luctus condimentum leo. Sed id fermentum velit, eget ultricies dui. Aenean suscipit maximus velit, at gravida justo lacinia id. Nam tortor lectus, bibendum sed metus non, luctus ultrices orci. Interdum et malesuada fames ac.",
+    "rating": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 0
+    },
+    "averageRating": 4,
+    "quantity": 1,
+    "numSales": 2,
+    "isArchived": false,
+    "reviews": [
+      {
+        "userId": "672faf6be3120c5df6679670",
+        "rating": 4,
+        "comment": "Good battery life",
+        "_id": {
+          "$oid": "6731e2f48ddbfc04a4a5f327"
+        }
+      }
+    ],
+    "createdAt": {
+      "$date": "2024-11-01T19:46:48.825Z"
+    },
+    "updatedAt": {
+      "$date": "2024-11-30T11:24:29.068Z"
+    },
+    "__v": 12,
+    "creatorId": {
+      "$oid": "67252de1d5a2d7588e2ce7fe"
+    },
+    "userRatings": [
+      {
+        "$oid": "672faf6be3120c5df6679670"
+      }
+    ],
+    "priceId": "price_1QQommFqphnFdcP1xFI0GJ2W"
+  },
+  ...
+]
+```
+
 ## Trip Routes
 
 ## User Routes
@@ -912,7 +1521,7 @@ POST /user/signup
 | Parameter | Type   | Description                                                                       |
 | --------- | ------ | --------------------------------------------------------------------------------- |
 | email     | String | **Required.** The email of the user inside the request body.                      |
-| username  | String | **Required.** The id of the user inside the request body.                         |
+| username  | String | **Required.** The username of the user inside the request body.                   |
 | password  | String | **Required.** The password of the user inside the request body.                   |
 | role      | String | **Required.** The role of the user inside the request body.                       |
 | userData  | Object | **Required.** Additional User Data depending on the role inside the request body. |
