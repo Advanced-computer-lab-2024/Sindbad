@@ -1,7 +1,7 @@
 import { createTrip, updateTrip } from "@/services/TripApiHandler";
 import { Convert } from "easy-currencies";
 
-export const tripSubmit = async (values, id, data, navigate, dispatch, currency) => {
+export const tripSubmit = async (values, id, data, navigate, dispatch, currency, toast) => {
     const formData = new FormData();
     formData.append("name", values.name);
     formData.append("description", values.description);
@@ -25,19 +25,24 @@ export const tripSubmit = async (values, id, data, navigate, dispatch, currency)
     // try submitting form, and if successful, navigate to profile page
     try {
         let response;
+        let desc;
         if (data) {
             response = await updateTrip(data._id, formData);
+            desc = "Trip updated successfully";
         } else {
             formData.append("creatorId", id);
             response = await createTrip(formData);
+            desc = "Trip created successfully";
         }
 
         if (response && !response.error && navigate) {
             navigate("/app/profile");
+            toast({description: desc});
         } else {
             throw new Error("API did not return a success response");
         }
     } catch (error) {
         console.error("Error submitting form:", error);
+        toast({description: "Error submitting form"});
     }
 };

@@ -74,10 +74,10 @@ export function GenericForm({ type, data, id, fetcher }) {
 	const handleSubmit = (values) => {
 		try {
 			if (typeof onSubmit === "function") {
-				if (onSubmit.length === 5) {
-					onSubmit(values, id, navigate, dispatch, currency);
+				if (onSubmit.length === 6) {
+					onSubmit(values, id, navigate, dispatch, currency, toast);
 				} else {
-					onSubmit(values, id, data, navigate, dispatch, currency);
+					onSubmit(values, id, data, navigate, dispatch, currency, toast);
 				}
 				if (typeof fetcher === "function") {
 					fetcher();
@@ -85,7 +85,8 @@ export function GenericForm({ type, data, id, fetcher }) {
 				//toast({ description: "Submitted" });
 			}
 		} catch (e) {
-			toast({ description: `Error occured on submission: ${e.message}` });
+			// toast({ description: `Error occured on submission: ${e.message}` });
+			console.error(e);
 		}
 	};
 

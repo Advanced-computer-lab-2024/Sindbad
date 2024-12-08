@@ -1,6 +1,6 @@
 import { updateAdmin } from "@/services/AdminApiHandler";
 
-export const adminSubmit = (values, id, navigate, dispatch, currency) => {
+export const adminSubmit = async (values, id, navigate, dispatch, currency, toast) => {
 	const formData = new FormData();
 	formData.append("email", values.email);
 	if (values.profileImageUri && values.profileImageUri.length > 0) {
@@ -15,5 +15,19 @@ export const adminSubmit = (values, id, navigate, dispatch, currency) => {
 		console.log(pair[0] + ": ", pair[1]);
 	}
 
-	return updateAdmin(id, formData);
+	// return updateAdmin(id, formData);
+
+	try {
+		let response = await updateAdmin(id, formData);
+
+		if (response && !response.error && navigate) {
+			navigate("/app/profile");
+			toast({description: "Profile updated successfully"})
+		} else {
+			throw new Error("API did not return a success response");
+		}
+	} catch (error) {
+		console.error("Error submitting form:", error);
+		toast({description: "Error updating profile"});
+	}
 };

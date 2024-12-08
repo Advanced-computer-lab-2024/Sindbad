@@ -1,6 +1,6 @@
 import { updateTourGuide } from "@/services/TourGuideApiHandler";
 
-export const experienceSubmit = (values, id, data, navigate, dispatch, currency) => {
+export const experienceSubmit = async (values, id, data, navigate, dispatch, currency, toast) => {
 	const previousWork = {};
 	for (const key in values) {
 		if (key === "jobTitle") {
@@ -27,5 +27,19 @@ export const experienceSubmit = (values, id, data, navigate, dispatch, currency)
 		body.previousWork._id = data._id;
 	}
 
-	updateTourGuide(id, body);
+	// updateTourGuide(id, body);
+
+	try {
+		let response = await updateTourGuide(id, body);
+
+		if (response && !response.error && navigate) {
+			navigate("/app/profile");
+			toast({description: "Experience updated successfully"});
+		} else {
+			throw new Error("API did not return a success response");
+		}
+	} catch (error) {
+		console.error("Error submitting form:", error);
+		toast({description: "Error updating experience"});
+	}
 };

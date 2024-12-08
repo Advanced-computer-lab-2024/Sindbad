@@ -1,9 +1,9 @@
 import { updateTourist } from "@/services/TouristApiHandler";
 import { setCurrency } from "@/state management/userInfo";
 
-export const touristSubmit = (values, id, navigate, dispatch, currency) => {
+export const touristSubmit = async (values, id, navigate, dispatch, currency, toast) => {
 	dispatch(setCurrency(values.preferredCurrency));
-	
+
 	const formData = new FormData();
 	formData.append("email", values.email);
 	formData.append("mobileNumber", values.mobileNumber);
@@ -19,9 +19,23 @@ export const touristSubmit = (values, id, navigate, dispatch, currency) => {
 		formData.append("bannerImageUri", values.bannerImageUri[0]); // First file from FileList
 	}
 
-	for (let pair of formData.entries()) {
-		console.log(pair[0] + ": ", pair[1]);
-	}
+	// for (let pair of formData.entries()) {
+	// 	console.log(pair[0] + ": ", pair[1]);
+	// }
 
-	return updateTourist(id, formData);
+	// return updateTourist(id, formData);
+
+	try {
+		let response = await updateTourist(id, formData);
+
+		if (response && !response.error && navigate) {
+			navigate("/app/profile");
+			toast({description: "Profile updated successfully"});
+		} else {
+			throw new Error("API did not return a success response");
+		}
+	} catch (error) {
+		console.error("Error submitting form:", error);
+		toast({description: "Error updating profile"});
+	}
 };

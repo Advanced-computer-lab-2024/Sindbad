@@ -1,7 +1,7 @@
 import { updateTourGuide } from '@/services/TourGuideApiHandler';
 import { setCurrency } from "@/state management/userInfo";
 
-export const tourGuideSubmit = (values, id, navigate, dispatch, currency) => {
+export const tourGuideSubmit = async (values, id, navigate, dispatch, currency, toast) => {
 	dispatch(setCurrency(values.preferredCurrency));
 
 	// Prepare FormData
@@ -25,5 +25,19 @@ export const tourGuideSubmit = (values, id, navigate, dispatch, currency) => {
 	}
 
 	// Call API handler
-	return updateTourGuide(id, formData);
+	// return updateTourGuide(id, formData);
+
+	try {
+		let response = await updateTourGuide(id, formData);
+
+		if (response && !response.error && navigate) {
+			navigate("/app/profile");
+			toast({description: "Profile updated successfully"});
+		} else {
+			throw new Error("API did not return a success response");
+		}
+	} catch (error) {
+		console.error("Error submitting form:", error);
+		toast({description: "Error updating profile"});
+	}
 };

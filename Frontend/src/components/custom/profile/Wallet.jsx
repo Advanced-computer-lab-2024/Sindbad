@@ -73,7 +73,7 @@ function Wallet({ userData, setUserData }) {
                             Loyalty Points
                         </h4>
                         <h3 className="font-inter font-bold text-xl text-center">
-                            {userData.loyaltyPoints}
+                            {Math.floor(userData?.loyaltyPoints)}
                         </h3>
                     </div>
                 </div>

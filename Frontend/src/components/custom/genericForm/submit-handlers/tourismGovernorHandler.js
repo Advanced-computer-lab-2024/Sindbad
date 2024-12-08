@@ -1,6 +1,6 @@
 import { updateTourismGovernor } from "@/services/TourismGovernorApiHandler";
 
-export const tourismGovernorSubmit = (values, id, navigate, dispatch, currency) => {
+export const tourismGovernorSubmit = async (values, id, navigate, dispatch, currency, toast) => {
 	const formData = new FormData();
 
 	formData.append("email", values.email);
@@ -17,5 +17,19 @@ export const tourismGovernorSubmit = (values, id, navigate, dispatch, currency) 
 		console.log(pair[0] + ": ", pair[1]);
 	}
 
-	return updateTourismGovernor(id, formData);
+	// return updateTourismGovernor(id, formData);
+
+	try {
+		let response = await updateTourismGovernor(id, formData);
+
+		if (response && !response.error && navigate) {
+			navigate("/app/profile");
+			toast({description: "Profile updated successfully"});
+		} else {
+			throw new Error("API did not return a success response");
+		}
+	} catch (error) {
+		console.error("Error submitting form:", error);
+		toast({description: "Error updating profile"});
+	}
 };
