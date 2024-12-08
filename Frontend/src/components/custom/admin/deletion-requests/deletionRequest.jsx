@@ -50,9 +50,9 @@ export default function DeletionRequests() {
 	};
 
 	return (
-		<>
+		<div className="w-full">
 			{/* Display the message below the table */}
-			<div className="flex items-center gap-6">
+			<div className="flex items-center gap-6 mb-6">
 				<h1 className="text-3xl font-extrabold shrink-0">Deletion Requests</h1>
 				<hr className="border-neutral-300 border w-full mt-1.5" />
 			</div>
@@ -76,6 +76,6 @@ export default function DeletionRequests() {
 			) : (
 				<div>Unable to get users.</div>
 			)}
-		</>
+		</div>
 	);
 }

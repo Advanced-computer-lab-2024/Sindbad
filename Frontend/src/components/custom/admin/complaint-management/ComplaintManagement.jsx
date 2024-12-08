@@ -59,9 +59,9 @@ export default function ComplaintManagement() {
 	};
 
 	return (
-		<>
+		<div className="w-full">
 			{/* Display the message below the table */}
-			<div className="flex items-center gap-6">
+			<div className="flex items-center gap-6 mb-6">
 				<h1 className="text-3xl font-extrabold shrink-0">
 					Complaint Management
 				</h1>
@@ -88,6 +88,6 @@ export default function ComplaintManagement() {
 					<ComplaintDetails data={selectedComplaint} refreshData={fetchData} />
 				</div>
 			</div>
-		</>
+		</div>
 	);
 }

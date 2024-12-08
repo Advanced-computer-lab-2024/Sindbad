@@ -80,7 +80,8 @@ export default function PromoCodes(){
                         type="text"
                         id="code"
                         placeholder=""
-                        onChange={(e) => setPromoCode(e.target.value.trim())} 
+                        onChange={(e) => setPromoCode(e.target.value.trim())}
+                        value={promoCode}
                         className="border border-gray-300 rounded text-lg"
                     />
                 </div>
@@ -90,7 +91,8 @@ export default function PromoCodes(){
                         type="text"
                         id="code"
                         placeholder=""
-                        onChange={(e) => setDiscount(e.target.value)} 
+                        onChange={(e) => setDiscount(e.target.value)}
+                        value={discount}
                         className="border border-gray-300 rounded text-lg"
                     />
                 </div>
