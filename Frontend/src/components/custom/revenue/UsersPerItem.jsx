@@ -94,7 +94,10 @@ function UsersPerItem({data}) {
               tickLine={false}
               tickMargin={10}
               axisLine={false}
-              tickFormatter={(value) => value.slice(0, 12)}
+              tickFormatter={(value) => {
+                const firstWord = value.split(" ")[0];
+                return firstWord.length > 10 ? firstWord.slice(0, 10) : firstWord;
+              }}
             />
             <XAxis dataKey="count" type="number" />
             <ChartTooltip
