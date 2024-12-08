@@ -1,198 +1,202 @@
-## Tour Guide Routes
+## Itinerary Routes
 
-### Comment on Tour Guide
+### Get All Itineraries
 
 ```bash
-POST /tourGuide/:id/comment
+GET /itinerary/
 ```
 
 #### Request
 
-| Parameter | Type   | Description                                             |
-| --------- | ------ | ------------------------------------------------------- |
-| id        | String | **Required.** The tour guide's id in the request params |
-| userId    | String | **Required.** The user's id in the request body         |
-| comment   | String | **Required.** The user's comment in the request body    |
-
-#### Response
-
-```json
-{
-  "_id": "6725031bd5a2d7588e2ce42a",
-  "email": "jana.elowainy@gmail.com",
-  "username": "tourguide",
-  "passwordHash": "$2b$10$6QP9BwFlpfF3sJq6Dl0DrOXnNIM95W9DpXiKwtCOpICsv7w9oO7A2",
-  "isAccepted": true,
-  "createdAt": {
-    "$date": "2024-11-01T16:34:35.090Z"
-  },
-  "updatedAt": {
-    "$date": "2024-11-30T13:03:54.129Z"
-  },
-  ...
-}
-```
-
-### Get All Tour Guides
-
-```bash
-GET /tourGuide/
-```
-
-#### Request
-
-None
+| Parameter  | Type   | Description                                                                                                         |
+| ---------- | ------ | ------------------------------------------------------------------------------------------------------------------- |
+| searchTerm | String | **Optional.** The search term used to filter results inside the request query inside the request query.             |
+| budget     | Object | **Optional.** Contains budget-related filtering options (e.g., min, max) inside the request query.                  |
+| date       | Object | **Optional.** Contains date-related filtering options (e.g., start date, end date) inside the request query.        |
+| tag        | String | **Optional.** The tag used to filter results inside the request query.                                              |
+| rating     | Object | **Optional.** Contains rating-related filtering options (e.g., min, max) inside the request query.                  |
+| language   | String | **Optional.** The language preference for the results inside the request query.                                     |
+| sortBy     | String | **Optional.** The field by which the results are sorted inside the request query. Default is "availableDatesTimes". |
+| sortOrder  | String | **Optional.** The sorting order ("asc" or "desc") inside the request query. Default is "asc".                       |
+| page       | Number | **Optional.** The page number for pagination inside the request query. Default is 1.                                |
+| limit      | Number | **Optional.** The number of results per page inside the request query. Default is 10.                               |
 
 #### Response
 
 ```json
 [
-  {
-    "_id": "6725031215a2d7588e2ce42a",
-    "email": "moski.moskito@gmail.com",
-    "username": "tourguide",
-    "passwordHash": "$2b$10$6QP9BwFadadF3sJq6Dl0DrOXnNIM95W9DpXiKwtCOpICsv7w9oO7A2",
-    "isAccepted": false,
-    "createdAt": {
-      "$date": "2024-11-01T16:34:35.090Z"
-    },
-    "updatedAt": {
-      "$date": "2024-11-30T13:03:54.129Z"
-    },
-    ...
-  },
-  {
-    "_id": "6725031bd5a2d7588e2ce42a",
-    "email": "jana.elowainy@gmail.com",
-    "username": "tourguide",
-    "passwordHash": "$2b$10$6QP9BwFlpfF3sJq6Dl0DrOXnNIM95W9DpXiKwtCOpICsv7w9oO7A2",
-    "isAccepted": true,
-    "createdAt": {
-      "$date": "2024-11-01T16:34:35.090Z"
-    },
-    "updatedAt": {
-      "$date": "2024-11-30T13:03:54.129Z"
-    },
-    ...
-  },
+  Itinerary 1 Document,
+  Itinerary 2 Document,
+  ...
 ]
 ```
 
-### Get Tour Guide
+### Book Itinerary
 
 ```bash
-GET /tourGuide/:id
+POST /itinerary/book
 ```
 
 #### Request
 
-| Parameter | Type   | Description                                                  |
-| --------- | ------ | ------------------------------------------------------------ |
-| id        | string | **Required.** The id of the tour guide in the request params |
+| Parameter        | Type   | Description                                                                  |
+| ---------------- | ------ | ---------------------------------------------------------------------------- |
+| date             | String | **Required.** The date for the booking or event inside the request body.     |
+| adultTicketCount | Number | **Required.** The number of adult tickets inside the request body.           |
+| childTicketCount | Number | **Required.** The number of child tickets inside the request body.           |
+| itineraryId      | String | **Required.** The ID of the itinerary inside the request body.               |
+| userId           | String | **Required.** The ID of the user making the request inside the request body. |
 
 #### Response
 
 ```json
 {
-  "_id": "6725031bd5a2d7588e2ce42a",
-  "email": "jana.elowainy@gmail.com",
-  "username": "tourguide",
-  "passwordHash": "$2b$10$6QP9BwFlpfF3sJq6Dl0DrOXnNIM95W9DpXiKwtCOpICsv7w9oO7A2",
-  "isAccepted": true,
-  "createdAt": {
-    "$date": "2024-11-01T16:34:35.090Z"
-  },
-  "updatedAt": {
-    "$date": "2024-11-30T13:03:54.129Z"
-  },
-  ...
+  Booked Itinerary Document,
+  "priceCharged" : 30
 }
 ```
 
-### Delete Tour Guide
+### Cancel Itinerary Booking
 
 ```bash
-DELETE /tourGuide/:id
+POST /itinerary/cancel
 ```
 
 #### Request
 
-| Parameter | Type   | Description                                                  |
-| --------- | ------ | ------------------------------------------------------------ |
-| id        | string | **Required.** The id of the tour guide in the request params |
+| Parameter   | Type   | Description                                                                  |
+| ----------- | ------ | ---------------------------------------------------------------------------- |
+| date        | String | **Required.** The date for the booking or event inside the request body.     |
+| itineraryId | String | **Required.** The ID of the itinerary inside the request body.               |
+| userId      | String | **Required.** The ID of the user making the request inside the request body. |
+
+#### Response
+
+None
+
+### Get my Itineraries
+
+```bash
+POST /itinerary/my-itineraries/:creatorId
+```
+
+#### Request
+
+| Parameter | Type   | Description                                                              |
+| --------- | ------ | ------------------------------------------------------------------------ |
+| creatorId | String | **Required.** The creatorId of the tour guide inside the request params. |
+
+#### Response
+
+```json
+[
+  Itinerary 1 Document,
+  Itinerary 2 Document,
+  ...
+]
+```
+
+### Comment on Itinerary
+
+```bash
+POST /itinerary/:id/comment
+```
+
+#### Request
+
+| Parameter | Type   | Description                                                                    |
+| --------- | ------ | ------------------------------------------------------------------------------ |
+| id        | String | **Required.** The id of the itinerary to comment on inside the request params. |
+| userId    | String | **Required.** The user id of the user inside the request body.                 |
+| comment   | String | **Required.** The user's comment inside the request body.                      |
 
 #### Response
 
 ```json
 {
-  "_id": "6725031bd5a2d7588e2ce42a",
-  "email": "jana.elowainy@gmail.com",
-  "username": "tourguide",
-  "passwordHash": "$2b$10$6QP9BwFlpfF3sJq6Dl0DrOXnNIM95W9DpXiKwtCOpICsv7w9oO7A2",
-  "isAccepted": true,
-  "createdAt": {
-    "$date": "2024-11-01T16:34:35.090Z"
-  },
-  "updatedAt": {
-    "$date": "2024-11-30T13:03:54.129Z"
-  },
-  ...
+  Updated Itinerary Document
 }
 ```
 
-### Add Tour Guide Rating
+### Get Itinerary By ID
 
 ```bash
-POST /tourGuide/:id
+GET /itinerary/:id/
 ```
 
 #### Request
 
-| Parameter | Type   | Description                                                    |
-| --------- | ------ | -------------------------------------------------------------- |
-| id        | string | **Required.** The id of the tour guide in the request params   |
-| userId    | string | **Required.** The userId of the tour guide in the request body |
-| rating    | number | **Required.** The rating in the request body                   |
+| Parameter | Type   | Description                                                      |
+| --------- | ------ | ---------------------------------------------------------------- |
+| id        | String | **Required.** The id of the itinerary inside the request params. |
 
 #### Response
 
 ```json
 {
-  "_id": "6725031bd5a2d7588e2ce42a",
-  "email": "jana.elowainy@gmail.com",
-  "username": "tourguide",
-  "passwordHash": "$2b$10$6QP9BwFlpfF3sJq6Dl0DrOXnNIM95W9DpXiKwtCOpICsv7w9oO7A2",
-  "isAccepted": true,
-  "createdAt": {
-    "$date": "2024-11-01T16:34:35.090Z"
-  },
-  "updatedAt": {
-    "$date": "2024-11-30T13:03:54.129Z"
-  },
-  ...
+  Itinerary Document
 }
 ```
 
-### Delete Previous Work
+### Delete Itinerary By ID
 
 ```bash
-POST /tourGuide/:id/previous-work/:previousWorkId
+DELETE /itinerary/:id/
 ```
 
 #### Request
 
-| Parameter      | Type   | Description                                                           |
-| -------------- | ------ | --------------------------------------------------------------------- |
-| id             | string | **Required.** The tour guide's id in the request params               |
-| previousWorkId | string | **Required.** The tour guide's previous work id in the request params |
+| Parameter | Type   | Description                                                      |
+| --------- | ------ | ---------------------------------------------------------------- |
+| id        | String | **Required.** The id of the itinerary inside the request params. |
 
 #### Response
 
 ```json
 {
-  "id": "64b1f2f5e5b7cbe20c23a3c7",
-  "username": "moskiUser",
-  "preferredCurrency": "USD",
-  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  Deleted Itinerary Document
+}
+```
+
+### Add rating to Itinerary
+
+```bash
+POST /itinerary/:id/
+```
+
+#### Request
+
+| Parameter | Type   | Description                                                      |
+| --------- | ------ | ---------------------------------------------------------------- |
+| id        | String | **Required.** The id of the itinerary inside the request params. |
+| userId    | String | **Required.** The id of user inside the request body.            |
+| rating    | number | **Required.** The rating inside the request body.                |
+
+#### Response
+
+```json
+{
+  Updated Itinerary Document
+}
+```
+
+### Set Itinerary isAppropriate Status
+
+```bash
+PATCH /itinerary/set-inappropriate/:id
+```
+
+#### Request
+
+| Parameter       | Type    | Description                                                          |
+| --------------- | ------- | -------------------------------------------------------------------- |
+| id              | String  | **Required.** The id of the itinerary inside the request params.     |
+| isInappropriate | Boolean | **Required.** The values of isInappropriate inside the request body. |
+
+#### Response
+
+```json
+{
+  Updated Itinerary Document
 }
 ```
