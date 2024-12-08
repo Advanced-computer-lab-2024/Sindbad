@@ -39,11 +39,13 @@ export const getTrip = async (id) => {
     }
 };
 
-export const bookTrip = async (userId, tripId) => {
+export const bookTrip = async (userId, tripId, discount, type) => {
     try {
         const response = await axiosInstance.post(`/trip/${tripId}/book`, {
             resourceName: "Trip",
             userId,
+            discount,
+            type,
         });
         return response.data;
     } catch (error) {

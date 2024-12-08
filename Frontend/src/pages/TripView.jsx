@@ -1,13 +1,10 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-
 import GoogleMapRead from "@/components/custom/maps/GoogleMapRead";
-
 import ImagePlaceholder from "@/components/custom/ImagePlaceholder";
 import { useToast } from "@/hooks/use-toast";
 import { useUser, useCurrency } from "@/state management/userInfo";
 import { Convert } from "easy-currencies";
-
 import { Button } from "@/components/ui/button";
 import {
   Carousel,
@@ -16,13 +13,17 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-
 import { MapPin, CalendarDays, AlarmClock, ArrowRight } from "lucide-react";
-
 import { getTrip, bookTrip } from "@/services/TripApiHandler";
 import { getAdvertiser } from "@/services/AdvertiserApiHandler";
-
 import { useNavigate } from "react-router-dom";
+import { usePromoCode } from "@/services/PromoCodeApiHandler";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import SpinnerSVG from "@/SVGs/Spinner";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+
 
 function handleTripValues(trip) {
   if (!trip.description) {
@@ -41,6 +42,12 @@ function Trip() {
   const { id, role } = useUser();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [promoCode, setPromoCode] = useState("");
+  const [discount, setDiscount] = useState(0);
+  const [applied, setApplied] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [type, setType] = useState("cash");
+
 
   const getTripById = async () => {
     let response = await getTrip(tripId);
@@ -94,6 +101,72 @@ function Trip() {
     }
   }, [currency, trip]);
 
+  const handlePromoCodeApply = () => {
+    if (!promoCode || promoCode.trim() === "") {
+        toast({ description: "Please enter a promo code." });
+        return;
+    }
+
+    // Handle the async logic
+    const applyPromoCode = async () => {
+        try {
+            if(role !== "tourist") {
+                toast({ description: "You must be a tourist to apply a promo code." });
+                return;
+            }
+            const result = await usePromoCode(id, promoCode); // Use the promo code here
+            setLoading(false); // Reset loading state
+
+            if (result.discount) {
+                setDiscount(result.discount); // Set discount if the result contains it
+                setApplied(true); // Mark promo code as applied
+                toast({
+                    description: `Promo code applied! You got a ${result.discount}% discount.`,
+                });
+                setLoading(false); // Reset loading state
+            } else {
+                toast({ description: result.message || "Incorrect Promo Code." });
+                setLoading(false); // Reset loading state
+            }
+        } catch (error) {
+            toast({
+                description: error.message || "An unexpected error occurred.",
+            });
+            setLoading(false); // Reset loading state
+        } 
+    };
+
+    applyPromoCode(); // Call the async function to apply the promo code
+};
+
+const renderPromoCodeSection = () => (
+  <div className="flex items-center gap-2 w-full">
+    <div className="py-2 w-full">
+      <div className="flex w-full">
+        <Label className="text-sm pb-1" htmlFor="code">
+          Enter Promocode
+        </Label>
+      </div>
+      <Input
+        type="text"
+        id="code"
+        placeholder="Enter code.."
+        value={promoCode}
+        onChange={(e) => setPromoCode(e.target.value.trim())}
+        className=""
+        disabled={applied}
+      />
+    </div>
+    <Button
+      className="flex items-center justify-center mt-6 h-[28px] py-0 w-[65px]"
+      onClick={() => handlePromoCodeApply()}
+      disabled={loading || applied}
+    >
+      {loading ? <SpinnerSVG size={20} /> : "Apply"}
+    </Button>
+  </div>
+);
+
   if (!trip) {
     return (
       <div className="py-8 px-24 max-w-[1200px] flex gap-9 mx-auto">
@@ -112,8 +185,7 @@ function Trip() {
       toast({ description: "You must be a tourist to book transportation" });
       return; // Exit the function if not a tourist
     }
-
-    const response = await bookTrip(id, tripId);
+    const response = await bookTrip(id, tripId, discount, type);
     if (response.error) {
       console.error(response.error);
       toast({ description: "An error occurred, please try again later" });
@@ -227,8 +299,18 @@ function Trip() {
           </div>
 
           <div className="text-end">
+            <div className="w-full flex justify-between items-center mb-3 mt-2">
+              <p className="text-sm font-medium">Payment method</p>
+              <Tabs defaultValue="cash" className="">
+                <TabsList>
+                  <TabsTrigger value="cash" onClick={() => setType("cash")}>Cash</TabsTrigger>
+                  <TabsTrigger value="wallet" onClick={() => setType("wallet")}>Wallet</TabsTrigger>
+                </TabsList>
+              </Tabs>
+            </div>
+            {renderPromoCodeSection()}
             <p className="text-3xl font-semibold text-primary-950">
-              {convertedPrice && convertedPrice.toFixed(2)}
+              {convertedPrice && (convertedPrice.toFixed(2) - (convertedPrice.toFixed(2) * discount / 100)).toFixed(2)}
               <span className="text-xl font-medium text-gray-700"> {currency}</span>
             </p>
 
