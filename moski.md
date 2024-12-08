@@ -1,202 +1,233 @@
-## Itinerary Routes
+## User Routes
 
-### Get All Itineraries
+### Sign Up
 
 ```bash
-GET /itinerary/
+POST /user/signup
 ```
 
 #### Request
 
-| Parameter  | Type   | Description                                                                                                         |
-| ---------- | ------ | ------------------------------------------------------------------------------------------------------------------- |
-| searchTerm | String | **Optional.** The search term used to filter results inside the request query inside the request query.             |
-| budget     | Object | **Optional.** Contains budget-related filtering options (e.g., min, max) inside the request query.                  |
-| date       | Object | **Optional.** Contains date-related filtering options (e.g., start date, end date) inside the request query.        |
-| tag        | String | **Optional.** The tag used to filter results inside the request query.                                              |
-| rating     | Object | **Optional.** Contains rating-related filtering options (e.g., min, max) inside the request query.                  |
-| language   | String | **Optional.** The language preference for the results inside the request query.                                     |
-| sortBy     | String | **Optional.** The field by which the results are sorted inside the request query. Default is "availableDatesTimes". |
-| sortOrder  | String | **Optional.** The sorting order ("asc" or "desc") inside the request query. Default is "asc".                       |
-| page       | Number | **Optional.** The page number for pagination inside the request query. Default is 1.                                |
-| limit      | Number | **Optional.** The number of results per page inside the request query. Default is 10.                               |
-
-#### Response
-
-```json
-[
-  Itinerary 1 Document,
-  Itinerary 2 Document,
-  ...
-]
-```
-
-### Book Itinerary
-
-```bash
-POST /itinerary/book
-```
-
-#### Request
-
-| Parameter        | Type   | Description                                                                  |
-| ---------------- | ------ | ---------------------------------------------------------------------------- |
-| date             | String | **Required.** The date for the booking or event inside the request body.     |
-| adultTicketCount | Number | **Required.** The number of adult tickets inside the request body.           |
-| childTicketCount | Number | **Required.** The number of child tickets inside the request body.           |
-| itineraryId      | String | **Required.** The ID of the itinerary inside the request body.               |
-| userId           | String | **Required.** The ID of the user making the request inside the request body. |
+| Parameter | Type   | Description                                                                       |
+| --------- | ------ | --------------------------------------------------------------------------------- |
+| email     | String | **Required.** The email of the user inside the request body.                      |
+| username  | String | **Required.** The id of the user inside the request body.                         |
+| password  | String | **Required.** The password of the user inside the request body.                   |
+| role      | String | **Required.** The role of the user inside the request body.                       |
+| userData  | Object | **Required.** Additional User Data depending on the role inside the request body. |
 
 #### Response
 
 ```json
 {
-  Booked Itinerary Document,
-  "priceCharged" : 30
+  Created User (Tourist / Tour Guide / Tourism Governor / Advertiser / Seller / Admin) Document
 }
 ```
 
-### Cancel Itinerary Booking
+### Reset Password
 
 ```bash
-POST /itinerary/cancel
+POST /user/reset-password
 ```
 
 #### Request
 
-| Parameter   | Type   | Description                                                                  |
-| ----------- | ------ | ---------------------------------------------------------------------------- |
-| date        | String | **Required.** The date for the booking or event inside the request body.     |
-| itineraryId | String | **Required.** The ID of the itinerary inside the request body.               |
-| userId      | String | **Required.** The ID of the user making the request inside the request body. |
+| Parameter   | Type   | Description                                                         |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| newPassword | String | **Required.** The new password of the user inside the request body. |
+| id          | String | **Required.** The id of the user inside the request body.           |
+
+#### Response
+
+```json
+{
+  User (Tourist / Tour Guide / Tourism Governor / Advertiser / Seller / Admin) Document
+}
+```
+
+### Send Reset Password Email
+
+```bash
+POST /user/forgot-password
+```
+
+#### Request
+
+| Parameter | Type   | Description                                                     |
+| --------- | ------ | --------------------------------------------------------------- |
+| username  | String | **Required.** The username of the user inside the request body. |
 
 #### Response
 
 None
 
-### Get my Itineraries
+### Update User Password
 
 ```bash
-POST /itinerary/my-itineraries/:creatorId
+POST /user/changePassword/:id
 ```
 
 #### Request
 
-| Parameter | Type   | Description                                                              |
-| --------- | ------ | ------------------------------------------------------------------------ |
-| creatorId | String | **Required.** The creatorId of the tour guide inside the request params. |
+| Parameter   | Type   | Description                                                         |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| id          | String | **Required.** The id of the user inside the request params.         |
+| role        | String | **Required.** The role of the user inside the request body.         |
+| oldPassword | String | **Required.** The old password of the user inside the request body. |
+| newPassword | String | **Required.** The new password of the user inside the request body. |
+
+#### Response
+
+```json
+{
+  Updated User (Tourist / Tour Guide / Tourism Governor / Advertiser / Seller / Admin) Document
+}
+```
+
+### Change User System Acceptance Status
+
+```bash
+POST /user/changeAcceptance/:id
+```
+
+#### Request
+
+| Parameter  | Type    | Description                                                              |
+| ---------- | ------- | ------------------------------------------------------------------------ |
+| id         | String  | **Required.** The id of the user inside the request params.              |
+| role       | String  | **Required.** The role of the user inside the request body.              |
+| isAccepted | Boolean | **Required.** The isAccepted status of the user inside the request body. |
+
+#### Response
+
+```json
+{
+  Updated User (Tourist / Tour Guide / Tourism Governor / Advertiser / Seller / Admin) Document
+}
+```
+
+### Get User Role
+
+```bash
+GET /user/get-user-role/:id
+```
+
+#### Request
+
+| Parameter | Type   | Description                                                 |
+| --------- | ------ | ----------------------------------------------------------- |
+| id        | String | **Required.** The id of the user inside the request params. |
+
+#### Response
+
+```json
+{
+  "role": "tourist"
+}
+```
+
+### Get Users Pending to be accepted into system
+
+```bash
+GET /user/getPendingUsers
+```
+
+#### Request
+
+None
 
 #### Response
 
 ```json
 [
-  Itinerary 1 Document,
-  Itinerary 2 Document,
+  User 1 Document,
+  User 2 Document,
   ...
 ]
 ```
 
-### Comment on Itinerary
+### Check if user account is safe to delete
 
 ```bash
-POST /itinerary/:id/comment
+GET /user/canDelete/:id
 ```
 
 #### Request
 
-| Parameter | Type   | Description                                                                    |
-| --------- | ------ | ------------------------------------------------------------------------------ |
-| id        | String | **Required.** The id of the itinerary to comment on inside the request params. |
-| userId    | String | **Required.** The user id of the user inside the request body.                 |
-| comment   | String | **Required.** The user's comment inside the request body.                      |
+| Parameter | Type   | Description                                                 |
+| --------- | ------ | ----------------------------------------------------------- |
+| id        | String | **Required.** The id of the user inside the request params. |
+| role      | String | **Required.** The id of the user inside the request body.   |
 
 #### Response
 
 ```json
 {
-  Updated Itinerary Document
+  "canDelete": true
 }
 ```
 
-### Get Itinerary By ID
+### Get all Users
 
 ```bash
-GET /itinerary/:id/
+GET /user/
 ```
 
 #### Request
 
-| Parameter | Type   | Description                                                      |
-| --------- | ------ | ---------------------------------------------------------------- |
-| id        | String | **Required.** The id of the itinerary inside the request params. |
+None
+
+#### Response
+
+```json
+[
+  User 1 Document,
+  User 2 Document,
+  ...
+]
+```
+
+### Delete User Account
+
+```bash
+DELETE /user/:id
+```
+
+#### Request
+
+| Parameter | Type   | Description                                                 |
+| --------- | ------ | ----------------------------------------------------------- |
+| id        | String | **Required.** The id of the user inside the request params. |
+| role      | String | **Required.** The id of the user inside the request body.   |
 
 #### Response
 
 ```json
 {
-  Itinerary Document
+  "deletedCount": 10,
+  "userDeleted": true
 }
 ```
 
-### Delete Itinerary By ID
+### Change status of account deletion request
 
 ```bash
-DELETE /itinerary/:id/
+PATCH /user/request-account-deletion/:id
 ```
 
 #### Request
 
-| Parameter | Type   | Description                                                      |
-| --------- | ------ | ---------------------------------------------------------------- |
-| id        | String | **Required.** The id of the itinerary inside the request params. |
+| Parameter                  | Type   | Description                                                 |
+| -------------------------- | ------ | ----------------------------------------------------------- |
+| id                         | String | **Required.** The id of the user inside the request params. |
+| role                       | String | **Required.** The role of the user inside the request body. |
+| isRequestedAccountDeletion | String | **Optional.** The id of the user inside the request body.   |
 
 #### Response
 
 ```json
 {
-  Deleted Itinerary Document
-}
-```
-
-### Add rating to Itinerary
-
-```bash
-POST /itinerary/:id/
-```
-
-#### Request
-
-| Parameter | Type   | Description                                                      |
-| --------- | ------ | ---------------------------------------------------------------- |
-| id        | String | **Required.** The id of the itinerary inside the request params. |
-| userId    | String | **Required.** The id of user inside the request body.            |
-| rating    | number | **Required.** The rating inside the request body.                |
-
-#### Response
-
-```json
-{
-  Updated Itinerary Document
-}
-```
-
-### Set Itinerary isAppropriate Status
-
-```bash
-PATCH /itinerary/set-inappropriate/:id
-```
-
-#### Request
-
-| Parameter       | Type    | Description                                                          |
-| --------------- | ------- | -------------------------------------------------------------------- |
-| id              | String  | **Required.** The id of the itinerary inside the request params.     |
-| isInappropriate | Boolean | **Required.** The values of isInappropriate inside the request body. |
-
-#### Response
-
-```json
-{
-  Updated Itinerary Document
+  "deletedCount": 10,
+  "userDeleted": true
 }
 ```
