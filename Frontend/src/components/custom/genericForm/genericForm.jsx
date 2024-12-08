@@ -244,14 +244,30 @@ export function GenericForm({ type, data, id, fetcher }) {
 		}
 	}
 
+	function navigateBack() {
+		if (["tourist", "tourGuide", "seller", "advertiser", "admin", "tourismGovernor", "company", "experience"].includes(type)) {
+			navigate("/app/profile");
+		}
+		else {
+			navigate(-1);
+		}
+	}
+
 	return (
 		<div>
 			<Form {...form}>
 				<form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
 					{formFields.map((field) => renderField(field))}
-					<Button type="submit" disabled={loading} className="w-[72px] justify-center mt-2">
-						{loading ? <SpinnerSVG /> : "Submit"}
-					</Button>
+					<div className="flex justify-between">
+						{type !== "complaint" && type !== "flightBooking" &&
+							<Button disabled={loading} type="button" onClick={() => navigateBack()} variant="link" className="p-0 text-xs">
+								Cancel
+							</Button>
+						}
+						<Button type="submit" disabled={loading} className="w-[72px] justify-center mt-2">
+							{loading ? <SpinnerSVG /> : "Submit"}
+						</Button>
+					</div>
 				</form>
 			</Form>
 		</div>
