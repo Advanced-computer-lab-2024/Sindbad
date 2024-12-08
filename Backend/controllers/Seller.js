@@ -171,7 +171,7 @@ const deleteSeller = async (req, res) => {
 			return res.status(404).json({ message: "Seller not found" });
 		}
 
-		res.status(204).send(); // No content to return after deletion
+		res.status(204).send("successfully deleted"); // No content to return after deletion
 	} catch (error) {
 		return res.status(500).json({
 			message: "Error deleting seller",
