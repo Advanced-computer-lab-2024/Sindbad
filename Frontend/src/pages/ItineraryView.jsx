@@ -219,11 +219,19 @@ const Itinerary = () => {
         applyPromoCode(); // Call the async function to apply the promo code
     };
 
-    const handleItineraryBooking = () => {
+    const handleItineraryBooking = async () => {
+        if (selectedDate === -1) {
+            toast({ description: "Please select a date and time." });
+            return;
+        }
+        if(adult + child === 0) {
+            toast({ description: "Please select at least one ticket." });
+            return;
+        }
         if (currentPaymentType === "wallet") {
-            payWithWallet();
+            await payWithWallet();
         } else {
-            payWithStripe();
+            await payWithStripe();
         }
     };
 
@@ -236,16 +244,27 @@ const Itinerary = () => {
                 childTicketCount: child,
                 userId: id,
             });
-            const response = checkoutWithWallet(id, itinerary, discount, "itinerary");
-
-            if (response.data) {
+            const cart = {
+                ...itinerary,
+                date: itinerary.availableDatesTimes[selectedDate],
+                adultTicketCount: adult,
+                childTicketCount: child,
+                userId: id,
+            };
+            const response = await checkoutWithWallet(id, cart, discount, "itinerary");
+            if (!response.error) {
                 toast({ description: "Payment successful!" });
                 navigate("/checkout/success");
             }
+            else {
+                throw new Error(response.error);
+            }
         } catch (error) {
             console.error("Error paying with wallet:", error);
+            toast({ description: "An error occurred, please try again later." });
         }
     };
+
     const payWithStripe = async () => {
         setItinerary({
             ...itinerary,

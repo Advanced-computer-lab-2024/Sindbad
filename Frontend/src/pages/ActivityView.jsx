@@ -31,7 +31,7 @@ import {
 } from "@/services/TouristApiHandler";
 import { Input } from "@/components/ui/input";
 import { usePromoCode } from "@/services/PromocodeApiHandler";
-import { Tabs, TabsList, TabsTrigger  } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 function handleActivityValues(activity) {
   if (!activity.description) {
@@ -176,7 +176,7 @@ function Activity() {
     );
   }
 
-   const handleBooking = async () => {
+  const handleBooking = async () => {
     if (currentPaymentType === "wallet") {
       payWithWallet();
     } else {
@@ -187,8 +187,16 @@ function Activity() {
   const payWithWallet = async () => {
     try {
       const response = await checkoutWithWallet(id, activity, discount, "activity");
+      if (!response.error) {
+        toast({ description: "Payment successful!" });
+        navigate("/checkout/success");
+      }
+      else {
+        throw new Error(response.error);
+      }
     } catch (error) {
       console.error("Error paying with wallet:", error);
+      toast({ description: "An error occurred, please try again later." });
     }
   };
 
@@ -215,8 +223,8 @@ function Activity() {
         onChange={(e) => setPromoCode(e.target.value)}
         disabled={applied}
       />
-      <Button 
-        onClick={handlePromoCodeApply} 
+      <Button
+        onClick={handlePromoCodeApply}
         disabled={applied || loading}
       >
         {loading ? "Applying..." : applied ? "Applied" : "Apply"}
@@ -356,10 +364,10 @@ function Activity() {
             {renderPromoCodeSection()}
 
             <Tabs defaultValue="stripe" className="w-[400px]">
-                <TabsList>
-                    <TabsTrigger value="stripe" onClick={()=> setCurrentPaymentType("stripe")}>Credit</TabsTrigger>
-                    <TabsTrigger value="wallet" onClick={()=> setCurrentPaymentType("wallet")}>Wallet</TabsTrigger>
-                </TabsList>
+              <TabsList>
+                <TabsTrigger value="stripe" onClick={() => setCurrentPaymentType("stripe")}>Credit</TabsTrigger>
+                <TabsTrigger value="wallet" onClick={() => setCurrentPaymentType("wallet")}>Wallet</TabsTrigger>
+              </TabsList>
             </Tabs>
             <div className="">
               {activity.isBookingOpen ? (
