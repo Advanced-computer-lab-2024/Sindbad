@@ -32,6 +32,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { usePromoCode } from "@/services/PromocodeApiHandler";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Label } from "@/components/ui/label";
+import SpinnerSVG from "@/SVGs/Spinner";
 
 function handleActivityValues(activity) {
   if (!activity.description) {
@@ -61,7 +63,7 @@ function Activity() {
   const [creator, setCreator] = useState(null);
   const [totalRatings, setTotalRatings] = useState(0);
   const [error, setError] = useState(false);
-  const { id } = useUser();
+  const { id, role } = useUser();
   const { toast } = useToast();
   const currency = useCurrency();
   const [convertedPrice, setConvertedPrice] = useState(null);
@@ -72,6 +74,7 @@ function Activity() {
   const [promoCode, setPromoCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [applied, setApplied] = useState(false);
+  const [totalCost, setTotalCost] = useState(0);
 
   const getActivity = async () => {
     let response = await getActivityById(activityId);
@@ -99,13 +102,20 @@ function Activity() {
     }
   };
 
-  const handlePromoCodeApply = () => {
-    if (!promoCode || promoCode.trim() === "") {
-      toast({ description: "Please enter a promo code." });
+  const handlePromoCodeApply = async () => {
+    setLoading(true);
+
+    if (role !== "tourist") {
+      toast({ description: "You must be a tourist to apply a promo code." });
+      setLoading(false);
       return;
     }
 
-    setLoading(true);
+    if (!promoCode || promoCode.trim() === "") {
+      toast({ description: "Please enter a promo code." });
+      setLoading(false);
+      return;
+    }
 
     const applyPromoCode = async () => {
       try {
@@ -152,6 +162,9 @@ function Activity() {
           const rateMin = await convert.amount(activity.price.min).to(currency);
           const rateMax = await convert.amount(activity.price.max).to(currency);
           setConvertedPrice({ min: rateMin, max: rateMax });
+        } else if (activity.price) {
+          const rate = await convert.amount(activity.price).to(currency);
+          setConvertedPrice(rate);
         }
       } catch (error) {
         console.error("Error fetching conversion rate:", error);
@@ -163,6 +176,13 @@ function Activity() {
       fetchConversionRate();
     }
   }, [currency, activity]);
+
+  useEffect(() => {
+    const baseCost = convertedPrice ? convertedPrice : activity?.price; // Use converted price if available
+    const discountedCost =
+      discount > 0 ? baseCost * (1 - discount / 100) : baseCost; // Apply discount if any
+    setTotalCost(discountedCost?.toFixed(2)); // Update total cost
+  }, [convertedPrice, discount, activity?.price]);
 
   if (!activity) {
     return (
@@ -177,11 +197,17 @@ function Activity() {
   }
 
   const handleBooking = async () => {
-    if (currentPaymentType === "wallet") {
-      payWithWallet();
-    } else {
-      payWithStripe();
+    setLoading(true);
+    if (role !== "tourist") {
+      toast({ description: "You must be a tourist to book an activity." });
+      return;
     }
+    if (currentPaymentType === "wallet") {
+      await payWithWallet();
+    } else {
+      await payWithStripe();
+    }
+    setLoading(false);
   };
 
   const payWithWallet = async () => {
@@ -215,19 +241,29 @@ function Activity() {
   };
 
   const renderPromoCodeSection = () => (
-    <div className="flex items-center space-x-2">
-      <Input
-        type="text"
-        placeholder="Enter promo code"
-        value={promoCode}
-        onChange={(e) => setPromoCode(e.target.value)}
-        disabled={applied}
-      />
+    <div className="flex items-center gap-2 w-full">
+      <div className="py-2 w-full">
+        <div className="flex w-full">
+          <Label className="text-sm pb-1" htmlFor="code">
+            Enter Promocode
+          </Label>
+        </div>
+        <Input
+          type="text"
+          id="code"
+          placeholder="Enter code.."
+          value={promoCode}
+          onChange={(e) => setPromoCode(e.target.value.trim())}
+          className=""
+          disabled={applied}
+        />
+      </div>
       <Button
-        onClick={handlePromoCodeApply}
-        disabled={applied || loading}
+        className="flex items-center justify-center mt-6 h-[28px] py-0 w-[65px]"
+        onClick={() => handlePromoCodeApply()}
+        disabled={loading || applied}
       >
-        {loading ? "Applying..." : applied ? "Applied" : "Apply"}
+        {loading ? <SpinnerSVG size={20} /> : "Apply"}
       </Button>
     </div>
   );
@@ -257,37 +293,24 @@ function Activity() {
             </div>
           </div>
 
-          {/*description*/}
-          <p className="text-sm">{activity.description}</p>
+          {/*description and category*/}
+          <div className="text-sm flex flex-col gap-2">
+            <p>{activity.description}</p>
+            <p><span className="font-semibold">Category: </span>{activity.category.name}</p>
+          </div>
 
           {/*Tags*/}
           <div>
             <h2 className="text-lg font-semibold mb-1">Tagged As</h2>
-            <div className="flex flex-wrap gap-2 text-sm">
+            <div className="flex flex-wrap gap-2 text-sm text-light">
               {activity.tags.map((tag) => (
                 <div
                   key={tag._id}
-                  className="flex gap-1 text-xs text-center items-center bg-gradient-to-br from-primary-700 to-primary-900 px-3 py-1.5 rounded-full"
+                  className="flex gap-1 text-xs items-center bg-gradient-to-br from-primary-600 to-primary-800 px-3 py-1.5 rounded-full"
                 >
                   {tag.name}
                 </div>
               ))}
-            </div>
-          </div>
-
-          <div>
-            <h2 className="text-lg font-semibold mb-1">Location</h2>
-            <div className="flex flex-col gap-2">
-              <div className="bg-light h-[250px] rounded-md overflow-clip">
-                <GoogleMapRead
-                  lat={activity.location.coordinates.lat}
-                  lng={activity.location.coordinates.lng}
-                />
-              </div>
-              <div className="flex items-start gap-1">
-                <MapPin size={16} className="shrink-0" />
-                <span className="text-sm">{activity.location.address}</span>
-              </div>
             </div>
           </div>
 
@@ -305,6 +328,22 @@ function Activity() {
                 <span className="text-sm">
                   {new Date(activity.dateTime).toTimeString()}
                 </span>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h2 className="text-lg font-semibold mb-1">Location</h2>
+            <div className="flex flex-col gap-2">
+              <div className="bg-light h-[250px] rounded-md overflow-clip">
+                <GoogleMapRead
+                  lat={activity.location.coordinates.lat}
+                  lng={activity.location.coordinates.lng}
+                />
+              </div>
+              <div className="flex items-start gap-1">
+                <MapPin size={16} className="shrink-0" />
+                <span className="text-sm">{activity.location.address}</span>
               </div>
             </div>
           </div>
@@ -350,7 +389,7 @@ function Activity() {
             ) : (
               // If it's a single price (number)
               <p className="text-3xl font-semibold">
-                {activity.price.toFixed(2)}
+                {totalCost}
                 <span className="text-xl font-medium"> {currency}</span>
               </p>
             )}
@@ -367,28 +406,32 @@ function Activity() {
             <hr className="border-neutral-300 border w-full my-4" />
             {renderPromoCodeSection()}
 
-            <Tabs defaultValue="stripe" className="w-[400px]">
-              <TabsList>
-                <TabsTrigger value="stripe" onClick={() => setCurrentPaymentType("stripe")}>Credit</TabsTrigger>
-                <TabsTrigger value="wallet" onClick={() => setCurrentPaymentType("wallet")}>Wallet</TabsTrigger>
-              </TabsList>
-            </Tabs>
+            <div className="w-full flex justify-between items-center mb-3 mt-2">
+              <p className="text-sm font-medium">Payment method</p>
+              <Tabs defaultValue="stripe" className="">
+                <TabsList>
+                  <TabsTrigger value="stripe" onClick={() => setCurrentPaymentType("stripe")}>Credit</TabsTrigger>
+                  <TabsTrigger value="wallet" onClick={() => setCurrentPaymentType("wallet")}>Wallet</TabsTrigger>
+                </TabsList>
+              </Tabs>
+            </div>
+
             <div className="">
               {activity.isBookingOpen ? (
                 <div className="items-center flex flex-col gap-1">
-                  <div className="flex gap-2">
-                    <Button onClick={handleBooking}>
+                  <div className="flex gap-2 w-full">
+                    <Button onClick={handleBooking} className="w-full">
                       Book activity
                       <ArrowRight className="inline-block ml-1" size={12} />
                     </Button>
                     {/* Cancel Booking Button */}
-                    <Button variant="outline" onClick={handleCancelBooking}>
+                    <Button onClick={handleCancelBooking} className="bg-neutral-300 text-dark w-max">
                       Cancel booking
                     </Button>
                   </div>
                   {activity.headCount > 0 && (
-                    <p className="text-sm text-neutral-400">
-                      {activity.headCount} Sindbad users have already registerd!
+                    <p className="text-xs text-neutral-500 mt-2">
+                      {activity.headCount} Sindbad user{activity.headCount > 1 && "s"} ha{activity.headCount > 1 ? "ve" : "s"} already registered
                     </p>
                   )}
                 </div>

@@ -319,7 +319,7 @@ const Itinerary = () => {
                     {/* Supported Languages */}
                     <div>
                         <h2 className="text-lg font-semibold mb-1">Supported Languages</h2>
-                        <div className="flex flex-wrap gap-2 text-sm text-white">
+                        <div className="flex flex-wrap gap-2 text-sm text-light">
                             {itinerary.languages.map((lang) => (
                                 <div
                                     key={lang}
@@ -572,10 +572,10 @@ const Itinerary = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="relative z-10 mb-2 -mt-1">
+                                <div className="relative z-10 mb-2 -mt-1 w-full">
                                     {!applied ? (
-                                        <div className="grid grid-cols-3 w-full max-w-sm items-center gap-1">
-                                            <div className="col-span-2 p-2">
+                                        <div className="flex items-center gap-2">
+                                            <div className="p-2">
                                                 <Label className="text-sm pb-1" htmlFor="code">
                                                     Enter Promocode
                                                 </Label>
@@ -589,7 +589,7 @@ const Itinerary = () => {
                                                 />
                                             </div>
                                             <Button
-                                                className="col-span-1 flex items-center justify-center mt-6 h-[28px] py-0"
+                                                className="flex items-center justify-center mt-6 h-[28px] py-0 w-max"
                                                 onClick={() => handlePromoCodeApply()}
                                             >
                                                 Apply
@@ -602,7 +602,7 @@ const Itinerary = () => {
                                                     type="text"
                                                     id="code"
                                                     placeholder={promoCode} // Display the applied promo code
-                                                    className="p-2"
+                                                    className=""
                                                     disabled
                                                 />
                                             </div>

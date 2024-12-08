@@ -69,21 +69,29 @@ function MainPage() {
 
   return (
     <div>
-      <div className="bg-primary-700/50 flex justify-center items-center sticky top-0 z-50 backdrop-blur-md">
+      <div className="bg-white shadow-sm flex justify-center items-center sticky top-0 z-50 backdrop-blur-md">
         <div className="px-24 py-2 max-w-[1200px] w-full justify-between flex gap-4">
-          <div className="flex gap-6 items-center justify-center">
-            <LogoSVG
+          {/* <div className="flex gap-6 items-center justify-center"> */}
+          <div className="w-[173px]">
+            <div className="flex items-center gap-1 cursor-pointer w-max"
               onClick={() => {
                 navigate(`/`, { replace: true });
               }}
-              className="h-10 w-10 cursor-pointer"
-            />
-            <NavigationMenu>
-              <NavigationMenuList className={navigationMenuTriggerStyle()}>
-                {renderFields()}
-              </NavigationMenuList>
-            </NavigationMenu>
+            >
+              <LogoSVG
+                className="h-10 w-10"
+              />
+              <p className="text-primary-900 font-bold">
+                Sindbad
+              </p>
+            </div>
           </div>
+          <NavigationMenu>
+            <NavigationMenuList className={navigationMenuTriggerStyle()}>
+              {renderFields()}
+            </NavigationMenuList>
+          </NavigationMenu>
+          {/* </div> */}
           <div className="flex gap-4 items-center">
             {renderedFields.includes("wishlist") && (
               <button
