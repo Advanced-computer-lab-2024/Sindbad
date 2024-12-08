@@ -1761,6 +1761,56 @@ GET /hotel/by-city
 | cityCode         | String | **Required.**  |
 | radius    | Number | **Required.** Represents the radius (in kilometers) around the cityCode to search for hotels. |
 
+#### Response
+```json
+{
+  "data": [
+    {
+      "chainCode": "ZZ",
+      "iataCode": "NCE",
+      "dupeId": 504813011,
+      "name": "HOTEL 3",
+      "hotelId": "ZZNCENVX",
+      "geoCode": {
+        "latitude": 43.66665,
+        "longitude": 7.21465
+      },
+      "address": {
+        "countryCode": "FR"
+      },
+      "distance": {
+        "value": 0.92,
+        "unit": "KM"
+      }
+    },
+    {
+      "chainCode": "NN",
+      "iataCode": "NCE",
+      "dupeId": 700091936,
+      "name": "CAMPANILE NICE - A?ROPORT",
+      "hotelId": "NNNCE357",
+      "geoCode": {
+        "latitude": 43.66686,
+        "longitude": 7.21397
+      },
+      "address": {
+        "countryCode": "FR"
+      },
+      "distance": {
+        "value": 0.96,
+        "unit": "KM"
+      }
+    }
+  ],
+  "meta": {
+    "count": 2,
+    "links": {
+      "self": "http://test.api.amadeus.com/reference-data/locations/hotels/by-city?cityCode=NCE&radius=1"
+    }
+  }
+}
+```
+
 ### Find Hotel by Geographical Code
 
 #### Request
@@ -1774,6 +1824,103 @@ GET /hotel/by-geocode
 | longitude         | Number | **Required.**  |
 | radius    | Number | **Required.** Represents the radius (in kilometers) around the cityCode to search for hotels. ||
 
+```json
+{
+  "data": [
+    {
+      "chainCode": "OI",
+      "iataCode": "SXD",
+      "dupeId": 700118746,
+      "name": "HOTEL OMEGA - VALBONNE",
+      "hotelId": "OISXD968",
+      "geoCode": {
+        "latitude": 43.61428,
+        "longitude": 7.05464
+      },
+      "address": {
+        "countryCode": "FR"
+      },
+      "distance": {
+        "value": 0.73,
+        "unit": "KM"
+      }
+    },
+    {
+      "chainCode": "DH",
+      "iataCode": "SCR",
+      "dupeId": 505001770,
+      "name": "CHECK SINGLE CIF DHSCRMS8",
+      "hotelId": "DHSCRMS8",
+      "geoCode": {
+        "latitude": 43.62215,
+        "longitude": 7.04024
+      },
+      "distance": {
+        "value": 0.82,
+        "unit": "KM"
+      }
+    },
+    {
+      "chainCode": "DH",
+      "iataCode": "VLI",
+      "dupeId": 504621595,
+      "name": "CHECK SINGLE CIF DHVLIMS8",
+      "hotelId": "DHVLIMS8",
+      "geoCode": {
+        "latitude": 43.62215,
+        "longitude": 7.04024
+      },
+      "distance": {
+        "value": 0.82,
+        "unit": "KM"
+      }
+    },
+    {
+      "chainCode": "DH",
+      "iataCode": "AET",
+      "dupeId": 504621441,
+      "name": "CHECK SINGLE CIF DHAETMS8",
+      "hotelId": "DHAETMS8",
+      "geoCode": {
+        "latitude": 43.62215,
+        "longitude": 7.04024
+      },
+      "address": {
+        "countryCode": "US"
+      },
+      "distance": {
+        "value": 0.82,
+        "unit": "KM"
+      }
+    },
+    {
+      "chainCode": "DH",
+      "iataCode": "NYC",
+      "dupeId": 504621445,
+      "name": "CHECK SINGLE CIF DHNYCMS8",
+      "hotelId": "DHNYCMS8",
+      "geoCode": {
+        "latitude": 43.62215,
+        "longitude": 7.04024
+      },
+      "address": {
+        "countryCode": "US"
+      },
+      "distance": {
+        "value": 0.82,
+        "unit": "KM"
+      }
+    }
+  ],
+  "meta": {
+    "count": 5,
+    "links": {
+      "self": "http://test.api.amadeus.com/reference-data/locations/hotels/by-geocode?latitude=43.61999752&longitude=7.0499998&radius=1"
+    }
+  }
+}
+```
+
 ### Find Hotel by id
 
 #### Request
@@ -1784,6 +1931,85 @@ GET /hotel/:hotelId/offers
 | Parameter  | Type   | Description                                          |
 |------------|--------|------------------------------------------------------|
 | hotelId         | String | **Required.** |
+
+#### Response
+```json
+{
+  "data": {
+    "type": "hotel-offers",
+    "hotel": {
+      "type": "hotel",
+      "hotelId": "MCLONGHM",
+      "chainCode": "MC",
+      "name": "JW MARRIOTT GROSVENOR HOUSE",
+      "cityCode": "LON",
+      "address": {
+        "countryCode": "GB"
+      },
+      "amenities": [
+        "CRIBS_AVAILABLE"
+      ]
+    },
+    "available": true,
+    "offers": [
+      {
+        "id": "TSXOJ6LFQ2",
+        "checkInDate": "2023-11-22",
+        "checkOutDate": "2023-11-23",
+        "rateCode": "V  ",
+        "rateFamilyEstimated": {
+          "code": "PRO",
+          "type": "P"
+        },
+        "description": {
+          "text": "Executive King Room, Executive Lounge Access, 1 King, 35sqm/377sqft-40sqm/430sqft, Wireless in ternet, for a fee, Wired internet, for a fee, C A credit card is required for payment to guarantee the Prepay Non-refundable Non-changeable rate. Prepay rates will be charged the full cost of the reservation within 24 hours of making the reservation. If payment is unsuccessful within 48 hours of making the reservation, the hotel reserves the right to cancel the reservation. Date changes to the reservation are not allowed. Cancellation will result in forfeiture of the prepayment. The credit card used at the time of making the reservation must be valid for the entire stay.",
+          "lang": "EN"
+        },
+        "room": {
+          "type": "ELE",
+          "typeEstimated": {
+            "beds": 1,
+            "bedType": "DOUBLE"
+          },
+          "description": {
+            "text": "Prepay Non-refundable Non-changeable, prepay in full",
+            "lang": "EN"
+          }
+        },
+        "guests": {
+          "adults": 1
+        },
+        "price": {
+          "currency": "GBP",
+          "base": "716.00",
+          "total": "716.00",
+          "variations": {
+            "changes": [
+              {
+                "startDate": "2023-11-22",
+                "endDate": "2023-11-23",
+                "base": "716.00"
+              }
+            ]
+          }
+        },
+        "policies": {
+          "paymentType": "deposit",
+          "cancellation": {
+            "description": {
+              "text": "NON-REFUNDABLE RATE"
+            },
+            "type": "FULL_STAY"
+          }
+        }
+      }
+    ]
+  },
+  "meta": {
+    "lang": "EN"
+  }
+}
+```
 
 ### Book Hotel
 
@@ -1798,7 +2024,128 @@ GET /hotel/book
 | bookingId    | String | **Required.** Hotel Offer Id. |
 | travelerId           | String | **Required.** |
 
-
+#### Response
+```json
+{
+  "data": {
+    "type": "hotel-order",
+    "id": "V0g2VFJaLzIwMjQtMDYtMDc=",
+    "hotelBookings": [
+      {
+        "type": "hotel-booking",
+        "id": "MS84OTkyMjcxMC85MDIyNDU0OQ==",
+        "bookingStatus": "CONFIRMED",
+        "hotelProviderInformation": [
+          {
+            "hotelProviderCode": "AR",
+            "confirmationNumber": "89922710"
+          }
+        ],
+        "roomAssociations": [
+          {
+            "hotelOfferId": "******",
+            "guestReferences": [
+              {
+                "guestReference": "1"
+              }
+            ]
+          }
+        ],
+        "hotelOffer": {
+          "id": "******",
+          "type": "hotel-offer",
+          "category": "TYPE_CONDITIONAL",
+          "checkInDate": "2024-06-07",
+          "checkOutDate": "2024-06-08",
+          "guests": {
+            "adults": 1
+          },
+          "policies": {
+            "cancellations": [
+              {
+                "amount": "215.05",
+                "deadline": "2024-06-06T23:59:00+02:00"
+              }
+            ],
+            "paymentType": "GUARANTEE"
+          },
+          "price": {
+            "base": "195.50",
+            "currency": "EUR",
+            "sellingTotal": "215.05",
+            "taxes": [
+              {
+                "amount": "19.55",
+                "code": "VALUE_ADDED_TAX",
+                "currency": "EUR",
+                "included": false,
+                "pricingFrequency": "PER_STAY",
+                "pricingMode": "PER_PRODUCT"
+              }
+            ],
+            "total": "215.05",
+            "variations": {
+              "changes": [
+                {
+                  "endDate": "2024-06-08",
+                  "startDate": "2024-06-07",
+                  "base": "195.50",
+                  "currency": "EUR"
+                }
+              ]
+            }
+          },
+          "rateCode": "S9R",
+          "room": {
+            "description": {
+              "lang": "EN",
+              "text": "Marriott Senior Discount, includes"
+            },
+            "type": "XMI"
+          },
+          "roomQuantity": 1
+        },
+        "hotel": {
+          "hotelId": "ARMADAIT",
+          "chainCode": "AR",
+          "name": "AC BY MARRIOTT HOTEL AITANA",
+          "self": "https://test.travel.api.amadeus.com/v1/reference-data/locations/by-hotel/ARMADAIT"
+        },
+        "payment": {
+          "method": "CREDIT_CARD",
+          "paymentCard": {
+            "paymentCardInfo": {
+              "vendorCode": "VI",
+              "cardNumber": "415128XXXXXX1370",
+              "expiryDate": "0826",
+              "holderName": "BOB SMITH"
+            }
+          }
+        },
+        "travelAgentId": "00000000"
+      }
+    ],
+    "guests": [
+      {
+        "tid": 1,
+        "id": 1,
+        "title": "MR",
+        "firstName": "BOB",
+        "lastName": "SMITH",
+        "phone": "+33679278416",
+        "email": "bob.smith@email.com"
+      }
+    ],
+    "associatedRecords": [
+      {
+        "reference": "WH6TRZ",
+        "originSystemCode": "GDS"
+      }
+    ],
+    "self": "http://test.api.amadeus.com/v2/booking/hotel-orders/V0g2VFJaLzIwMjQtMDYtMDc="
+  }
+}
+```
 
 ## Itinerary Routes
 
