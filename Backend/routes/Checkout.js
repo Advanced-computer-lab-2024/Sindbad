@@ -76,7 +76,7 @@ router.post("/stripe", async (req, res) => {
         line_items,
         mode: "payment",
         discounts: promoCode ? [{ coupon: promoCode }] : [],
-        success_url: `${YOUR_DOMAIN}/checkout/success`,
+        success_url: `${YOUR_DOMAIN}checkout/success`,
         cancel_url: `${YOUR_DOMAIN}?canceled=true`,
         metadata: {
           userId,
@@ -92,7 +92,7 @@ router.post("/stripe", async (req, res) => {
         line_items,
         mode: "payment",
         discounts: promoCode ? [{ coupon: promoCode }] : [],
-        success_url: `${YOUR_DOMAIN}/checkout/success`,
+        success_url: `${YOUR_DOMAIN}checkout/success`,
         cancel_url: `${YOUR_DOMAIN}?canceled=true`,
         metadata: {
           userId,
@@ -114,7 +114,7 @@ router.post("/stripe", async (req, res) => {
         line_items,
         mode: "payment",
         discounts: promoCode ? [{ coupon: promoCode }] : [],
-        success_url: `${YOUR_DOMAIN}/checkout/success`,
+        success_url: `${YOUR_DOMAIN}checkout/success`,
         cancel_url: `${YOUR_DOMAIN}?canceled=true`,
         metadata: {
           userId,
