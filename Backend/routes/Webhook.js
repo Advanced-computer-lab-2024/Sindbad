@@ -98,7 +98,7 @@ const purchaseSuccessful = async (req, res) => {
       user.orders.push(userOrder);
 
       // Increment product.numSales for each product in the cart
-      for (const item of cart) {
+      for (const item of user.cart) {
         const product = await Product.findById(item.productID._id);
         if (product) {
           product.numSales += item.quantity;
