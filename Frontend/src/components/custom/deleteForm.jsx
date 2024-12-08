@@ -6,8 +6,10 @@ import { deleteTrip } from "@/services/TripApiHandler";
 
 import { Button } from "../ui/button";
 import { deleteUser } from "@/services/UserApiHandler";
+import { useToast } from "@/hooks/use-toast";
 
 function DeleteForm({ type, data }) {
+  const { toast } = useToast();
   const handleButtonClick = () => {
     if (type === "site") {
       deleteSite(data._id);
@@ -32,6 +34,7 @@ function DeleteForm({ type, data }) {
     if (type === "transportation") {
       deleteTrip(data._id);
     }
+    toast({ description: "Request being processed by an admin" });
   };
   return (
     <div>

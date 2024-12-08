@@ -127,7 +127,7 @@ function ProfileBanner({ userData, profileId, id, profileRole, setEditing }) {
 
                     {/* phone number */}
                     {profileRole !== "tourist" && (userData.mobileNumber || userData.hotline) && (
-                        <div className="flex gap-1 items-center bg-gradient-to-br from-primary-700 to-primary-900 px-3 py-1.5 rounded-full">
+                        <div className="text-light flex gap-1 items-center bg-gradient-to-br from-primary-700 to-primary-900 px-3 py-1.5 rounded-full">
                             <div className="shrink-0">
                                 <Phone size={16} />
                             </div>
