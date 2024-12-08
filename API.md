@@ -2166,6 +2166,14 @@ POST /PromoCode/
 | promocode  | String | **Required.** The promocode name passed in the request body.|
 | discount   | Number | **Required.** The discount associates with the promo code.  |
 
+#### Response
+```json
+{
+  "message": "Promo Code and Stripe coupon created successfully!",
+  Promocode Document
+}
+```
+
 ### Use Promo Code
 
 #### Request
@@ -2178,6 +2186,14 @@ PUT /PromoCode/:id
 | id         | String | **Required.** Id of the tourist using the promo code.       |
 | promocode  | String | **Required.** The promocode name passed in the request body.|
 
+#### Response
+```json
+{
+  "message": "Promo code applied.",
+  "discount": 50,
+  "stripeID": "3mdQ1apG"
+}
+``
 
 ## Sales Routes
 - `GET /sale/my-product-sales/:creatorId`: Get product sales by creator ID
