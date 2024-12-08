@@ -1,77 +1,190 @@
-## Auth Routes
+## Tour Guide Routes
 
-### Login
+### Comment on Tour Guide
 
 ```bash
-POST /auth/
+POST /tourGuide/:id/comment
 ```
 
 #### Request
 
-| Parameter | Type   | Description                                           |
-| --------- | ------ | ----------------------------------------------------- |
-| username  | String | **Required.** The user's username in the request body |
-| password  | String | **Required.** The user's password in the request body |
+| Parameter | Type   | Description                                             |
+| --------- | ------ | ------------------------------------------------------- |
+| id        | String | **Required.** The tour guide's id in the request params |
+| userId    | String | **Required.** The user's id in the request body         |
+| comment   | String | **Required.** The user's comment in the request body    |
 
 #### Response
 
 ```json
 {
-  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "role": "tourist",
-  "id": "64b1f2f5e5b7cbe20c23a3c7"
+  "_id": "6725031bd5a2d7588e2ce42a",
+  "email": "jana.elowainy@gmail.com",
+  "username": "tourguide",
+  "passwordHash": "$2b$10$6QP9BwFlpfF3sJq6Dl0DrOXnNIM95W9DpXiKwtCOpICsv7w9oO7A2",
+  "isAccepted": true,
+  "createdAt": {
+    "$date": "2024-11-01T16:34:35.090Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-30T13:03:54.129Z"
+  },
+  ...
 }
 ```
 
-### Refresh Access Token
+### Get All Tour Guides
 
 ```bash
-GET /auth/refresh
+GET /tourGuide/
 ```
 
 #### Request
-
-| Parameter | Type      | Description                                                   |
-| --------- | --------- | ------------------------------------------------------------- |
-| jwt       | jwt token | **Required.** The user's refresh token sent inside the cookie |
-
-#### Response
-
-```json
-{
-  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "role": "tourist",
-  "id": "64b1f2f5e5b7cbe20c23a3c7"
-}
-```
-
-### Logout
-
-```bash
-POST /auth/logout
-```
-
-#### Request
-
-| Parameter | Type      | Description                                                   |
-| --------- | --------- | ------------------------------------------------------------- |
-| jwt       | jwt token | **Optional.** The user's refresh token sent inside the cookie |
-
-#### Response
 
 None
 
-### Get User Info
+#### Response
+
+```json
+[
+  {
+    "_id": "6725031215a2d7588e2ce42a",
+    "email": "moski.moskito@gmail.com",
+    "username": "tourguide",
+    "passwordHash": "$2b$10$6QP9BwFadadF3sJq6Dl0DrOXnNIM95W9DpXiKwtCOpICsv7w9oO7A2",
+    "isAccepted": false,
+    "createdAt": {
+      "$date": "2024-11-01T16:34:35.090Z"
+    },
+    "updatedAt": {
+      "$date": "2024-11-30T13:03:54.129Z"
+    },
+    ...
+  },
+  {
+    "_id": "6725031bd5a2d7588e2ce42a",
+    "email": "jana.elowainy@gmail.com",
+    "username": "tourguide",
+    "passwordHash": "$2b$10$6QP9BwFlpfF3sJq6Dl0DrOXnNIM95W9DpXiKwtCOpICsv7w9oO7A2",
+    "isAccepted": true,
+    "createdAt": {
+      "$date": "2024-11-01T16:34:35.090Z"
+    },
+    "updatedAt": {
+      "$date": "2024-11-30T13:03:54.129Z"
+    },
+    ...
+  },
+]
+```
+
+### Get Tour Guide
 
 ```bash
-POST /auth/user
+GET /tourGuide/:id
 ```
 
 #### Request
 
-| Parameter | Type      | Description                                                   |
-| --------- | --------- | ------------------------------------------------------------- |
-| jwt       | jwt token | **Required.** The user's refresh token sent inside the cookie |
+| Parameter | Type   | Description                                                  |
+| --------- | ------ | ------------------------------------------------------------ |
+| id        | string | **Required.** The id of the tour guide in the request params |
+
+#### Response
+
+```json
+{
+  "_id": "6725031bd5a2d7588e2ce42a",
+  "email": "jana.elowainy@gmail.com",
+  "username": "tourguide",
+  "passwordHash": "$2b$10$6QP9BwFlpfF3sJq6Dl0DrOXnNIM95W9DpXiKwtCOpICsv7w9oO7A2",
+  "isAccepted": true,
+  "createdAt": {
+    "$date": "2024-11-01T16:34:35.090Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-30T13:03:54.129Z"
+  },
+  ...
+}
+```
+
+### Delete Tour Guide
+
+```bash
+DELETE /tourGuide/:id
+```
+
+#### Request
+
+| Parameter | Type   | Description                                                  |
+| --------- | ------ | ------------------------------------------------------------ |
+| id        | string | **Required.** The id of the tour guide in the request params |
+
+#### Response
+
+```json
+{
+  "_id": "6725031bd5a2d7588e2ce42a",
+  "email": "jana.elowainy@gmail.com",
+  "username": "tourguide",
+  "passwordHash": "$2b$10$6QP9BwFlpfF3sJq6Dl0DrOXnNIM95W9DpXiKwtCOpICsv7w9oO7A2",
+  "isAccepted": true,
+  "createdAt": {
+    "$date": "2024-11-01T16:34:35.090Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-30T13:03:54.129Z"
+  },
+  ...
+}
+```
+
+### Add Tour Guide Rating
+
+```bash
+POST /tourGuide/:id
+```
+
+#### Request
+
+| Parameter | Type   | Description                                                    |
+| --------- | ------ | -------------------------------------------------------------- |
+| id        | string | **Required.** The id of the tour guide in the request params   |
+| userId    | string | **Required.** The userId of the tour guide in the request body |
+| rating    | number | **Required.** The rating in the request body                   |
+
+#### Response
+
+```json
+{
+  "_id": "6725031bd5a2d7588e2ce42a",
+  "email": "jana.elowainy@gmail.com",
+  "username": "tourguide",
+  "passwordHash": "$2b$10$6QP9BwFlpfF3sJq6Dl0DrOXnNIM95W9DpXiKwtCOpICsv7w9oO7A2",
+  "isAccepted": true,
+  "createdAt": {
+    "$date": "2024-11-01T16:34:35.090Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-30T13:03:54.129Z"
+  },
+  ...
+}
+```
+
+### Delete Previous Work
+
+```bash
+POST /tourGuide/:id/previous-work/:previousWorkId
+```
+
+#### Request
+
+| Parameter      | Type   | Description                                                           |
+| -------------- | ------ | --------------------------------------------------------------------- |
+| id             | string | **Required.** The tour guide's id in the request params               |
+| previousWorkId | string | **Required.** The tour guide's previous work id in the request params |
 
 #### Response
 
@@ -79,7 +192,6 @@ POST /auth/user
 {
   "id": "64b1f2f5e5b7cbe20c23a3c7",
   "username": "moskiUser",
-  "role": "tourist",
   "preferredCurrency": "USD",
   "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 }
