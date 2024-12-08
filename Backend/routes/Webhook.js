@@ -130,6 +130,13 @@ const purchaseSuccessful = async (req, res) => {
               }
               res.status(200).send(`Email sent: ${info.response}`);
             });
+
+            const notification = {
+              title: "Product out of stock",
+              Body: "Your Product " + product.name + " is out of stock.'",
+              isSeen: false,
+            };
+            user.Notifications.push(notification);
           }
         }
       }
