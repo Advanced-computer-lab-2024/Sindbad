@@ -12,6 +12,7 @@ import { useCurrency, useUser } from "@/state management/userInfo";
 import { Convert } from "easy-currencies";
 import { useNavigate, useParams } from "react-router-dom";
 import { getProductById } from "@/services/ProductApiHandler";
+import { ImageOff } from "lucide-react";
 
 export const OrdersView = () => {
   const { orderId } = useParams();
@@ -110,6 +111,7 @@ export const OrdersView = () => {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-[100px]">Picture</TableHead>
                 <TableHead className="w-[100px]">Product</TableHead>
                 <TableHead>Quantity</TableHead>
                 <TableHead>Price</TableHead>
@@ -120,6 +122,23 @@ export const OrdersView = () => {
                 const product = productDetails[item.productID];
                 return (
                   <TableRow key={item.productID}>
+                    <TableCell>
+                      {item.cardImage && item.cardImage.url ? (
+                        <img
+                          src={item.cardImage.url}
+                          alt={`${item.name}`}
+                          className="h-full w-full object-cover rounded-md border border-neutral-300"
+                          style={{
+                            width: "50px",
+                            height: "50px",
+                            objectFit: "cover",
+                            borderRadius: "8px", // Makes the edges rounded
+                          }}
+                        />
+                      ) : (
+                        <ImageOff size={45} className="text-gray-500" />
+                      )}
+                    </TableCell>
                     <TableCell
                       className="font-medium cursor-pointer"
                       onClick={() => handleProductClick(item.productID)}
