@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, FormProvider } from "react-hook-form";
 import { z } from "zod";
@@ -19,6 +20,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Star } from "lucide-react";
 import { MultiSelectField } from "./input-fields/MultiSelectField";
 import { DateTimeField } from "./input-fields/DateTimeField";
+import SpinnerSVG from "@/SVGs/Spinner";
 
 export function GenericForm({ type, data, id, fetcher }) {
 	// If you need more information about how this component works, check out forms.js in the same folder.
@@ -71,23 +73,27 @@ export function GenericForm({ type, data, id, fetcher }) {
 	const dispatch = useDispatch();
 	const currency = useCurrency();
 	const { toast } = useToast();
-	const handleSubmit = (values) => {
+	const [loading, setLoading] = useState(false);
+	const handleSubmit = async (values) => {
 		try {
 			if (typeof onSubmit === "function") {
-				if (onSubmit.length === 5) {
-					onSubmit(values, id, navigate, dispatch, currency);
+				if (onSubmit.length === 7) {
+					await onSubmit(values, id, navigate, dispatch, currency, toast, setLoading);
 				} else {
-					onSubmit(values, id, data, navigate, dispatch, currency);
+					await onSubmit(values, id, data, navigate, dispatch, currency, toast, setLoading);
 				}
 				if (typeof fetcher === "function") {
 					fetcher();
 				}
-				//toast({ description: "Submitted" });
 			}
 		} catch (e) {
-			toast({ description: `Error occured on submission: ${e.message}` });
+			console.error(e);
 		}
 	};
+
+	useEffect(() => {
+		console.log("LOADING: ", loading);
+	}, [loading]);
 
 	function renderField(field, path = "") {
 		const fullPath = path ? `${path}.${field.name}` : field.name;
@@ -238,14 +244,30 @@ export function GenericForm({ type, data, id, fetcher }) {
 		}
 	}
 
+	function navigateBack() {
+		if (["tourist", "tourGuide", "seller", "advertiser", "admin", "tourismGovernor", "company", "experience"].includes(type)) {
+			navigate("/app/profile");
+		}
+		else {
+			navigate(-1);
+		}
+	}
+
 	return (
 		<div>
 			<Form {...form}>
 				<form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
 					{formFields.map((field) => renderField(field))}
-					<Button type="submit" className="mt-2 w-max">
-						Submit
-					</Button>
+					<div className="flex justify-between">
+						{type !== "complaint" && type !== "flightBooking" &&
+							<Button disabled={loading} type="button" onClick={() => navigateBack()} variant="link" className="p-0 text-xs">
+								Cancel
+							</Button>
+						}
+						<Button type="submit" disabled={loading} className="w-[72px] justify-center mt-2">
+							{loading ? <SpinnerSVG /> : "Submit"}
+						</Button>
+					</div>
 				</form>
 			</Form>
 		</div>

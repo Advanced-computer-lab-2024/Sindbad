@@ -1,8 +1,9 @@
 import { bookFlight } from "@/services/FlightApiHandler";
 import { confirmationResponse } from "@/state management/confirmationResponse";
 
-export const flightBookingHandler = (values, id, data, navigate, dispatch, currency) => {
+export const flightBookingHandler = (values, id, data, navigate, dispatch, currency, toast, setLoading) => {
   // console.log("VALUES: ", values);
+  setLoading(true);
   let submitValues = {};
   submitValues.travelers = values;
   submitValues.travelerID = id;
@@ -17,5 +18,10 @@ export const flightBookingHandler = (values, id, data, navigate, dispatch, curre
     confirmationResponse.success = true;
     confirmationResponse.message = "Flight booking successful!";
     navigate("/app/flight/confirmation");
+    setLoading(false);
+  }).catch((error) => {
+    console.error("Error submitting form:", error);
+    toast({ description: "Error booking flight" });
+    setLoading(false);
   });
 };

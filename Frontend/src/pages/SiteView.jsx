@@ -105,11 +105,11 @@ function Site() {
 						<h2 className="text-lg font-semibold mb-1">
 							Tagged As
 						</h2>
-						<div className="flex flex-wrap gap-2 text-sm">
+						<div className="flex flex-wrap gap-2 text-sm text-light">
 							{site.tags.map((tag) => (
 								<div
 									key={tag._id}
-									className="flex gap-1 text-center text-xs items-center bg-gradient-to-br from-primary-700 to-primary-900 px-3 py-1.5 rounded-full"
+									className="flex gap-1 text-xs items-center bg-gradient-to-br from-primary-600 to-primary-800 px-3 py-1.5 rounded-full"
 								>
 									{tag.name}
 								</div>
@@ -120,7 +120,7 @@ function Site() {
 				<div className="h-[400px] w-[400px] shrink-0">
 					<Carousel>
 						<CarouselContent>
-							{site.cardImage ? (
+							{site.cardImage && site.cardImage.url ? (
 								<CarouselItem className="h-[400px] w-[400px]">
 									<img
 										src={site.cardImage.url}
@@ -174,7 +174,7 @@ function Site() {
 							/>
 						</div>
 						<div className="flex items-start gap-1">
-							<MapPin size={16} className="shrink-0" />
+							<MapPin size={16} className="shrink-0 mt-[1px]" />
 							<span className="text-sm">
 								{site.location.address}
 							</span>
@@ -186,55 +186,126 @@ function Site() {
 					<h2 className="text-lg font-semibold mb-1">
 						Ticket Prices
 					</h2>
-					{Object.keys(site.ticketPrices).length === 0 ? (
-						<div className="flex flex-col justify-center items-center h-full w-ful rounded-lg">
-							<Frown className="w-32 h-32 text-primary-900 m-4" />
-							<p className=" text-2xl font-semibold self-center text-primary-950">
-								No available bookings
-							</p>
+					<div className="relative p-6 bg-gradient-to-b from-neutral-200/60 to-light rounded-md mt-4 overflow-clip z-0">
+						{/* border */}
+						<div className="absolute top-0 left-0 rounded-md border border-neutral-500 h-full w-full z-0"></div>
+						{/* Top cutout */}
+						<div className="absolute top-[183px] -left-5 -right-5 flex justify-between z-0">
+							<div className="w-[36px] h-6 bg-light rounded-t-full border-t border-r border-neutral-500"></div>
+							<div className="w-[36px] h-6 bg-light rounded-t-full border-t border-l border-neutral-500"></div>
 						</div>
-					) : (
-						<div className="w-full h-full">
-							{convertedPrice &&
-								<>
-									{Object.entries(convertedPrice).map(([type, price]) => (
-										<div
-											key={type}
-											className="relative p-6 bg-gradient-to-br from-neutral-200/60 to-light rounded-md mt-4 overflow-clip"
-										>
-											{/* border */}
-											<div className="absolute top-0 left-0 rounded-md border border-neutral-500 h-full w-full"></div>
-											{/* cutouts */}
-											<div className="z-10 absolute left-[200px] -top-5 -bottom-5 flex flex-col justify-between">
-												<div className="h-[32px] w-4 bg-light rounded-l-full border-l border-b border-neutral-500"></div>
-												<div className="h-[32px] w-4 bg-light rounded-l-full border-l border-t border-neutral-500"></div>
-											</div>
-											<div className="z-10 absolute left-[216px] -top-5 -bottom-5 flex flex-col justify-between">
-												<div className="h-[32px] w-2 bg-light rounded-r-full border-r border-b border-neutral-500"></div>
-												<div className="h-[32px] w-2 bg-light rounded-r-full border-r border-t border-neutral-500"></div>
-											</div>
-
-											<div className="h-[100%] absolute left-[216px] top-0 w-0 border border-neutral-400 border-dashed"></div>
-
-											<p className="text-base font-medium">{type} ticket</p>
-											<div className="text-end">
-												{price === 0 ? (
-													<span className="text-xl font-semibold">Free</span>
-												) : (
-													<>
-														<span className="text-xl font-semibold">
-															{price.toFixed(2) + " "}
-														</span>
-														<span className="text-sm">{currency}</span>
-													</>
-												)}
-											</div>
-										</div>
-									))}
-								</>
-							}
+						<div className="absolute top-[205px] -left-5 -right-5 flex justify-between z-0">
+							<div className="w-[36px] h-3 bg-light rounded-b-full border-b border-r border-neutral-500"></div>
+							<div className="w-[36px] h-3 bg-light rounded-b-full border-b border-l border-neutral-500"></div>
 						</div>
-					)}
+
+						<div className="space-y-4 my-3 mx-1.5">
+							<div className="flex items-center justify-between">
+								<div className="flex gap-2 items-center">
+									<p className="text-base font-semibold">Adult</p>
+									<span className="text-neutral-500 text-xs mt-1 font-medium">
+										(18+)
+									</span>
+								</div>
+								<div className="flex items-center justify-center gap-4 ">
+									{convertedPrice ?
+										<p className="text-sm font-medium break-all">
+											{(convertedPrice?.adult).toFixed(2)} {currency}
+										</p>
+										:
+										<p className="text-sm font-medium break-all">
+											{(site?.ticketPrices?.adult).toFixed(2)} USD
+										</p>
+									}
+								</div>
+							</div>
+							<div className="flex items-center justify-between">
+								<div className="flex gap-2 items-center">
+									<p className="text-base font-semibold">Child</p>
+									<span className="text-neutral-500 text-xs mt-1 font-medium">
+										(5-17)
+									</span>
+								</div>
+								<div className="flex items-center justify-center gap-4">
+									{convertedPrice ?
+										<p className="text-sm font-medium break-all">
+											{(convertedPrice?.child).toFixed(2)} {currency}
+										</p>
+										:
+										<p className="text-sm font-medium break-all">
+											{(site?.ticketPrices?.child).toFixed(2)} USD
+										</p>
+									}
+								</div>
+							</div>
+							<div className="flex items-center justify-between">
+								<div className="flex gap-2 items-center">
+									<p className="text-base font-semibold">Student</p>
+								</div>
+								<div className="flex items-center justify-center gap-4">
+									{convertedPrice ?
+										<p className="text-sm font-medium break-all">
+											{(convertedPrice?.student).toFixed(2)} {currency}
+										</p>
+										:
+										<p className="text-sm font-medium break-all">
+											{(site?.ticketPrices?.student).toFixed(2)} USD
+										</p>
+									}
+								</div>
+							</div>
+							<div className="flex items-center justify-between">
+								<div className="flex gap-2 items-center">
+									<p className="text-base font-semibold">Foreigner</p>
+								</div>
+								<div className="flex items-center justify-center gap-4">
+									{convertedPrice ?
+										<p className="text-sm font-medium break-all">
+											{(convertedPrice?.foreigner).toFixed(2)} {currency}
+										</p>
+										:
+										<p className="text-sm font-medium break-all">
+											{(site?.ticketPrices?.foreigner).toFixed(2)} USD
+										</p>
+									}
+								</div>
+							</div>
+						</div>
+
+						<div className="border border-neutral-400 border-dashed -mx-6 my-6"></div>
+
+						{/* Total Cost Section */}
+						<div className="bg-primary-200 -mx-6 px-8 py-4 text-sm flex flex-col gap-2">
+							<div className="flex justify-between">
+								<p>Item count:</p>
+								<p className="font-medium">
+									{Object.keys(site.ticketPrices).length}
+								</p>
+							</div>
+							<div>
+								<div className="flex justify-between">
+									<p>Total:</p>
+									<p className="font-medium">
+										{/* sum of all prices in site.ticketPrices */}
+										{convertedPrice ?
+											<p className="font-medium">
+												{convertedPrice?.adult + convertedPrice?.child + convertedPrice?.student + convertedPrice?.foreigner} {currency}
+											</p>
+											:
+											<p className="font-medium">
+												{site?.ticketPrices
+													? site.ticketPrices.adult + site.ticketPrices.child + site.ticketPrices.student + site.ticketPrices.foreigner
+													: 0} USD
+											</p>
+										}
+									</p>{" "}
+								</div>
+								<p className="text-xs text-neutral-500 italic mt-0.5">
+									*Includes taxes and charges
+								</p>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

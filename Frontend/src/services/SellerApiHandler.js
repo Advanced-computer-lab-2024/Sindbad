@@ -16,7 +16,7 @@ export const getSeller = async (sellerId) => {
 
 export const updateSeller = async (sellerId, formData) => {
     try {
-        const response = axiosInstance.put(
+        const response = await axiosInstance.put(
             `/seller/${sellerId}`,
             formData,
             {

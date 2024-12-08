@@ -8,6 +8,7 @@ const excludedRoutes = [
   /^\/user\/reset-password$/, // Matches exactly "/user/reset-password"
   /^\/tag$/,
   /^\/category$/,
+  /^\/webhook$/,
   /^\/activity\/?.*/,
   /^\/itinerary\/?.*/,
   /^\/auth(\/.*)?$/, // Matches "/auth" and anything after it

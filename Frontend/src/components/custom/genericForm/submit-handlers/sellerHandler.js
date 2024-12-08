@@ -1,7 +1,8 @@
 import { updateSeller } from '@/services/SellerApiHandler';
 import { setCurrency } from "@/state management/userInfo";
 
-export const sellerSubmit = (values, id, navigate, dispatch, currency) => {
+export const sellerSubmit = async (values, id, navigate, dispatch, currency, toast, setLoading) => {
+	setLoading(true);
 	dispatch(setCurrency(values.preferredCurrency));
 
 	const formData = new FormData();
@@ -23,5 +24,21 @@ export const sellerSubmit = (values, id, navigate, dispatch, currency) => {
 		console.log(pair[0] + ": ", pair[1]);
 	}
 
-	return updateSeller(id, formData);
+	// return updateSeller(id, formData);
+	
+	try {
+		let response = await updateSeller(id, formData);
+
+		if (response && !response.error && navigate) {
+			navigate("/app/profile");
+			toast({description: "Profile updated successfully"});
+			setLoading(false);
+		} else {
+			throw new Error("API did not return a success response");
+		}
+	} catch (error) {
+		console.error("Error submitting form:", error);
+		toast({description: "Error updating profile"});
+		setLoading(false);
+	}
 };

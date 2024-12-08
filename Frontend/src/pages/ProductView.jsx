@@ -25,6 +25,7 @@ import {
   addItemToCart,
   addProductToWishlist,
 } from "@/services/TouristApiHandler";
+import { getTouristById } from "@/services/TouristApiHandler";
 
 function ProductView() {
   const { productId } = useParams();
@@ -36,6 +37,7 @@ function ProductView() {
   const [convertedPrice, setConvertedPrice] = useState(null);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [tourist, setTourist] = useState(null);
 
   const getProduct = async (productId) => {
     const response = await getProductById(productId);
@@ -51,6 +53,23 @@ function ProductView() {
       );
     }
   };
+
+  const getTourist = async (touristId) => {
+    if(role !== "tourist") return;
+
+    const response = await getTouristById(touristId);
+    if (response.error) {
+      console.error(response.message);
+    } else {
+      setTourist(response);
+    }
+  };
+
+  useEffect(() => {
+    if (id) {
+      getTourist(id);
+    }
+  }, [id]);
 
   const handleBuyProduct = async () => {
     const response = await addItemToCart(id, productId, 1);
@@ -73,6 +92,7 @@ function ProductView() {
       toast({
         description: "Product added to wishlist.",
       });
+      getTourist(id);
     }
   };
   useEffect(() => {
@@ -191,9 +211,9 @@ function ProductView() {
 
             <Button
               onClick={() => handleAddToWishlist()}
-              className="w-10 h-10 p-2 rounded-full bg-transparent flex items-center justify-center"
+              className="w-10 h-10 m-0 p-0 rounded-full bg-white flex items-center justify-center shrink-0"
             >
-              <Heart size={24} className="text-black" />
+              <Heart size={32} className={`text-dark ${tourist?.wishlist?.some((item) => item.productID === productId) ? "text-red-800 fill-red-600" : ""}`} />
             </Button>
           </div>
         </div>

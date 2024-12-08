@@ -14,7 +14,7 @@ import {
   updateCart,
 } from "@/services/TouristApiHandler";
 import { useCurrency, useUser } from "@/state management/userInfo";
-import { BadgeX } from "lucide-react";
+import { BadgeX, ImageOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Convert } from "easy-currencies";
 import { useNavigate } from "react-router-dom";
@@ -108,6 +108,7 @@ export const Cart = () => {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-[100px]">Picture</TableHead>
                 <TableHead className="w-[100px]">Product</TableHead>
                 <TableHead>Quantity</TableHead>
                 <TableHead>Price</TableHead>
@@ -117,6 +118,24 @@ export const Cart = () => {
             <TableBody>
               {cart?.map((item) => (
                 <TableRow key={item.productID._id}>
+                  <TableCell>
+                    {item.productID.cardImage &&
+                    item.productID.cardImage.url ? (
+                      <img
+                        src={item.productID.cardImage.url}
+                        alt={`${item.productID.name}`}
+                        className="h-full w-full object-cover rounded-md border border-neutral-300"
+                        style={{
+                          width: "50px",
+                          height: "50px",
+                          objectFit: "cover",
+                          borderRadius: "8px", // Makes the edges rounded
+                        }}
+                      />
+                    ) : (
+                      <ImageOff size={45} className="text-gray-500" />
+                    )}
+                  </TableCell>
                   <TableCell className="font-medium">
                     <span
                       className="text-black-500 cursor-pointer"

@@ -617,8 +617,8 @@ function setHeadCountForDate(itinerary, targetDate, newHeadCount) {
 
 const bookItinerary = async (req, res) => {
     try {
-        const { date, adultTicketCount, childTicketCount, itineraryId, userId } =
-            req.body;
+        // console.log("ENTERED BOOK ITINERARY");
+        const { date, adultTicketCount, childTicketCount, itineraryId, userId } = req.body;
         let itinerary = await Itinerary.findById(itineraryId);
         if (!itinerary) {
             return res.status(404).json({ message: "Itinerary not found" });
@@ -653,47 +653,61 @@ const bookItinerary = async (req, res) => {
             return res.status(400).json({ message: "Bookings are currently closed" });
         }
 
-        if (adultTicketCount == 0 && childTicketCount == 0)
+        if (parseInt(adultTicketCount) == 0 && parseInt(adultTicketCount) == 0)
             return res.status(400).json({ message: "Please select ticket count" });
 
         let priceCharged;
         if (typeof itinerary.price === "number") {
-            priceCharged = itinerary.price * (adultTicketCount + childTicketCount);
+            priceCharged = itinerary.price * (parseInt(adultTicketCount) + parseInt(childTicketCount));
         } else {
             const { min, max } = itinerary.price;
-            priceCharged = min * (adultTicketCount + childTicketCount);
+            priceCharged = min * (parseInt(adultTicketCount) + parseInt(childTicketCount));
         }
 
-        if (tourist.wallet < priceCharged) {
-            return res.status(400).json({ message: "Insufficient funds" });
-        }
+        // if (tourist.wallet < priceCharged) {
+        //     return res.status(400).json({ message: "Insufficient funds" });
+        // }
 
         headcount = getHeadCountForDate(itinerary, date);
         itinerary = setHeadCountForDate(
             itinerary,
             date,
-            headcount + adultTicketCount + childTicketCount
+            headcount + parseInt(adultTicketCount) + parseInt(childTicketCount)
         );
 
         await itinerary.save();
-
         // Create a record in the Sale document
         await Sale.create({
             type: "Itinerary",
             itemId: itineraryId,
-            quantity: adultTicketCount + childTicketCount,
+            quantity: parseInt(adultTicketCount) + parseInt(childTicketCount),
             buyerId: userId,
             totalPrice: priceCharged,
         });
-
-        tourist.wallet -= priceCharged;
+        // tourist.wallet -= priceCharged;
 
         tourist.bookedEvents.itineraries.push({
             itineraryId: itineraryId,
-            ticketsBooked: childTicketCount + adultTicketCount,
+            ticketsBooked: parseInt(adultTicketCount) + parseInt(childTicketCount),
             dateBooked: new Date(date),
         });
         await tourist.save();
+
+        // send payment confirmation email
+        const mailOptions = {
+            from: process.env.GMAIL,
+            to: tourist.email,
+            subject: "Itinerary Payment Confirmation",
+            text: `You have successfully booked the itinerary ${itinerary.name} for ${date} at a price of ${(priceCharged).toFixed(2)} USD`,
+        };
+
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                console.log(error);
+            } else {
+                console.log("Email sent: " + info.response);
+            }
+        });
 
         let loyaltyPoints = tourist.loyaltyPoints;
         switch (tourist.level) {
@@ -788,6 +802,8 @@ const cancelBooking = async (req, res) => {
             itineraryId: itineraryId,
             buyerId: userId,
             totalPrice: -priceCharged,
+            type: "Itinerary",
+            itemId: itineraryId,
         });
 
         let loyaltyPoints = tourist.loyaltyPoints;

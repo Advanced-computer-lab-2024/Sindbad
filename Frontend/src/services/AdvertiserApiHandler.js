@@ -16,7 +16,7 @@ export const getAdvertiser = async (advertiserId) => {
 
 export const updateAdvertiser = async (formData, id) => {
     try {
-        const response = axiosInstance.put(
+        const response = await axiosInstance.put(
             `/advertiser/${id}`,
             formData,
             {
