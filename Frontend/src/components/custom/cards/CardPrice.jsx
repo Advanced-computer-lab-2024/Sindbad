@@ -40,7 +40,7 @@ const CardPrice = ({ price }) => {
                         </p>
                     ) : (
                         <p className="text-sm font-medium break-all text-dark">
-                            {`${price.toFixed(2)}`}
+                            {`${price}`}
                             <span className="text-xs text-neutral-500">{` ${currency}`}</span>
                         </p>
                     )}
