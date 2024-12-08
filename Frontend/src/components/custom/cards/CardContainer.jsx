@@ -17,7 +17,7 @@ To add a new card type, create a new card component file and add it to the getCa
 const CardContainer = ({ cardList, cardType, fetchCardData, columns = 3 }) => {
   const styles = {
     container:
-      "w-full h-full flex flex-col border rounded-md overflow-clip group bg-gradient-to-br from-light",
+      "w-full h-full flex flex-col border border-primary-200 rounded-md overflow-clip group bg-gradient-to-br from-primary-100 to-primary-200",
     inappropriate: "to-red-300/30 border-red-300/50",
     inactive: "to-neutral-300/50 border-neutral-300/80",
     active: "to-primary-700/50 border-primary-700/80",
@@ -29,7 +29,7 @@ const CardContainer = ({ cardList, cardType, fetchCardData, columns = 3 }) => {
     button: "mt-2",
     buttonInappropriate: "bg-red-300/70",
     buttonInactive: "bg-neutral-300",
-    buttonActive: "bg-primary-700",
+    buttonActive: "",
     buttonText: "text-xs",
     buttonIcon: "shrink-0",
   };

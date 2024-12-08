@@ -315,15 +315,19 @@ function Activity() {
           <div className="h-[400px] w-[400px] shrink-0">
             <Carousel>
               <CarouselContent>
-                <CarouselItem className="h-[400px]">
-                  <ImagePlaceholder />
-                </CarouselItem>
-                <CarouselItem className="h-[400px]">
-                  <ImagePlaceholder />
-                </CarouselItem>
-                <CarouselItem className="h-[400px]">
-                  <ImagePlaceholder />
-                </CarouselItem>
+                {activity.cardImage && activity.cardImage.url ? (
+                  <CarouselItem className="h-[400px] w-[400px]">
+                    <img
+                      src={activity.cardImage.url}
+                      alt={`${activity.name}`}
+                      className="h-full w-full object-cover rounded-md border border-neutral-300"
+                    />
+                  </CarouselItem>
+                ) : (
+                  <CarouselItem className="h-[400px]">
+                    <ImagePlaceholder />
+                  </CarouselItem>
+                )}
               </CarouselContent>
               <CarouselPrevious />
               <CarouselNext />

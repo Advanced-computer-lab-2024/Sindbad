@@ -120,7 +120,7 @@ function Site() {
 				<div className="h-[400px] w-[400px] shrink-0">
 					<Carousel>
 						<CarouselContent>
-							{site.cardImage ? (
+							{site.cardImage && site.cardImage.url ? (
 								<CarouselItem className="h-[400px] w-[400px]">
 									<img
 										src={site.cardImage.url}

@@ -10,7 +10,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "flex gap-1 items-center text-xs text-light justify-between self-center bg-primary-400 w-full px-3 py-1.5 rounded-md group transition-all hover:ring-[1.5px] hover:ring-secondary",
+          "flex gap-1 items-center text-xs text-light justify-between self-center bg-primary-700 w-full px-3 py-1.5 rounded-md group transition-all hover:ring-[1.5px] hover:ring-secondary",
         rounded:
           "flex gap-1 items-center self-center bg-neutral-300/50 w-max px-3 py-1.5 rounded-full group transition-all hover:ring-[1.5px] hover:ring-secondary",
         icon:

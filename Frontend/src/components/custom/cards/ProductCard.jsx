@@ -32,7 +32,7 @@ function ProductCard({ data, fetchCardData, styles }) {
 			}`}
 		>
 			<div className={styles.imageContainer}>
-				<CardImage imageUris={data.imageUris} altText={data.name} />
+				<CardImage imageSrc={data.cardImage} altText={data.name} />
 				<CardMenu
 					data={data}
 					config={cardConfig}

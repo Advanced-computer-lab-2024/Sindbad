@@ -155,8 +155,8 @@ function Trip() {
                     lng={trip.pickupLocation.coordinates.lng}
                   />
                 </div>
-                <div className="flex items-center gap-1">
-                  <MapPin size={16} className="shrink-0" />
+                <div className="flex items-start gap-1">
+                  <MapPin size={16} className="shrink-0 mt-0.5" />
                   <span className="text-sm text-gray-600">
                     {trip.pickupLocation.address}
                   </span>
@@ -173,8 +173,8 @@ function Trip() {
                     lng={trip.dropoffLocation.coordinates.lng}
                   />
                 </div>
-                <div className="flex items-center gap-1">
-                  <MapPin size={16} className="shrink-0" />
+                <div className="flex items-start gap-1">
+                  <MapPin size={16} className="shrink-0 mt-0.5" />
                   <span className="text-sm text-gray-600">
                     {trip.dropoffLocation.address}
                   </span>
@@ -207,15 +207,14 @@ function Trip() {
           <div className="h-[400px] w-[400px]">
             <Carousel>
               <CarouselContent>
-                {trip.imageUris && trip.imageUris.length > 0 ? (
-                  trip.imageUris.map((uri, index) => (
-                    <CarouselItem key={index} className="h-[400px]">
-                      <img
-                        src={uri}
-                        className="w-full h-full object-cover rounded-md"
-                      />
-                    </CarouselItem>
-                  ))
+                {trip.cardImage && trip.cardImage.url ? (
+                  <CarouselItem className="h-[400px] w-[400px]">
+                    <img
+                      src={trip.cardImage.url}
+                      alt={`${trip.name}`}
+                      className="h-full w-full object-cover rounded-md border border-neutral-300"
+                    />
+                  </CarouselItem>
                 ) : (
                   <CarouselItem className="h-[400px]">
                     <ImagePlaceholder />
@@ -261,8 +260,6 @@ function Trip() {
           </div>
         </div>
       </div>
-
-      <hr className="border-neutral-300 border w-full mt-6" />
     </div>
   );
 }
