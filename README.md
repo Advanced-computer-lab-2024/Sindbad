@@ -244,12 +244,12 @@ npm run dev
 
 ## API References
 Can view the APIs in the following link
- [API documentation](https://)
+ [API documentation](https://github.com/Advanced-computer-lab-2024/Sindbad/blob/develop/API.md)
 
 
 ## Tests
 Testing is done using postman, you can check the tests in the following link
- [API documentation](https://)
+ [API documentation](https://github.com/Advanced-computer-lab-2024/Sindbad/blob/develop/API.md)
 
 ## How to Use
 Since there are different types of users that can use the website,we have curated the platform to provide a tailored experience for each user type:
@@ -321,7 +321,6 @@ git push origin branch-name
 - [zod Documentation](https://zod.dev/)
 - [react-hook-form Documentation](https://react-hook-form.com/docs)
 - [tanstack Documentation](https://tanstack.com/table/latest)
-- yara, salma
 ## License
 This project is licensed under the Apache 2.0 License.
 

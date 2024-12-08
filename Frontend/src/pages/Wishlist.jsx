@@ -14,7 +14,7 @@ import {
   removeFromWishlist,
 } from "@/services/TouristApiHandler";
 import { useUser } from "@/state management/userInfo";
-import { BadgeX, ArrowRight } from "lucide-react";
+import { BadgeX, ArrowRight, ImageOff } from "lucide-react";
 import { useNavigate } from "react-router-dom"; // Add navigate import
 
 export const Wishlist = () => {
@@ -41,11 +41,11 @@ export const Wishlist = () => {
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead className="w-[100px]">Image</TableHead>
             <TableHead className="w-[100px]">Product</TableHead>
             <TableHead>Price</TableHead>
             <TableHead className="text-right">Move to Cart</TableHead>{" "}
-            {/* Swapped */}
-            <TableHead className="text-right">Remove</TableHead> {/* Swapped */}
+            <TableHead className="text-right">Remove</TableHead>
           </TableRow>
         </TableHeader>
 
@@ -59,6 +59,24 @@ export const Wishlist = () => {
           ) : (
             wishlist.map((item) => (
               <TableRow key={item._id}>
+                <TableCell>
+                  {item.cardImage && item.cardImage.url ? (
+                    <img
+                      src={item.cardImage.url}
+                      alt={`${item.name}`}
+                      className="h-full w-full object-cover rounded-md border border-neutral-300"
+                      style={{
+                        width: "50px",
+                        height: "50px",
+                        objectFit: "cover",
+                        borderRadius: "8px", // Makes the edges rounded
+                      }}
+                    />
+                  ) : (
+                    <ImageOff size={45} className="text-gray-500" />
+                  )}
+                </TableCell>
+
                 <TableCell className="font-medium">
                   <span
                     className="text-black-300 cursor-pointer"
