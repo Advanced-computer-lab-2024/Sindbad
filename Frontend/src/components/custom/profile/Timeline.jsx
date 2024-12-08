@@ -13,6 +13,7 @@ import { getActivityById } from "@/services/ActivityApiHandler";
 import { getItineraryById } from "@/services/ItineraryApiHandler";
 import { itinerary } from "../genericForm/rendered-fields/itineraryFields";
 import { useNavigate } from "react-router-dom";
+import { getMyTrips } from "@/services/TripApiHandler";
 
 function Timeline({
   userData,
@@ -29,12 +30,28 @@ function Timeline({
   const [upcomingItineraries, setUpcomingItineraries] = useState([]);
   const [pastActivities, setPastActivities] = useState([]);
   const [pastItineraries, setPastItineraries] = useState([]);
+  const [transportation, setTransportation] = useState([]);
 
   const rejectable = () =>
     profileRole === "tourGuide" ||
     profileRole === "seller" ||
     profileRole === "advertiser";
   const myProfile = () => profileId === id;
+
+  // fetch trips if user is an advertiser
+  useEffect(() => {
+    if (profileRole === "advertiser") {
+      const fetchTrips = async () => {
+        try {
+          const response = await getMyTrips(id);
+          setTransportation(response);
+        } catch (err) {
+          console.error(err);
+        }
+      };
+      fetchTrips();
+    }
+  }, [profileRole, id]);
 
   const getActivity = async (productID) => await getActivityById(productID);
   const getItinerary = async (productID) => await getItineraryById(productID);
@@ -109,14 +126,14 @@ function Timeline({
     role === "admin" && profileRole === "tourGuide"
       ? cardData.filter((card) => card.isActive)
       : role === "admin" && profileRole === "advertiser"
-      ? cardData
-      : profileRole === "tourGuide" && id !== profileId
-      ? cardData.filter((card) => card.isActive && !card.isInappropriate)
-      : profileRole === "advertiser" && id !== profileId
-      ? cardData.filter((card) => !card.isInappropriate)
-      : profileRole === "seller" && id !== profileId
-      ? cardData.filter((card) => !card.isArchived)
-      : cardData;
+        ? cardData
+        : profileRole === "tourGuide" && id !== profileId
+          ? cardData.filter((card) => card.isActive && !card.isInappropriate)
+          : profileRole === "advertiser" && id !== profileId
+            ? cardData.filter((card) => !card.isInappropriate)
+            : profileRole === "seller" && id !== profileId
+              ? cardData.filter((card) => !card.isArchived)
+              : cardData;
 
   const getCardType = () => {
     if (profileRole === "tourGuide") {
@@ -137,12 +154,12 @@ function Timeline({
           {profileRole === "tourist"
             ? "Bookmarks"
             : profileRole === "seller" || profileRole === "admin"
-            ? "Products"
-            : profileRole === "advertiser"
-            ? "Activities"
-            : profileRole === "tourismGovernor"
-            ? "Historical Places & Museums"
-            : "Itineraries"}
+              ? "Products"
+              : profileRole === "advertiser"
+                ? "Activities"
+                : profileRole === "tourismGovernor"
+                  ? "Historical Places & Museums"
+                  : "Itineraries"}
         </h1>
         <hr className="border-neutral-300 border w-full mt-1.5" />
         {role !== "tourist" &&
@@ -165,12 +182,12 @@ function Timeline({
           profileRole === "tourist"
             ? "activity"
             : profileRole === "tourGuide"
-            ? "itinerary"
-            : profileRole === "seller" || profileRole === "admin"
-            ? "product"
-            : profileRole === "advertiser"
-            ? "activity"
-            : "site"
+              ? "itinerary"
+              : profileRole === "seller" || profileRole === "admin"
+                ? "product"
+                : profileRole === "advertiser"
+                  ? "activity"
+                  : "site"
         }
         fetchCardData={fetchCardData}
       />
@@ -194,63 +211,89 @@ function Timeline({
           )}
       </div>
 
-      <div className="flex items-center gap-6">
-        <h1 className="text-3xl font-extrabold shrink-0">
-          {profileRole === "tourist" ? "Upcoming Events" : ""}
-        </h1>
-        {profileRole === "tourist" && (
-          <hr className="border-neutral-300 border w-full mt-1.5" />
-        )}
-      </div>
+      {profileRole === "tourist" &&
+        <>
+          <div className="flex items-center gap-6">
+            <h1 className="text-3xl font-extrabold shrink-0">
+              {profileRole === "tourist" ? "Upcoming Events" : ""}
+            </h1>
+            {profileRole === "tourist" && (
+              <hr className="border-neutral-300 border w-full mt-1.5" />
+            )}
+          </div>
 
-      <h2 className="text-2xl font-bold shrink-0 text-gray-500 mb-1">
-        {profileRole === "tourist" ? "Activities" : ""}
-      </h2>
+          <h2 className="text-2xl font-bold shrink-0 text-gray-500 mb-1">
+            {profileRole === "tourist" ? "Activities" : ""}
+          </h2>
 
-      <CardContainer
-        cardList={profileRole === "tourist" ? upcomingActivities : []}
-        cardType="activity"
-        fetchCardData={fetchCardData}
-      />
+          <CardContainer
+            cardList={profileRole === "tourist" ? upcomingActivities : []}
+            cardType="activity"
+            fetchCardData={fetchCardData}
+          />
 
-      <h2 className="text-2xl font-bold shrink-0 text-gray-500 mt-2 mb-1">
-        {profileRole === "tourist" ? "Itineraries" : ""}
-      </h2>
+          <h2 className="text-2xl font-bold shrink-0 text-gray-500 mt-2 mb-1">
+            {profileRole === "tourist" ? "Itineraries" : ""}
+          </h2>
 
-      <CardContainer
-        cardList={profileRole === "tourist" ? upcomingItineraries : []}
-        cardType="itinerary"
-        fetchCardData={fetchCardData}
-      />
+          <CardContainer
+            cardList={profileRole === "tourist" ? upcomingItineraries : []}
+            cardType="itinerary"
+            fetchCardData={fetchCardData}
+          />
 
-      <div className="flex items-center gap-6">
-        <h1 className="text-3xl font-extrabold shrink-0">
-          {profileRole === "tourist" ? "Event History" : ""}
-        </h1>
-        {profileRole === "tourist" && (
-          <hr className="border-neutral-300 border w-full mt-1.5" />
-        )}
-      </div>
+          <div className="flex items-center gap-6">
+            <h1 className="text-3xl font-extrabold shrink-0">
+              {profileRole === "tourist" ? "Event History" : ""}
+            </h1>
+            {profileRole === "tourist" && (
+              <hr className="border-neutral-300 border w-full mt-1.5" />
+            )}
+          </div>
 
-      <h2 className="text-2xl font-bold shrink-0 text-gray-500 mb-1">
-        {profileRole === "tourist" ? "Activities" : ""}
-      </h2>
+          <h2 className="text-2xl font-bold shrink-0 text-gray-500 mb-1">
+            {profileRole === "tourist" ? "Activities" : ""}
+          </h2>
 
-      <CardContainer
-        cardList={profileRole === "tourist" ? pastActivities : []}
-        cardType="activity"
-        fetchCardData={fetchCardData}
-      />
+          <CardContainer
+            cardList={profileRole === "tourist" ? pastActivities : []}
+            cardType="activity"
+            fetchCardData={fetchCardData}
+          />
 
-      <h2 className="text-2xl font-bold shrink-0 text-gray-500 mt-2 mb-1">
-        {profileRole === "tourist" ? "Itineraries" : ""}
-      </h2>
+          <h2 className="text-2xl font-bold shrink-0 text-gray-500 mt-2 mb-1">
+            {profileRole === "tourist" ? "Itineraries" : ""}
+          </h2>
 
-      <CardContainer
-        cardList={profileRole === "tourist" ? pastItineraries : []}
-        cardType="itinerary"
-        fetchCardData={fetchCardData}
-      />
+          <CardContainer
+            cardList={profileRole === "tourist" ? pastItineraries : []}
+            cardType="itinerary"
+            fetchCardData={fetchCardData}
+          />
+        </>
+      }
+      {profileRole === "advertiser" &&
+        <>
+          <div className="flex items-center gap-6 mt-4">
+            <h1 className="text-3xl font-extrabold shrink-0">
+              Transportation
+            </h1>
+            <hr className="border-neutral-300 border w-full mt-1.5" />
+            {role !== "tourist" && myProfile() === true && (rejectable() === false || userData.isAccepted === true) &&
+              <button
+                className="shrink-0 mt-1.5 text-neutral-400 hover:text-neutral-600 transition-all"
+                onClick={() => navigate(`/app/create/transportation`)}>
+                <CirclePlus size={24} />
+              </button>
+            }
+          </div>
+          <CardContainer
+            cardList={transportation}
+            cardType={"transportation"}
+            fetchCardData={() => { getMyTrips(profileId) }}
+          />
+        </>
+      }
     </div>
   );
 }

@@ -175,7 +175,7 @@ function MainPage() {
             </NavigationMenuList>
           </NavigationMenu>
           {/* </div> */}
-          <div className="flex gap-4 items-center">
+          <div className="flex gap-4 items-center w-[173px] justify-end">
             {console.log("Notifications: ", notifications)} {/* Log notifications */}
             {renderedFields.includes("notifications") && (
               <Sheet>
