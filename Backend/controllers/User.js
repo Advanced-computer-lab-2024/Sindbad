@@ -412,11 +412,11 @@ const UserController = {
   },
 
   forgotPassword: async (req, res) => {
-    const { email } = req.body;
+    const { username } = req.body;
 
     // Validate the email input
-    if (!email) {
-      return res.status(400).json({ message: "Email is required" });
+    if (!username) {
+      return res.status(400).json({ message: "Username is required" });
     }
 
     // Define all user models
@@ -434,7 +434,7 @@ const UserController = {
     try {
       // Loop through all models to find the user
       for (const [_, UserModel] of Object.entries(models)) {
-        foundUser = await UserModel.findOne({ email }).exec();
+        foundUser = await UserModel.findOne({ username }).exec();
         if (foundUser) {
           break; // Exit the loop once the user is found
         }

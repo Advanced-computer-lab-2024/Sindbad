@@ -20,14 +20,16 @@ import { useState } from "react";
 const ForgotPassword = () => {
   // Schema for Email Form
   const emailFormSchema = z.object({
-    email: z.string().email({
-      message: "Please enter a valid email address.",
-    }),
+    username: z
+      .string({
+        message: "Please enter a valid username",
+      })
+      .min(1),
   });
 
   // Default values for the new form
   const emailDefaultValues = {
-    email: "",
+    username: "",
   };
 
   // Use useForm hook with zodResolver and schema
@@ -44,7 +46,7 @@ const ForgotPassword = () => {
     setIsEmailSent(false);
     setIsError(false);
 
-    const response = await sendForgotPasswordEmail(data.email)
+    const response = await sendForgotPasswordEmail(data.username)
       .then((_) => {
         // console.log("Response:", response);
         console.log("Email sent successfully.");
@@ -57,9 +59,9 @@ const ForgotPassword = () => {
       })
       .catch((error) => {
         if (error.status === 400) {
-          console.error("Payload must contain email");
+          console.error("Payload must contain username");
         } else if (error.status === 404) {
-          console.error("Email not found. Please try again.");
+          console.error("Username not found. Please try again.");
           setIsError(true);
         } else {
           console.error("Error:", error);
@@ -106,16 +108,16 @@ const ForgotPassword = () => {
                 className="flex flex-col gap-4"
               >
                 <FormField
-                  key="email"
+                  key="username"
                   control={form.control}
-                  name="email"
+                  name="username"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        <p className="form-label">Email</p>
+                        <p className="form-label">Username</p>
                       </FormLabel>
                       <FormControl>
-                        <Input {...field} type="email" />
+                        <Input {...field} type="text" />
                       </FormControl>
                       <FormMessage className="text-xs" />
                     </FormItem>
@@ -128,7 +130,7 @@ const ForgotPassword = () => {
                       id="error-message"
                       className="text-red-500 text-sm justify-self-center w-auto"
                     >
-                      Email not found. Please try again.
+                      Username not found. Please try again.
                     </p>
                   </div>
                 )}
