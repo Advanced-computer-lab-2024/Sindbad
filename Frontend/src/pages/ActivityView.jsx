@@ -227,7 +227,7 @@ function Activity() {
   };
 
   const payWithStripe = async () => {
-    checkoutWithStripe(id, activity, promoCode, "activity");
+    checkoutWithStripe(id, activity, stripeID, "activity");
   };
 
   const handleCancelBooking = async () => {

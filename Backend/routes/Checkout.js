@@ -149,7 +149,7 @@ router.post('/wallet' , async (req, res) => {
     }
 
     // Deduct total amount from user's balance
-    user.wallet -= total + (total * discount)/100;
+    user.wallet -= total - (total * discount)/100;
 
     if (type === 'product') {
       const userOrder = {};
@@ -163,7 +163,7 @@ router.post('/wallet' , async (req, res) => {
               itemId: product._id,
               buyerId: userId,
               quantity: item.quantity,
-              totalPrice: product.price * item.quantity + (product.price * item.quantity * discount)/100
+              totalPrice: product.price * item.quantity - (product.price * item.quantity * discount)/100
           });
 
           const savedSale = await sale.save();
@@ -181,7 +181,7 @@ router.post('/wallet' , async (req, res) => {
           itemId: cart._id,
           buyerId: userId,
           quantity: cart.adultTicketCount + cart.childTicketCount,
-          totalPrice: (cart.price + (cart.price * discount)/100 ) * (cart.adultTicketCount + cart.childTicketCount)
+          totalPrice: (cart.price - (cart.price * discount)/100 ) * (cart.adultTicketCount + cart.childTicketCount)
       });
       const mockRes = {
         status: function(statusCode) {
@@ -207,7 +207,7 @@ router.post('/wallet' , async (req, res) => {
           type: 'Activity',
           itemId: cart._id,
           buyerId: userId,
-          totalPrice: cart.price + (cart.price * discount)/100
+          totalPrice: cart.price - (cart.price * discount)/100
       });
       const mockRes = {
         status: function(statusCode) {
