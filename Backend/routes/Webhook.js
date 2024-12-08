@@ -13,10 +13,22 @@ const router = express.Router();
 const YOUR_DOMAIN = process.env.FRONTEND_DOMAIN;
 const BACKEND_DOMAIN = process.env.BACKEND_DOMAIN;
 
+const Admin = require("../models/Admin");
+const Seller = require("../models/Seller");
+const nodemailer = require("nodemailer");
+
 function hashCart(cart) {
   const cartString = JSON.stringify(cart);
   return crypto.createHash('sha256').update(cartString).digest('hex');
 }
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.GMAIL, // Your Gmail address
+    pass: process.env.GMAILPASSWORD    // Your Gmail App Password
+  }
+});
 
 const purchaseSuccessful = async (req, res) => {
   // const sig = req.headers['stripe-signature'];
@@ -67,7 +79,7 @@ const purchaseSuccessful = async (req, res) => {
       for (const item of user.cart) {
 
         const product = item.productID;
-        
+
         const sale = new Sale({
           type: 'Product',
           itemId: product._id,
@@ -75,15 +87,52 @@ const purchaseSuccessful = async (req, res) => {
           quantity: item.quantity,
           totalPrice: product.price * item.quantity
         });
-        
+
         const savedSale = await sale.save();
         saleIds.push(savedSale._id);
       }
-      
+
       userOrder.sales = saleIds;
       userOrder.cart = JSON.parse(JSON.stringify(user.cart));
       userOrder.isDelivered = Math.random() >= 0.5;
       user.orders.push(userOrder);
+
+      // Increment product.numSales for each product in the cart
+      for (const item of cart) {
+        const product = await Product.findById(item.productID._id);
+        if (product) {
+          product.numSales += item.quantity;
+          product.quantity -= item.quantity;
+          await product.save();
+
+          let user = await Seller.findById(product.creatorId); // Check if user is an admin
+
+          if (!user) {
+            user = await Admin.findById(product.creatorId); // Check if user is a seller
+          }
+
+          if (!user) {
+            return res.status(404).json({ message: "User not found or unauthorized" });
+          }
+
+          if (product.quantity == 0) {
+            //send an email
+            const mailOptions = {
+              from: process.env.GMAIL,
+              to: user.email,
+              subject: 'Product out of stock',
+              text: 'Your product ' + product.name + ' is out of stock.'
+            };
+
+            transporter.sendMail(mailOptions, (error, info) => {
+              if (error) {
+                return res.status(500).send(error.toString());
+              }
+              res.status(200).send(`Email sent: ${info.response}`);
+            });
+          }
+        }
+      }
 
       user.cart = [];
     }

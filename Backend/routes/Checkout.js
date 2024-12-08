@@ -72,16 +72,6 @@ router.post("/stripe", async (req, res) => {
           type: type,
         },
       });
-
-      // Increment product.numSales for each product in the cart
-      for (const item of cart) {
-        const product = await Product.findById(item.productID._id);
-        if (product) {
-          product.numSales += item.quantity;
-          product.quantity -= item.quantity;
-          await product.save();
-        }
-      }
     }
 
     if (type == "itinerary") {
