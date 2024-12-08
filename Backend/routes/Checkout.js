@@ -32,7 +32,7 @@ router.post('/stripe', async (req, res) => {
           throw new Error('Invalid cart item: missing priceId or quantity.');
         }
         return {
-          price: item.productID.priceId,
+          price: item.priceId,
           quantity: item.quantity,
         };
       });

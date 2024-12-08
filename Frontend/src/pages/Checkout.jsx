@@ -117,7 +117,7 @@ export const Checkout = () => {
 
     const payWithWallet = async () => {
         try {
-            const response = checkoutWithWallet(id, cart, discount);
+            const response = checkoutWithWallet(id, cart, discount, "product");
             navigate("/checkout/success");
         }
         catch (error) {
@@ -125,7 +125,7 @@ export const Checkout = () => {
         }
     }
     const payWithStripe = async () => {
-        checkoutWithStripe(id, cart, stripeID);
+        checkoutWithStripe(id, cart, stripeID, "product");
     }
     const payWithCOD = async () => {
         try {
