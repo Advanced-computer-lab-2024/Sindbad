@@ -22,7 +22,7 @@ router.post('/stripe', async (req, res) => {
   try {
     const { cart, userId, promoCode, type } = req.body;
     let line_items;
-    if (type === 'product') {
+    if (type == 'product') {
       if (!Array.isArray(cart) || cart.length === 0) {
         return res.status(400).json({ error: 'Cart is invalid or empty.' });
       }
@@ -37,14 +37,14 @@ router.post('/stripe', async (req, res) => {
         };
       });
     }
-    if (type === 'itinerary') {
+    if (type == 'itinerary') {
       line_items = [{
         price: cart.priceId,
         quantity: cart.adultTicketCount + cart.childTicketCount,
       }]
     }    
 
-    if (type === 'activity') {
+    if (type == 'activity') {
       line_items = [{
         price: cart.priceId,
         quantity: 1,
@@ -52,7 +52,7 @@ router.post('/stripe', async (req, res) => {
     }
     let session;
 
-    if (type === 'product') {
+    if (type == 'product') {
     // Create a Stripe Checkout session
       session = await stripe.checkout.sessions.create({
         line_items,
@@ -68,8 +68,8 @@ router.post('/stripe', async (req, res) => {
       });
     }
 
-    if (type === 'itinerary') {
-
+    if (type == 'itinerary') {
+      console.log("CART: ", cart)
       session = await stripe.checkout.sessions.create({
         line_items,
         mode: 'payment',
@@ -89,7 +89,7 @@ router.post('/stripe', async (req, res) => {
       });
     }
 
-    if (type === 'activity') {
+    if (type == 'activity') {
       session = await stripe.checkout.sessions.create({
         line_items,
         mode: 'payment',

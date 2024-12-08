@@ -3,6 +3,7 @@ const express = require('express');
 const Tourist = require("../models/Tourist");
 const Product = require("../models/Product");
 const Sale = require("../models/Sale");
+const { bookItinerary } = require("../controllers/Itinerary");
 const crypto = require('crypto');
 const app = express();
 app.use(express.json());
@@ -33,10 +34,11 @@ function hashCart(cart) {
     const event = req.body;
 
     const session = event.data.object
+    console.log("ENTERED PURCHASE SUCCESSFUL");
 
     // Handle the event
-    if (event.type === 'checkout.session.completed') {
-        
+    if (event.type == 'checkout.session.completed') {
+        console.log("ENTERED CHECKOUT SESSION COMPLETED");
         const cartHash = session.metadata.cartHash;
         const userId = session.metadata.userId;
         const type = session.metadata.type;
@@ -57,7 +59,7 @@ function hashCart(cart) {
         }
 
 
-        if (type === 'product') {
+        if (type == 'product') {
             if (hashCart(user.cart) !== cartHash) {
                 return res.status(400).json({ error: 'Cart has been altered.' });
             }
@@ -90,7 +92,8 @@ function hashCart(cart) {
             user.cart = [];
         }
 
-        if (type === 'itinerary') {
+        if (type == 'itinerary') {
+          console.log("DETECTED AS ITINERAARY");
             const sale = new Sale({
                 type: 'Itinerary',
                 itemId: itineraryId,
@@ -117,7 +120,7 @@ function hashCart(cart) {
             await bookItinerary(req, mockRes);
           }
       
-          if (type === 'activity') {
+          if (type == 'activity') {
             const sale = new Sale({
                 type: 'Activity',
                 itemId: activityId,

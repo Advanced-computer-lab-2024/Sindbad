@@ -617,8 +617,8 @@ function setHeadCountForDate(itinerary, targetDate, newHeadCount) {
 
 const bookItinerary = async (req, res) => {
     try {
-        const { date, adultTicketCount, childTicketCount, itineraryId, userId } =
-            req.body;
+        console.log("ENTERED BOOK ITINERARY");
+        const { date, adultTicketCount, childTicketCount, itineraryId, userId } = req.body;
         let itinerary = await Itinerary.findById(itineraryId);
         if (!itinerary) {
             return res.status(404).json({ message: "Itinerary not found" });
@@ -664,9 +664,9 @@ const bookItinerary = async (req, res) => {
             priceCharged = min * (adultTicketCount + childTicketCount);
         }
 
-        if (tourist.wallet < priceCharged) {
-            return res.status(400).json({ message: "Insufficient funds" });
-        }
+        // if (tourist.wallet < priceCharged) {
+        //     return res.status(400).json({ message: "Insufficient funds" });
+        // }
 
         headcount = getHeadCountForDate(itinerary, date);
         itinerary = setHeadCountForDate(
@@ -676,7 +676,7 @@ const bookItinerary = async (req, res) => {
         );
 
         await itinerary.save();
-
+        console.log("SAVED ITINERARY");
         // Create a record in the Sale document
         await Sale.create({
             type: "Itinerary",
@@ -685,16 +685,31 @@ const bookItinerary = async (req, res) => {
             buyerId: userId,
             totalPrice: priceCharged,
         });
-
-        tourist.wallet -= priceCharged;
-
+        // tourist.wallet -= priceCharged;
+        console.log("BEFORE TOURIST PUSH");
         tourist.bookedEvents.itineraries.push({
             itineraryId: itineraryId,
             ticketsBooked: childTicketCount + adultTicketCount,
             dateBooked: new Date(date),
         });
         await tourist.save();
+        console.log("AFTER TOURIST PUSH");
+        // send payment confirmation with price in email
+        const mailOptions = {
+            from: process.env.GMAIL,
+            to: tourist.email,
+            subject: "Payment Confirmation",
+            text: `You have successfully booked the itinerary ${itinerary.name} for ${date} at a price of ${(priceCharged / 10).toFixed(2)} USD`,
+        };
 
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                console.log(error);
+            } else {
+                console.log("Email sent: " + info.response);
+            }
+        });
+        console.log("AFTER MAIL SENT");
         let loyaltyPoints = tourist.loyaltyPoints;
         switch (tourist.level) {
             case 1:
