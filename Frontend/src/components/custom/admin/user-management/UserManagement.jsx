@@ -95,8 +95,8 @@ export default function UserManagement() {
   let newUsers = getNewUsersInDateRange();
 
   return (
-    <>
-      <div className="flex items-center gap-6">
+    <div className="w-full">
+      <div className="flex items-center gap-6 mb-6">
         <h1 className="text-3xl font-extrabold shrink-0">Users</h1>
         <hr className="border-neutral-300 border w-full mt-1.5" />
         <div className="shrink-0 flex items-center border rounded-md p-1 justify-center gap-2">
@@ -135,6 +135,6 @@ export default function UserManagement() {
       ) : (
         <div>Unable to get users.</div>
       )}
-    </>
+    </div>
   );
 }

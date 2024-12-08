@@ -57,8 +57,8 @@ function UserVerification() {
     };
 
     return (
-        <>
-            <div className="flex items-center gap-6">
+        <div className="w-full">
+            <div className="flex items-center gap-6 mb-6">
                 <h1 className="text-3xl font-extrabold shrink-0">Unaccepted Users</h1>
                 <hr className="border-neutral-300 border w-full mt-1.5" />
             </div>
@@ -74,7 +74,7 @@ function UserVerification() {
             ) : (
                 <div>No users found.</div>
             )}
-        </>
+        </div>
     );
 }
 
