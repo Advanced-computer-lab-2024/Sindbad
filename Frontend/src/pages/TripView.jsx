@@ -124,7 +124,7 @@ function Trip() {
 
   return (
     <div className="py-8 px-12 sm:px-24 max-w-[1200px] mx-auto">
-      <div className="flex items-center gap-6 mb-6">
+      <div className="flex items-center gap-6">
         <h1 className="text-3xl font-extrabold shrink-0">{trip.name}</h1>
         <hr className="border-neutral-300 border w-full mt-1.5" />
       </div>
@@ -144,6 +144,24 @@ function Trip() {
           </div>
 
           <p className="text-sm text-gray-600">{trip.description}</p>
+
+          <div>
+            <h2 className="text-lg font-semibold mb-2">Date & Time</h2>
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-1">
+                <CalendarDays size={16} className="shrink-0" />
+                <span className="text-sm text-gray-600">
+                  {new Date(trip.dateTime).toDateString()}
+                </span>
+              </div>
+              <div className="flex items-center gap-1">
+                <AlarmClock size={16} className="shrink-0" />
+                <span className="text-sm text-gray-600">
+                  {new Date(trip.dateTime).toTimeString().split(" ")[0]}
+                </span>
+              </div>
+            </div>
+          </div>
 
           <div className="flex gap-6 lg:gap-8">
             <div className="w-full lg:w-1/2">
@@ -179,24 +197,6 @@ function Trip() {
                     {trip.dropoffLocation.address}
                   </span>
                 </div>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <h2 className="text-lg font-semibold mb-2">Date & Time</h2>
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-1">
-                <CalendarDays size={16} className="shrink-0" />
-                <span className="text-sm text-gray-600">
-                  {new Date(trip.dateTime).toDateString()}
-                </span>
-              </div>
-              <div className="flex items-center gap-1">
-                <AlarmClock size={16} className="shrink-0" />
-                <span className="text-sm text-gray-600">
-                  {new Date(trip.dateTime).toTimeString().split(" ")[0]}
-                </span>
               </div>
             </div>
           </div>
@@ -244,18 +244,14 @@ function Trip() {
             <hr className="border-neutral-300 border w-full my-4" />
 
             <div>
-              {trip.isBookingOpen ? (
+              {
                 <div className="items-center flex flex-col gap-1">
                   <Button onClick={handleBooking} className="w-full">
                     Book trip
                     <ArrowRight className="inline-block ml-1" size={12} />
                   </Button>
                 </div>
-              ) : (
-                <p className="text-neutral-400 text-center text-sm italic">
-                  Bookings are closed
-                </p>
-              )}
+              }
             </div>
           </div>
         </div>

@@ -508,8 +508,8 @@ const Itinerary = () => {
                                     <div className="w-[36px] h-3 bg-light rounded-b-full border-b border-l border-neutral-500"></div>
                                 </div>
 
-                                <div className="space-y-4 my-3">
-                                    <div className="flex items-center justify-around">
+                                <div className="space-y-4 my-3 mx-1.5">
+                                    <div className="flex items-center justify-between">
                                         <div className="flex gap-2 items-center">
                                             <p className="text-base font-semibold">Adult</p>
                                             <span className="text-neutral-500 text-xs mt-1 font-medium">
@@ -540,7 +540,7 @@ const Itinerary = () => {
                                             </Button>
                                         </div>
                                     </div>
-                                    <div className="flex items-center justify-around">
+                                    <div className="flex items-center justify-between">
                                         <div className="flex gap-2 items-center">
                                             <p className="text-base font-semibold">Child</p>
                                             <span className="text-neutral-500 text-xs mt-1 font-medium">
