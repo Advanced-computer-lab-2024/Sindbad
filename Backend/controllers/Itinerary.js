@@ -802,6 +802,8 @@ const cancelBooking = async (req, res) => {
             itineraryId: itineraryId,
             buyerId: userId,
             totalPrice: -priceCharged,
+            type: "Itinerary",
+            itemId: itineraryId,
         });
 
         let loyaltyPoints = tourist.loyaltyPoints;
