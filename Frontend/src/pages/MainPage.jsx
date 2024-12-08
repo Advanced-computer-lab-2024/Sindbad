@@ -34,6 +34,7 @@ import { getRolePermissions } from "@/utilities/roleConfig";
 import { useDispatch } from "react-redux";
 import { useUser, logout, setCurrency } from "@/state management/userInfo";
 import axiosInstance from "@/services/axiosInstance";
+import { HelpButton } from "@/components/custom/HelpButton";
 
 function MainPage() {
   const navigate = useNavigate();
@@ -243,6 +244,12 @@ useEffect(() => {
         </div>
       </div>
       <Outlet />
+      
+      {(role === "guest" || role === "tourist") && (
+        <div className="fixed bottom-6 right-6">
+          <HelpButton />
+        </div>
+      )}
     </div>
   );
 }
