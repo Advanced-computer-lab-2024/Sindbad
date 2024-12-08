@@ -196,9 +196,8 @@ To run this project, you will need to add the following
 - create a mongoDB account and create a cluster
 - create an amadeus account and create a new self service app
 - For the website's gmail account, enable 2 Factor Authentication and create a new App password
-- create a cloudinary account?
-- create a stripe account?
-- authentication stuff?
+- create a cloudinary account
+- create a stripe account
 
 >Adding the .env files to the project
 - Create a `.env` file in the **backend** folder and add the following necessary configurations
