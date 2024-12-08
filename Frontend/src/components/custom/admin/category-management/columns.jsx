@@ -31,7 +31,7 @@ export const columns = (handleDeleteCategory, handleUpdateCategory) => [
 					value={name}
 					onChange={(e) => setName(e.target.value)}
 					onKeyDown={handleKeyDown}
-					className={isDirty ? "bg-secondary-900 text-dark" : ""}
+					className={isDirty ? "bg-primary-100 text-dark" : ""}
 				/>
 			);
 		},

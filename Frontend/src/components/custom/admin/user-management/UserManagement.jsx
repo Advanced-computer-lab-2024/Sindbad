@@ -6,9 +6,11 @@ import { columns } from "./columns";
 
 import { getAllUsers, deleteUser } from "@/services/AdminApiHandler";
 import { DatePicker } from "../../DatePicker";
+import { useToast } from "@/hooks/use-toast";
 
 // UserManagement Component
 export default function UserManagement() {
+  const { toast } = useToast();
   // State management for data, loading, and message
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -40,6 +42,9 @@ export default function UserManagement() {
       await deleteUser(userId, role);
       setMessage({ type: "success", text: "User deleted successfully." });
       await fetchData(); // Refresh the data after deletion
+        toast({
+          description: "User deleted successfully.",
+        });
     } catch (error) {
       console.error("Failed to delete user:", error);
       setMessage({ type: "error", text: "Failed to delete user." });
@@ -53,8 +58,7 @@ export default function UserManagement() {
     return { from: startOfMonth, to: endOfMonth };
   };
 
-	const [dateRange, setDateRange] = useState(getCurrentMonthRange());
-
+  const [dateRange, setDateRange] = useState(getCurrentMonthRange());
 
   const getTotalUsers = () => {
     if (data) {
@@ -112,22 +116,11 @@ export default function UserManagement() {
             startDate={dateRange.from}
             endDate={dateRange.to}
             setDate={(range) => setDateRange(range)}
-            clear = {false}
+            clear={false}
           />
         </div>
       </div>
 
-      {message && (
-        <div
-          className={`p-2 rounded-lg ${
-            message.type === "error"
-              ? "bg-destructive text-light"
-              : "bg-secondary text-dark"
-          }`}
-        >
-          {message.text}
-        </div>
-      )}
       {loading ? (
         <TableSkeleton rows={5} cols={4} />
       ) : data ? ( // Check if data
