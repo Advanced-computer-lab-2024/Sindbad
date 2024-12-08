@@ -137,6 +137,8 @@ const purchaseSuccessful = async (req, res) => {
               isSeen: false,
             };
             user.Notifications.push(notification);
+
+            await user.save();
           }
         }
       }

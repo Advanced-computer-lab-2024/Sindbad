@@ -244,6 +244,8 @@ router.post("/wallet", async (req, res) => {
               isSeen: false,
             };
             user.Notifications.push(notification);
+
+            await user.save();
           }
         }
       }
@@ -407,6 +409,8 @@ router.post("/cod", async (req, res) => {
             isSeen: false,
           };
           user.Notifications.push(notification);
+
+          await user.save();
         }
       }
     }
