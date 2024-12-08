@@ -181,24 +181,9 @@ None
 
 ```json
 [
-  {
-    "_id": "64b1f2f5e5b7cbe20c23a3c7",
-    "name": "Advertiser 1",
-    "email": "advertiser1@example.com",
-    "phone": "+123456789",
-    "createdAt": "2024-06-12T08:23:45.123Z",
-    "updatedAt": "2024-06-14T15:45:33.123Z",
-    ...
-  },
-  {
-    "_id": "64b1f2f5e5b7cbe20c23a3c8",
-    "name": "Advertiser 2",
-    "email": "advertiser2@example.com",
-    "phone": "+987654321",
-    "createdAt": "2024-06-10T12:11:22.456Z",
-    "updatedAt": "2024-06-12T10:35:21.456Z",
-    ...
-  }
+  Advertiser 1 Document,
+  Advertiser 2 Document,
+  ...
 ]
 ```
 
@@ -220,15 +205,7 @@ PUT /advertiser/upload/:id
 
 ```json
 {
-  "_id": "64b1f2f5e5b7cbe20c23a3c7",
-  "name": "Advertiser 1",
-  "email": "advertiser1@example.com",
-  "phone": "+123456789",
-  "idCardImage": "binary_data_of_id_card_image",
-  "taxationRegistryCardImage": "binary_data_of_taxation_registry_card_image",
-  "createdAt": "2024-06-12T08:23:45.123Z",
-  "updatedAt": "2024-06-14T15:45:33.123Z",
-  ...
+  Updated Advertiser Document
 }
 ```
 
@@ -248,14 +225,7 @@ GET /advertiser/:id
 
 ```json
 {
-  "_id": "64b1f2f5e5b7cbe20c23a3c7",
-  "name": "Advertiser 1",
-  "email": "advertiser1@example.com",
-  "phone": "+123456789",
-  "idCardImage": "binary_data_of_id_card_image",
-  "taxationRegistryCardImage": "binary_data_of_taxation_registry_card_image",
-  "createdAt": "2024-06-12T08:23:45.123Z",
-  "updatedAt": "2024-06-14T15:45:33.123Z"
+  Advertiser Document
 }
 ```
 
@@ -613,18 +583,7 @@ POST /tourGuide/:id/comment
 
 ```json
 {
-  "_id": "6725031bd5a2d7588e2ce42a",
-  "email": "jana.elowainy@gmail.com",
-  "username": "tourguide",
-  "passwordHash": "$2b$10$6QP9BwFlpfF3sJq6Dl0DrOXnNIM95W9DpXiKwtCOpICsv7w9oO7A2",
-  "isAccepted": true,
-  "createdAt": {
-    "$date": "2024-11-01T16:34:35.090Z"
-  },
-  "updatedAt": {
-    "$date": "2024-11-30T13:03:54.129Z"
-  },
-  ...
+  Updated Tour Guide Document
 }
 ```
 
@@ -642,34 +601,9 @@ None
 
 ```json
 [
-  {
-    "_id": "6725031215a2d7588e2ce42a",
-    "email": "moski.moskito@gmail.com",
-    "username": "tourguide",
-    "passwordHash": "$2b$10$6QP9BwFadadF3sJq6Dl0DrOXnNIM95W9DpXiKwtCOpICsv7w9oO7A2",
-    "isAccepted": false,
-    "createdAt": {
-      "$date": "2024-11-01T16:34:35.090Z"
-    },
-    "updatedAt": {
-      "$date": "2024-11-30T13:03:54.129Z"
-    },
-    ...
-  },
-  {
-    "_id": "6725031bd5a2d7588e2ce42a",
-    "email": "jana.elowainy@gmail.com",
-    "username": "tourguide",
-    "passwordHash": "$2b$10$6QP9BwFlpfF3sJq6Dl0DrOXnNIM95W9DpXiKwtCOpICsv7w9oO7A2",
-    "isAccepted": true,
-    "createdAt": {
-      "$date": "2024-11-01T16:34:35.090Z"
-    },
-    "updatedAt": {
-      "$date": "2024-11-30T13:03:54.129Z"
-    },
-    ...
-  },
+  Tour Guide 1 Document,
+  Tour Guide 2 Document,
+  ...
 ]
 ```
 
@@ -689,18 +623,7 @@ GET /tourGuide/:id
 
 ```json
 {
-  "_id": "6725031bd5a2d7588e2ce42a",
-  "email": "jana.elowainy@gmail.com",
-  "username": "tourguide",
-  "passwordHash": "$2b$10$6QP9BwFlpfF3sJq6Dl0DrOXnNIM95W9DpXiKwtCOpICsv7w9oO7A2",
-  "isAccepted": true,
-  "createdAt": {
-    "$date": "2024-11-01T16:34:35.090Z"
-  },
-  "updatedAt": {
-    "$date": "2024-11-30T13:03:54.129Z"
-  },
-  ...
+  Tour Guide Document
 }
 ```
 
@@ -720,18 +643,7 @@ DELETE /tourGuide/:id
 
 ```json
 {
-  "_id": "6725031bd5a2d7588e2ce42a",
-  "email": "jana.elowainy@gmail.com",
-  "username": "tourguide",
-  "passwordHash": "$2b$10$6QP9BwFlpfF3sJq6Dl0DrOXnNIM95W9DpXiKwtCOpICsv7w9oO7A2",
-  "isAccepted": true,
-  "createdAt": {
-    "$date": "2024-11-01T16:34:35.090Z"
-  },
-  "updatedAt": {
-    "$date": "2024-11-30T13:03:54.129Z"
-  },
-  ...
+  Deleted Tour Guide Document
 }
 ```
 
@@ -753,18 +665,7 @@ POST /tourGuide/:id
 
 ```json
 {
-  "_id": "6725031bd5a2d7588e2ce42a",
-  "email": "jana.elowainy@gmail.com",
-  "username": "tourguide",
-  "passwordHash": "$2b$10$6QP9BwFlpfF3sJq6Dl0DrOXnNIM95W9DpXiKwtCOpICsv7w9oO7A2",
-  "isAccepted": true,
-  "createdAt": {
-    "$date": "2024-11-01T16:34:35.090Z"
-  },
-  "updatedAt": {
-    "$date": "2024-11-30T13:03:54.129Z"
-  },
-  ...
+  Updated Tour Guide Document
 }
 ```
 
@@ -785,10 +686,7 @@ POST /tourGuide/:id/previous-work/:previousWorkId
 
 ```json
 {
-  "id": "64b1f2f5e5b7cbe20c23a3c7",
-  "username": "moskiUser",
-  "preferredCurrency": "USD",
-  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  Updated Tour Guide Document
 }
 ```
 
