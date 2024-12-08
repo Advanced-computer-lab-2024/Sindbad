@@ -15,17 +15,109 @@ http://localhost:3000/addRouteHere
 
 
 ## Activity Routes
-### Get Activity by ID
 
+
+### Create Activity
+
+```bash
+POST /activity/
+```
+
+#### Request
+
+| Parameter        | Type     | Description                                                            |
+|-------------------|----------|------------------------------------------------------------------------|
+| name             | String   | **Required.** Name of the activity.                                    |
+| dateTime         | DateTime | **Required.** Scheduled date and time for the activity.                |
+| location         | Object   | **Required.** Location details as a JSON object.                      |
+| price            | Number   | **Required.** Price for the activity.                                  |
+| category         | String   | **Required.** Name of the category.                                    |
+| tags             | Array    | **Required.** Array of tag names.                                      |
+| discounts        | Array    | **Optional.** Array of discount objects.                               |
+| isBookingOpen    | Boolean  | **Required.** Indicates if booking is open (true/false).               |
+| headCount        | Number   | **Optional.** Maximum headcount for the activity.                      |
+| description      | String   | **Optional.** Description of the activity.                             |
+| cardImage        | File     | **Optional.** Card image file for the activity.                        |
+
+#### Response
+
+```json
+{
+  "message": "Activity created successfully",
+  Created Activity Document
+}
+```
+
+### Update Activity
+
+```bash
+PUT /activity/:id
+```
+
+#### Request
+
+| Parameter        | Type     | Description                                                            |
+|-------------------|----------|------------------------------------------------------------------------|
+| id               | String   | **Required.** The ID of the activity.                                  |
+| name             | String   | **Optional.** Updated activity name.                                   |
+| dateTime         | DateTime | **Optional.** Updated date and time for the activity.                  |
+| location         | Object   | **Optional.** Updated location details as a JSON object.               |
+| price            | Number   | **Optional.** Updated price for the activity.                          |
+| category         | String   | **Optional.** Updated category for the activity.                       |
+| tags             | Array    | **Optional.** Updated array of tag names.                              |
+| discounts        | Array    | **Optional.** Updated array of discount objects.                       |
+| isBookingOpen    | Boolean  | **Optional.** Updated booking status (open or closed).                 |
+| headCount        | Number   | **Optional.** Updated maximum headcount for the activity.              |
+| description      | String   | **Optional.** Updated description of the activity.                     |
+| cardImage        | File     | **Optional.** Updated card image for the activity.                     |
+
+#### Response
+
+```json
+{
+  Updated Activity Document
+}
+```
+### Get Activity by ID
 ```bash
 GET /activity/:id
 ```
+
+#### Request
 
 | Parameter | Type   | Description                                  |
 |-----------|--------|----------------------------------------------|
 | id        | String | **Required.** The ID of the activity to be retrieved.|
 
+#### Response
 
+```json
+{
+  Activity Document (populated with Category Document, Tag Document)
+}
+```
+
+### Set Activity as Inappropriate
+
+```bash
+PUT /activity/:id/inappropriate
+```
+
+#### Request
+
+| Parameter        | Type    | Description                                   |
+|-------------------|---------|-----------------------------------------------|
+| id               | String  | **Required.** The ID of the activity.         |
+| isInappropriate  | Boolean | **Required.** Indicates if the activity is flagged as inappropriate (true/false). This is passed in the request body. |
+
+#### Response
+
+```json
+{
+  "message": "Activity flagged successfully",
+  Activity Document
+}
+```
 
 ### Get My Activities
 
@@ -33,16 +125,32 @@ GET /activity/:id
 GET /activity/my-activities/:creatorId
 ```
 
+#### Request
+
 | Parameter  | Type   | Description                                       |
 |------------|--------|---------------------------------------------------|
 | creatorId  | String | **Required.** The ID of the user whose activities are to be retrieved. |
 
+#### Response
+    
+```json
+{
+    [
+    Activity 1 Document,
+    Activity 2 Document,
+    ...
+    ]
+}
+```
 
 ### Get All Activities
 
 ```bash
 GET /activity/
 ```
+
+#### Request
+
 | Parameter | Type   | Description                                  |
 |-----------|--------|----------------------------------------------|
 | searchTerm| String | **Optional** term to search in activity names, tags, or categories to be passed in the query.  |
@@ -56,6 +164,17 @@ GET /activity/
 | page      | Number | **Optional** page number for pagination to be passed in the query. Default is 1.  |
 | limit     | Number | **Optional** number of activities per page to be passed in the query. Default is 10.  |
 
+#### Response
+    
+```json
+{
+    [
+    Activity 1 Document,
+    Activity 2 Document,
+    ...
+    ]
+}
+```
 
 ### Delete Activity
 
@@ -63,9 +182,19 @@ GET /activity/
 DELETE /activity/:id
 ```
 
+#### Request
+
 | Parameter | Type   | Description                                  |
 |-----------|--------|----------------------------------------------|
 | id        | String | **Required.** The ID of the activity to delete.  |
+
+#### Response
+
+```json
+    {
+    Deleted Activity Document
+    }
+```
 
 ### Post a Rating to an Activity
 
@@ -73,11 +202,23 @@ DELETE /activity/:id
 POST activity/:id
 ```
 
+#### Request
+
 | Parameter | Type   | Description                                  |
 |-----------|--------|----------------------------------------------|
 | id        | String | **Required.** The ID of the activity.  |
 | userId    | Number | **Required.** The user's id passed in the request body.  |
 | rating    | Number | **Required.** The rating passed in the request body.  |
+
+
+#### Response
+
+```json
+{
+  "message": "Rating added successfully",
+  Activity Document (populated with Category Document, Tag Document),
+}
+```
 
 ### Post a comment to an Activity
 
@@ -85,11 +226,22 @@ POST activity/:id
 POST /activity/:id/comment
 ```
 
+#### Request
+
 | Parameter | Type   | Description                                  |
 |-----------|--------|----------------------------------------------|
 | id        | String | **Required.** The ID of the activity  |
 | userId    | Number | **Required.** The user's id passed in the request body.  |
 | comment    | Number | **Required.** The comment passed in the request body.  |
+
+#### Response
+
+```json
+{
+  "message": "Comment added successfully",
+  Activity Document (populated with Category Document, Tag Document),
+}
+```
 
 ### Book an Activity
 
@@ -97,10 +249,22 @@ POST /activity/:id/comment
 POST /activity/book
 ```
 
+#### Request
+
 | Parameter | Type   | Description                                  |
 |-----------|--------|----------------------------------------------|
 | activityId        | String | **Required.** The activity to be booked's Id passed in the request body.  |
 | userId        | String | **Required.** The Id of the user booking the activity passed in the request body.  |
+
+#### Response
+
+```json
+{
+  "message": "Activity booked successfully",
+  Activity Document,
+  "priceCharged" : 30
+}
+```
 
 ### Cancel an Activity's Booking
 
@@ -108,16 +272,26 @@ POST /activity/book
 POST /activity/cancel
 ```
 
+#### Request
+
 | Parameter | Type   | Description                                  |
 |-----------|--------|----------------------------------------------|
 | activityId        | String | **Required.** The activity to be canceled's Id passed in the request body.  |
 | userId        | String | **Required.** The Id of the user cancelling the activity passed in the request body.  |
 
+#### Response
 
+```json
+{
+  "message": "Activity cancelled successfully",
+}
+```
 
 ## Admin Routes
 
 ### Get All Admins
+
+#### Request
 ```bash
 GET /admin/
 ```
@@ -127,7 +301,22 @@ GET /admin/
 | email        | String | **Optional.** The admin to be fetched's email as a filter passed in the request query.  |
 | username        | String | **Optional.** The admin to be fetched's username as a filter passed in the request query.  |
 
+#### Response
+
+```json
+{
+    [
+    Admin 1 Document,
+    Admin 2 Document,
+    ...
+    ]
+}
+```
+
 ### Create an Admin
+
+#### Request
+
 ```bash
 POST /admin/
 ```
@@ -138,7 +327,19 @@ POST /admin/
 | username        | String | **Required.**   |
 | passwordHash        | String | **Required.**  |
 
+#### Response
+
+```json
+{
+  "message": "Comment added successfully",
+  Admin Document
+}
+```
+
 ### Get an Admin by Id
+
+#### Request
+
 ```bash
 GET /admin/:id
 ```
@@ -147,7 +348,18 @@ GET /admin/:id
 |-----------|--------|----------------------------------------------|
 | id        | String | **Required.** The Admin to be fetched's id.  |
 
+#### Response
+
+```json
+{
+  Admin Document
+}
+```
+
 ### Delete an Admin
+
+#### Request
+
 ```bash
 DELETE /admin/:id
 ```
@@ -156,11 +368,37 @@ DELETE /admin/:id
 |-----------|--------|----------------------------------------------|
 | id        | String | **Required.** The Admin to be deleted's id.  |
 
+
+#### Response
+
+```json
+{
+  "message": "Admin deleted successfully!",
+}
+```
+
 ### Get Accounts requesting to be deleted
+
+#### Request
+
 ```bash
 GET /admin/requested-account-deletion-users
 ```
 
+#### Response
+
+```json
+{
+    [
+    Tourist 1 Document,
+    Tourguide 1 Document,
+    Advertiser 1 Document,
+    Seller 1 Document,
+    Tourist 2 Document,
+    ...
+    ]
+}
+```
 
 ## Advertiser Routes
 
