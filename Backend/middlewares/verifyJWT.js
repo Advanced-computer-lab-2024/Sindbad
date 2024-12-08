@@ -12,7 +12,18 @@ const excludedRoutes = [
   /^\/activity\/?$/, // Matches "/activity" and "/activity/"
   /^\/activity\/[a-fA-F0-9]+$/, // Matches "/activity/{id}"
   /^\/activity\/\?.*$/, // Matches "/activity/" with query parameters
-  /^\/itinerary\/?.*/,
+  /^\/itinerary\/?$/, // Matches "/itinerary" and "/itinerary/"
+  /^\/itinerary\/[a-fA-F0-9]+$/, // Matches "/itinerary/{id}"
+  /^\/itinerary\/\?.*$/, // Matches "/itinerary/" with query parameters
+  /^\/category\/?$/, // Matches "/category" and "/category/"
+  /^\/category\/[a-fA-F0-9]+$/, // Matches "/category/{id}"
+  /^\/category\/\?.*$/, // Matches "/category/" with query parameters
+  /^\/tourguide\/?$/, // Matches "/tourguide" and "/tourguide/"
+  /^\/tourguide\/[a-fA-F0-9]+$/, // Matches "/tourguide/{id}"
+  /^\/tourguide\/\?.*$/, // Matches "/tourguide/" with query parameters
+  /^\/advertiser\/?$/, // Matches "/advertiser" and "/advertiser/"
+  /^\/advertiser\/[a-fA-F0-9]+$/, // Matches "/advertiser/{id}"
+  /^\/advertiser\/\?.*$/, // Matches "/advertiser/" with query parameters
   /^\/site(\/?$|\?.*)$/, // Matches "/site", "/site/", and "/site" with query parameters
   /^\/site\/[a-fA-F0-9]+$/, // Matches "/site/{id}"
   /^\/auth(\/.*)?$/, // Matches "/auth" and anything after it
