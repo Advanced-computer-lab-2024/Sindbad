@@ -109,29 +109,26 @@ function Timeline({
     role === "admin" && profileRole === "tourGuide"
       ? cardData.filter((card) => card.isActive)
       : role === "admin" && profileRole === "advertiser"
-        ? cardData
-        : profileRole === "tourGuide" && id !== profileId
-          ? cardData.filter((card) => card.isActive && !card.isInappropriate)
-          : profileRole === "advertiser" && id !== profileId
-            ? cardData.filter((card) => !card.isInappropriate)
-            : profileRole === "seller" && id !== profileId
-              ? cardData.filter((card) => !card.isArchived)
-              : cardData;
+      ? cardData
+      : profileRole === "tourGuide" && id !== profileId
+      ? cardData.filter((card) => card.isActive && !card.isInappropriate)
+      : profileRole === "advertiser" && id !== profileId
+      ? cardData.filter((card) => !card.isInappropriate)
+      : profileRole === "seller" && id !== profileId
+      ? cardData.filter((card) => !card.isArchived)
+      : cardData;
 
   const getCardType = () => {
     if (profileRole === "tourGuide") {
       return "itinerary";
-    }
-    else if (profileRole === "seller" || profileRole === "admin") {
+    } else if (profileRole === "seller" || profileRole === "admin") {
       return "product";
-    }
-    else if (profileRole === "tourismGovernor") {
+    } else if (profileRole === "tourismGovernor") {
       return "site";
-    }
-    else {
+    } else {
       return "activity";
     }
-  }
+  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -140,12 +137,12 @@ function Timeline({
           {profileRole === "tourist"
             ? "Bookmarks"
             : profileRole === "seller" || profileRole === "admin"
-              ? "Products"
-              : profileRole === "advertiser"
-                ? "Activities"
-                : profileRole === "tourismGovernor"
-                  ? "Historical Places & Museums"
-                  : "Itineraries"}
+            ? "Products"
+            : profileRole === "advertiser"
+            ? "Activities"
+            : profileRole === "tourismGovernor"
+            ? "Historical Places & Museums"
+            : "Itineraries"}
         </h1>
         <hr className="border-neutral-300 border w-full mt-1.5" />
         {role !== "tourist" &&
@@ -153,7 +150,8 @@ function Timeline({
           (rejectable() === false || userData.isAccepted) && (
             <button
               className="shrink-0 mt-1.5 text-neutral-400 hover:text-neutral-600 transition-all"
-              onClick={() => navigate(`/app/create/${getCardType()}`)}>
+              onClick={() => navigate(`/app/create/${getCardType()}`)}
+            >
               <CirclePlus size={24} />
             </button>
           )}
@@ -167,12 +165,12 @@ function Timeline({
           profileRole === "tourist"
             ? "activity"
             : profileRole === "tourGuide"
-              ? "itinerary"
-              : profileRole === "seller" || profileRole === "admin"
-                ? "product"
-                : profileRole === "advertiser"
-                  ? "activity"
-                  : "site"
+            ? "itinerary"
+            : profileRole === "seller" || profileRole === "admin"
+            ? "product"
+            : profileRole === "advertiser"
+            ? "activity"
+            : "site"
         }
         fetchCardData={fetchCardData}
       />
@@ -235,7 +233,7 @@ function Timeline({
       </div>
 
       <h2 className="text-2xl font-bold shrink-0 text-gray-500 mb-1">
-        {profileRole === "tourist" ? "Past Activities" : ""}
+        {profileRole === "tourist" ? "Activities" : ""}
       </h2>
 
       <CardContainer
@@ -245,7 +243,7 @@ function Timeline({
       />
 
       <h2 className="text-2xl font-bold shrink-0 text-gray-500 mt-2 mb-1">
-        {profileRole === "tourist" ? "Past Itineraries" : ""}
+        {profileRole === "tourist" ? "Itineraries" : ""}
       </h2>
 
       <CardContainer

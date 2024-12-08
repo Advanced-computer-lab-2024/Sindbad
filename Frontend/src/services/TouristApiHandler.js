@@ -190,7 +190,7 @@ export const checkoutWithStripe = async (id, cart, promoCode, type) => {
   }
 };
 
-export const checkoutWithWallet = async (touristId, cart, discount ,type) => {
+export const checkoutWithWallet = async (touristId, cart, discount, type) => {
   try {
     const response = await axiosInstance.post(`/checkout/wallet`, {
       userId: touristId,
@@ -211,6 +211,37 @@ export const checkoutWithCod = async (touristId, cart, type) => {
       cart: cart,
       type: type,
     });
+    return response.data;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const viewOrders = async (touristId) => {
+  try {
+    const response = await axiosInstance.get(`/tourist/${touristId}/orders`);
+    return response.data;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const viewOrderDetails = async (touristId, orderId) => {
+  try {
+    const response = await axiosInstance.get(
+      `/tourist/${touristId}/orders/${orderId}`
+    );
+    return response.data;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const cancelOrder = async (touristId, orderId) => {
+  try {
+    const response = await axiosInstance.delete(
+      `/tourist/${touristId}/orders/${orderId}`
+    );
     return response.data;
   } catch (error) {
     return error;

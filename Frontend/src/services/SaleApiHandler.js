@@ -14,11 +14,24 @@ export const getAllSales = async () => {
 export const getMySales = async (type, creatorId) => {
   try {
     const response = await axiosInstance.get(
-      `/sale/my-sales/${type === "transportation" ? "trip" : type}/${creatorId}`,
+      `/sale/my-sales/${
+        type === "transportation" ? "trip" : type
+      }/${creatorId}`,
       {
         resourceName: "Sale",
       }
     );
+    return response.data;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const getSaleById = async (id) => {
+  try {
+    const response = await axiosInstance.get(`/sale/sales/${id}`, {
+      resourceName: "Sale",
+    });
     return response.data;
   } catch (error) {
     return error;
