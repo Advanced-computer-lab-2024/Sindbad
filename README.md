@@ -321,7 +321,6 @@ git push origin branch-name
 - [zod Documentation](https://zod.dev/)
 - [react-hook-form Documentation](https://react-hook-form.com/docs)
 - [tanstack Documentation](https://tanstack.com/table/latest)
-- yara, salma
 ## License
 This project is licensed under the Apache 2.0 License.
 
