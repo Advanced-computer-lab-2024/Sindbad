@@ -38,15 +38,15 @@ const ForgotPassword = () => {
     defaultValues: emailDefaultValues,
   });
 
-  const [isError, setIsError] = useState(false);
+  const [isError, setIsError] = useState("");
   const [isEmailSent, setIsEmailSent] = useState(false);
 
   const onSubmit = async (data) => {
     // console.log("Data:", data);
     setIsEmailSent(false);
-    setIsError(false);
+    setIsError("");
 
-    const response = await sendForgotPasswordEmail(data.username)
+    await sendForgotPasswordEmail(data.username)
       .then((_) => {
         // console.log("Response:", response);
         console.log("Email sent successfully.");
@@ -60,9 +60,10 @@ const ForgotPassword = () => {
       .catch((error) => {
         if (error.status === 400) {
           console.error("Payload must contain username");
+          setIsError("Payload must contain username");
         } else if (error.status === 404) {
           console.error("Username not found. Please try again.");
-          setIsError(true);
+          setIsError("Username not found. Please try again.");
         } else {
           console.error("Error:", error);
         }
@@ -130,7 +131,7 @@ const ForgotPassword = () => {
                       id="error-message"
                       className="text-red-500 text-sm justify-self-center w-auto"
                     >
-                      Username not found. Please try again.
+                      {isError}
                     </p>
                   </div>
                 )}
