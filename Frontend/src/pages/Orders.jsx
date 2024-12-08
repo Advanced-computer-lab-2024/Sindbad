@@ -10,27 +10,33 @@ import { useEffect, useState } from "react";
 import { BadgeX } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { viewOrders, cancelOrder } from "@/services/TouristApiHandler";
-import { useUser } from "@/state management/userInfo";
+import { useUser, useCurrency } from "@/state management/userInfo";
 import { getSaleById } from "@/services/SaleApiHandler";
+import { Convert } from "easy-currencies";
 
-const calculateTotalPrice = async (sales) => {
+const calculateTotalPrice = async (sales, conversionRate, currency) => {
   let total = 0;
+  let convertedTotal = 0;
+
   for (const saleId of sales) {
     try {
       const sale = await getSaleById(saleId);
       if (sale && sale.totalPrice) {
         total += sale.totalPrice;
       }
+
+      convertedTotal = conversionRate ? await conversionRate.amount(total).to(currency) : total;
     } catch (error) {
       console.error("Error fetching sale:", error);
     }
   }
-  return total.toFixed(2);
+  return convertedTotal.toFixed(2);
 };
 
 export const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [conversionRate, setConversionRate] = useState(null);
   const { id } = useUser();
   const navigate = useNavigate();
 
@@ -57,6 +63,23 @@ export const Orders = () => {
   useEffect(() => {
     if (id) fetchOrders();
   }, [id]);
+
+  // use effect to fetch conversion rates
+  useEffect(() => {
+    const fetchConversionRate = async () => {
+      try {
+        const convert = await Convert().from("USD").fetch();
+        setConversionRate(convert);
+      } catch (error) {
+        console.error("Error fetching conversion rate:", error);
+        setConversionRate(null);
+      }
+    };
+
+    fetchConversionRate();
+  }, []);
+
+  const currency = useCurrency();
 
   return (
     <div className="py-8 px-24 max-w-[1200px] mx-auto bg-gradient-to-b from-neutral-200/60 to-light border border-neutral-300 rounded-md">
@@ -97,7 +120,7 @@ export const Orders = () => {
                     {order.sales && order.sales.length > 0 ? (
                       <>
                         {order.sales.length > 0 && (
-                          <TotalPriceCalculator sales={order.sales} />
+                          <TotalPriceCalculator sales={order.sales} conversionRate={conversionRate} currency={currency} />
                         )}
                       </>
                     ) : (
@@ -122,12 +145,12 @@ export const Orders = () => {
   );
 };
 
-const TotalPriceCalculator = ({ sales }) => {
+const TotalPriceCalculator = ({ sales, conversionRate, currency }) => {
   const [totalPrice, setTotalPrice] = useState(null);
 
   useEffect(() => {
     const fetchTotalPrice = async () => {
-      const total = await calculateTotalPrice(sales);
+      const total = await calculateTotalPrice(sales, conversionRate, currency);
       setTotalPrice(total);
     };
 
