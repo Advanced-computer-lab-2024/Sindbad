@@ -33,10 +33,11 @@ router.post("/stripe", async (req, res) => {
           throw new Error("Invalid cart item: missing priceId or quantity.");
         }
         return {
-          price: item.priceId,
+          price: item.productID.priceId,
           quantity: item.quantity,
         };
       });
+      console.log("cart: ", cart);
     }
     if (type == "itinerary") {
       line_items = [
@@ -77,6 +78,7 @@ router.post("/stripe", async (req, res) => {
         const product = await Product.findById(item.productID._id);
         if (product) {
           product.numSales += item.quantity;
+          product.quantity -= item.quantity;
           await product.save();
         }
       }
@@ -192,6 +194,7 @@ router.post("/wallet", async (req, res) => {
         const productDoc = await Product.findById(product._id);
         if (productDoc) {
           productDoc.numSales += item.quantity;
+          productDoc.quantity -= item.quantity;
           await productDoc.save();
         }
       }
@@ -308,6 +311,7 @@ router.post("/cod", async (req, res) => {
       const productDoc = await Product.findById(product._id);
       if (productDoc) {
         productDoc.numSales += item.quantity;
+        productDoc.quantity -= item.quantity;
         await productDoc.save();
       }
     }
