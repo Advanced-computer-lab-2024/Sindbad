@@ -69,7 +69,7 @@ router.post('/stripe', async (req, res) => {
     }
 
     if (type == 'itinerary') {
-      console.log("CART: ", cart)
+      // console.log("CART: ", cart);
       session = await stripe.checkout.sessions.create({
         line_items,
         mode: 'payment',
@@ -90,6 +90,7 @@ router.post('/stripe', async (req, res) => {
     }
 
     if (type == 'activity') {
+      console.log("CART: ", cart);
       session = await stripe.checkout.sessions.create({
         line_items,
         mode: 'payment',

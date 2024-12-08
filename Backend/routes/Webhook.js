@@ -4,6 +4,7 @@ const Tourist = require("../models/Tourist");
 const Product = require("../models/Product");
 const Sale = require("../models/Sale");
 const { bookItinerary } = require("../controllers/Itinerary");
+const { bookActivity } = require("../controllers/Activity");
 const crypto = require('crypto');
 const app = express();
 app.use(express.json());
@@ -93,7 +94,7 @@ function hashCart(cart) {
         }
 
         if (type == 'itinerary') {
-          console.log("DETECTED AS ITINERAARY");
+          console.log("DETECTED AS ITINERARY");
             const sale = new Sale({
                 type: 'Itinerary',
                 itemId: itineraryId,
@@ -121,6 +122,7 @@ function hashCart(cart) {
           }
       
           if (type == 'activity') {
+            console.log("DETECTED AS ACTIVITY");
             const sale = new Sale({
                 type: 'Activity',
                 itemId: activityId,
@@ -143,7 +145,7 @@ function hashCart(cart) {
             };
             const savedSale = await sale.save();
             const req = { body : { activityId: activityId, userId: userId } };
-            activity = await bookActivity(req, mockRes);
+            await bookActivity(req, mockRes);
           }
 
         await user.save();

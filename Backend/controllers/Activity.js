@@ -606,20 +606,36 @@ const bookActivity = async (req, res) => {
         }
 
         // Check if tourist has enough wallet balance
-        if (tourist.wallet < priceCharged) {
-            return res.status(400).json({ message: "Insufficient funds" });
-        }
+        // if (tourist.wallet < priceCharged) {
+        //     return res.status(400).json({ message: "Insufficient funds" });
+        // }
 
         activity.headCount += 1;
         await activity.save();
 
-        tourist.wallet -= priceCharged;
+        // tourist.wallet -= priceCharged;
 
         tourist.bookedEvents.activities.push({
             activityId: activityId,
             priceCharged: priceCharged,
         });
         await tourist.save();
+
+        // send payment confirmation email
+        const mailOptions = {
+            from: process.env.GMAIL,
+            to: tourist.email,
+            subject: "Activity Payment Confirmation",
+            text: `You have successfully booked the activity ${activity.name} at a price of ${(priceCharged).toFixed(2)} USD`,
+        };
+
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                console.log(error);
+            } else {
+                console.log("Email sent: " + info.response);
+            }
+        });
 
         let loyaltyPoints = tourist.loyaltyPoints;
         switch (tourist.level) {

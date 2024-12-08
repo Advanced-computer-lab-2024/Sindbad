@@ -55,7 +55,7 @@ function Trips() {
         ) : !loading ? (
           <CardContainer
             cardList={trips} // Pass trips data here
-            cardType={"trip"} // Specify card type
+            cardType={"transportation"} // Specify card type
             fetchCardData={() => { }} // No need to refetch
             columns={4}
           />

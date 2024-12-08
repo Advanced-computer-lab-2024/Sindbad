@@ -30,7 +30,7 @@ import {
   checkoutWithStripe,
 } from "@/services/TouristApiHandler";
 import { Input } from "@/components/ui/input";
-import { usePromoCode } from "@/services/PromoCodeApiHandler";
+import { usePromoCode } from "@/services/PromocodeApiHandler";
 import { Tabs, TabsList, TabsTrigger  } from "@/components/ui/tabs";
 
 function handleActivityValues(activity) {

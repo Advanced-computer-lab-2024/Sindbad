@@ -617,7 +617,7 @@ function setHeadCountForDate(itinerary, targetDate, newHeadCount) {
 
 const bookItinerary = async (req, res) => {
     try {
-        console.log("ENTERED BOOK ITINERARY");
+        // console.log("ENTERED BOOK ITINERARY");
         const { date, adultTicketCount, childTicketCount, itineraryId, userId } = req.body;
         let itinerary = await Itinerary.findById(itineraryId);
         if (!itinerary) {
@@ -653,15 +653,15 @@ const bookItinerary = async (req, res) => {
             return res.status(400).json({ message: "Bookings are currently closed" });
         }
 
-        if (adultTicketCount == 0 && childTicketCount == 0)
+        if (parseInt(adultTicketCount) == 0 && parseInt(adultTicketCount) == 0)
             return res.status(400).json({ message: "Please select ticket count" });
 
         let priceCharged;
         if (typeof itinerary.price === "number") {
-            priceCharged = itinerary.price * (adultTicketCount + childTicketCount);
+            priceCharged = itinerary.price * (parseInt(adultTicketCount) + parseInt(childTicketCount));
         } else {
             const { min, max } = itinerary.price;
-            priceCharged = min * (adultTicketCount + childTicketCount);
+            priceCharged = min * (parseInt(adultTicketCount) + parseInt(childTicketCount));
         }
 
         // if (tourist.wallet < priceCharged) {
@@ -672,34 +672,33 @@ const bookItinerary = async (req, res) => {
         itinerary = setHeadCountForDate(
             itinerary,
             date,
-            headcount + adultTicketCount + childTicketCount
+            headcount + parseInt(adultTicketCount) + parseInt(childTicketCount)
         );
 
         await itinerary.save();
-        console.log("SAVED ITINERARY");
         // Create a record in the Sale document
         await Sale.create({
             type: "Itinerary",
             itemId: itineraryId,
-            quantity: adultTicketCount + childTicketCount,
+            quantity: parseInt(adultTicketCount) + parseInt(childTicketCount),
             buyerId: userId,
             totalPrice: priceCharged,
         });
         // tourist.wallet -= priceCharged;
-        console.log("BEFORE TOURIST PUSH");
+
         tourist.bookedEvents.itineraries.push({
             itineraryId: itineraryId,
-            ticketsBooked: childTicketCount + adultTicketCount,
+            ticketsBooked: parseInt(adultTicketCount) + parseInt(childTicketCount),
             dateBooked: new Date(date),
         });
         await tourist.save();
-        console.log("AFTER TOURIST PUSH");
-        // send payment confirmation with price in email
+
+        // send payment confirmation email
         const mailOptions = {
             from: process.env.GMAIL,
             to: tourist.email,
-            subject: "Payment Confirmation",
-            text: `You have successfully booked the itinerary ${itinerary.name} for ${date} at a price of ${(priceCharged / 10).toFixed(2)} USD`,
+            subject: "Itinerary Payment Confirmation",
+            text: `You have successfully booked the itinerary ${itinerary.name} for ${date} at a price of ${(priceCharged).toFixed(2)} USD`,
         };
 
         transporter.sendMail(mailOptions, function (error, info) {
@@ -709,7 +708,7 @@ const bookItinerary = async (req, res) => {
                 console.log("Email sent: " + info.response);
             }
         });
-        console.log("AFTER MAIL SENT");
+
         let loyaltyPoints = tourist.loyaltyPoints;
         switch (tourist.level) {
             case 1:
