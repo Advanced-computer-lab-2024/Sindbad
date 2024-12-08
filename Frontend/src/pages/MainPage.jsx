@@ -46,6 +46,7 @@ function MainPage() {
 
   const getUserNotifications = async (id, role) => {
     try {
+      console.log("Fetching notifications for:", { id, role }); // Debug log
         let notifications = null;
 
         switch (role) {
@@ -56,6 +57,7 @@ function MainPage() {
 
             case "tourGuide":
                 const { Notifications: guideNotifications } = await getTourGuide(id);
+                console.log(guideNotifications);
                 notifications = guideNotifications;
                 break;
 
@@ -86,8 +88,14 @@ function MainPage() {
 };
 
 useEffect(() => {
+  if (!id || !role) {
+      console.log("User ID or role not available yet:", { id, role });
+      return; // Wait until `id` and `role` are defined
+  }
+
   const fetchNotifications = async () => {
-      const result = await getUserNotifications(role);
+      console.log("Starting fetchNotifications with:", { id, role }); // Debug log
+      const result = await getUserNotifications(id, role);
       if (result.error) {
           setError(true);
       } else {
@@ -97,7 +105,7 @@ useEffect(() => {
   };
 
   fetchNotifications();
-}, []);
+}, [id, role]); // Add `id` and `role` as dependencies
 
   function camelCaseToEnglish(str) {
     let result = str
@@ -168,7 +176,6 @@ useEffect(() => {
           </NavigationMenu>
           {/* </div> */}
           <div className="flex gap-4 items-center">
-          {console.log("Rendered Fields: ", renderedFields)} {/* Log rendered fields */}
           {console.log("Notifications: ", notifications)} {/* Log notifications */}
           {renderedFields.includes("notifications") && (
             <Sheet>
