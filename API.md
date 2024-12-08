@@ -12,6 +12,13 @@ http://localhost:3000/addRouteHere
 - [Hotel Routes](#hotel-routes)
 - [Promo Code Routes](#promo-code-routes)
 - [Tag Routes](#tag-routes)
+- [Seller Routes](#seller-routes)
+- [Product Routes](#product-routes)
+- [Site Routes](#site-routes)
+- [Trip Routes](#trip-routes)
+- [Payment Routes](#payment-routes)
+- [Complaint Routes](#complaint-routes)
+- [TourismGovernor Routes](#tourismgovernor-routes)
 
 
 ## Activity Routes
@@ -362,7 +369,629 @@ PUT /PromoCode/:id
 
 ## Seller Routes
 
+### Create Seller
+
+```bash
+POST /seller/
+```
+| Field                        | Type      | Required/Optional | Description                                      |
+|------------------------------|-----------|-------------------|--------------------------------------------------|
+| email                        | String    | Required          | Email of the seller. Must be a valid email address. |
+| username                     | String    | Required          | Unique username for the seller. Cannot contain spaces. |
+| passwordHash                 | String    | Required          | Hashed password for the seller.                 |
+| firstName                    | String    | Optional          | First name of the seller.                       |
+| lastName                     | String    | Optional          | Last name of the seller.                        |
+| preferredCurrency            | String    | Optional          | Preferred currency of the seller. Defaults to "USD". |
+| description                  | String    | Optional          | Description or bio of the seller.               |
+| idCardImage                  | Buffer    | Optional          | Binary data for the seller's ID card image.     |
+| taxationRegistryCardImage    | Buffer    | Optional          | Binary data for the taxation registry card image. |
+
+
+#### Response: returns created seller
+
+
+### Get Seller by ID
+
+```bash
+GET /seller/:id
+```
+
+| Parameter | Type   | Description                                  |
+|-----------|--------|----------------------------------------------|
+| id        | String | **Required.** The ID of the seller to be retrieved.|
+
+
+#### Response: returns fetched seller
+
+
+### Get All Sellers
+
+```bash
+GET /seller/
+```
+| Parameter | Type   | Description                                  |
+|-----------|--------|----------------------------------------------|
+| none        |  | retrieves a list of all sellers|
+
+#### Response: returns list of all sellers
+
+
+### Update an Existing Seller
+
+```bash
+PUT /seller/:id
+```
+| Field             | Type   | Required/Optional | Description                                           |
+|-------------------|--------|-------------------|-------------------------------------------------------|
+| id                | String | Required          | The ID of the seller to update.                      |
+| email             | String | Optional          | Updated email of the seller - request body.                         |
+| firstName         | String | Optional          | Updated first name of the seller - request body.                    |
+| lastName          | String | Optional          | Updated last name of the seller - request body.                     |
+| preferredCurrency | String | Optional          | Updated preferred currency - request body.                          |
+| description       | String | Optional          | Updated description or bio - request body.                          |
+| profileImageUri   | Object | Optional          | Updated profile image. Must include `public_id` and `url` - request body. |
+| bannerImageUri    | Object | Optional          | Updated banner image. Must include `public_id` and `url` - request body. |
+
+
+#### Response: returns updated seller 
+
+
+### Delete a Seller
+
+```bash
+DELETE /seller/:id
+```
+
+| Parameter | Type   | Description                                  |
+|-----------|--------|----------------------------------------------|
+| id        | String | **Required.** The ID of the seller to be deleted.|
+
+
+#### Response: no json return
+
+
+### Add Seller Documents
+
+```bash
+PUT /seller/upload/:id
+```
+| Field                     | Type   | Required/Optional | Description                                           |
+|---------------------------|--------|-------------------|-------------------------------------------------------|
+| id                        | String | Required          | The ID of the seller.                                 |
+| idCardImage               | Buffer | Optional          | Binary data for the seller's ID card image.          |
+| taxationRegistryCardImage | Buffer | Optional          | Binary data for the taxation registry card image.    |
+
+#### Response: returns seller with updated documents
+
+
+## Product Routes
+
+### Get All Products
+
+```bash
+GET /product/
+```
+
+| Field        | Type    | Required/Optional | Description                                    |
+|--------------|---------|-------------------|------------------------------------------------|
+| search       | String  | Optional (query) | Text to search in product names.              |
+| minprice     | Number  | Optional (query)  | Minimum price for filtering.                  |
+| maxprice     | Number  | Optional (query)  | Maximum price for filtering.                  |
+| sortrating   | String  | Optional (query)  | Sort by rating (asc or desc).                 |
+
+
+#### Response: returns list of all products
+
+
+### Get Minimum and Maximum Prices
+
+```bash
+GET /product/price-min-max
+```
+
+| Parameter | Type   | Description                                  |
+|-----------|--------|----------------------------------------------|
+| none        |  | Retrieves the minimum and maximum prices among all products.|
+
+
+#### Response: returns minPrice and maxPrice
+
+
+### Get Products by Creator
+
+```bash
+GET /product/my-products/:creatorId
+```
+| Field      | Type   | Required/Optional | Description                               |
+|------------|--------|-------------------|-------------------------------------------|
+| creatorId  | String | Required          | The ID of the creator (seller/admin).    |
+
+
+### Register All Products in Stripe
+
+```bash
+GET /product/registerProductsStripe
+```
+
+| Parameter | Type   | Description                                  |
+|-----------|--------|----------------------------------------------|
+| none        |  | Registers all products in Stripe by creating their Stripe product and price entries.|
+
+
+### Get Product by ID
+
+```bash
+GET /product/:id
+```
+
+| Field | Type   | Required/Optional | Description                                      |
+|-------|--------|-------------------|--------------------------------------------------|
+| id    | String | Required          | The ID of the product to retrieve.              |
+
+### Delete a Product
+
+```bash
+DELETE /product/:id
+```
+
+| Parameter | Type   | Description                                  |
+|-----------|--------|----------------------------------------------|
+| id        | String | **Required.** The ID of the product to be deleted.|
+
+
+### Add Rating to a Product
+
+```bash
+POST /product/:id
+```
+| Parameter | Type   | Required/Optional | Description                                  |
+|-----------|--------|-------------------|----------------------------------------------|
+| id        | String | Required          | The ID of the product to rate.               |
+| userId    | String | Required (Body)   | ID of the user adding the rating.           |
+| rating    | Number | Required (Body)   | Rating value (1-5).                          |
+
+
+### Add or Update Review
+
+```bash
+POST /product/:id/review
+```
+| Parameter | Type   | Required/Optional | Description                                  |
+|-----------|--------|-------------------|----------------------------------------------|
+| id        | String | Required          | The ID of the product to review.             |
+| userId    | String | Required (Body)   | ID of the user adding or updating the review.|
+| rating    | Number | Optional (Body)   | Rating value (1-5).                          |
+| comment   | String | Optional (Body)   | Review comment.                              |
+
+
+### Buy Product
+
+```bash
+POST /product/:id/buy
+```
+| Parameter | Type   | Required/Optional | Description                                  |
+|-----------|--------|-------------------|----------------------------------------------|
+| id        | String | Required          | The ID of the product to purchase.           |
+| userId    | String | Required (Body)   | ID of the user making the purchase.          |
+
+
+## Trip Routes
+
+### Get All Trips
+
+```bash
+GET /trip/
+```
+| Parameter | Type   | Description                                  |
+|-----------|--------|----------------------------------------------|
+| none        |  | retrieves a list of all trips|
+
+
+### Get Trip by ID
+```bash
+GET /trip/:id
+```
+
+| Field | Type   | Required/Optional | Description                                      |
+|-------|--------|-------------------|--------------------------------------------------|
+| id    | String | Required          | The ID of the trip to retrieve.              |
+
+### Create a New Trip
+
+```bash
+POST /trip/
+```
+
+| Parameter        | Type     | Required/Optional | Description                                             |
+|------------------|----------|-------------------|---------------------------------------------------------|
+| name             | String   | Required          | Name of the trip/activity.                             |
+| description      | String   | Optional          | Description of the trip.                               |
+| dateTime         | Date     | Required          | Date and time of the trip.                             |
+| price            | Number   | Required          | Price of the trip.                                     |
+| pickupLocation   | Object   | Required          | Pickup location object containing address and coordinates (lat, lng). |
+| dropoffLocation  | Object   | Required          | Dropoff location object containing address and coordinates (lat, lng). |
+| cardImage        | Object   | Optional          | Card image data (public_id and url from Cloudinary).    |
+| creatorId        | String   | Required          | The ID of the creator (Advertiser).                    |
+| capacity         | Number   | Optional          | Maximum number of participants (default is 0).          |
+| participants     | Array    | Optional          | List of participant IDs (Tourist).                     |
+
+
+
+#### Response: returns created trip
+
+
+### Update an Existing Trip
+
+```bash
+PUT /trip/:id
+```
+
+| Parameter        | Type     | Required/Optional | Description                                              |
+|------------------|----------|-------------------|----------------------------------------------------------|
+| id               | String   | Required          | The ID of the trip to update.                            |
+| name             | String   | Optional          | Updated name of the trip.                                |
+| description      | String   | Optional          | Updated description of the trip.                         |
+| dateTime         | Date     | Optional          | Updated date and time of the trip.                       |
+| price            | Number   | Optional          | Updated price of the trip.                               |
+| pickupLocation   | Object   | Optional          | Updated pickup location object (address, lat, lng).      |
+| dropoffLocation  | Object   | Optional          | Updated dropoff location object (address, lat, lng).     |
+| cardImage        | Object   | Optional          | Updated card image data (public_id and url from Cloudinary). |
+| capacity         | Number   | Optional          | Updated capacity of the trip.                            |
+| participants     | Array    | Optional          | Updated list of participant IDs.                         |
+
+
+#### Response: returns updated trip
+
+
+### Delete a Trip
+
+```bash
+DELETE /trip/:id
+```
+
+| Parameter | Type   | Description                                  |
+|-----------|--------|----------------------------------------------|
+| id        | String | **Required.** The ID of the trip to be deleted.|
+
+#### Response: no return json
+
+
+### Book a Trip
+
+```bash
+POST /trip/:id/book
+```
+
+| Field  | Type   | Required/Optional | Description                                      |
+|--------|--------|-------------------|--------------------------------------------------|
+| id     | String | Required          | The ID of the trip to book.                     |
+| userId | String | Required (Body)   | ID of the user making the booking.              |
+
+
+#### Response: returns booked trip
+
+
+### Get Trips by Creator
+
+```bash
+GET /trip/my-trips/:creatorId
+```
+
+| Field      | Type   | Required/Optional | Description                                      |
+|------------|--------|-------------------|--------------------------------------------------|
+| creatorId  | String | Required          | The ID of the creator (Advertiser).              |
+
+
+#### Response: returns list of trips
+
+
+
+
+
+## Complaint Routes
+
+### Create a New Complaint
+
+```bash
+POST /complaint
+```
+
+| Field      | Type     | Required/Optional | Description                                          |
+|------------|----------|-------------------|------------------------------------------------------|
+| title      | String   | Required          | Title of the complaint.                              |
+| body       | String   | Required          | Detailed body of the complaint.                      |
+| isResolved | Boolean  | Optional          | Status of the complaint (default: false).            |
+| comment    | String   | Optional          | Comment or reply to the complaint.                   |
+| creatorId  | String   | Required          | ID of the creator (Tourist) submitting the complaint. |
+
+#### Response: returns created complaint
+
+
+### Get All Complaints
+
+```bash
+GET /complaint
+```
+
+| Parameter   | Type     | Required/Optional | Description                                      |
+|-------------|----------|-------------------|--------------------------------------------------|
+| isResolved  | Boolean  | Optional (query)   | Filter complaints by their resolution status.    |
+| sortOrder   | String   | Optional (query)   | Order complaints by date ('asc' or 'desc').      |
+| page        | Number   | Optional (query)   | Page number for pagination (default: 1).         |
+| limit       | Number   | Optional (query)   | Number of complaints per page (default: 10).     |
+
+#### Response: returns list of all complaints
+
+
+### Get Complaint by ID
+
+```bash
+GET /complaint/:id
+```
+
+| Parameter | Type   | Required/Optional | Description                                      |
+|-----------|--------|-------------------|--------------------------------------------------|
+| id        | String | Required          | The ID of the complaint to retrieve.             |
+
+
+#### Response: returns complaint
+
+
+### Update Complaint Status and Comment
+
+```bash
+PUT /complaint/:id
+```
+
+| Parameter   | Type     | Required/Optional | Description                                          |
+|-------------|----------|-------------------|------------------------------------------------------|
+| id          | String   | Required          | The ID of the complaint to update.                   |
+| isResolved  | Boolean  | Optional (Body)   | Updated resolution status of the complaint.          |
+| comment     | String   | Optional (Body)   | Reply to the complaint.                              |
+
+
+#### Response: returns updated complaint
+
+
+### Get Complaints by Creator (User)
+
+```bash
+GET /complaint/my-complaints/:creatorId
+```
+| Parameter | Type   | Required/Optional | Description                                      |
+|-----------|--------|-------------------|--------------------------------------------------|
+| creatorId | String | Required          | The ID of the creator (Tourist) to retrieve complaints for. |
+
+
+#### Response: returns list of complaints created by user
+
+
+
+
 ## Site Routes
+
+### Get All Sites
+
+```bash
+GET /sites/
+```
+
+| Field    | Type   | Required/Optional | Description                                     |
+|----------|--------|-------------------|-------------------------------------------------|
+| siteName | String | Optional (query)  | Filters sites by name (partial matching).       |
+| tagName  | String | Optional (query)  | Filters sites by tag name (partial matching).   |
+
+#### Response: returns a list of all sites
+
+### Get Site by ID
+
+
+```bash
+GET /sites/:id
+```
+
+
+### Get Site by ID
+
+```bash
+GET /sites/:id
+```
+
+| Field | Type   | Required/Optional | Description                      |
+|-------|--------|-------------------|----------------------------------|
+| id    | String | Required          | The ID of the site to retrieve. |
+
+
+#### Response: returns the fetched site
+
+
+### Create a new Site
+
+
+```bash
+POST /sites/
+```
+| Field         | Type     | Required/Optional | Description                                                   |
+|---------------|----------|-------------------|---------------------------------------------------------------|
+| name          | String   | Required          | Name of the site.                                             |
+| description   | String   | Required          | Description of the site.                                      |
+| cardImage     | Object   | Optional (file)   | Image for the site (uploaded to Cloudinary).                  |
+| location      | Object   | Required          | Address and coordinates (latitude, longitude).                |
+| openingHours  | Object   | Required          | Opening hours (e.g., day-wise start and end times).            |
+| ticketPrices  | Map      | Optional          | Map of ticket types and their prices.                         |
+| tags          | Array    | Optional          | Array of tag names associated with the site.                  |
+| creatorId     | String   | Required          | The ID of the creator (user who adds the site).               |
+
+#### Response: returns the created Site
+
+
+
+### Update a Site
+
+
+```bash
+PUT /sites/:id
+```
+| Field         | Type     | Required/Optional | Description                                           |
+|---------------|----------|-------------------|-------------------------------------------------------|
+| id            | String   | Required          | The ID of the site to update.                        |
+| name          | String   | Optional          | Updated name of the site.                            |
+| description   | String   | Optional          | Updated description of the site.                     |
+| cardImage     | Object   | Optional (file)   | New image for the site (uploaded to Cloudinary).      |
+| location      | Object   | Optional          | Updated address and coordinates.                     |
+| openingHours  | Object   | Optional          | Updated opening hours.                                |
+| ticketPrices  | Map      | Optional          | Updated map of ticket types and prices.              |
+| tags          | Array    | Optional          | Updated array of tag names.                          |
+
+
+#### Response: returns the updated site
+
+
+
+
+### Delete a Site
+
+
+```bash
+DELETE /site/:id
+```
+
+| Field | Type   | Required/Optional | Description                      |
+|-------|--------|-------------------|----------------------------------|
+| id    | String | Required          | The ID of the site to delete.   |
+
+
+#### Response: no returned json
+
+
+### Get Sites Created by a User
+
+
+```bash
+GET /site/my-sites/:creatorId
+```
+
+| Field      | Type   | Required/Optional | Description                                  |
+|------------|--------|-------------------|----------------------------------------------|
+| creatorId  | String | Required          | The ID of the user who created the sites.    |
+
+#### Response: returns list of sites
+
+
+
+
+##  Payment Routes
+
+
+
+### Stripe Checkout Payment
+
+```bash
+POST /payment/stripe
+```
+
+| Field     | Type          | Required/Optional | Description                                                   |
+|-----------|---------------|-------------------|---------------------------------------------------------------|
+| cart      | Array/Object  | Required          | The cart items for the payment. Structure depends on the type (product, itinerary, or activity). |
+| userId    | String        | Required          | The ID of the user making the payment.                        |
+| promoCode | String        | Optional          | A promo code for discounts (if applicable).                   |
+| type      | String        | Required          | The type of purchase (product, itinerary, or activity).        |
+
+
+#### Response: Returns a URL to the Stripe Checkout page.
+
+
+
+### Wallet Checkout Payment
+
+```bash
+POST /payment/stripe
+```
+
+| Field     | Type          | Required/Optional | Description                                                   |
+|-----------|---------------|-------------------|---------------------------------------------------------------|
+| cart      | Array/Object  | Required          | The cart items for the payment. Structure depends on the type (product, itinerary, or activity). |
+| userId    | String        | Required          | The ID of the user making the payment.                        |
+| discount  | Number        | Optional          | A discount percentage to be applied (if applicable).           |
+| type      | String        | Required          | The type of purchase (product, itinerary, or activity).        |
+
+#### Response: Returns a success message upon successful wallet payment.
+
+
+### Cash on Delivery (COD) Payment
+
+
+```bash
+POST /payment/cod
+```
+
+| Field     | Type   | Required/Optional | Description                                      |
+|-----------|--------|-------------------|--------------------------------------------------|
+| cart      | Array  | Required          | The cart items for the order.                    |
+| userId    | String | Required          | The ID of the user placing the order.            |
+
+
+#### Response: Returns a success message upon successfully placing the order.
+
+
+
+## TourismGovernor Routes
+
+
+
+### Create Tourism Governor
+
+
+```bash
+POST /tourismGovernor/
+```
+
+| Field            | Type     | Required/Optional | Description                                               |
+|------------------|----------|-------------------|-----------------------------------------------------------|
+| username         | String   | Required          | The username of the tourism governor.                     |
+| email            | String   | Optional          | The email of the tourism governor.                        |
+| passwordHash     | String   | Required          | The hashed password for the tourism governor.             |
+| profileImageUri  | Object   | Optional          | Object containing public_id and url of the profile image. |
+| bannerImageUri   | Object   | Optional          | Object containing public_id and url of the banner image.  |
+
+
+#### Response: returns the created tourism governor
+
+
+
+### Get Tourism Governor by ID
+
+```bash
+GET /tourismGovernor/:id
+```
+
+| Field | Type   | Required/Optional | Description                                       |
+|-------|--------|-------------------|---------------------------------------------------|
+| id    | String | Required          | The ID of the tourism governor to retrieve.      |
+
+
+#### Response: returns fetched tourism governor
+
+
+
+### Update Tourism Governor
+
+```bash
+PUT /tourismGovernor/:id
+```
+
+| Field            | Type     | Required/Optional | Description                                              |
+|------------------|----------|-------------------|----------------------------------------------------------|
+| id               | String   | Required          | The ID of the tourism governor to update.                |
+| username         | String   | Optional          | The new username of the tourism governor.                |
+| email            | String   | Optional          | The new email of the tourism governor.                   |
+| profileImageUri  | Object   | Optional          | New profile image object containing public_id and url.   |
+| bannerImageUri   | Object   | Optional          | New banner image object containing public_id and url.    |
+
+
+#### Response: returns updated tourism governor
+
+
 
 ## Tag Routes
 
