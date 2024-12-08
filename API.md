@@ -2193,7 +2193,7 @@ PUT /PromoCode/:id
   "discount": 50,
   "stripeID": "3mdQ1apG"
 }
-``
+```
 
 ## Sales Routes
 - `GET /sale/my-product-sales/:creatorId`: Get product sales by creator ID
@@ -2216,6 +2216,12 @@ POST /tag/
 |------------|--------|---------------------------------------------------------|
 | name       | String | **Required**. Tag's name passed in the request body.                                 |
 
+#### Response
+```json
+{
+  Tag Document
+}
+```
 ### Retrieve a Tag by ID
 
 #### Request
@@ -2227,11 +2233,28 @@ GET /tag/:id
 |------------|--------|---------------------------------------------------------|
 | id         | String | **Required.**                                               |
 
+#### Response
+```json
+{
+  Tag Document
+}
+```
+
 ### Retrieve all Tags
 
 #### Request
 ```bash
 GET /tag/
+```
+#### Response
+```json
+{
+  [
+    Tag 1 Document,
+    Tag 2 Document,
+    ...
+  ]
+}
 ```
 
 ### Update a Tag
@@ -2246,6 +2269,13 @@ PUT /tag/:id
 | id         | String | **Required.**                                               |
 | name       | String | **Required.** Tag's name passed in the request body.                                 |
 
+#### Response
+```json
+{
+  Updated Tag Document
+}
+```
+
 ### Delete a Tag
 
 #### Request
@@ -2256,6 +2286,13 @@ DELETE /tag/:id
 | Parameter  | Type   | Description                                             |
 |------------|--------|---------------------------------------------------------|
 | id         | String | **Required.**                                               |
+
+#### Response
+```json
+{
+  "message": "Tag deleted successfully"
+}
+```
 
 ## Tour Guide Routes
 
