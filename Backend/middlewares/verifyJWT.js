@@ -11,6 +11,8 @@ const excludedRoutes = [
   /^\/webhook$/,
   /^\/activity\/?.*/,
   /^\/itinerary\/?.*/,
+  /^\/site(\/?$|\?.*)$/, // Matches "/site", "/site/", and "/site" with query parameters
+  /^\/site\/[a-fA-F0-9]+$/, // Matches "/site/{id}"
   /^\/auth(\/.*)?$/, // Matches "/auth" and anything after it
   /^\/advertiser\/upload\/[a-fA-F0-9]+$/, // Matches "/advertiser/upload/{id}"
   /^\/seller\/upload\/[a-fA-F0-9]+$/, // Matches "/seller/upload/{id}"
