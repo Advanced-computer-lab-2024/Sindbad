@@ -191,14 +191,6 @@ router.post("/wallet", async (req, res) => {
 
         const savedSale = await sale.save();
         saleIds.push(savedSale._id);
-
-        // Increment product.numSales for each product in the cart
-        const productDoc = await Product.findById(product._id);
-        if (productDoc) {
-          productDoc.numSales += item.quantity;
-          productDoc.quantity -= item.quantity;
-          await productDoc.save();
-        }
       }
       userOrder.sales = saleIds;
       userOrder.cart = JSON.parse(JSON.stringify(user.cart));
@@ -207,7 +199,9 @@ router.post("/wallet", async (req, res) => {
       // Increment product.numSales for each product in the cart
       for (const item of cart) {
         const product = await Product.findById(item.productID._id);
+        console.log(product);
         if (product) {
+          
           product.numSales += item.quantity;
           product.quantity -= item.quantity;
           await product.save();
@@ -355,14 +349,6 @@ router.post("/cod", async (req, res) => {
 
       const savedSale = await sale.save();
       saleIds.push(savedSale._id);
-
-      // Increment product.numSales for each product in the cart
-      const productDoc = await Product.findById(product._id);
-      if (productDoc) {
-        productDoc.numSales += item.quantity;
-        productDoc.quantity -= item.quantity;
-        await productDoc.save();
-      }
     }
 
     userOrder.sales = saleIds;
@@ -373,6 +359,7 @@ router.post("/cod", async (req, res) => {
     for (const item of cart) {
       const product = await Product.findById(item.productID._id);
       if (product) {
+        console.log(product.quantity, item.quantity);
         product.numSales += item.quantity;
         product.quantity -= item.quantity;
         await product.save();
