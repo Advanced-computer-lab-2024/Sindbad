@@ -29,20 +29,25 @@ const CardPrice = ({ price }) => {
     }, [currency, price]);
 
     return (
-        price && (
-            <div className="text-neutral-500 flex gap-1 items-start">
-                <Wallet size={16} className="shrink-0" />
-                {convertedPrice ? (
-                    <p className="text-xs leading-[11px] font-medium break-all pt-0.5">
-                        Starting {`${convertedPrice.toFixed(2)} ${currency}`}
-                    </p>
-                ) : (
-                    <p className="text-xs leading-[11px] font-medium break-all pt-0.5">
-                        {price ? `${price} ${currency}` : "N/A"}
-                    </p>
-                )}
-            </div>
-        )
+        <>
+            {price !== undefined && price !== null && (
+                <div className="text-neutral-600 flex gap-1 items-start">
+                    <Wallet size={16} className="shrink-0 mt-[1.5px]" />
+                    {convertedPrice !== null ? (
+                        <p className="text-sm font-medium break-all text-dark">
+                            {`${convertedPrice.toFixed(2)}`}
+                            <span className="text-xs text-neutral-500">{` ${currency}`}</span>
+                        </p>
+                    ) : (
+                        <p className="text-sm font-medium break-all text-dark">
+                            {`${price}`}
+                            <span className="text-xs text-neutral-500">{` ${currency}`}</span>
+                        </p>
+                    )}
+                </div>
+            )}
+
+        </>
     );
 };
 

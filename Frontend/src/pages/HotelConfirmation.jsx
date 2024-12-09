@@ -51,7 +51,7 @@ function HotelConfirmation() {
 					Confirmation Number: {" "}
 					{data.hotelBookings?.[0]?.hotelProviderInformation?.[0]?.confirmationNumber ?? "N/A"}
 				</h3>
-				<p dangerouslySetInnerHTML={{ __html: message }}></p>
+				<p dangerouslySetInnerHTML={{ __html: message }} className="text-sm"></p>
 				<hr className="border-neutral-300 border w-full mt-1.5" />
 			</div>
 		</div>

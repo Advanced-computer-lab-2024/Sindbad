@@ -16,6 +16,7 @@ import { complaintSchema } from "./form-schemas/complaintSchema";
 import { tripSchema } from "./form-schemas/tripSchema";
 import {flightSearchSchema} from "./form-schemas/flightSearchSchema";
 import { flightBookingSchema } from "./form-schemas/flightBookingSchema";
+import { touristAddressSchema } from "./form-schemas/touristAddressSchema";
 
 
 //import rendered fields here
@@ -36,6 +37,7 @@ import { complaint } from "./rendered-fields/complaintFields";
 import { trip } from "./rendered-fields/tripFields";
 import { flightSearchFields } from "./rendered-fields/flightSearchFields";
 import { flightBookingFields } from "./rendered-fields/flightBookingFields";
+import { touristAddress } from "./rendered-fields/touristAddressFields";
 
 //import submit handlers here
 import { touristSubmit } from "./submit-handlers/touristHandler";
@@ -55,6 +57,7 @@ import { complaintSubmit } from "./submit-handlers/complaintHandler";
 import { tripSubmit } from "./submit-handlers/tripHandler";
 import { flightSearchHandler } from "./submit-handlers/flightSearchHandler";
 import { flightBookingHandler } from "./submit-handlers/flightBookingHandler";
+import { touristAddressSubmit } from "./submit-handlers/touristAddressHandler";
 
 /*
     Forms for the generic form component should be generated based on this object:
@@ -176,7 +179,7 @@ export const forms = {
     onSubmit: complaintSubmit,
   },
 
-  trip: {
+  transportation: {
     zodSchema: tripSchema,
     renderedFields: trip.fields,
     defaultValues: trip.defaultValues,
@@ -195,5 +198,12 @@ export const forms = {
     renderedFields: flightBookingFields.fields,
     defaultValues: flightBookingFields.defaultValues,
     onSubmit: flightBookingHandler,
+  },
+
+  touristAddress: {
+    zodSchema: touristAddressSchema,
+    renderedFields: touristAddress.fields,
+    defaultValues: touristAddress.defaultValues,
+    onSubmit: touristAddressSubmit,
   }
 };

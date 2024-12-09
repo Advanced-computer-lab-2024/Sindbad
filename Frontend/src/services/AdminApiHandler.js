@@ -66,6 +66,17 @@ export const getAllCategories = async () => {
 	}
 };
 
+export const getCategoryById = async (categoryId) => {
+	try {
+		// Fetch a category by ID
+		let category = await axiosInstance.get(`/category/${categoryId}`);
+		return category.data;
+	} catch (error) {
+		console.error("Error fetching category by ID: ", error);
+		return error; // Handle errors appropriately
+	}
+};
+
 export const createCategory = async (category) => {
 	try {
 		// Create a category
@@ -119,9 +130,18 @@ export const getAdmin = async (id) => {
 	}
 }
 
-export const updateAdmin = async (id, data) => {
+export const updateAdmin = async (id, formData) => {
 	try {
-		let admin = await axiosInstance.put(`/admin/${id}`, data);
+		let admin = await axiosInstance.put(
+			`/admin/${id}`,
+			formData,
+			{
+				headers: {
+					"Content-Type": "multipart/form-data", // Explicitly set for FormData
+				},
+				resourceName: "Admin",
+			}
+		);
 		return admin.data;
 	} catch (error) {
 		console.error("Error editing admin: ", error);

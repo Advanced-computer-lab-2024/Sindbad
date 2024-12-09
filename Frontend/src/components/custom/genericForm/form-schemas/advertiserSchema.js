@@ -6,13 +6,29 @@ export const advertiserSchema = {
 		.email({ message: "Invalid email address!" })
 		.min(1, { message: "Email is required!" }),
 
-  	websiteLink: z.string(),
+	websiteLink: z.string(),
 
 	hotline: z
 		.string()
 		.regex(/^\+?[1-9]\d{1,14}$/, { message: "Invalid mobile number!" })
 		.min(1, { message: "Mobile number is required!" }),
-	bannerImageUri: z.string(),
-	logoImageUri: z.string(),
+	profileImageUri: z
+		.any()
+		.refine(
+			(files) =>
+				files === undefined ||
+				(files instanceof FileList && Array.from(files).every(file => ['image/png', 'image/jpeg'].includes(file.type))),
+			{ message: "profileImageUri must be a PNG or JPG file" }
+		),
+
+	bannerImageUri: z
+		.any()
+		.refine(
+			(files) =>
+				files === undefined ||
+				(files instanceof FileList && Array.from(files).every(file => ['image/png', 'image/jpeg'].includes(file.type))),
+			{ message: "profileImageUri must be a PNG or JPG file" }
+		),
+		
 	preferredCurrency: z.string(),
 };

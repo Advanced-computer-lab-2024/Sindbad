@@ -1,23 +1,29 @@
 const express = require("express");
 const router = express.Router();
 const {
-	signUp,
-	getUserRole,
-	deleteUser,
-	getAllUsers,
-	updateUserPassword,
-	getAllPendingUsers,
-	updateUserAcceptance,
-	checkDeletion,
-	requestAccountDeletion,
+  signUp,
+  getUserRole,
+  deleteUser,
+  getAllUsers,
+  updateUserPassword,
+  getAllPendingUsers,
+  updateUserAcceptance,
+  checkDeletion,
+  requestAccountDeletion,
+  forgotPassword,
+  resetPassword,
 } = require("../controllers/User");
 
-// Sign up route
+// Public routes (No authentication required)
+router.post("/signup", signUp);
+
+router.post("/reset-password", resetPassword);
+
+router.post("/forgot-password", forgotPassword);
+
 router.post("/changePassword/:id", updateUserPassword);
 
 router.post("/changeAcceptance/:id", updateUserAcceptance);
-
-router.post("/signup", signUp);
 
 router.get("/get-user-role/:id", getUserRole);
 

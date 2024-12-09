@@ -2,11 +2,9 @@ import { z } from "zod";
 
 export const openingHoursSchema = z.object({
 	start: z
-		.number()
-		.min(0, "Start time must be a positive number")
-		.max(1440, "Start time must be within a 24-hour range"),
+		.string()
+		.regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, "Incorrect time format"), // 00:00 - 23:59
 	end: z
-		.number()
-		.min(0, "End time must be a positive number")
-		.max(1440, "End time must be within a 24-hour range"),
+		.string()
+		.regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, "Incorrect time format"),
 });

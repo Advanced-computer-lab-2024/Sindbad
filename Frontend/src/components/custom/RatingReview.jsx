@@ -19,6 +19,10 @@ function RatingReview({ data, totalRatings, fetchData }) {
     const [purchased, setPurchased] = useState(false);
     const [error, setError] = useState("");
 
+    console.log("myReview: ",myReview);
+    console.log("rated: ",rated);
+    console.log("purchased: ",purchased);
+
     const { id, role } = useUser();
     const { toast } = useToast();
 
@@ -48,7 +52,7 @@ function RatingReview({ data, totalRatings, fetchData }) {
             console.error(response.error);
         } else {
             const sales = response.productSales;
-            const hasPurchased = sales.some(sale => sale.buyerId === id && sale.productId === data._id);
+            const hasPurchased = sales.some(sale => sale.buyerId === id && sale.itemId === data._id);
             setPurchased(hasPurchased);
         }
     }

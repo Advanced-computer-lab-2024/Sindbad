@@ -15,12 +15,15 @@ export const getTourismGovernor = async (tourismGovernorId) => {
 	}
 }
 
-export const updateTourismGovernor = async (tourismGovernorId, data) => {
+export const updateTourismGovernor = async (tourismGovernorId, formData) => {
 	try {
 		const response = await axiosInstance.put(
 			`/tourism-governor/${tourismGovernorId}`,
-			data,
+			formData,
 			{
+				headers: {
+					"Content-Type": "multipart/form-data", // Explicitly set for FormData
+				},
 				resourceName: "Tourism governor",
 			}
 		);

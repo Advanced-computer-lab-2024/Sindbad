@@ -42,33 +42,10 @@ function Trips() {
 
   return (
     <div className="py-8 px-24 max-w-[1200px] flex flex-col gap-4 mx-auto">
-      <div className="flex items-center gap-4 mb-6">
-        <h1 className="text-3xl font-extrabold">Trips</h1>
-        <Dialog>
-						<DialogTrigger className="shrink-0 mt-1.5 text-neutral-400 hover:text-neutral-600 transition-all">
-            {role === "advertiser" && (
-              <button
-                className="p-1 rounded-full hover:bg-neutral-200 transition-colors"
-              >
-                <Plus className="w-5 h-5 text-neutral-500" />
-              </button>
-            )}
-						</DialogTrigger>
-						<DialogContent className="overflow-y-scroll max-h-[50%]">
-							<DialogHeader>
-								<GenericForm
-									type="trip"
-									id={id}
-								/>
-							</DialogHeader>
-						</DialogContent>
-					</Dialog>
-        
+      <div className="flex items-center gap-6 mb-6">
+        <h1 className="text-3xl font-extrabold">Transportation</h1>
         <hr className="border-neutral-300 border w-full mt-1.5" />
       </div>
-
-      {/* Display form if showForm is true */}
-      {showForm && <GenericForm type="trip" id={id} data={null} />}
 
       <div className="flex gap-10">
         {!loading && error ? (
@@ -78,8 +55,9 @@ function Trips() {
         ) : !loading ? (
           <CardContainer
             cardList={trips} // Pass trips data here
-            cardType={"trip"} // Specify card type
-            fetchCardData={() => {}} // No need to refetch
+            cardType={"transportation"} // Specify card type
+            fetchCardData={() => { }} // No need to refetch
+            columns={4}
           />
         ) : (
           <div className="flex col-span-3 mx-auto">

@@ -14,12 +14,15 @@ export const getSeller = async (sellerId) => {
     }
 };
 
-export const updateSeller = async (sellerId, updatedValues) => {
+export const updateSeller = async (sellerId, formData) => {
     try {
-        const response = axiosInstance.put(
+        const response = await axiosInstance.put(
             `/seller/${sellerId}`,
-            updatedValues,
+            formData,
             {
+                headers: {
+                    "Content-Type": "multipart/form-data", // Explicitly set for FormData
+                },
                 resourceName: 'Seller',
             }
         );
@@ -41,27 +44,27 @@ export const updateSeller = async (sellerId, updatedValues) => {
 // };
 
 export const updateSellerFiles = async (sellerId, files) => {
-	const formData = new FormData();
+    const formData = new FormData();
 
-	if (files.idCardImage) {
-		formData.append("idCardImage", files.idCardImage[0]);
-	}
-	if (files.taxationRegistryCardImage) {
-		formData.append("taxationRegistryCardImage", files.taxationRegistryCardImage[0]);
-	}
+    if (files.idCardImage) {
+        formData.append("idCardImage", files.idCardImage[0]);
+    }
+    if (files.taxationRegistryCardImage) {
+        formData.append("taxationRegistryCardImage", files.taxationRegistryCardImage[0]);
+    }
 
-	try {
-		const response = await axiosInstance.post(`/seller/upload/${sellerId}/`, 
-			formData
-		  , {
-			headers: {
-				"Content-Type": "multipart/form-data",
-			},
-		  }
-		)
+    try {
+        const response = await axiosInstance.post(`/seller/upload/${sellerId}/`,
+            formData
+            , {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            }
+        )
 
-		return response.data;
-	} catch (error) {
-		return error;
-	}
+        return response.data;
+    } catch (error) {
+        return error;
+    }
 }

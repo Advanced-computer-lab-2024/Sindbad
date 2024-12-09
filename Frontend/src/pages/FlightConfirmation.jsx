@@ -69,10 +69,9 @@ function FlightConfirmation({ confirmationData }) {
           Booking Number: {confirmationData?.BookingNumber || "N/A"}
         </h3>
         <p
-          className="text-neutral-700 leading-relaxed"
+          className="text-sm"
           dangerouslySetInnerHTML={{ __html: message }}
         />
-        <hr className="border-neutral-300 border w-full mt-1.5" />
       </div>
     </div>
   );

@@ -28,10 +28,24 @@ const TouristSchema = new mongoose.Schema(
       required: true,
     },
     profileImageUri: {
-      type: String,
+      public_id: {
+        type: String,
+        required: this.profileImageUri !== undefined,
+      },
+      url: {
+        type: String,
+        required: this.profileImageUri !== undefined,
+      },
     },
     bannerImageUri: {
-      type: String,
+      public_id: {
+        type: String,
+        required: this.bannerImageUri !== undefined,
+      },
+      url: {
+        type: String,
+        required: this.bannerImageUri !== undefined,
+      },
     },
     mobileNumber: {
       type: String,
@@ -62,7 +76,14 @@ const TouristSchema = new mongoose.Schema(
       default: "USD",
     },
     bookmarks: {
-      type: [String], // Array of bookmark IDs or URLs
+      type: [
+        {
+          productID: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Activity",
+          },
+        },
+      ],
       default: [],
     },
     loyaltyPoints: {
@@ -77,16 +98,46 @@ const TouristSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    isReceiveNotifications: {
-      type: Boolean,
-      default: false,
+    Notifications: {
+      type: [
+        {
+          title: {
+            type: String,
+          },
+          Body: {
+            type: String,
+          },
+          isSeen: {
+            Type: Boolean,
+          },
+        },
+      ],
+      default: [],
     },
     wishlist: {
-      type: [String], // Array of item IDs or details
+      type: [
+        {
+          productID: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Product", // Reference to the Product model
+          },
+        },
+      ],
       default: [],
     },
     cart: {
-      type: [String], // Array of item IDs in the cart
+      type: [
+        {
+          productID: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Product", // Reference to the Product model
+          },
+          quantity: {
+            type: Number,
+            required: true,
+          },
+        },
+      ],
       default: [],
     },
     addresses: [
@@ -150,6 +201,33 @@ const TouristSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    orders: [
+      {
+        sales: [
+          {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Sale",
+          },
+        ],
+        cart: [
+          {
+            productID: {
+              type: mongoose.Schema.Types.ObjectId,
+              ref: "Product",
+            },
+            quantity: {
+              type: Number,
+              required: true,
+            },
+          },
+        ],
+        isDelivered: {
+          type: Boolean,
+          required: true,
+          default: false, // Assuming new orders are not delivered by default
+        },
+      },
+    ],
   },
   { timestamps: true }
 );

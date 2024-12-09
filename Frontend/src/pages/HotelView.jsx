@@ -1,20 +1,13 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from "@/components/ui/dialog";
+import { useUser } from "@/state management/userInfo";
 import GenericForm from "@/components/custom/genericForm/genericForm";
 
 import { getHotelOffers } from "@/services/HotelApiHandler";
 
 function HotelView() {
 	const { hotelId } = useParams();
+	const { id } = useUser();
 	const [data, setData] = useState(null);
 	const [error, setError] = useState(false);
 
@@ -40,8 +33,8 @@ function HotelView() {
 
 	useEffect(() => {
 		console.log("Data: ", data);
-        console.log("Hotel Name: ", data?.hotel?.name);
-        console.log("Offers: ", data?.offers);
+		console.log("Hotel Name: ", data?.hotel?.name);
+		console.log("Offers: ", data?.offers);
 	}, [data]);
 
 	if (!data) {
@@ -56,6 +49,17 @@ function HotelView() {
 		);
 	}
 
+	function formatString(str) {
+		// Step 1: Convert the whole string to lowercase except for the first letter
+		str = str.toLowerCase();
+		str = str.charAt(0).toUpperCase() + str.slice(1);
+
+		// Step 2: Ensure exactly one space after each comma
+		str = str.replace(/\s*,\s*/g, ', ');
+
+		return str;
+	}
+
 	return (
 		<div className="py-8 px-24 max-w-[1200px] mx-auto">
 			<div className="flex items-center gap-6">
@@ -65,33 +69,19 @@ function HotelView() {
 				<hr className="border-neutral-300 border w-full mt-1.5" />
 			</div>
 
-			<div className="flex justify-between gap-24 py-6">
-				<div className="flex flex-col gap-3 ">
-					<h2 className="text-lg mb-1">
-						{data.offers[0].room.description.text}
+			<div className="w-2/3 mx-auto">
+				<div className="flex flex-col mt-6">
+					<h1 className="text-xl font-bold shrink-0">Book the following offer: </h1>
+					<h2 className="text mb-8">
+						{formatString(data.offers[0].room.description.text)}
 					</h2>
-				</div>
-				<div className="flex flex-col gap-3 w-full">
-					<Dialog>
-						<DialogTrigger asChild>
-							<Button>Book now</Button>
-						</DialogTrigger>
-						<DialogContent className="max-h-[500px] overflow-y-scroll">
-							<DialogHeader>
-								<DialogTitle>Confirm your booking</DialogTitle>
-								<DialogDescription>
-									Please enter your details to confirm your booking.
-								</DialogDescription>
-							</DialogHeader>
-							<GenericForm
-								type="hotelBooking"
-								id={data.offers[0].id}
-							/>
-						</DialogContent>
-					</Dialog>
+					<GenericForm
+						type="hotelBooking"
+						data={data.offers[0].id}
+						id={id}
+					/>
 				</div>
 			</div>
-			<hr className="border-neutral-300 border w-full mt-1.5" />
 		</div>
 	);
 }

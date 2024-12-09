@@ -28,13 +28,47 @@ const AdminSchema = new Schema(
 			required: true,
 		},
 		profileImageUri: {
-			type: String,
+			public_id: {
+				type: String,
+				required: this.profileImageUri !== undefined,
+			},
+			url: {
+				type: String,
+				required: this.profileImageUri !== undefined,
+			},
 		},
 		bannerImageUri: {
-			type: String,
+			public_id: {
+				type: String,
+				required: this.bannerImageUri !== undefined,
+			},
+			url: {
+				type: String,
+				required: this.bannerImageUri !== undefined,
+			},
 		},
+		Notifications: {
+			type: [
+				{
+					title: {
+						type: String,
+					},
+					Body: {
+						type: String,
+					},
+					isSeen: {
+						Type: Boolean,
+					},
+				}
+			],
+			default: [],
+		},
+
 	},
 	{ timestamps: true }
 );
 
-module.exports = mongoose.model("Admin", AdminSchema);
+const Admin = mongoose.model("Admin", AdminSchema);
+module.exports = Admin;
+
+// module.exports = mongoose.model("Admin", AdminSchema);

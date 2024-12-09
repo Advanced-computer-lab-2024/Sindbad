@@ -26,9 +26,23 @@ import HotelConfirmation from "./pages/HotelConfirmation";
 import FlightView from "./pages/FlightView";
 import FlightConfirmation from "./pages/FlightConfirmation";
 import DeletionRequests from "./components/custom/admin/deletion-requests/deletionRequest";
+import EditFormPage from "./pages/EditFormPage";
+import CreateFormPage from "./pages/CreateFormPage";
+import PromoCodes from "./components/custom/admin/promocode-management/promoCode";
+import { Cart } from "./pages/Cart";
 import Trips from "./pages/Trips";
 import TripView from "./pages/TripView";
+import RevenueReport from "./pages/RevenueReport";
+import { Checkout } from "./pages/Checkout";
 import { useUser } from "@/state management/userInfo";
+import { CheckoutSuccess } from "./pages/CheckoutSuccess";
+import { CheckoutOutlet } from "./pages/CheckoutOutlet";
+import { Wishlist } from "./pages/Wishlist";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+import { Orders } from "./pages/Orders";
+import { OrdersView } from "./pages/OrdersView";
+import PrivilegeManagement from "./components/custom/admin/privelege-management/PrivelegeManagement";
 
 function App() {
   const { id } = useUser();
@@ -37,24 +51,32 @@ function App() {
     <main className="bg-light text-dark font-inter min-h-screen h-max">
       <Routes>
         <Route path="/app" element={<MainPage />}>
+          <Route index element={<Navigate to="/app/itineraries" replace />} />
           <Route
             path="profile"
             element={<Navigate to={`/app/profile/${id}`} replace />}
           />
           <Route path="profile/:profileId" element={<Profile />} />
+          <Route path="cart" element={<Cart />} />
+          <Route path="wishlist" element={<Wishlist />} />
           <Route path="activities" element={<ActivitiesPage />} />
           <Route path="sites" element={<SitesPage />} />
           <Route path="itineraries" element={<ItinerariesPage />} />
           <Route path="store" element={<ShoppingPage />} />
-          <Route path="trips" element={<Trips />} />
+          <Route path="transportation" element={<Trips />} />
           <Route path="product/:productId" element={<ProductView />} />
+          <Route path="revenue" element={<RevenueReport />} />
+          <Route path="orders/:touristId" element={<Orders />} />
+          <Route path="orderDetails/:orderId" element={<OrdersView />} />
           <Route path="management" element={<AdminManagementView />}>
             <Route path="" element={<Navigate to="users" replace />} />
             <Route path="users" element={<UserManagement />} />
             <Route path="verification" element={<UserVerification />} />
+            <Route path="priveleges" element={<PrivilegeManagement/>} />
             <Route path="complaints" element={<ComplaintManagement />} />
             <Route path="tagcategories" element={<TagCategoryManagement />} />
             <Route path="deletion-requests" element={<DeletionRequests />} />
+            <Route path="promocodes" element={<PromoCodes />} />
           </Route>
           <Route path="booking" element={<Booking />}>
             <Route path="" element={<Navigate to="hotel" replace />} />
@@ -68,13 +90,56 @@ function App() {
           <Route path="itinerary/:itineraryId" element={<Itinerary />} />
           <Route path="activity/:activityId" element={<Activity />} />
           <Route path="site/:siteId" element={<Site />} />
-          <Route path="trip/:tripId" element={<TripView />} />
+          <Route path="transportation/:tripId" element={<TripView />} />
           <Route path="complaints/:creatorId" element={<ComplaintView />} />
+          <Route
+            path="complaints"
+            element={<Navigate to={`/app/complaints/${id}`} replace />}
+          />
+          <Route
+            path=":cardType/:cardId/edit"
+            element={<EditFormPage />}
+            loader={({ params }) => {
+              const validCardTypes = [
+                "itinerary",
+                "activity",
+                "site",
+                "product",
+                "transportation",
+              ];
+              if (!validCardTypes.includes(params.cardType)) {
+                throw new Error("Invalid card type"); // Replace with error handling or redirection
+              }
+              return params;
+            }}
+          />
+          <Route
+            path="create/:cardType"
+            element={<CreateFormPage />}
+            loader={({ params }) => {
+              const validCardTypes = [
+                "itinerary",
+                "activity",
+                "site",
+                "product",
+                "transportation",
+              ];
+              if (!validCardTypes.includes(params.cardType)) {
+                throw new Error("Invalid card type"); // Replace with error handling or redirection
+              }
+              return params;
+            }}
+          />
+        </Route>
+        <Route path="/checkout" element={<CheckoutOutlet />}>
+          <Route path="" element={<Checkout />} />
+          <Route path="success" element={<CheckoutSuccess />} />
         </Route>
         <Route path="/login" element={<LogIn />} />
         <Route path="/signup" element={<SignUp />} />
-
-        <Route path="/" element={<Navigate to="/app" replace />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:id" element={<ResetPassword />} />
+        <Route path="/" element={<Navigate to="/app/itineraries" replace />} />
       </Routes>
     </main>
   );

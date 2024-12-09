@@ -35,11 +35,25 @@ const AdvertiserSchema = new mongoose.Schema(
 			type: Buffer,
 			default: null,
 		},
-		logoImageUri: {
-			type: String,
+		profileImageUri: {
+			public_id: {
+				type: String,
+				required: this.profileImageUri !== undefined,
+			},
+			url: {
+				type: String,
+				required: this.profileImageUri !== undefined,
+			},
 		},
 		bannerImageUri: {
-			type: String,
+			public_id: {
+				type: String,
+				required: this.bannerImageUri !== undefined,
+			},
+			url: {
+				type: String,
+				required: this.bannerImageUri !== undefined,
+			},
 		},
 		preferredCurrency: {
 			type: String,
@@ -92,6 +106,23 @@ const AdvertiserSchema = new mongoose.Schema(
 			type: Boolean,
 			default: false,
 		},
+		Notifications: {
+			type: [
+				{
+					title: {
+						type: String,
+					},
+					Body: {
+						type: String,
+					},
+					isSeen: {
+						Type: Boolean,
+					},
+				}
+			],
+			default: [],
+		},
+
 	},
 	{ timestamps: true }
 );

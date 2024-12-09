@@ -20,14 +20,15 @@ const CardContainer = ({ cardList, cardType, fetchCardData, columns = 3 }) => {
       "w-full h-full flex flex-col border rounded-md overflow-clip group bg-gradient-to-br from-light",
     inappropriate: "to-red-300/30 border-red-300/50",
     inactive: "to-neutral-300/50 border-neutral-300/80",
-    active: "to-primary-700/50 border-primary-700/80",
+    active: "to-primary-200 border-primary-300/80",
     imageContainer: "h-[156px] relative shrink-0 bg-neutral-300",
     noImageContainer: "h-[0px] relative shrink-0 ",
     detailsContainer: "flex flex-col p-3 gap-2 h-full justify-between",
+    noImageDetailsContainer: "bg-gradient-to-br from-light to-primary-200 flex flex-col p-3 gap-2 h-full justify-between",
     title: "text-base font-semibold line-clamp-2",
     button: "mt-2",
-    buttonInappropriate: "bg-red-300/70",
-    buttonInactive: "bg-neutral-300",
+    buttonInappropriate: "bg-red-300",
+    buttonInactive: "bg-neutral-400",
     buttonActive: "bg-primary-700",
     buttonText: "text-xs",
     buttonIcon: "shrink-0",
@@ -49,8 +50,8 @@ const CardContainer = ({ cardList, cardType, fetchCardData, columns = 3 }) => {
         return "No products found.";
       case "hotel":
         return "No hotels found.";
-      case "trip":
-        return "No trips found";
+      case "transportation":
+        return "No transportation offers found";
       case "flight":
         return "No flights found.";
       default:
@@ -70,7 +71,7 @@ const CardContainer = ({ cardList, cardType, fetchCardData, columns = 3 }) => {
         return ProductCard;
       case "hotel":
         return HotelCard;
-      case "trip":
+      case "transportation":
         return TripCard;
       case "flight":
         return FlightCard;
@@ -81,7 +82,7 @@ const CardContainer = ({ cardList, cardType, fetchCardData, columns = 3 }) => {
 
   return (
     // TODO: Make this change columns based on prop
-    <div className={`grid gap-6 grid-cols-3 w-full auto-rows-max`}>
+    <div className={`grid gap-6 w-full auto-rows-max ${columns === 3 ? "grid-cols-3" : "grid-cols-4"}`}>
       {cardList.length > 0 ? (
         cardList.map((item, index) => {
           const CardComponent = getCardComponent(cardType);

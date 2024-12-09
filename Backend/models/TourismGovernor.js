@@ -28,10 +28,24 @@ const TourismGovernorSchema = new mongoose.Schema(
 			required: true,
 		},
 		profileImageUri: {
-			type: String,
+			public_id: {
+				type: String,
+				required: this.profileImageUri !== undefined,
+			},
+			url: {
+				type: String,
+				required: this.profileImageUri !== undefined,
+			},
 		},
 		bannerImageUri: {
-			type: String,
+			public_id: {
+				type: String,
+				required: this.bannerImageUri !== undefined,
+			},
+			url: {
+				type: String,
+				required: this.bannerImageUri !== undefined
+			},
 		},
 	},
 	{ timestamps: true }

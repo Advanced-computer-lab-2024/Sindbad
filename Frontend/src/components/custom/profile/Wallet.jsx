@@ -6,29 +6,35 @@ import { ArrowRight } from "lucide-react";
 import { useUser, useCurrency } from "@/state management/userInfo";
 import { Convert } from "easy-currencies";
 import { redeemPoints } from "@/services/TouristApiHandler";
+import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 function Wallet({ userData, setUserData }) {
     const currency = useCurrency();
     const [convertedPrice, setConvertedPrice] = useState(null);
-    const { role, id } = useUser();
+    const { id } = useUser();
+    const { toast } = useToast();
+    const navigate = useNavigate();
 
     const handleRedeemPoints = async () => {
         try {
             const result = await redeemPoints(id);
 
             if (result.status === 200) {
-                alert(result.data.message);
+                toast({ description: result.data.message });
                 setUserData((prevData) => ({
                     ...prevData,
                     wallet: result.wallet,
                     loyaltyPoints: result.loyaltyPoints,
                 }));
+                navigate("/app/profile");
             } else {
-                if (result.status === 400) alert("You don't have any points to redeem");
-                else alert("An error occurred while redeeming points.");
+                if (result.status === 400) toast({ description: "You don't have any points to redeem" });
+                else toast({ description: "An error occurred while redeeming points" });
             }
         } catch (error) {
-            alert("An error occurred while redeeming points.");
+            console.error("Error redeeming points:", error);
+            toast({ description: "An error occurred while redeeming points" });
         }
     };
 
@@ -61,9 +67,13 @@ function Wallet({ userData, setUserData }) {
                         <h4 className="text-center font-semibold text-base text-neutral-500 mb-1.5">
                             Wallet
                         </h4>
-                        {convertedPrice &&
+                        {convertedPrice ?
                             <h3 className="font-inter font-bold text-xl break-all">
                                 {convertedPrice.toFixed(2)} {currency}
+                            </h3>
+                            :
+                            <h3 className="font-inter font-bold text-xl break-all">
+                                {userData?.wallet} {currency}
                             </h3>
                         }
                     </div>
@@ -73,7 +83,7 @@ function Wallet({ userData, setUserData }) {
                             Loyalty Points
                         </h4>
                         <h3 className="font-inter font-bold text-xl text-center">
-                            {userData.loyaltyPoints}
+                            {Math.floor(userData?.loyaltyPoints)}
                         </h3>
                     </div>
                 </div>

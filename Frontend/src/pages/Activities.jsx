@@ -15,6 +15,7 @@ function Activities() {
 	const [categories, setCategories] = useState([]);
 	const [categoryNames, setCategoryNames] = useState([]);
 	const currency = useCurrency();
+
 	const [priceRange, setPriceRange] = useState({
 		minPrice: 0,
 		maxPrice: 1000,
@@ -33,12 +34,7 @@ function Activities() {
 		category: {
 			selected: "",
 		},
-		rating: {
-			min: 0,
-			max: 5,
-		},
 		sortBy: "",
-		sortOrder: "",
 	});
 
 	const formFields = {
@@ -64,24 +60,10 @@ function Activities() {
 			label: "Category",
 			options: categoryNames,
 		},
-		rating: {
-			type: "range",
-			label: "Rating",
-			range: {
-				min: 0,
-				max: 5,
-			},
-			step: 1,
-		},
 		sortBy: {
 			type: "select",
 			label: "Sort By",
-			options: ["price", "rating"],
-		},
-		sortOrder: {
-			type: "select",
-			label: "Sort Order",
-			options: ["asc", "desc"],
+			options: ["Price: Low to High", "Price: High to Low", "Rating: Low to High", "Rating: High to Low"],
 		},
 	};
 
@@ -100,14 +82,20 @@ function Activities() {
 		const convertedMax = activeFilters.price.max / converter.rates[currency];
 		const convertedPrice = { min: convertedMin, max: convertedMax };
 
+		const sortBy = activeFilters.sortBy.selected?.split(": ")[0].toLowerCase();
+		const sortOrder = activeFilters.sortBy.selected?.split(": ")[1].toLowerCase() === "low to high" ? "asc" : "high to low" ? "desc" : null;
+
 		const response = await getAllActivities(
 			activeFilters.name,
 			convertedPrice,
 			activeFilters.date, // Pass start and end separately
 			categoryToSend, // Send the category ID
-			activeFilters.rating,
-			activeFilters.sortBy.selected,
-			activeFilters.sortOrder.selected
+			{
+				min: 0,
+				max: 5,
+			},
+			sortBy,
+			sortOrder
 		);
 		if (!response.error) {
 			setActivities(response);
@@ -169,7 +157,7 @@ function Activities() {
 	useEffect(() => {
 		fetchCategories();
 		getPriceRange();
-	}, []);
+	}, [currency]);
 
 	return (
 		<div className="py-8 px-24 max-w-[1200px] flex flex-col gap-4 mx-auto">
@@ -178,7 +166,7 @@ function Activities() {
 				<hr className="border-neutral-300 border w-full mt-1.5" />
 			</div>
 			<div className="flex gap-10">
-				<div className="w-[280px] shrink-0">
+				<div className="w-[220px] shrink-0">
 					<GenericFilter
 						formFields={formFields}
 						activeFilters={activeFilters}

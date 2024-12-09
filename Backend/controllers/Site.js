@@ -1,4 +1,8 @@
 const Site = require("../models/Site");
+const Tag = require("../models/Tag");
+const cloudinary = require("../utils/cloudinary");
+const DatauriParser = require("datauri/parser");
+const path = require('path');
 
 /**
  * Creates a new site.
@@ -12,9 +16,60 @@ const Site = require("../models/Site");
  */
 const createSite = async (req, res) => {
 	try {
-		const site = new Site(req.body);
-		await site.save();
-		res.status(201).json({ message: "Site created successfully!", site });
+		if (req.files.cardImage) {
+            const cardImage = req.files.cardImage[0];
+            const parser = new DatauriParser();
+            const extName = path.extname(cardImage.originalname);
+            const file64 = parser.format(extName, cardImage.buffer);
+            const cardImageUpload = await cloudinary.uploader.upload(
+                file64.content,
+                {
+                    folder: "sites",
+                    resource_type: "image",
+                }
+            );
+            req.body.cardImage = {
+                public_id: cardImageUpload.public_id,
+                url: cardImageUpload.secure_url,
+            };
+        }
+
+		// convert prices to numbers if they are strings
+		if (req.body.ticketPrices) {
+			req.body.ticketPrices = JSON.parse(req.body.ticketPrices);
+			for (const [key, value] of Object.entries(req.body.ticketPrices)) {
+				req.body.ticketPrices[key] = Number(value);
+			}
+		}
+
+		if(req.body.location) {
+			req.body.location = JSON.parse(req.body.location);
+		}
+
+		if(req.body.openingHours) {
+			req.body.openingHours = JSON.parse(req.body.openingHours);
+		}
+
+		if(req.body.tags) {
+			req.body.tags = JSON.parse(req.body.tags);
+		}
+
+		// get tag ids
+        const tags = await Tag.find({
+            name: { $in: req.body.tags }
+        });
+		console.log(tags)
+		console.log(req.body.tags)
+        if (tags.length !== req.body.tags.length) {
+            return res.status(404).json({
+                message: "One or more tags do not exist",
+            });
+        }
+        req.body.tags = tags.map((tag) => tag._id);
+
+		const newSite = await Site.create(req.body);
+        
+        res.status(201).json(newSite);
 	} catch (err) {
 		res.status(400).json({ message: err.message });
 	}
@@ -117,9 +172,62 @@ const getSiteById = async (req, res) => {
  */
 const updateSite = async (req, res) => {
 	try {
-		const site = await Site.findByIdAndUpdate(req.params.id, req.body, {
-			new: true,
+		if (req.files.cardImage) {
+			const cardImage = req.files.cardImage[0];
+			const parser = new DatauriParser();
+			const extName = path.extname(cardImage.originalname);
+			const file64 = parser.format(extName, cardImage.buffer);
+			const cardImageUpload = await cloudinary.uploader.upload(
+				file64.content,
+				{
+					folder: "sites",
+					resource_type: "image",
+				}
+			);
+			req.body.cardImage = {
+				public_id: cardImageUpload.public_id,
+				url: cardImageUpload.secure_url,
+			};
+		}
+
+		// convert prices to numbers if they are strings
+		if (req.body.ticketPrices) {
+			req.body.ticketPrices = JSON.parse(req.body.ticketPrices);
+			for (const [key, value] of Object.entries(req.body.ticketPrices)) {
+				req.body.ticketPrices[key] = Number(value);
+			}
+		}
+
+		if(req.body.location) {
+			req.body.location = JSON.parse(req.body.location);
+		}
+
+		if(req.body.openingHours) {
+			req.body.openingHours = JSON.parse(req.body.openingHours);
+		}
+
+		if(req.body.tags) {
+			req.body.tags = JSON.parse(req.body.tags);
+		}
+
+		// get tag ids
+		const tags = await Tag.find({
+			name: { $in: req.body.tags }
 		});
+		if (tags.length !== req.body.tags.length) {
+			return res.status(404).json({
+				message: "One or more tags do not exist",
+			});
+		}
+		req.body.tags = tags.map((tag) => tag._id);
+
+		const site = await Site.findByIdAndUpdate(
+			req.params.id,
+			req.body,
+			{
+				new: true,
+			}
+		);
 		if (!site) {
 			return res.status(404).json({ message: "Site not found" });
 		}

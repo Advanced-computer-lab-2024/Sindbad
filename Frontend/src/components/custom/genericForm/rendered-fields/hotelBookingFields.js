@@ -3,6 +3,7 @@ export const hotelBooking = {
     {
       name: "guests",
       type: "objectArray",
+      description: "Details of all guests staying in the hotel room",
       label: "Guests",
       fields: [
         {

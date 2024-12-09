@@ -16,7 +16,9 @@ const {
 
 router.route("/my-activities/:creatorId").get(getMyActivities);
 
-router.route("/").post(setActivity).get(getActivities);
+router.route("/")
+  // .post(setActivity)
+  .get(getActivities);
 
 router.route("/:id/comment").post(addComment);
 
@@ -27,7 +29,7 @@ router.route("/cancel").post(cancelBooking);
 router
   .route("/:id")
   .get(getActivity)
-  .put(updateActivity)
+  // .put(updateActivity)
   .delete(deleteActivity)
   .post(addRating);
 

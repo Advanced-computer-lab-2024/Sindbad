@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-
 import { Button } from "@/components/ui/button";
 import {
     Carousel,
@@ -9,9 +8,7 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from "@/components/ui/carousel";
-
 import { MapPin, Star, ArrowRight } from "lucide-react";
-
 import {
     getItineraryById,
     bookItinerary,
@@ -26,11 +23,17 @@ import {
 import StarRating from "@/components/custom/StarRating";
 import RatingComment from "@/components/custom/RatingComment";
 import { useToast } from "@/hooks/use-toast";
-
 import { useUser, useCurrency } from "@/state management/userInfo";
 import { Convert } from "easy-currencies";
-
 import { useNavigate } from "react-router-dom";
+import { Input } from "@/components/ui/input";
+import { Label } from "@radix-ui/react-dropdown-menu";
+import { usePromoCode } from "@/services/PromocodeApiHandler";
+import {
+    checkoutWithWallet,
+    checkoutWithStripe,
+} from "@/services/TouristApiHandler";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 function handleItineraryValues(itinerary) {
     if (!itinerary.description) {
@@ -59,11 +62,18 @@ const Itinerary = () => {
     const [creator, setCreator] = useState(null);
     const [totalRatings, setTotalRatings] = useState(0);
     const [error, setError] = useState(false);
-    const { id } = useUser();
+    const { id, role } = useUser();
     const currency = useCurrency();
     const [convertedPrice, setConvertedPrice] = useState(null);
     const { toast } = useToast();
     const navigate = useNavigate();
+    const [applied, setApplied] = useState(false);
+    const [promoCode, setPromoCode] = useState("");
+    const [loading, setLoading] = useState(false); // For apply button
+    const [discount, setDiscount] = useState(0);
+    const [totalCost, setTotalCost] = useState(0);
+    const [stripeID, setStripeID] = useState(null);
+    const [currentPaymentType, setCurrentPaymentType] = useState("credit");
 
     const getItinerary = async () => {
         let response = await getItineraryById(itineraryId);
@@ -74,6 +84,7 @@ const Itinerary = () => {
         } else {
             handleItineraryValues(response);
             setItinerary(response);
+            console.log(response);
             setTotalRatings(
                 Object.values(response.rating).reduce((acc, cur) => acc + cur, 0)
             );
@@ -89,6 +100,13 @@ const Itinerary = () => {
             setCreator(response);
         }
     };
+
+    useEffect(() => {
+        const baseCost = adult * convertedPrice + child * convertedPrice;
+        const discountedCost =
+            discount > 0 ? baseCost * (1 - discount / 100) : baseCost; // Apply discount if any
+        setTotalCost(discountedCost.toFixed(2)); // Update total cost
+    }, [adult, child, convertedPrice, discount]); // Dependencies to trigger re-calculation
 
     useEffect(() => {
         getItinerary();
@@ -136,9 +154,6 @@ const Itinerary = () => {
     // Ensure availableDatesTimes exists before accessing it
     if (!itinerary.availableDatesTimes) return null;
 
-    const fullStars = itinerary.rating;
-    const emptyStar = 5 - fullStars;
-
     const dates = itinerary.availableDatesTimes.map((entry) => {
         const d = new Date(entry.dateTime);
         // console.log(entry);
@@ -146,9 +161,10 @@ const Itinerary = () => {
         const weekday = d.toLocaleString("en-US", { weekday: "short" });
         const day = d.toLocaleString("en-US", { day: "numeric" });
         const month = d.toLocaleString("en-US", { month: "short" });
+        const year = d.toLocaleString("en-US", { year: "numeric" });
         return {
             dateObj: d, // for future comparison
-            display: `${weekday} ${day} ${month}` // for display purposes
+            display: `${weekday} ${day} ${month} ${year}`, // for display purposes
         };
     });
 
@@ -165,6 +181,113 @@ const Itinerary = () => {
     const handleAdultDecrement = () => adult > 0 && setAdult(adult - 1);
     const handleChildIncrement = () => setChild(child + 1);
     const handleChildDecrement = () => child > 0 && setChild(child - 1);
+
+    const handlePromoCodeApply = () => {
+        if (!promoCode || promoCode.trim() === "") {
+            toast({ description: "Please enter a promo code." });
+            return;
+        }
+
+        setLoading(true); // Set loading state to true, indicating a request is in progress
+
+        // Handle the async logic
+        const applyPromoCode = async () => {
+            try {
+                if(role !== "tourist") {
+                    toast({ description: "You must be a tourist to apply a promo code." });
+                    return;
+                }
+                const result = await usePromoCode(id, promoCode); // Use the promo code here
+
+                if (result.discount) {
+                    setDiscount(result.discount); // Set discount if the result contains it
+                    setApplied(true); // Mark promo code as applied
+                    setStripeID(result.stripeID); // Set the stripe ID for the payment
+                    toast({
+                        description: `Promo code applied! You got a ${result.discount}% discount.`,
+                    });
+                } else {
+                    toast({ description: result.message || "Incorrect Promo Code." });
+                }
+            } catch (error) {
+                toast({
+                    description: error.message || "An unexpected error occurred.",
+                });
+            } finally {
+                setLoading(false); // Reset loading state after the request is finished
+            }
+        };
+
+        applyPromoCode(); // Call the async function to apply the promo code
+    };
+
+    const handleItineraryBooking = async () => {
+        if(role !== "tourist") {
+            toast({ description: "You must be a tourist to book an itinerary." });
+            return;
+        }
+        if (selectedDate === -1) {
+            toast({ description: "Please select a date and time." });
+            return;
+        }
+        if (adult + child === 0) {
+            toast({ description: "Please select at least one ticket." });
+            return;
+        }
+        if (currentPaymentType === "wallet") {
+            await payWithWallet();
+        } else {
+            await payWithStripe();
+        }
+    };
+
+    const payWithWallet = async () => {
+        try {
+            setItinerary({
+                ...itinerary,
+                date: itinerary.availableDatesTimes[selectedDate],
+                adultTicketCount: adult,
+                childTicketCount: child,
+                userId: id,
+            });
+            const cart = {
+                ...itinerary,
+                date: itinerary.availableDatesTimes[selectedDate],
+                adultTicketCount: adult,
+                childTicketCount: child,
+                userId: id,
+            };
+            const response = await checkoutWithWallet(id, cart, discount, "itinerary");
+            if (!response.error) {
+                toast({ description: "Payment successful!" });
+                navigate("/checkout/success");
+            }
+            else {
+                throw new Error(response.error);
+            }
+        } catch (error) {
+            console.error("Error paying with wallet:", error);
+            toast({ description: "An error occurred, please try again later." });
+        }
+    };
+
+    const payWithStripe = async () => {
+        setItinerary({
+            ...itinerary,
+            date: itinerary.availableDatesTimes[selectedDate],
+            adultTicketCount: adult,
+            childTicketCount: child,
+            userId: id,
+        });
+        const cart = {
+            ...itinerary,
+            date: itinerary.availableDatesTimes[selectedDate],
+            adultTicketCount: adult,
+            childTicketCount: child,
+            userId: id,
+        };
+        checkoutWithStripe(id, cart, stripeID, "itinerary");
+    };
 
     return (
         <div className="py-8 px-24 max-w-[1200px] mx-auto">
@@ -196,11 +319,11 @@ const Itinerary = () => {
                     {/* Supported Languages */}
                     <div>
                         <h2 className="text-lg font-semibold mb-1">Supported Languages</h2>
-                        <div className="flex flex-wrap gap-2 text-sm">
+                        <div className="flex flex-wrap gap-2 text-sm text-light">
                             {itinerary.languages.map((lang) => (
                                 <div
                                     key={lang}
-                                    className="flex gap-1 text-xs items-center bg-gradient-to-br from-primary-700 to-primary-900 px-3 py-1.5 rounded-full"
+                                    className="flex gap-1 text-xs items-center bg-gradient-to-br from-primary-600 to-primary-800 px-3 py-1.5 rounded-full"
                                 >
                                     {lang}
                                 </div>
@@ -225,15 +348,19 @@ const Itinerary = () => {
                 <div className="h-full w-[400px] shrink-0">
                     <Carousel>
                         <CarouselContent>
-                            <CarouselItem className="h-[400px]">
-                                <ImagePlaceholder />
-                            </CarouselItem>
-                            <CarouselItem className="h-[400px]">
-                                <ImagePlaceholder />
-                            </CarouselItem>
-                            <CarouselItem className="h-[400px]">
-                                <ImagePlaceholder />
-                            </CarouselItem>
+                            {itinerary.cardImage && itinerary.cardImage.url ? (
+                                <CarouselItem className="h-[400px] w-[400px]">
+                                    <img
+                                        src={itinerary.cardImage.url}
+                                        alt={`${itinerary.name}`}
+                                        className="h-full w-full object-cover rounded-md border border-neutral-300"
+                                    />
+                                </CarouselItem>
+                            ) : (
+                                <CarouselItem className="h-[400px]">
+                                    <ImagePlaceholder />
+                                </CarouselItem>
+                            )}
                         </CarouselContent>
                         <CarouselPrevious />
                         <CarouselNext />
@@ -251,7 +378,7 @@ const Itinerary = () => {
                         <li className="flex items-start gap-3">
                             <MapPin
                                 size={36}
-                                className="border-2 rounded-full p-1 mt-0.5 border-neutral-300 bg-neutral-200 text-indigo-950"
+                                className="rounded-full p-1 mt-0.5 bg-gradient-to-br from-neutral-200 to-neutral-300"
                             />
                             <div>
                                 <p className="text-sm text-neutral-500">Starting at</p>
@@ -268,7 +395,7 @@ const Itinerary = () => {
                         {itinerary.timeline.map((stop, index) => (
                             <>
                                 <li key={index} className="flex items-start gap-3">
-                                    <div className="shrink-0 border-2 border-neutral-300 rounded-full bg-neutral-200 text-indigo-950 font-semibold w-9 h-9 flex items-center justify-center">
+                                    <div className="shrink-0 rounded-full bg-gradient-to-br from-neutral-200 to-neutral-300 font-semibold w-9 h-9 flex items-center justify-center">
                                         {index + 1}
                                     </div>
                                     <p className="mt-2 text-sm font-medium">{stop}</p>
@@ -285,7 +412,7 @@ const Itinerary = () => {
                         <li className="flex items-start gap-3">
                             <MapPin
                                 size={36}
-                                className="border-2 rounded-full p-1 mt-0.5 border-neutral-300 bg-neutral-200 text-indigo-900"
+                                className="rounded-full p-1 mt-0.5 bg-gradient-to-br from-neutral-200 to-neutral-300"
                             />
                             <div>
                                 <p className="text-sm text-neutral-500">Finishing at</p>
@@ -302,7 +429,7 @@ const Itinerary = () => {
                     <ul className="flex flex-col gap-6">
                         {itinerary.activities.map((activity, index) => (
                             <li key={index} className="flex items-start gap-3">
-                                <div className="shrink-0 border-2 border-neutral-300 rounded-full bg-neutral-200 text-indigo-950 font-semibold w-9 h-9 flex items-center justify-center">
+                                <div className="shrink-0 rounded-full bg-gradient-to-br from-neutral-200 to-neutral-300 font-semibold w-9 h-9 flex items-center justify-center">
                                     {index + 1}
                                 </div>
                                 <div>
@@ -326,24 +453,36 @@ const Itinerary = () => {
                             <Carousel>
                                 <CarouselContent className="px-0.5 -ml-4 mr-3">
                                     {dates.map((date, idx) => {
-                                        if (date.dateObj >= new Date()) { // Only render future dates
+                                        if (date.dateObj >= new Date()) {
+                                            // Only render future dates
                                             return (
-                                                <CarouselItem key={idx} className="basis-1/3 py-0.5 pl-4">
+                                                <CarouselItem
+                                                    key={idx}
+                                                    className="basis-1/3 py-0.5 pl-4"
+                                                >
                                                     <button
                                                         onClick={() => {
                                                             setSelectedDate(idx);
                                                             setSelectedTime(idx);
                                                         }}
-                                                        className={`border py-2 px-3 min-h-20 w-24 rounded-md bg-gradient-to-br from-primary-700/80 to-primary-900/80 text-center ${selectedDate === idx ? "ring-secondary ring-2" : "ring-transparent"
+                                                        className={`border py-2 px-3 min-h-20 w-24 rounded-md bg-gradient-to-br from-primary-200 to-primary-300 text-center ${selectedDate === idx
+                                                            ? "ring-secondary ring-2"
+                                                            : "ring-transparent hover:ring-secondary ring-2"
                                                             }`}
                                                     >
                                                         <div className="flex flex-col">
                                                             {/* Weekday, Day, Month */}
-                                                            <span className="text-sm">{date.display.split(" ")[0]}</span>
-                                                            <span className="text-lg font-bold">{date.display.split(" ")[1]}</span>
-                                                            <span className="text-sm">{date.display.split(" ")[2]}</span>
+                                                            <span className="text-sm">
+                                                                {date.display.split(" ")[0]}
+                                                            </span>
+                                                            <span className="text-md font-bold">
+                                                                {date.display.split(" ")[1]} {date.display.split(" ")[2]}
+                                                            </span>
+                                                            <span className="text-sm">
+                                                                {date.display.split(" ")[3]}
+                                                            </span>
                                                         </div>
-                                                        <hr className="border-primary-900 border-1 w-full my-1.5" />
+                                                        <hr className="border-primary-400 border-1 w-full my-1.5" />
                                                         <p className="text-xs">{times[idx]}</p>
                                                     </button>
                                                 </CarouselItem>
@@ -356,22 +495,21 @@ const Itinerary = () => {
                                 <CarouselNext />
                             </Carousel>
 
-
-                            <div className="relative p-6 bg-gradient-to-b from-neutral-200/60 to-light rounded-md mt-4 overflow-clip">
+                            <div className="relative p-6 bg-gradient-to-b from-neutral-200/60 to-light rounded-md mt-4 overflow-clip z-0">
                                 {/* border */}
-                                <div className="absolute top-0 left-0 rounded-md border border-neutral-500 h-full w-full"></div>
+                                <div className="absolute top-0 left-0 rounded-md border border-neutral-500 h-full w-full z-0"></div>
                                 {/* Top cutout */}
-                                <div className="absolute top-[248px] -left-5 -right-5 flex justify-between">
+                                <div className="absolute top-[313px] -left-5 -right-5 flex justify-between z-0">
                                     <div className="w-[36px] h-6 bg-light rounded-t-full border-t border-r border-neutral-500"></div>
                                     <div className="w-[36px] h-6 bg-light rounded-t-full border-t border-l border-neutral-500"></div>
                                 </div>
-                                <div className="absolute top-[270px] -left-5 -right-5 flex justify-between">
+                                <div className="absolute top-[335px] -left-5 -right-5 flex justify-between z-0">
                                     <div className="w-[36px] h-3 bg-light rounded-b-full border-b border-r border-neutral-500"></div>
                                     <div className="w-[36px] h-3 bg-light rounded-b-full border-b border-l border-neutral-500"></div>
                                 </div>
 
-                                <div className="space-y-4 my-5">
-                                    <div className="flex items-center justify-around">
+                                <div className="space-y-4 my-3 mx-1.5">
+                                    <div className="flex items-center justify-between">
                                         <div className="flex gap-2 items-center">
                                             <p className="text-base font-semibold">Adult</p>
                                             <span className="text-neutral-500 text-xs mt-1 font-medium">
@@ -382,7 +520,7 @@ const Itinerary = () => {
                                             {/* Decrement Button */}
                                             <Button
                                                 onClick={handleAdultDecrement}
-                                                className="z-10 flex items-center justify-center text-xl bg-transparent border border-neutral-300 hover:border-secondary w-5"
+                                                className="z-10 flex items-center justify-center text-xl text-dark bg-transparent border border-neutral-300 w-5"
                                                 disabled={adult === 0}
                                             >
                                                 -
@@ -396,13 +534,13 @@ const Itinerary = () => {
                                             {/* Increment Button */}
                                             <Button
                                                 onClick={handleAdultIncrement}
-                                                className="z-10 flex items-center justify-center text-xl bg-transparent border border-neutral-300 hover:border-secondary w-5"
+                                                className="z-10 flex items-center justify-center text-xl text-dark bg-transparent border border-neutral-300 w-5"
                                             >
                                                 +
                                             </Button>
                                         </div>
                                     </div>
-                                    <div className="flex items-center justify-around">
+                                    <div className="flex items-center justify-between">
                                         <div className="flex gap-2 items-center">
                                             <p className="text-base font-semibold">Child</p>
                                             <span className="text-neutral-500 text-xs mt-1 font-medium">
@@ -413,7 +551,7 @@ const Itinerary = () => {
                                             {/* Decrement Button */}
                                             <Button
                                                 onClick={handleChildDecrement}
-                                                className="z-10 flex items-center justify-center text-xl bg-transparent border border-neutral-300 hover:border-secondary w-5"
+                                                className="z-10 flex items-center justify-center text-xl text-dark bg-transparent border border-neutral-300 w-5"
                                                 disabled={child === 0}
                                             >
                                                 -
@@ -427,26 +565,70 @@ const Itinerary = () => {
                                             {/* Increment Button */}
                                             <Button
                                                 onClick={handleChildIncrement}
-                                                className="z-10 flex items-center justify-center text-xl bg-transparent border border-neutral-300 hover:border-secondary w-5"
+                                                className="z-10 flex items-center justify-center text-xl text-dark bg-transparent border border-neutral-300 w-5"
                                             >
                                                 +
                                             </Button>
                                         </div>
                                     </div>
                                 </div>
+                                <div className="relative z-10 mb-2 -mt-1 w-full">
+                                    {!applied ? (
+                                        <div className="flex items-center gap-2">
+                                            <div className="p-2">
+                                                <Label className="text-sm pb-1" htmlFor="code">
+                                                    Enter Promocode
+                                                </Label>
+                                                <Input
+                                                    type="text"
+                                                    id="code"
+                                                    placeholder="Enter code.."
+                                                    value={promoCode}
+                                                    onChange={(e) => setPromoCode(e.target.value.trim())}
+                                                    className=""
+                                                />
+                                            </div>
+                                            <Button
+                                                className="flex items-center justify-center mt-6 h-[28px] py-0 w-max"
+                                                onClick={() => handlePromoCodeApply()}
+                                            >
+                                                Apply
+                                            </Button>
+                                        </div>
+                                    ) : (
+                                        <div className="grid grid-cols-3 w-full max-w-sm items-center gap-1">
+                                            <div className="col-span-2 p-2">
+                                                <Input
+                                                    type="text"
+                                                    id="code"
+                                                    placeholder={promoCode} // Display the applied promo code
+                                                    className=""
+                                                    disabled
+                                                />
+                                            </div>
+                                            <Button
+                                                className="col-span-1 flex items-center justify-center"
+                                                disabled
+                                            >
+                                                Applied
+                                            </Button>
+                                        </div>
+                                    )}
+                                </div>
 
                                 {/* Total Cost Section */}
-                                <div className="bg-primary-700/40 -mx-6 px-8 py-4 text-sm flex flex-col gap-2">
+                                <div className="bg-primary-200 -mx-6 px-8 py-4 text-sm flex flex-col gap-2">
                                     <div className="flex justify-between">
-                                        <p>Item count: </p>
+                                        <p>Item count:</p>
                                         <p className="font-medium">{adult + child}</p>
                                     </div>
                                     <div>
                                         <div className="flex justify-between">
                                             <p>Total:</p>
                                             <p className="font-medium">
-                                                {(adult * convertedPrice + child * convertedPrice).toFixed(2)} {currency}
-                                            </p>
+                                                {totalCost} {currency}
+                                            </p>{" "}
+                                            {/* Use totalCost state */}
                                         </div>
                                         <p className="text-xs text-neutral-500 italic mt-0.5">
                                             *Includes taxes and charges
@@ -454,35 +636,27 @@ const Itinerary = () => {
                                     </div>
                                 </div>
 
-                                <div className="border border-neutral-400 border-dashed -mx-6 mt-4 mb-6"></div>
+                                <div className="border border-neutral-400 border-dashed -mx-6 my-6"></div>
+                                <div className="relative -mt-2 mb-4">
+                                    <div className="z-50 w-full flex justify-between items-center">
+                                        <p className="text-sm font-medium">Payment method</p>
+                                        <Tabs defaultValue="stripe" className="">
+                                            <TabsList>
+                                                <TabsTrigger value="stripe" onClick={() => setCurrentPaymentType("stripe")}>Credit</TabsTrigger>
+                                                <TabsTrigger value="wallet" onClick={() => setCurrentPaymentType("wallet")}>Wallet</TabsTrigger>
+                                            </TabsList>
+                                        </Tabs>
+                                    </div>
+                                </div>
+
 
                                 {/* Book Now and Cancel Itinerary Buttons */}
                                 <div className="flex justify-center gap-2">
+
                                     {/* Book Now Button */}
                                     <Button
-                                        className="text-center w-30 py-3 relative bg-white border border-neutral-400 hover:bg-neutral-100"
-                                        onClick={async () => {
-                                            if (selectedDate === -1) {
-                                                toast({ description: "Please select a date" });
-                                                return;
-                                            }
-                                            const response = await bookItinerary(
-                                                itineraryId,
-                                                id,
-                                                itinerary.availableDatesTimes[selectedDate].dateTime,
-                                                adult,
-                                                child
-                                            );
-                                            if (response.error) {
-                                                console.error(response.error);
-                                                toast({
-                                                    description:
-                                                        "An error occurred, please try again later",
-                                                });
-                                            } else {
-                                                toast({ description: "Successfully booked itinerary" });
-                                            }
-                                        }}
+                                        className="z-10"
+                                        onClick={handleItineraryBooking}
                                     >
                                         <p>Book itinerary</p>
                                         <ArrowRight />
@@ -490,7 +664,7 @@ const Itinerary = () => {
 
                                     {/* Cancel Itinerary Button */}
                                     <Button
-                                        className="text-center w-22 py-3 relative bg-white border border-neutral-400 hover:bg-neutral-100"
+                                        className="z-10 bg-neutral-300 text-dark"
                                         onClick={async () => {
                                             const response = await cancelBooking(
                                                 itineraryId,

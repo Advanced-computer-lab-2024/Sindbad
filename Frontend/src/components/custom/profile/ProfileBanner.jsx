@@ -53,9 +53,9 @@ function ProfileBanner({ userData, profileId, id, profileRole, setEditing }) {
         <section className="group relative w-[280px] border border-neutral-300 rounded-md overflow-clip flex flex-col items-center shrink-0 pb-6 bg-gradient-to-b from-neutral-200/60 to-light">
             <div className="h-[110px] w-full">
                 {/* header image */}
-                {userData.bannerImageUri ? (
+                {userData.bannerImageUri && userData.bannerImageUri.url ? (
                     <img
-                        src={userData.bannerImageUri}
+                        src={userData.bannerImageUri.url}
                         alt="banner"
                         className="w-full h-full object-cover"
                     />
@@ -80,17 +80,9 @@ function ProfileBanner({ userData, profileId, id, profileRole, setEditing }) {
                 <div className="flex flex-col -mt-10 w-full items-center gap-3">
                     {/* profile photo */}
                     <div className="rounded-full h-[116px] w-[116px] border-2 border-light">
-                        {(profileRole !== "seller" &&
-                            profileRole !== "advertiser" &&
-                            userData.profileImageUri) ||
-                            ((profileRole === "seller" || profileRole === "advertiser") &&
-                                userData.logoImageUri) ? (
+                        {userData.profileImageUri && userData.profileImageUri.url ? (
                             <img
-                                src={
-                                    profileRole === "seller" || profileRole === "advertiser"
-                                        ? userData.logoImageUri
-                                        : userData.profileImageUri
-                                }
+                                src={userData.profileImageUri.url}
                                 alt="profile"
                                 className="rounded-full h-full w-full object-cover"
                             />
@@ -134,8 +126,8 @@ function ProfileBanner({ userData, profileId, id, profileRole, setEditing }) {
                     </div>
 
                     {/* phone number */}
-                    {(userData.mobileNumber || userData.hotline) && (
-                        <div className="flex gap-1 items-center bg-gradient-to-br from-primary-700 to-primary-900 px-3 py-1.5 rounded-full">
+                    {profileRole !== "tourist" && (userData.mobileNumber || userData.hotline) && (
+                        <div className="text-light flex gap-1 items-center bg-gradient-to-br from-primary-700 to-primary-900 px-3 py-1.5 rounded-full">
                             <div className="shrink-0">
                                 <Phone size={16} />
                             </div>
@@ -143,6 +135,22 @@ function ProfileBanner({ userData, profileId, id, profileRole, setEditing }) {
                                 {profileRole === "advertiser"
                                     ? userData.hotline
                                     : userData.mobileNumber}
+                            </p>
+                        </div>
+                    )}
+
+                    {/* level badge */}
+                    {profileRole === "tourist" && (userData.mobileNumber || userData.hotline) && (
+                        <div
+                            className={`flex gap-1 items-center px-3 py-1.5 rounded-full bg-gradient-to-br
+                            ${userData.level === 3 ? "from-amber-300 to-amber-400"
+                                    : userData.level === 2 ? "from-gray-400 to-gray-500" : "from-yellow-700 to-yellow-800 text-light"}`}
+                        >
+                            <div className="shrink-0">
+                                {renderLoyaltyIcon(userData.level)}
+                            </div>
+                            <p className="text-xs leading-[11px]">
+                                Level {userData.level}
                             </p>
                         </div>
                     )}
@@ -159,6 +167,14 @@ function ProfileBanner({ userData, profileId, id, profileRole, setEditing }) {
                     </div>
                     {profileRole === "tourist" && (
                         <>
+                            <div className="flex gap-2">
+                                <div className="shrink-0">
+                                    <Phone size={16} />
+                                </div>
+                                <a className="text-xs break-all pt-[1px]">
+                                    {userData.mobileNumber}
+                                </a>
+                            </div>
                             <div className="flex gap-2">
                                 <div className="shrink-0">
                                     <Cake size={16} />
@@ -180,14 +196,6 @@ function ProfileBanner({ userData, profileId, id, profileRole, setEditing }) {
                                     <Briefcase size={16} />
                                 </div>
                                 <a className="text-xs break-all pt-[1px]">{userData.job}</a>
-                            </div>
-                            <div className="flex gap-2">
-                                <div className="shrink-0">
-                                    {renderLoyaltyIcon(userData.level)}
-                                </div>
-                                <a className="text-xs break-all pt-[1px]">
-                                    Level {userData.level}
-                                </a>
                             </div>
                         </>
                     )}

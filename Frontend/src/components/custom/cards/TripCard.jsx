@@ -28,13 +28,13 @@ function TripCard({ data, fetchCardData, styles }) {
       }`}
     >
       <div className={styles.imageContainer}>
-        <CardImage imageUris={data.imageUris} altText={data.name} />
+        <CardImage imageSrc={data.cardImage} altText={data.name} />
         <CardMenu
           data={data}
           config={cardConfig}
           role={role}
           id={id}
-          cardType="trip"
+          cardType="transportation"
           fetchCardData={fetchCardData}
           openDialog={openDialog}
           setOpenDialog={setOpenDialog}
@@ -45,7 +45,7 @@ function TripCard({ data, fetchCardData, styles }) {
         <div className="flex flex-col gap-1">
           <CardPrice price={data.price} />
           <Button
-            onClick={() => navigate(`/app/trip/${data._id}`)}
+            onClick={() => navigate(`/app/transportation/${data._id}`)}
             className={`${styles.button} ${
               data.isInappropriate === true
                 ? styles.buttonInappropriate

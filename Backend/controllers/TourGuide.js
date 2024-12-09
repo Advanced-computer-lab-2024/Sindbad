@@ -1,6 +1,9 @@
 const TourGuide = require("../models/TourGuide");
 const Tourist = require("../models/Tourist");
 const Itinerary = require("../models/Itinerary");
+const cloudinary = require("../utils/cloudinary");
+const DatauriParser = require("datauri/parser");
+const path = require('path');
 /**
  * Retrieves all tourGuides
  *
@@ -17,6 +20,7 @@ const getAllTourGuides = async (req, res) => {
 		});
 	}
 };
+
 
 /**
  * Retrieves a tourGuide by its ID
@@ -42,6 +46,7 @@ const getTourGuide = async (req, res) => {
 	res.status(200).json(tourGuide);
 };
 
+
 /**
  * Updates a tourGuide's profile
  *
@@ -62,22 +67,66 @@ const updateTourGuide = async (req, res) => {
 			error: err.message,
 		});
 	}
+
 	if (!tourGuide.isAccepted)
 		return res.status(404).send("TourGuide not accepted yet");
 
-	if (req.body.email != null) tourGuide.email = req.body.email;
+	if (tourGuide.profileImageUri && tourGuide.profileImageUri.public_id && req.files.profileImageUri) {
+		await cloudinary.uploader.destroy(tourGuide.profileImageUri.public_id);
+	}
+
+	if (tourGuide.bannerImageUri && tourGuide.bannerImageUri.public_id && req.files.bannerImageUri) {
+		await cloudinary.uploader.destroy(tourGuide.bannerImageUri.public_id);
+	}
+
+	// Handle profileImage upload
+	if (req.files.profileImageUri) {
+		const profileImage = req.files.profileImageUri[0]; // Get the uploaded file
+		const parser = new DatauriParser();
+		const extName = path.extname(profileImage.originalname);
+		const file64 = parser.format(extName, profileImage.buffer);
+		const profileUpload = await cloudinary.uploader.upload(
+			file64.content, // Pass the buffer here instead of the file path
+			{
+				folder: "profileImages",
+				resource_type: "image", // Ensure it's treated as an image
+			}
+		);
+		// Update schema
+		tourGuide.profileImageUri = {
+			public_id: profileUpload.public_id,
+			url: profileUpload.secure_url,
+		};
+	}
+
+	// Handle bannerImage upload
+	if (req.files.bannerImageUri) {
+		const bannerImage = req.files.bannerImageUri[0]; // Get the uploaded file
+		const parser = new DatauriParser();
+		const extName = path.extname(bannerImage.originalname);
+		const file64 = parser.format(extName, bannerImage.buffer);
+		const bannerUpload = await cloudinary.uploader.upload(
+			file64.content, // Pass the buffer here instead of the file path
+			{
+				folder: "bannerImages",
+				resource_type: "image", // Ensure it's treated as an image
+			}
+		);
+		// Update schema
+		tourGuide.bannerImageUri = {
+			public_id: bannerUpload.public_id,
+			url: bannerUpload.secure_url,
+		};
+	}
+
+	if (req.body.email != null)
+		tourGuide.email = req.body.email;
 
 	if (req.body.mobileNumber != null)
 		tourGuide.mobileNumber = req.body.mobileNumber;
 
 	if (req.body.yearsOfExperience != null)
 		tourGuide.yearsOfExperience = req.body.yearsOfExperience;
-
-	if (req.body.profileImageUri != null)
-		tourGuide.profileImageUri = req.body.profileImageUri;
-
-	if (req.body.bannerImageUri != null)
-		tourGuide.bannerImageUri = req.body.bannerImageUri;
 
 	if (req.body.preferredCurrency != undefined)
 		tourGuide.preferredCurrency = req.body.preferredCurrency;
@@ -218,23 +267,23 @@ const addRating = async (req, res) => {
 		// // Check if the tour guide exists
 		const tourGuide = await TourGuide.findById(id);
 		if (!tourGuide) {
-		  return res.status(404).json({ message: "TourGuide not found" });
+			return res.status(404).json({ message: "TourGuide not found" });
 		}
-	
+
 		// // Find the tourist by userId to get their itineraries
 		const tourist = await Tourist.findById(userId);
 		if (!tourist) {
-		  return res.status(404).json({ message: "Tourist not found" });
+			return res.status(404).json({ message: "Tourist not found" });
 		}
-	
+
 		// Populate itineraries to get creatorId from Itinerary
 		const itineraries = await Itinerary.find({
 			'_id': { $in: tourist.bookedEvents.itineraries.map(itinerary => itinerary.itineraryId) }
 		});
-	
+
 		// Check if any itinerary's creatorId matches the tour guide's ID
 		const hasBookedItinerary = itineraries.some(itinerary => itinerary.creatorId.toString() === id);
-	
+
 		if (!hasBookedItinerary) {
 			return res.status(403).json({ message: "User has not booked an itinerary with this tour guide." });
 		}
@@ -252,13 +301,13 @@ const addRating = async (req, res) => {
 
 		if (tourGuide.userRatings.includes(userId)) {
 			return res.status(403).json({ message: "User has already rated this tour guide." });
-		}	  
+		}
 
 		// Increment the count of the given rating
 		const currentCount = tourGuide.rating.get(rating.toString()) || 0;
 		tourGuide.rating.set(rating.toString(), currentCount + 1);
 
-	    // Add the userId to the userRatings array
+		// Add the userId to the userRatings array
 		tourGuide.userRatings.push(userId);
 
 		// Recalculate the average rating
@@ -294,7 +343,7 @@ const addComment = async (req, res) => {
 	try {
 		const { id } = req.params;
 		const { userId, comment } = req.body;
-		
+
 		// Validate input
 		if (!userId || !comment) {
 			return res
@@ -314,17 +363,17 @@ const addComment = async (req, res) => {
 		// Find the tourist by userId to get their itineraries
 		const tourist = await Tourist.findById(userId);
 		if (!tourist) {
-		  return res.status(404).json({ message: "Tourist not found" });
+			return res.status(404).json({ message: "Tourist not found" });
 		}
-	
+
 		// Populate itineraries to get creatorId from Itinerary
 		const itineraries = await Itinerary.find({
 			'_id': { $in: tourist.bookedEvents.itineraries.map(itinerary => itinerary.itineraryId) }
 		});
-	
+
 		// Check if any itinerary's creatorId matches the tour guide's ID
 		const hasBookedItinerary = itineraries.some(itinerary => itinerary.creatorId.toString() === id);
-	
+
 		if (!hasBookedItinerary) {
 			return res.status(403).json({ message: "User has not booked an itinerary with this tour guide." });
 		}
@@ -379,6 +428,9 @@ const addTourGuideDocuments = async (req, res) => {
 	}
 };
 
+
+const notificationSeen = async (req, res) => {
+};
 module.exports = {
 	getAllTourGuides,
 	getTourGuide,

@@ -1,7 +1,24 @@
 const Activity = require("../models/Activity");
 const Tag = require("../models/Tag");
 const Category = require("../models/Category");
+const Advertiser = require("../models/Advertiser");
 const Tourist = require("../models/Tourist");
+const Sale = require("../models/Sale");
+const nodemailer = require("nodemailer");
+const cloudinary = require("../utils/cloudinary");
+const DatauriParser = require("datauri/parser");
+const path = require("path");
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+require("dotenv").config();
+
+//Email prefrences
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.GMAIL, // Your Gmail address
+    pass: process.env.GMAILPASSWORD, // Your Gmail App Password
+  },
+});
 
 /**
  * Gets an activity by ID
@@ -26,7 +43,7 @@ const getActivity = async (req, res) => {
 
 /**
  * Retrieves activities created by a specific user
- * @route GET /activity/my-activities
+ * @route GET /activity/my-activities/:creatorId
  * @param {Object} req - The request object containing user data
  * @param {Object} res - The response object for sending the result
  * @returns {Object} JSON containing an array of activities or error message
@@ -55,30 +72,67 @@ const getMyActivities = async (req, res) => {
  */
 const setActivity = async (req, res) => {
   try {
-    const { category, tags, ...activityData } = req.body; // Extract category, tags, and other activity data
+    if (req.files.cardImage) {
+      const cardImage = req.files.cardImage[0];
+      const parser = new DatauriParser();
+      const extName = path.extname(cardImage.originalname);
+      const file64 = parser.format(extName, cardImage.buffer);
+      const cardImageUpload = await cloudinary.uploader.upload(file64.content, {
+        folder: "activities",
+        resource_type: "image",
+      });
+      req.body.cardImage = {
+        public_id: cardImageUpload.public_id,
+        url: cardImageUpload.secure_url,
+      };
+    }
 
-    console.log(req.body);
-    // Check if the category exists (optional)
-    const existingCategory = await Category.findById(category);
-    if (!existingCategory) {
+    if (typeof req.body.price === "string") {
+      req.body.price = parseFloat(req.body.price);
+    }
+
+    if (req.body.location) {
+      req.body.location = JSON.parse(req.body.location);
+    }
+    if (req.body.tags) {
+      req.body.tags = JSON.parse(req.body.tags);
+    }
+
+    // get category id
+    const category = await Category.findOne({
+      name: req.body.category,
+    });
+    if (!category) {
       return res.status(404).json({
         message: "Category does not exist",
-        x: existingCategory,
       });
     }
+    req.body.category = category._id;
 
-    // Check if all provided tag IDs exist (optional)
-    const existingTags = await Tag.find({ _id: { $in: tags } });
-    if (existingTags.length !== tags.length) {
-      return res.status(404).json({ message: "One or more tags do not exist" });
-    }
-
-    // Create the activity with valid category and tag IDs
-    const activity = await Activity.create({
-      ...activityData,
-      category: existingCategory._id, // Use category ID
-      tags: existingTags.map((tag) => tag._id), // Use valid tag IDs
+    // get tag ids
+    const tags = await Tag.find({
+      name: { $in: req.body.tags },
     });
+    if (tags.length !== req.body.tags.length) {
+      return res.status(404).json({
+        message: "One or more tags do not exist",
+      });
+    }
+    req.body.tags = tags.map((tag) => tag._id);
+
+    const stripeProduct = await stripe.products.create({
+      name: req.body.name,
+    });
+
+    const price = await stripe.prices.create({
+      unit_amount: Math.floor(req.body.price * 100), // Price in cents (2000 = $20.00)
+      currency: "usd",
+      product: stripeProduct.id, // Use the product ID from the previous step
+    });
+
+    req.body.priceId = price.id;
+
+    const activity = await Activity.create(req.body);
 
     res.status(201).json(activity);
   } catch (error) {
@@ -89,6 +143,13 @@ const setActivity = async (req, res) => {
   }
 };
 
+/**
+ * Adds a comment to an activity
+ * @route POST /activity/:id/comment
+ * @param {Object} req - The request object containing the comment in the body
+ * @param {Object} res - The response object used to send a confirmation message or error
+ * @returns {Object} - A JSON object with a confirmation message or an error message if not found
+ */
 const addComment = async (req, res) => {
   try {
     const { id } = req.params;
@@ -241,41 +302,99 @@ const calculateAverageRating = (ratings) => {
 const updateActivity = async (req, res) => {
   try {
     // Get the ID from the request parameters
-    const { id } = req.params;
+    const activityId = req.params.id;
 
-    // Destructure the fields from the request body
-    const {
-      name,
-      dateTime,
-      location,
-      price,
-      category,
-      tags,
-      discounts,
-      isBookingOpen,
-      creatorId,
-      headCount,
-      description,
-    } = req.body;
+    const updatedData = req.body;
+
+    if (req.files.cardImage) {
+      const cardImage = req.files.cardImage[0];
+      const parser = new DatauriParser();
+      const extName = path.extname(cardImage.originalname);
+      const file64 = parser.format(extName, cardImage.buffer);
+      const cardImageUpload = await cloudinary.uploader.upload(file64.content, {
+        folder: "activities",
+        resource_type: "image",
+      });
+      updatedData.cardImage = {
+        public_id: cardImageUpload.public_id,
+        url: cardImageUpload.secure_url,
+      };
+    }
+
+    if (typeof updatedData.price === "string") {
+      updatedData.price = parseFloat(updatedData.price);
+    }
+
+    if (req.body.location) {
+      req.body.location = JSON.parse(req.body.location);
+    }
+    if (req.body.tags) {
+      req.body.tags = JSON.parse(req.body.tags);
+    }
+
+    // get category id
+    const category = await Category.findOne({
+      name: req.body.category,
+    });
+    if (!category) {
+      return res.status(404).json({
+        message: "Category does not exist",
+      });
+    }
+    req.body.category = category._id;
+
+    // get tag ids
+    const tags = await Tag.find({
+      name: { $in: req.body.tags },
+    });
+    if (tags.length !== req.body.tags.length) {
+      return res.status(404).json({
+        message: "One or more tags do not exist",
+      });
+    }
+    req.body.tags = tags.map((tag) => tag._id);
 
     const updatedActivity = await Activity.findByIdAndUpdate(
-      id,
+      activityId,
       {
-        name,
-        dateTime,
-        location,
-        price,
-        category,
-        tags,
-        discounts,
-        isBookingOpen,
-        creatorId,
-        headCount,
-        description,
+        name: updatedData.name,
+        dateTime: updatedData.dateTime,
+        location: updatedData.location,
+        price: updatedData.price,
+        category: updatedData.category,
+        tags: updatedData.tags,
+        discounts: updatedData.discounts,
+        isBookingOpen: updatedData.isBookingOpen,
+        creatorId: updatedData.creatorId,
+        headCount: updatedData.headCount,
+        description: updatedData.description,
       },
       { new: true, runValidators: true } // Return the updated document and run validators
     );
 
+    if (updatedData.isBookingOpen) {
+      // Find tourists who have bookmarked this activity
+      const tourists = await Tourist.find({
+        "bookmarks.productID": activityId,
+      });
+
+      if (tourists.length > 0) {
+        // Add notifications to each tourist
+        const notificationPromises = tourists.map((tourist) => {
+          const notification = {
+            title: "Booking Opened",
+            Body: `The activity "${updatedActivity.name}" has opened its bookings!`,
+            isSeen: false,
+          };
+
+          tourist.Notifications.push(notification);
+          return tourist.save();
+        });
+
+        // Wait for all notifications to be saved
+        await Promise.all(notificationPromises);
+      }
+    }
     if (!updatedActivity) {
       return res.status(404).json({ message: "Activity not found" });
     }
@@ -435,7 +554,7 @@ const getActivities = async (req, res) => {
 
 /**
  * Books an activity by incrementing its headCount & decreasing the wallet amount
- *
+ * @route POST /activity/book
  * @param {Object} req - The request object containing the activity id and the user id
  * @param {Object} res - The response object used to send results.
  * @returns {Object} - JSON response indicating success or failure.
@@ -486,20 +605,38 @@ const bookActivity = async (req, res) => {
     }
 
     // Check if tourist has enough wallet balance
-    if (tourist.wallet < priceCharged) {
-      return res.status(400).json({ message: "Insufficient funds" });
-    }
+    // if (tourist.wallet < priceCharged) {
+    //     return res.status(400).json({ message: "Insufficient funds" });
+    // }
 
     activity.headCount += 1;
     await activity.save();
 
-    tourist.wallet -= priceCharged;
+    // tourist.wallet -= priceCharged;
 
     tourist.bookedEvents.activities.push({
       activityId: activityId,
       priceCharged: priceCharged,
     });
     await tourist.save();
+
+    // send payment confirmation email
+    const mailOptions = {
+      from: process.env.GMAIL,
+      to: tourist.email,
+      subject: "Activity Payment Confirmation",
+      text: `You have successfully booked the activity ${
+        activity.name
+      } at a price of ${priceCharged.toFixed(2)} USD`,
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log("Email sent: " + info.response);
+      }
+    });
 
     let loyaltyPoints = tourist.loyaltyPoints;
     switch (tourist.level) {
@@ -522,6 +659,14 @@ const bookActivity = async (req, res) => {
     tourist.level = level;
     await tourist.save();
 
+    // Record the activity sale
+    await Sale.create({
+      type: "Activity",
+      itemId: activity._id,
+      buyerId: tourist._id,
+      totalPrice: priceCharged,
+    });
+
     res.status(200).json({
       message: "Activity booked successfully",
       activity,
@@ -535,6 +680,13 @@ const bookActivity = async (req, res) => {
   }
 };
 
+/**
+ * Cancels a booking for an activity
+ * @route POST /activity/cancel
+ * @param {Object} req - The request object containing the activity id and the user id
+ * @param {Object} res - The response object used to send results.
+ * @returns {Object} - JSON response indicating success or failure.
+ */
 const cancelBooking = async (req, res) => {
   try {
     const { activityId, userId } = req.body;
@@ -607,6 +759,14 @@ const cancelBooking = async (req, res) => {
 
     await tourist.save();
 
+    // Record the negative activity sale
+    await Sale.create({
+      type: "Activity",
+      itemId: activity._id,
+      buyerId: tourist._id,
+      totalPrice: -priceCharged,
+    });
+
     res.status(200).json({ message: "Activity cancelled successfully" });
   } catch (error) {
     res.status(500).json({
@@ -622,17 +782,49 @@ const setIsInappropriate = async (req, res) => {
     const { isInappropriate } = req.body;
 
     const activity = await Activity.findById(activityId);
-
-    // console.log("Activity:", activity);
-    // console.log("Available dates:", activity.availableDatesTimes);
-
     if (!activity) {
       return res.status(404).json({ message: "Activity not found" });
     }
 
-    activity.isInappropriate = isInappropriate;
+    // Find the advertiser associated with the itinerary
+    const advertiser = await Advertiser.findById(activity.creatorId);
+    if (!advertiser) {
+      return res.status(404).json({ message: "advertiser not found" });
+    }
 
+    activity.isInappropriate = isInappropriate;
     await activity.save();
+
+    // Create a new notification
+    if (isInappropriate) {
+      const notification = {
+        title: "Activity Flagged",
+        Body: `Your activity "${activity.name}" has been flagged as inappropriate.`,
+        isSeen: false,
+      };
+      advertiser.Notifications.push(notification);
+      await advertiser.save();
+
+      //send an email
+      const mailOptions = {
+        from: process.env.GMAIL,
+        to: advertiser.email,
+        subject: "Activity Flagged",
+        text:
+          "Your activity " +
+          activity.name +
+          " has been flagged as inappropriate.",
+      };
+
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          return res.status(500).send(error.toString());
+        }
+        res.status(200).send(`Email sent: ${info.response}`);
+      });
+    }
+
+    //return activity
     res.status(200).json(activity);
   } catch (error) {
     return res.status(500).json({

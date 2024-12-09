@@ -36,10 +36,24 @@ const TourGuideSchema = new mongoose.Schema(
 			default: null,
 		},
 		profileImageUri: {
-			type: String,
+			public_id: {
+				type: String,
+				required: this.profileImageUri !== undefined,
+			},
+			url: {
+				type: String,
+				required: this.profileImageUri !== undefined,
+			},
 		},
 		bannerImageUri: {
-			type: String,
+			public_id: {
+				type: String,
+				required: this.bannerImageUri !== undefined,
+			},
+			url: {
+				type: String,
+				required: this.bannerImageUri !== undefined,
+			},
 		},
 		preferredCurrency: {
 			type: String,
@@ -100,7 +114,7 @@ const TourGuideSchema = new mongoose.Schema(
 			type: [mongoose.Schema.Types.ObjectId],
 			ref: "User",
 			default: [],
-		  },
+		},
 		comments: [
 			{
 				userId: {
@@ -120,6 +134,22 @@ const TourGuideSchema = new mongoose.Schema(
 		},
 		portfolioUrl: {
 			type: String,
+		},
+		Notifications: {
+			type: [
+				{
+					title: {
+						type: String,
+					},
+					Body: {
+						type: String,
+					},
+					isSeen: {
+						Type: Boolean,
+					},
+				}
+			],
+			default: [],
 		},
 	},
 	{ timestamps: true }

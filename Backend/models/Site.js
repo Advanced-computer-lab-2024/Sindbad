@@ -33,10 +33,16 @@ const siteSchema = new mongoose.Schema(
 			type: String,
 			required: [true, "Please add a description for your site"],
 		},
-		imageUris: {
-			type: [String],
-			required: [true, "Please add an image for your site"],
-		},
+		cardImage: {
+            public_id: {
+                type: String,
+                required: this.cardImage !== undefined,
+            },
+            url: {
+                type: String,
+                required: this.cardImage !== undefined,
+            },
+        },
 		location: {
 			address: {
 				type: String,
