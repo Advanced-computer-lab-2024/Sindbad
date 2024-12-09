@@ -10,9 +10,10 @@ export const CoordinatesField = ({ name, control, label, latitude, longitude }) 
         <FormItem>
           <FormLabel>{label || name.toUpperCase()}</FormLabel>
           <FormControl>
+            {/* //HACK: Eh el araf da */}
             <GoogleMapWrite
-              lat={latitude}
-              lng={longitude}
+              lat={control._defaultValues.location.coordinates.lat}
+              lng={control._defaultValues.location.coordinates.lng}
               onChange={field.onChange}
             />
           </FormControl>
