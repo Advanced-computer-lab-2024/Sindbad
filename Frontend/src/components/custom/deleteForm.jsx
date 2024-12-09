@@ -7,21 +7,63 @@ import { deleteTrip } from "@/services/TripApiHandler";
 import { Button } from "../ui/button";
 import { deleteUser } from "@/services/UserApiHandler";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 function DeleteForm({ type, data }) {
   const { toast } = useToast();
-  const handleButtonClick = () => {
+  const navigate = useNavigate();
+  const handleButtonClick = async () => {
     if (type === "site") {
-      deleteSite(data._id);
+      try {
+        const response = await deleteSite(data._id);
+        if (!response.error) {
+          toast({ description: "Site deleted successfully" });
+          navigate(`/app/profile`);
+        } else { 
+          throw new Error("An unknown error has occurred");
+        }
+      } catch (error) {
+        toast({ description: "An unknown error has occurred" });
+      }
     }
     if (type === "activity") {
-      deleteActivity(data._id);
+      try {
+        const response = await deleteActivity(data._id);
+        if (!response.error) {
+          toast({ description: "Activity deleted successfully" });
+          navigate(`/app/profile`);
+        } else {
+          throw new Error("An unknown error has occurred");
+        }
+      } catch (error) {
+        toast({ description: "An unknown error has occurred" });
+      }
     }
     if (type === "itinerary") {
-      deleteItinerary(data._id);
+      try {
+        const response = await deleteItinerary(data._id);
+        if (!response.error) {
+          toast({ description: "Itinerary deleted successfully" });
+          navigate(`/app/profile`);
+        } else {
+          throw new Error("An unknown error has occurred");
+        }
+      } catch (error) {
+        toast({ description: "An unknown error has occurred" });
+      }
     }
     if (type === "experience") {
-      removeTourGuideWork(data.id, data.experience_id);
+      try {
+        const response = await removeTourGuideWork(data.id, data.experience_id);
+        if (!response.error) {
+          toast({ description: "Experience deleted successfully" });
+          navigate(`/app/profile`);
+        } else {
+          throw new Error("An unknown error has occurred");
+        }
+      } catch (error) {
+        toast({ description: "An unknown error has occurred" });
+      }
     }
     if (
       type === "tourGuide" ||
@@ -29,12 +71,31 @@ function DeleteForm({ type, data }) {
       type === "seller" ||
       type === "advertiser"
     ) {
-      deleteUser(data._id, type);
+      try {
+        const response = await deleteUser(data._id, type);
+        if (!response.error) {
+          toast({ description: "Deletion request has been sent" });
+          navigate(`/app/profile`);
+        } else {
+          throw new Error("An unknown error has occurred");
+        }
+      } catch (error) {
+        toast({ description: "An unknown error has occurred" });
+      }
     }
     if (type === "transportation") {
-      deleteTrip(data._id);
+      try {
+        const response = await deleteTrip(data._id);
+        if (!response.error) {
+          toast({ description: "Transportation deleted successfully" });
+          navigate(`/app/profile`);
+        } else {
+          throw new Error("An unknown error has occurred");
+        }
+      } catch (error) {
+        toast({ description: "An unknown error has occurred" });
+      }
     }
-    toast({ description: "Request being processed by an admin" });
   };
   return (
     <div>
