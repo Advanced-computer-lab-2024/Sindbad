@@ -43,7 +43,7 @@ function Timeline({
     if (profileRole === "advertiser") {
       const fetchTrips = async () => {
         try {
-          const response = await getMyTrips(id);
+          const response = await getMyTrips(profileId);
           setTransportation(response);
         } catch (err) {
           console.error(err);
@@ -272,7 +272,7 @@ function Timeline({
           />
         </>
       }
-      {profileRole === "advertiser" &&
+      {profileRole === "advertiser" && role != "guest" &&
         <>
           <div className="flex items-center gap-6 mt-4">
             <h1 className="text-3xl font-extrabold shrink-0">
