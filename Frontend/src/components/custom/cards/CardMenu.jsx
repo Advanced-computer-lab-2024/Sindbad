@@ -58,15 +58,17 @@ function CardMenu({
   useEffect(() => {
     // Function to check if the activity is already bookmarked
     const checkIfBookmarked = async () => {
-      try {
-        const response = await getBookmarkedActivities(id);
-        const isActivityBookmarked = response.data.some(
-          (activity) => activity._id === data._id
-        );
-        setIsBookmarked(isActivityBookmarked);
-      } catch (error) {
-        console.error("Error fetching bookmark status:", error);
-      }
+      if (!id) return;
+      if (config.actions.bookmark?.includes(role)) return;
+        try {
+          const response = await getBookmarkedActivities(id);
+          const isActivityBookmarked = response.data.some(
+            (activity) => activity._id === data._id
+          );
+          setIsBookmarked(isActivityBookmarked);
+        } catch (error) {
+          console.error("Error fetching bookmark status:", error);
+        }
     };
     checkIfBookmarked();
   }, [id, data._id]); // Check bookmark status whenever id or data._id changes
