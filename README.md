@@ -26,11 +26,10 @@ Sindbad is designed to provide a comprehensive platform for managing and booking
 - Project is in development stage
 - The current build status of the project is stable. 
 - More automated tests should be added in the future.
+- More layers of security should be added to the authentication system.
 
 
 ## Code Style
-
-**Indentation:** Our code is indented with spaces 2.
 
 **Naming Conventions:** 
 - Variables and functions follow camelCase naming convention
@@ -184,13 +183,13 @@ git clone https://github.com/Advanced-computer-lab-2024/Sindbad.git
 ```
 2. Navigate to the project directory: 
 ``` bash 
-cd sindbad
+cd Sindbad
 ```
 
 3. Install dependencies: 
 - **For the backend**
 ``` bash 
-cd Backend
+cd backend
 npm install
 ```
 
@@ -202,7 +201,7 @@ cd ..
 ```
 Then to install frontend dependencies
 ``` bash 
-cd Frontend
+cd frontend
 npm install
 ```
 
@@ -271,7 +270,6 @@ npm run dev
 ```
 
 Now, both the frontend and backend servers should be running. You can access the application in your browser at
-In another terminal
 ``` bash  
 http://localhost:5173/
 ```
