@@ -45,7 +45,9 @@ Sindbad is designed to provide a comprehensive platform for managing and booking
 The project follows the MVC design pattern that divide the related program logic into three interconnected elements. The Files in the backend was divided into the M (models) where the schema of the models exist which represent the core of the database , the C (controller) where the functions needed for the routes exists and the V (views) the view in MERN stack is represented by the react frontend server.
 
 ## Screenshots
+The Landing/Login Page:
 ![Screenshot 2024-12-09 021621](https://github.com/user-attachments/assets/aa167622-fa0a-44fc-8644-40dfdd5ccbf7)
+
 
 ![Screenshot 2024-12-09 021823](https://github.com/user-attachments/assets/d6ddef3a-3444-4284-b4bf-3da1d315be8e)
 
