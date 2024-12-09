@@ -30,6 +30,9 @@ const excludedRoutes = [
   /^\/advertiser\/upload\/[a-fA-F0-9]+$/, // Matches "/advertiser/upload/{id}"
   /^\/seller\/upload\/[a-fA-F0-9]+$/, // Matches "/seller/upload/{id}"
   /^\/tourGuide\/upload\/[a-fA-F0-9]+$/, // Matches "/tourGuide/upload/{id}"
+  /^\/advertiser\/upload\/[a-fA-F0-9]+$/, // Matches "/advertiser/upload/{id}"
+  /^\/seller\/upload\/[a-fA-F0-9]+$/, // Matches "/seller/upload/{id}"
+  /^\/tourGuide\/upload\/[a-fA-F0-9]+$/, // Matches "/tourGuide/upload/{id}"
 
   // /^\/public-route/, // Matches "/public-route" and any sub-routes
   // Add more complex regex patterns if needed

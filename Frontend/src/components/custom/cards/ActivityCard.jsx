@@ -13,7 +13,7 @@ import CardMenu from "./CardMenu";
 
 const cardConfig = {
 	actions: {
-		edit:[],
+		edit: [],
 		delete: [],
 		bookmark: ["tourist"],
 		flagAsInappropriate: ["admin"],
@@ -27,11 +27,10 @@ function ActivityCard({ data, fetchCardData, styles }) {
 
 	return (
 		<article
-			className={`${styles.container} ${
-				data.isInappropriate === true
+			className={`${styles.container} ${data.isInappropriate === true
 					? styles.inappropriate
 					: styles.active
-			}`}
+				}`}
 		>
 			<div className={styles.imageContainer}>
 				<CardImage imageSrc={data.cardImage} altText={data.name} />
@@ -49,15 +48,18 @@ function ActivityCard({ data, fetchCardData, styles }) {
 			<div className={styles.detailsContainer}>
 				<h4 className={styles.title}>{data.name}</h4>
 				<div className="flex flex-col gap-1">
-					<StarRating rating={data.averageRating ? data.averageRating : 0} size={16} />
+					{/* only render starRating if date has passed */}
+					{
+						new Date(data.dateTime) < new Date() &&
+						<StarRating rating={data.averageRating ? data.averageRating : 0} size={16} />
+					}
 					<CardPrice price={data.price} />
 					<Button
 						onClick={() => navigate(`/app/activity/${data._id}`)}
-						className={`${styles.button} ${
-							data.isInappropriate === true
+						className={`${styles.button} ${data.isInappropriate === true
 								? styles.buttonInappropriate
 								: styles.buttonActive
-						}`}
+							}`}
 					>
 						<p className={styles.buttonText}>Read more</p>
 						<div className={styles.buttonIcon}>
