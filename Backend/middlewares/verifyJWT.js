@@ -33,7 +33,12 @@ const excludedRoutes = [
   /^\/advertiser\/upload\/[a-fA-F0-9]+$/, // Matches "/advertiser/upload/{id}"
   /^\/seller\/upload\/[a-fA-F0-9]+$/, // Matches "/seller/upload/{id}"
   /^\/tourGuide\/upload\/[a-fA-F0-9]+$/, // Matches "/tourGuide/upload/{id}"
-
+  /^\/user\/get-user-role\/[a-fA-F0-9]+$/,
+  /^\/trip\/my-trips\/(?:[a-fA-F0-9]+|null)$/,
+  /^\/activity\/my-activities\/[a-fA-F0-9]+$/,
+  /^\/tourGuide\/[a-fA-F0-9]+$/,
+  /^\/tourist\/[a-fA-F0-9]+$/,
+  /^\/itinerary\/my-itineraries\/[a-fA-F0-9]+$/,
   // /^\/public-route/, // Matches "/public-route" and any sub-routes
   // Add more complex regex patterns if needed
 ];
