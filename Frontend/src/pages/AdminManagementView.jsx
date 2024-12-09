@@ -1,11 +1,25 @@
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useUser } from "@/state management/userInfo";
 
 function AdminManagementView() {
 	const location = useLocation();
 	const navigate = useNavigate();
 	const currentPath = location.pathname.split("/").pop();
+	const { role } = useUser();
+
+	if (role !== "admin") {
+		return (
+			<div className="py-8 px-24 max-w-[1200px] flex gap-9 mx-auto">
+				<div className="flex justify-center w-full">
+					<p className="text-neutral-400 text-sm italic">
+						You are not authorised to view this page.
+					</p>
+				</div>
+			</div>
+		);
+	}
 
 	return (
 		<div className="py-8 px-24 max-w-[1200px] flex gap-6 mx-auto">
