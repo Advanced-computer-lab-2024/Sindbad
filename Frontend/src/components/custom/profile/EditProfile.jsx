@@ -129,7 +129,7 @@ function EditProfile({ userType, id, userData }) {
           </form>
         </Form>
       </div>
-      {userType !== "admin" && (
+      {userType !== "admin" && userType !== "tourismGovernor" && (
         <>
           <div className="flex items-center gap-6 mb-3 mt-8">
             <h1 className="text-xl font-bold shrink-0">Danger Area</h1>
