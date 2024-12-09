@@ -75,6 +75,33 @@ if (process.env.NODE_ENV !== "test") {
         });
 }
 
+app.post(
+    "/advertiser/upload/:id",
+    upload.fields([
+        { name: "idCardImage", maxCount: 1 },
+        { name: "taxationRegistryCardImage", maxCount: 1 },
+    ]),
+    AdvertiserController.addAdvertiserDocuments
+);
+
+app.post(
+    "/seller/upload/:id",
+    upload.fields([
+        { name: "idCardImage", maxCount: 1 },
+        { name: "taxationRegistryCardImage", maxCount: 1 },
+    ]),
+    SellerController.addSellerDocuments
+);
+
+app.post(
+    "/tourGuide/upload/:id",
+    upload.fields([
+        { name: "idCardImage", maxCount: 1 },
+        { name: "certificateImage", maxCount: 1 },
+    ]),
+    TourGuideController.addTourGuideDocuments
+);
+
 app.use(verifyJWTMiddleware);
 
 // Auth routes
@@ -212,33 +239,6 @@ app.put(
         { name: "cardImage", maxCount: 1 },
     ]),
     ProductController.updateProduct
-);
-
-app.post(
-    "/advertiser/upload/:id",
-    upload.fields([
-        { name: "idCardImage", maxCount: 1 },
-        { name: "taxationRegistryCardImage", maxCount: 1 },
-    ]),
-    AdvertiserController.addAdvertiserDocuments
-);
-
-app.post(
-    "/seller/upload/:id",
-    upload.fields([
-        { name: "idCardImage", maxCount: 1 },
-        { name: "taxationRegistryCardImage", maxCount: 1 },
-    ]),
-    SellerController.addSellerDocuments
-);
-
-app.post(
-    "/tourGuide/upload/:id",
-    upload.fields([
-        { name: "idCardImage", maxCount: 1 },
-        { name: "certificateImage", maxCount: 1 },
-    ]),
-    TourGuideController.addTourGuideDocuments
 );
 
 //User routes

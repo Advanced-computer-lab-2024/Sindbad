@@ -288,9 +288,12 @@ function Activity() {
             </p>
 
             {/*Star Section */}
-            <div className="mt-1">
-              <StarRating rating={activity.averageRating} size={20} />
-            </div>
+            {
+              new Date(activity.dateTime) < new Date() &&
+              <div className="mt-1">
+                <StarRating rating={activity.averageRating} size={20} />
+              </div>
+            }
           </div>
 
           {/*description and category*/}

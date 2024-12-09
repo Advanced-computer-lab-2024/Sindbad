@@ -34,10 +34,6 @@ function Activities() {
 		category: {
 			selected: "",
 		},
-		rating: {
-			min: 0,
-			max: 5,
-		},
 		sortBy: "",
 	});
 
@@ -63,15 +59,6 @@ function Activities() {
 			type: "select",
 			label: "Category",
 			options: categoryNames,
-		},
-		rating: {
-			type: "range",
-			label: "Rating",
-			range: {
-				min: 0,
-				max: 5,
-			},
-			step: 1,
 		},
 		sortBy: {
 			type: "select",
@@ -103,7 +90,10 @@ function Activities() {
 			convertedPrice,
 			activeFilters.date, // Pass start and end separately
 			categoryToSend, // Send the category ID
-			activeFilters.rating,
+			{
+				min: 0,
+				max: 5,
+			},
 			sortBy,
 			sortOrder
 		);
