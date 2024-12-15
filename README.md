@@ -48,13 +48,13 @@ The project follows the MVC design pattern that divide the related program logic
 ![Screenshot 2024-12-09 021621](https://github.com/user-attachments/assets/aa167622-fa0a-44fc-8644-40dfdd5ccbf7)
 
 ### Browse Itineraries
-![Browse Itineraries](https://github.com/user-attachments/assets/5381010a-95dc-4652-b9bc-c8c32cb560e3)
+![Browse Itineraries](https://github.com/user-attachments/assets/2e591e4a-ce81-4494-b1d4-3e019cc5518e)
 
 ### Itinerary:
 ![Itinerary](https://github.com/user-attachments/assets/77fdb131-12ea-49cf-8a8f-22ec2b964572)
 
-### Profile Edit:
-![Profile Edit](https://github.com/user-attachments/assets/cb27c576-85cb-4337-a2c0-1190d4252eaa)
+### Edit Profile:
+![Profile Edit](https://github.com/user-attachments/assets/9a189bc8-3d6d-402c-9a18-81970f6a01b9)
 
 ### Cart:
 ![Screenshot 2024-12-09 022517](https://github.com/user-attachments/assets/dd278112-515c-4334-addf-ad7b852ef3dc)
