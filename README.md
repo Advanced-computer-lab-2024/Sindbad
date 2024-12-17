@@ -47,19 +47,44 @@ The project follows the MVC design pattern that divide the related program logic
 ### Login Page:
 ![Screenshot 2024-12-09 021621](https://github.com/user-attachments/assets/aa167622-fa0a-44fc-8644-40dfdd5ccbf7)
 
+### Signup: 
+![image](https://github.com/user-attachments/assets/8cb82e7a-9e98-461a-85c3-e3d06508c54c)
+
+![image](https://github.com/user-attachments/assets/68e09048-e295-4ecb-ae56-81c88ca2ed5c)
+
 ### Browse Itineraries
 ![Browse Itineraries](https://github.com/user-attachments/assets/2e591e4a-ce81-4494-b1d4-3e019cc5518e)
 
-### Itinerary:
+### Itinerary
 ![Itinerary](https://github.com/user-attachments/assets/77fdb131-12ea-49cf-8a8f-22ec2b964572)
 
-### Edit Profile:
+### Activities
+![image](https://github.com/user-attachments/assets/1c597da5-a50d-4ddf-bb7c-d805ec37ff44)
+
+### Transportation
+![image](https://github.com/user-attachments/assets/b40162fc-3626-47ac-8e83-729795e5c174)
+
+### Easy Transportation Booking
+![image](https://github.com/user-attachments/assets/5ee0cf0d-f10c-4cec-8c7f-a0e9e79575a3)
+
+### Souvenir store
+![image](https://github.com/user-attachments/assets/7dfa3bb1-453e-44ab-a8d7-564ef7a9ff6f)
+
+![image](https://github.com/user-attachments/assets/c090ab8e-fc3e-4787-baf9-a8407c853bad)
+
+### Wishlist
+![image](https://github.com/user-attachments/assets/6fc21475-3ba0-4710-8ec4-db6528072e97)
+
+### Sites
+![image](https://github.com/user-attachments/assets/13789e38-a240-4591-8209-803bd8e27d1b)
+
+### Edit Profile
 ![Profile Edit](https://github.com/user-attachments/assets/9a189bc8-3d6d-402c-9a18-81970f6a01b9)
 
 ### Cart:
 ![Screenshot 2024-12-09 022517](https://github.com/user-attachments/assets/dd278112-515c-4334-addf-ad7b852ef3dc)
 
-### Revenue:
+### Revenue
 ![Screenshot 2024-12-09 022018](https://github.com/user-attachments/assets/8c9da030-e708-481f-b9e1-9b323aeed3a4)
 
 
