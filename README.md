@@ -47,11 +47,31 @@ The project follows the MVC design pattern that divide the related program logic
 ### Login Page:
 ![Screenshot 2024-12-09 021621](https://github.com/user-attachments/assets/aa167622-fa0a-44fc-8644-40dfdd5ccbf7)
 
+### Signup: 
+![image](https://github.com/user-attachments/assets/8cb82e7a-9e98-461a-85c3-e3d06508c54c)
+
+![image](https://github.com/user-attachments/assets/68e09048-e295-4ecb-ae56-81c88ca2ed5c)
+
+
 ### Browse Itineraries
 ![Browse Itineraries](https://github.com/user-attachments/assets/2e591e4a-ce81-4494-b1d4-3e019cc5518e)
 
 ### Itinerary:
 ![Itinerary](https://github.com/user-attachments/assets/77fdb131-12ea-49cf-8a8f-22ec2b964572)
+
+![image](https://github.com/user-attachments/assets/912ea155-ad3f-4a45-aaa4-f6e7247fd6f5)
+
+### Activities:
+![image](https://github.com/user-attachments/assets/1c597da5-a50d-4ddf-bb7c-d805ec37ff44)
+
+### Transportation:
+![image](https://github.com/user-attachments/assets/b40162fc-3626-47ac-8e83-729795e5c174)
+
+### Souvenir store:
+![image](https://github.com/user-attachments/assets/92c9684c-4169-4e42-8904-d3d207573d18)
+
+![image](https://github.com/user-attachments/assets/c090ab8e-fc3e-4787-baf9-a8407c853bad)
+
 
 ### Edit Profile:
 ![Profile Edit](https://github.com/user-attachments/assets/9a189bc8-3d6d-402c-9a18-81970f6a01b9)
